@@ -31,4 +31,15 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URL', 'http://localhost:8000/auth/google/callback'),
+        // Guzzle options (e.g., to disable TLS verification in local dev)
+        'guzzle' => [
+            // If SOCIALITE_CA_PATH is provided, Guzzle will use that CA bundle; otherwise fall back to boolean verify flag
+            'verify' => env('SOCIALITE_CA_PATH') ?: filter_var(env('SOCIALITE_HTTP_VERIFY', true), FILTER_VALIDATE_BOOLEAN),
+        ],
+    ],
+
 ];

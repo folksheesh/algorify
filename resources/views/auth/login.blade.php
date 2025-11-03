@@ -5,7 +5,6 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/bootstrap-icons/font/bootstrap-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/custom/login.css') }}">
@@ -15,6 +14,9 @@
     <div id="auth">
         @if (session('status'))
             <div class="alert alert-success">{{ session('status') }}</div>
+        @endif
+        @if (session('oauth_error'))
+            <div class="alert alert-danger">{{ session('oauth_error') }}</div>
         @endif
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -80,7 +82,7 @@
                             <hr>
                         </div>
 
-                        <a href="#" class="btn btn-google w-100">
+                        <a href="{{ url('/auth/google') }}" class="btn btn-google w-100">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22" aria-hidden="true">
                                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12 s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C33.64,6.053,29.083,4,24,4C12.955,4,4,12.955,4,24 s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
                                 <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,16.108,18.961,13,24,13c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657 C33.64,6.053,29.083,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
@@ -97,14 +99,17 @@
                 </div>
             </div>
             <div class="col-lg-7 d-none d-lg-block">
-                <div id="auth-right" style="background:#f3f4f6; height:100%;"></div>
+                <div id="auth-right"></div>
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('template/assets/static/js/initTheme.js') }}"></script>
+    <script>
+        // Ensure light theme on auth pages (in case previous page set dark)
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+    </script>
     <script>
         (function(){
             const toggleBtn = document.getElementById('togglePassword');

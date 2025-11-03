@@ -6,10 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'profesi',
+        'pendidikan',
+        'address',
+        'jenis_kelamin',
+        'foto_profil',
+        'status',
+        'tanggal_lahir',
+        'tanggal_daftar',
+        'tanggal_login_terakhir',
     ];
 
     /**
@@ -42,6 +53,40 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_lahir' => 'date',
+            'tanggal_daftar' => 'datetime',
+            'tanggal_login_terakhir' => 'datetime',
         ];
+    }
+    
+    // Relationships
+    public function kursus()
+    {
+        return $this->hasMany(Kursus::class);
+    }
+    
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+    
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
+    
+    public function sertifikat()
+    {
+        return $this->hasMany(Sertifikat::class);
+    }
+    
+    public function jawaban()
+    {
+        return $this->hasMany(Jawaban::class);
+    }
+    
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class);
     }
 }

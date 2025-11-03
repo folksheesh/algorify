@@ -5,7 +5,6 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/bootstrap-icons/font/bootstrap-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/custom/login.css') }}">
@@ -98,14 +97,17 @@
                 </div>
             </div>
             <div class="col-lg-7 d-none d-lg-block">
-                <div id="auth-right" style="background:#f3f4f6; height:100%;"></div>
+                <div id="auth-right"></div>
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('template/assets/static/js/initTheme.js') }}"></script>
+    <script>
+        // Force light theme on auth pages
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+    </script>
     <script>
         (function(){
             const agree = document.getElementById('agree');
