@@ -14,58 +14,98 @@ use Illuminate\Http\Request;
 class GoogleController extends Controller
 {
     /**
-     * Redirect the user to Google for authentication.
+     * Arahkan pengguna ke Google untuk proses login (OAuth)
+     *
+     * Fungsi ini memulai alur OAuth dengan Google. Pengguna akan
+     * diarahkan ke halaman Google untuk memilih akun dan memberi izin.
+     *
+     * @return RedirectResponse Redirect ke halaman otorisasi Google
      */
     public function redirectToGoogle(): RedirectResponse
     {
+        // Gunakan driver 'google' dari Socialite untuk memulai redirect
         return Socialite::driver('google')->redirect();
     }
 
     /**
-     * Handle the callback from Google.
+     * Menangani callback dari Google setelah pengguna mengizinkan/menolak
+     *
+     * Alur singkat:
+     * - Jika pengguna menolak (atau ada error), kembalikan ke login dengan pesan
+     * - Jika tidak ada 'code' (token), ulangi proses redirect
+     * - Ambil data pengguna dari Google
+     * - Cari user di database berdasarkan email
+     * - Jika belum ada, buat user baru (beri password acak karena kolom diperlukan)
+     * - Login user dan arahkan ke dashboard
+     *
+     * Catatan variabel penting:
+     * - $request : data callback dari Google (mengandung 'code' atau 'error')
+     * - $googleUser : objek yang berisi info user dari Google (email, nama, dsb.)
+     * - $user : model User dari aplikasi (dipakai untuk login)
+     *
+     * Alasan langkah tertentu:
+     * - Menggunakan password acak saat membuat user baru karena tabel user
+     *   biasanya memerlukan field password; pengguna tetap bisa login via OAuth.
+     * - Memanggil stateless() ke Socialite untuk menghindari masalah sesi
+     *   saat aplikasi tidak menyimpan state OAuth (lebih sederhana untuk API/edge cases).
+     * - Mencoba assign role 'peserta' hanya jika fitur role tersedia; jika tidak
+     *   maka dijaga agar tidak menimbulkan error.
+     *
+     * @param Request $request Data callback dari Google
+     * @return RedirectResponse Arahkan user setelah proses selesai
      */
     public function handleGoogleCallback(Request $request): RedirectResponse
     {
-        // If user declined or the request is invalid, guide them back gracefully
+        // Jika pengguna menolak permintaan (contoh: menekan "Cancel"),
+        // Google biasanya mengembalikan parameter 'error'. Tunjukkan pesan yang ramah.
         if ($request->has('error')) {
             return redirect()->route('login')->with('oauth_error', 'Google sign-in dibatalkan.');
         }
-        if (!$request->has('code')) {
-            // No code in callback, restart the OAuth flow
+
+        // Jika callback tidak berisi 'code', berarti alur OAuth belum lengkap.
+        // Arahan ulang ke route yang memulai proses OAuth.
+        if (! $request->has('code')) {
             return redirect()->route('google.redirect');
         }
 
+        // Ambil data user dari Google. stateless() dipakai untuk mengabaikan sesi
+        // internal Socialite (berguna jika state tidak disimpan di server).
         $googleUser = Socialite::driver('google')->stateless()->user();
 
-        // Try finding by Google ID first, then by email
+        // Cari user di database berdasarkan email (umumnya unik)
         $user = User::where('email', $googleUser->getEmail())->first();
 
-        if (!$user) {
+        if (! $user) {
+            // Jika user belum ada, buat user baru dengan data dari Google.
+            // Gunakan nama yang tersedia: nama lengkap, nickname, atau fallback.
             $user = User::create([
                 'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Google User',
                 'email' => $googleUser->getEmail(),
-                // Store a random password since users table requires it
+                // Simpan password acak karena kolom password biasanya wajib
                 'password' => Hash::make(Str::random(24)),
             ]);
 
-            // Assign default role "peserta" if Spatie is installed and tables exist
+            // Jika paket manajemen peran (Spatie) tersedia, coba beri peran 'peserta'
+            // Kami bungkus dengan try/catch agar tidak crash jika role/table belum ada.
             if (method_exists($user, 'assignRole')) {
                 try {
                     $user->assignRole('peserta');
                 } catch (\Throwable $e) {
-                    // role might not exist yet; we can create it silently
+                    // Jika role belum ada, coba buat role lalu assign lagi.
                     try {
                         \Spatie\Permission\Models\Role::findOrCreate('peserta');
                         $user->assignRole('peserta');
                     } catch (\Throwable $e2) {
-                        // ignore
+                        // Jika tetap gagal, kita abaikan agar proses login tetap jalan.
                     }
                 }
             }
         }
 
+        // Login user ke aplikasi (remember = true agar sesi persisten)
         Auth::login($user, true);
 
+        // Arahkan user ke halaman tujuan (dashboard) atau ke halaman yang diminta sebelumnya
         return redirect()->intended(route('dashboard'));
     }
 }

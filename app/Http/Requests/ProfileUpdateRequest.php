@@ -1,17 +1,18 @@
-<?php
+<?php // Request khusus untuk update profil user
 
-namespace App\Http\Requests;
+namespace App\Http\Requests; // Namespace request
 
-use App\Models\User;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Models\User; // Import model User
+use Illuminate\Foundation\Http\FormRequest; // Import FormRequest
+use Illuminate\Validation\Rule; // Import Rule untuk validasi unik
 
+// Kelas ini menangani validasi data update profil user
 class ProfileUpdateRequest extends FormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Mendefinisikan aturan validasi untuk update profil user.
+     * Nama wajib diisi, email harus unik dan valid, field lain opsional.
+     * Validasi juga untuk upload foto dan ganti password.
      */
     public function rules(): array
     {

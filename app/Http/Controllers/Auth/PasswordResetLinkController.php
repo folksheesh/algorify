@@ -11,7 +11,12 @@ use Illuminate\View\View;
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Display the password reset link request view.
+     * Tampilkan halaman permintaan tautan reset password.
+     *
+     * Halaman ini berisi form di mana pengguna memasukkan email mereka
+     * untuk menerima tautan reset password melalui email.
+     *
+     * @return View Halaman form lupa password
      */
     public function create(): View
     {
@@ -19,23 +24,42 @@ class PasswordResetLinkController extends Controller
     }
 
     /**
-     * Handle an incoming password reset link request.
+     * Tangani permintaan untuk mengirim tautan reset password.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * Alur kerja:
+     * 1. Validasi format email yang dimasukkan pengguna
+     * 2. Panggil Password::sendResetLink untuk mencoba mengirim email
+     * 3. Periksa status hasil pengiriman dan berikan respons yang sesuai
+     *
+     * Penjelasan variabel penting:
+     * - $request: berisi input dari form (hanya 'email' yang dipakai)
+     * - $status: hasil dari Password::sendResetLink() (kode yang menjelaskan sukses/gagal)
+     *
+     * Alasan langkah tertentu:
+     * - Validasi email diperlukan agar tidak mencoba mengirim ke alamat yang jelas salah
+     * - Password::sendResetLink mengurus pembuatan token dan pengiriman email
+     *   (kita tidak perlu menulis logika token manual di sini)
+     * - Mengembalikan input email saat gagal agar pengguna tidak perlu mengetik ulang
+     *
+     * @param Request $request Data dari form lupa password
+     * @throws \Illuminate\Validation\ValidationException Jika validasi gagal
+     * @return RedirectResponse Kembali ke form dengan status atau error
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validasi input: pastikan email diisi dan berbentuk alamat email yang benar
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        // Coba kirim tautan reset password ke email yang diminta.
+        // Password::sendResetLink akan membuat token dan mengirim email sesuai konfigurasi.
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
+        // Jika pengiriman sukses, tampilkan status sukses. Jika gagal, kembalikan
+        // ke form dengan input email supaya pengguna bisa mencoba lagi.
         return $status == Password::RESET_LINK_SENT
                     ? back()->with('status', __($status))
                     : back()->withInput($request->only('email'))

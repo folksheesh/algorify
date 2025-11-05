@@ -1,6 +1,6 @@
-<?php
+<?php // Request khusus untuk proses login user
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Auth; // Namespace request auth
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+// Kelas ini menangani validasi dan proses autentikasi login user
 class LoginRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Mengecek apakah user diizinkan melakukan request ini.
+     * Biasanya selalu true untuk form login.
      */
     public function authorize(): bool
     {
@@ -20,9 +22,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Mendefinisikan aturan validasi untuk form login.
+     * Email dan password wajib diisi.
      */
     public function rules(): array
     {
@@ -33,9 +34,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Melakukan proses autentikasi user berdasarkan email dan password.
+     * Jika gagal, akan menambah hit rate limiter dan melempar error validasi.
      */
     public function authenticate(): void
     {
@@ -53,9 +53,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Ensure the login request is not rate limited.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Memastikan permintaan login tidak melebihi batas percobaan (rate limit).
+     * Jika terlalu banyak percobaan gagal, user akan di-lock sementara.
      */
     public function ensureIsNotRateLimited(): void
     {
@@ -76,7 +75,7 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the rate limiting throttle key for the request.
+     * Mengambil key unik untuk rate limiter berdasarkan email dan IP user.
      */
     public function throttleKey(): string
     {
