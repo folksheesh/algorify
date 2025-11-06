@@ -1,7 +1,10 @@
+{{-- Gunakan layout utama --}}
 @extends('layouts.template')
 
+{{-- Judul halaman --}}
 @section('title', 'Algorify - Edit Profil Peserta')
 
+{{-- Tambahkan stylesheet dan style khusus halaman --}}
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
@@ -83,7 +86,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border: 3px solid white;
+            border: 2px solid white;
         }
 
         .upload-icon svg {
@@ -243,24 +246,29 @@
 @endpush
 
 @section('content')
+    {{-- Konten utama halaman profil --}}
     <div class="profile-edit-container">
         <div class="dashboard-container">
+            {{-- Tampilkan sidebar --}}
             @include('components.sidebar')
             
             <main class="main-content" style="background: #f8f9fa;">
                 <div class="profile-content">
+                    {{-- Header halaman --}}
                     <div class="profile-header">
                         <h1>Edit Profil Peserta</h1>
                         <p>Perbarui informasi profil Anda</p>
                     </div>
                     
                     <div class="profile-form-container">
+                        {{-- Pesan sukses --}}
                         @if (session('status') === 'profile-updated')
                             <div class="alert alert-success">
                                 Profil berhasil diperbarui!
                             </div>
                         @endif
 
+                        {{-- Pesan error validasi --}}
                         @if ($errors->any())
                             <div class="alert alert-error">
                                 <ul style="margin: 0; padding-left: 1.25rem;">
@@ -271,10 +279,12 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                    {{-- Form update profil: CSRF, method PATCH, upload foto --}}
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
 
+                            {{-- Kontrol upload foto dan preview --}}
                             <div class="profile-photo-section">
                                 <div class="profile-avatar">
                                     @if($user->foto_profil)
@@ -289,6 +299,7 @@
                                         </svg>
                                     </label>
                                 </div>
+                                {{-- Kontrol upload foto dan tombol upload --}}
                                 <div class="photo-info">
                                     <h3>Foto Profil</h3>
                                     <p>JPG, PNG atau GIF. Maksimal 2MB</p>
@@ -299,6 +310,7 @@
                                 </div>
                             </div>
 
+                            {{-- Input profil (nama, email, telepon, pekerjaan, dsb.) --}}
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="name">Nama Lengkap</label>
@@ -330,7 +342,7 @@
                                     <input type="text" id="pendidikan" name="pendidikan" value="{{ old('pendidikan', $user->pendidikan) }}" placeholder="Sarjana Komputer">
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group full-width">
                                     <label for="password_lama">Ganti Kata Sandi Lama</label>
                                     <input type="password" id="password_lama" name="password_lama" placeholder="Masukkan Kata Sandi Lama">
                                 </div>
@@ -340,15 +352,16 @@
                                     <input type="password" id="password_baru" name="password_baru" placeholder="Masukkan Kata Sandi Baru">
                                 </div>
 
-                                <div class="form-group full-width">
+                                <div class="form-group">
                                     <label for="password_baru_confirmation">Konfirmasi Kata Sandi Baru</label>
                                     <input type="password" id="password_baru_confirmation" name="password_baru_confirmation" placeholder="Konfirmasi Kata Sandi Baru">
                                 </div>
                             </div>
 
+                            {{-- Tombol simpan dan batal --}}
                             <div class="form-actions">
-                                <button type="submit" class="btn-primary">Simpan Perubahan</button>
-                                <a href="{{ route('dashboard') }}" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Batal</a>
+                                <button type="submit" class="btn-primary" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Simpan Perubahan</button>
+                                <a href="{{ route('dashboard') }}" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Batal</a>
                             </div>
                         </form>
                     </div>
@@ -358,12 +371,16 @@
     </div>
 @endsection
 
+{{-- Script khusus halaman:
+     - menetapkan tema light untuk elemen root
+     - menangani preview gambar saat user memilih file foto profil
+     Letakkan di stack scripts agar ditempatkan sebelum penutupan body oleh layout --}}
 @push('scripts')
     <script>
-        // Force light theme
+        // Paksa tema light pada root (beberapa layout menggunakan attribute ini untuk tema)
         document.documentElement.setAttribute('data-bs-theme', 'light');
 
-        // Preview foto profil
+        // Preview foto profil: menampilkan preview segera setelah file dipilih
         document.getElementById('foto_profil').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {

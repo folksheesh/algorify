@@ -68,9 +68,8 @@ class GoogleController extends Controller
             return redirect()->route('google.redirect');
         }
 
-        // Ambil data user dari Google. stateless() dipakai untuk mengabaikan sesi
-        // internal Socialite (berguna jika state tidak disimpan di server).
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        // Ambil data user dari Google
+        $googleUser = Socialite::driver('google')->user();
 
         // Cari user di database berdasarkan email (umumnya unik)
         $user = User::where('email', $googleUser->getEmail())->first();
