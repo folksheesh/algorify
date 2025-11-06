@@ -41,8 +41,8 @@
                     <span class="nav-text">Halaman Utama</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
+            <li class="nav-item {{ request()->routeIs('pelatihan.*') ? 'active' : '' }}">
+                <a href="{{ route('pelatihan.index') }}" class="nav-link">
                     <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5" fill="none" />
                         <path d="M7 7H13M7 10H13M7 13H10" stroke="currentColor" stroke-width="1.5" />
@@ -58,8 +58,8 @@
                     <span class="nav-text">Jelajahi Pelatihan</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
+            <li class="nav-item {{ request()->routeIs('sertifikat.*') ? 'active' : '' }}">
+                <a href="{{ route('sertifikat.index') }}" class="nav-link">
                     <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="4" y="4" width="12" height="13" rx="1" stroke="currentColor" stroke-width="1.5" fill="none" />
                         <path d="M8 4V2M12 4V2M4 8H16" stroke="currentColor" stroke-width="1.5" />

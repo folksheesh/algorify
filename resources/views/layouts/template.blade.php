@@ -8,6 +8,7 @@
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
     <!-- Page/Template CSS -->
+    <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     @stack('styles')
     </head>
     <body>
