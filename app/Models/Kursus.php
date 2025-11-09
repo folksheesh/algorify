@@ -36,6 +36,12 @@ class Kursus extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    // Alias untuk pengajar (untuk konsistensi)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function modul()
     {
         return $this->hasMany(Modul::class);

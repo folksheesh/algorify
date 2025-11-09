@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed roles
+        // Seed roles first
         $this->call([
             RolePesertaSeeder::class,
             RoleAdminSeeder::class,
@@ -22,10 +22,15 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
         ]);
 
-        // Optional: example user seeding can be kept or removed
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Seed users
+        $this->call([
+            AdminSeeder::class,
+            UserSeeder::class,
+        ]);
+
+        // Seed kursus
+        $this->call([
+            KursusSeeder::class,
+        ]);
     }
 }
