@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RoleAdminSeeder::class,
             RolePengajarSeeder::class,
             RoleSuperAdminSeeder::class,
+            AdminSeeder::class,
         ]);
 
         // Optional: example user seeding can be kept or removed

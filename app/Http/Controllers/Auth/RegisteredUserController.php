@@ -60,6 +60,14 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.required' => 'Silakan masukkan nama lengkap Anda.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'email.required' => 'Silakan masukkan alamat email Anda.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
+            'password.required' => 'Silakan masukkan kata sandi.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         // Buat user baru dengan password yang sudah di-hash

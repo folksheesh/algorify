@@ -28,22 +28,15 @@
                     <p class="hero-description">Berlangganan pelatihan lainnya untuk pengetahuan yang<br />lebih luas.</p>
                 </div>
                 <div class="hero-illustration">
-                    <svg class="illustration-graphic" width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="20" y="30" width="100" height="80" rx="4" fill="#1E293B" opacity="0.3" />
-                        <rect x="30" y="40" width="80" height="5" fill="#5D3FFF" opacity="0.5" />
-                        <rect x="30" y="50" width="70" height="3" fill="#5D3FFF" opacity="0.3" />
-                        <rect x="30" y="56" width="75" height="3" fill="#5D3FFF" opacity="0.3" />
-                        <rect x="30" y="62" width="60" height="3" fill="#5D3FFF" opacity="0.3" />
-                        <circle cx="160" cy="60" r="30" fill="#1E293B" opacity="0.3" />
-                        <path d="M150 70C150 70 155 65 160 65C165 65 170 70 170 70" stroke="#5D3FFF" stroke-width="2" fill="none" />
-                    </svg>
+                    <img src="{{ asset('template/img/hero-illustration.png') }}" alt="Hero Illustration" class="illustration-graphic">
                 </div>
             </section>
             <section class="stats-section">
                 <article class="stat-card">
                     <div class="stat-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
+                            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
                         </svg>
                     </div>
                     <div class="stat-content">
@@ -63,7 +56,8 @@
                 <article class="stat-card">
                     <div class="stat-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
+                            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
                         </svg>
                     </div>
                     <div class="stat-content">
@@ -83,7 +77,8 @@
                 <article class="stat-card">
                     <div class="stat-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
+                            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
                         </svg>
                     </div>
                     <div class="stat-content">

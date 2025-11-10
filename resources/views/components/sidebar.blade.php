@@ -1,21 +1,21 @@
 <aside class="sidebar">
     <header class="sidebar-header">
         <div class="logo">
-            <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="12" height="12" fill="#5D3FFF" />
-                <rect x="14" width="18" height="12" fill="#5D3FFF" />
-                <rect y="14" width="12" height="18" fill="#5D3FFF" />
-            </svg>
+            <img src="{{ asset('template/img/icon-logo.png') }}" alt="Algorify Logo" class="logo-icon">
             <span class="logo-text">Algorify</span>
         </div>
     </header>
     <div class="user-profile">
         <div class="user-avatar">
-            <svg class="avatar-icon" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="30" cy="30" r="30" fill="#F1F5F9" />
-                <circle cx="30" cy="24" r="10" fill="#1E293B" />
-                <path d="M10 50C10 40 18 34 30 34C42 34 50 40 50 50" fill="#1E293B" />
-            </svg>
+            @if(Auth::user()->foto_profil)
+                <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->name }}" class="avatar-image">
+            @else
+                <svg class="avatar-icon" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="30" cy="30" r="30" fill="#F1F5F9" />
+                    <circle cx="30" cy="24" r="10" fill="#1E293B" />
+                    <path d="M10 50C10 40 18 34 30 34C42 34 50 40 50 50" fill="#1E293B" />
+                </svg>
+            @endif
         </div>
         <div class="user-greeting">
             <h2 class="greeting-title">Selamat Pagi {{ Auth::user()->name }}</h2>

@@ -193,3 +193,50 @@
     color: #6B7280;
 }
 .with-left-icon .form-control { padding-left: 2.25rem !important; }
+
+/* Error message styling */
+.text-danger {
+    color: #DC2626 !important;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Invalid input styling */
+.form-control.is-invalid {
+    border-color: #DC2626 !important;
+    background-image: none !important;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #DC2626 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+}
+
+/* Right side illustration styling */
+#auth-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+    padding: 40px;
+}
+
+.login-illustration {
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Animasi float untuk ilustrasi */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}

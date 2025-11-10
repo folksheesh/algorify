@@ -29,7 +29,20 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8'],
+        ];
+    }
+
+    /**
+     * Pesan error custom untuk validasi.
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Silakan masukkan alamat email Anda.',
+            'email.email' => 'Alamat email yang dimasukkan tidak valid.',
+            'password.required' => 'Silakan masukkan kata sandi Anda.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
         ];
     }
 
@@ -44,9 +57,10 @@ class LoginRequest extends FormRequest
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+        // Di method authenticate() line 47
+        throw ValidationException::withMessages([
+            'email' => 'Email atau kata sandi salah.',
+        ]);
         }
 
         RateLimiter::clear($this->throttleKey());
@@ -67,10 +81,8 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'email' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam ' 
+            . ceil($seconds / 60) . ' menit.',
         ]);
     }
 
