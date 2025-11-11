@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
         Route::get('/sertifikat', [\App\Http\Controllers\Admin\SertifikatController::class, 'index'])->name('sertifikat.index');
+        Route::post('/sertifikat/upload-signature', [\App\Http\Controllers\Admin\SertifikatController::class, 'uploadSignature'])->name('sertifikat.upload-signature');
+        Route::delete('/sertifikat/delete-signature', [\App\Http\Controllers\Admin\SertifikatController::class, 'deleteSignature'])->name('sertifikat.delete-signature');
     });
     
     // User routes

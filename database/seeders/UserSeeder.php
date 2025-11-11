@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
         $zein = User::create([
             'name' => 'Muhammad Zein',
             'email' => 'zein@student.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('  '),
             'phone' => '081234567895',
             'profesi' => 'Mahasiswa',
             'address' => 'Semarang, Indonesia',
