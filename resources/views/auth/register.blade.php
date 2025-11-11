@@ -12,16 +12,6 @@
 
 @section('content')
     <div id="auth">
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <div class="row h-100">
             <div class="col-lg-5 col-12">
                 <div id="auth-left">
@@ -38,51 +28,72 @@
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control form-control-xl" placeholder="Masukkan Nama Lengkap" name="name" id="name" value="{{ old('name') }}" required autocomplete="name">
+                            <input type="text" class="form-control form-control-xl @error('name') is-invalid @enderror" placeholder="Masukkan Nama Lengkap" name="name" id="name" value="{{ old('name') }}" required autocomplete="name">
+                            @error('name')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Alamat Email</label>
                             <div class="position-relative has-icon-left">
-                                <input type="email" class="form-control form-control-xl" placeholder="Masukkan Email" name="email" id="email" value="{{ old('email') }}" required autocomplete="username">
+                                <input type="email" class="form-control form-control-xl @error('email') is-invalid @enderror" placeholder="Masukkan Email" name="email" id="email" value="{{ old('email') }}" required autocomplete="username">
                             </div>
+                            @error('email')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Kata Sandi</label>
                             <div class="password-wrap">
-                                <input type="password" class="form-control form-control-xl pe-5" placeholder="Masukkan Kata Sandi" name="password" id="password" required autocomplete="new-password">
+                                <input type="password" class="form-control form-control-xl pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan Kata Sandi" name="password" id="password" required autocomplete="new-password">
                                 <button type="button" id="togglePassword" class="toggle-eye" tabindex="-1" aria-label="Tampilkan/Sembunyikan Kata Sandi">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            @error('password')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="password_confirmation" class="form-label">Konfirmasi Kata Sandi</label>
                             <div class="password-wrap">
-                                <input type="password" class="form-control form-control-xl pe-5" placeholder="Masukkan Kata Sandi" name="password_confirmation" id="password_confirmation" required autocomplete="new-password">
+                                <input type="password" class="form-control form-control-xl pe-5 @error('password_confirmation') is-invalid @enderror" placeholder="Masukkan Kata Sandi" name="password_confirmation" id="password_confirmation" required autocomplete="new-password">
                                 <button type="button" id="togglePasswordConfirm" class="toggle-eye" tabindex="-1" aria-label="Tampilkan/Sembunyikan Konfirmasi Kata Sandi">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            @error('password_confirmation')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Nomor Telepon</label>
-                            <input type="tel" class="form-control form-control-xl" placeholder="Masukkan Nomor Telepon" name="phone" id="phone" value="{{ old('phone') }}">
+                            <input type="tel" class="form-control form-control-xl @error('phone') is-invalid @enderror" placeholder="Masukkan Nomor Telepon" name="phone" id="phone" value="{{ old('phone') }}">
+                            @error('phone')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="job" class="form-label">Profesi/Pekerjaan</label>
-                            <input type="text" class="form-control form-control-xl" placeholder="Masukkan Profesi/Pekerjaan" name="job" id="job" value="{{ old('job') }}">
+                            <input type="text" class="form-control form-control-xl @error('job') is-invalid @enderror" placeholder="Masukkan Profesi/Pekerjaan" name="job" id="job" value="{{ old('job') }}">
+                            @error('job')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="birthdate" class="form-label">Tanggal Lahir</label>
                             <div class="with-left-icon">
-                                <input type="date" class="form-control form-control-xl" placeholder="Pilih Tanggal Lahir" name="birthdate" id="birthdate" value="{{ old('birthdate') }}">
+                                <input type="date" class="form-control form-control-xl @error('birthdate') is-invalid @enderror" placeholder="Pilih Tanggal Lahir" name="birthdate" id="birthdate" value="{{ old('birthdate') }}">
                             </div>
+                            @error('birthdate')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="form-check mb-3">
@@ -97,7 +108,9 @@
                 </div>
             </div>
             <div class="col-lg-7 d-none d-lg-block">
-                <div id="auth-right"></div>
+                <div id="auth-right">
+                    <img src="{{ asset('template/img/icon-login.png') }}" alt="Register Illustration" class="login-illustration">
+                </div>
             </div>
         </div>
     </div>

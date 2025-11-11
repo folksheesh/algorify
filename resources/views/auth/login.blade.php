@@ -18,15 +18,6 @@
         @if (session('oauth_error'))
             <div class="alert alert-danger">{{ session('oauth_error') }}</div>
         @endif
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         <div class="row h-100">
             <div class="col-lg-5 col-12">
@@ -45,8 +36,11 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Alamat Email</label>
                             <div class="position-relative has-icon-left">
-                                <input type="email" class="form-control form-control-xl" placeholder="Masukkan Email" name="email" id="email" value="{{ old('email') }}" required autofocus autocomplete="username">
+                                <input type="email" class="form-control form-control-xl @error('email') is-invalid @enderror" placeholder="Masukkan Email" name="email" id="email" value="{{ old('email') }}" required autofocus autocomplete="username">
                             </div>
+                            @error('email')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-2">
@@ -54,7 +48,7 @@
                                 <label for="password" class="form-label mb-0">Kata Sandi</label>
                             </div>
                             <div class="password-wrap">
-                                <input type="password" class="form-control form-control-xl pe-5" placeholder="Masukkan Kata Sandi" name="password" id="password" required autocomplete="current-password">
+                                <input type="password" class="form-control form-control-xl pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan Kata Sandi" name="password" id="password" required autocomplete="current-password">
                                 <button type="button" id="togglePassword" class="toggle-eye" tabindex="-1" aria-label="Tampilkan/Sembunyikan Kata Sandi">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -62,6 +56,9 @@
                                     <i class="bi bi-shield-lock"></i>
                                 </div>
                             </div>
+                            @error('password')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
@@ -99,7 +96,9 @@
                 </div>
             </div>
             <div class="col-lg-7 d-none d-lg-block">
-                <div id="auth-right"></div>
+                <div id="auth-right">
+                    <img src="{{ asset('template/img/icon-login.png') }}" alt="Login Illustration" class="login-illustration">
+                </div>
             </div>
         </div>
     </div>
