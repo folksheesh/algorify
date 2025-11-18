@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta', [\App\Http\Controllers\Admin\PesertaController::class, 'index'])->name('peserta.index');
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');
+        Route::get('/pengajar/data', [\App\Http\Controllers\Admin\PengajarController::class, 'getData'])->name('pengajar.data');
+        Route::post('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'store'])->name('pengajar.store');
+        Route::put('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'update'])->name('pengajar.update');
+        Route::delete('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'destroy'])->name('pengajar.destroy');
         Route::get('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'index'])->name('pelatihan.index');
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
