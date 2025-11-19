@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
 <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+    body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f8f9fa; }
     .dashboard-container { display: flex; min-height: 100vh; }
     .main-content { flex: 1; padding: 30px; margin-left: 280px; }
     .page-title { font-size: 24px; margin-bottom: 30px; }
