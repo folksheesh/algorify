@@ -238,9 +238,9 @@
                                         Gratis
                                     @endif
                                 </div>
-                                <button class="enroll-button" onclick="alert('Fitur pendaftaran akan segera hadir!')">
+                                <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-button" style="display: inline-block; text-align: center; text-decoration: none; padding: 12px 24px;">
                                     Daftar Sekarang
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
