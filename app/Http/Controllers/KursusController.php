@@ -40,6 +40,19 @@ class KursusController extends Controller
     {
         // Ambil data kursus beserta relasi pengajar, modul, dan enrollments
         $kursus = Kursus::with('pengajar', 'modul', 'enrollments')->findOrFail($id);
+        
+        // Cek apakah user sudah enrolled di kursus ini
+        if (auth()->check()) {
+            $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())
+                ->where('kursus_id', $id)
+                ->first();
+            
+            // Jika sudah enrolled, redirect ke halaman pelatihan admin
+            if ($enrollment) {
+                return redirect()->route('admin.pelatihan.show', $id);
+            }
+        }
+        
         // Tampilkan ke view kursus.show dengan data kursus
         return view('kursus.show', compact('kursus'));
     }

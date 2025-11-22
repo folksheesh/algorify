@@ -31,5 +31,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             KursusSeeder::class,
         ]);
+
+        // Seed enrollments
+        $this->call([
+            EnrollmentSeeder::class,
+        ]);
     }
 }
