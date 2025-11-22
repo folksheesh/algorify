@@ -4,11 +4,116 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Kursus;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PelatihanController extends Controller
 {
     public function index()
     {
-        return view('admin.pelatihan.index');
+        // Get all courses with their related data
+        $kursus = Kursus::with(['pengajar', 'modul', 'enrollments'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('admin.pelatihan.index', compact('kursus'));
+    }
+
+    public function show($id)
+    {
+        $kursus = Kursus::with(['pengajar', 'modul' => function($query) {
+            $query->orderBy('urutan', 'asc')->with([
+                'materi' => function($q) {
+                    $q->orderBy('urutan', 'asc');
+                },
+                'video' => function($q) {
+                    $q->orderBy('urutan', 'asc');
+                }
+            ]);
+        }])->findOrFail($id);
+        
+        return view('admin.pelatihan.show', compact('kursus'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'judul' => 'required|string|max:255',
+            'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
+            'status' => 'required|in:draft,published,archived',
+            'deskripsi' => 'nullable|string',
+            'harga' => 'required|numeric|min:0',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = 'storage/' . $thumbnailPath;
+        }
+
+        // Set the instructor (current user)
+        $validated['user_id'] = Auth::id();
+
+        Kursus::create($validated);
+
+        return redirect()->route('admin.pelatihan.index')
+            ->with('success', 'Kursus berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $kursus = Kursus::findOrFail($id);
+        return response()->json($kursus);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $kursus = Kursus::findOrFail($id);
+
+        $validated = $request->validate([
+            'judul' => 'required|string|max:255',
+            'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
+            'status' => 'required|in:draft,published,archived',
+            'deskripsi' => 'nullable|string',
+            'harga' => 'required|numeric|min:0',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            // Delete old thumbnail if exists
+            if ($kursus->thumbnail) {
+                $oldPath = str_replace('storage/', '', $kursus->thumbnail);
+                Storage::disk('public')->delete($oldPath);
+            }
+            
+            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+            $validated['thumbnail'] = 'storage/' . $thumbnailPath;
+        }
+
+        $kursus->update($validated);
+
+        return redirect()->route('admin.pelatihan.index')
+            ->with('success', 'Kursus berhasil diupdate');
+    }
+
+    public function destroy($id)
+    {
+        $kursus = Kursus::findOrFail($id);
+
+        // Delete thumbnail if exists
+        if ($kursus->thumbnail) {
+            $path = str_replace('storage/', '', $kursus->thumbnail);
+            Storage::disk('public')->delete($path);
+        }
+
+        $kursus->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kursus berhasil dihapus'
+        ]);
     }
 }

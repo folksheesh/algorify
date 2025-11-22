@@ -24,8 +24,18 @@ class Modul extends Model
         return $this->belongsTo(Kursus::class);
     }
 
-    public function kuis()
+    public function ujian()
     {
-        return $this->hasMany(Kuis::class);
+        return $this->hasMany(Ujian::class);
+    }
+
+    public function materi()
+    {
+        return $this->hasMany(Materi::class)->orderBy('urutan');
+    }
+
+    public function video()
+    {
+        return $this->hasMany(Video::class)->orderBy('urutan');
     }
 }

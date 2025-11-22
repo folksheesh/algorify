@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Materi extends Model
+class Video extends Model
 {
-    use HasFactory;
-
-    protected $table = 'materi';
+    protected $table = 'video';
 
     protected $fillable = [
         'modul_id',
         'judul',
         'deskripsi',
-        'file_pdf',
+        'file_video',
         'urutan',
     ];
 
-    // Relationships
     public function modul()
     {
         return $this->belongsTo(Modul::class);

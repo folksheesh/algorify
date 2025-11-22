@@ -13,7 +13,7 @@ class Nilai extends Model
 
     protected $fillable = [
         'user_id',
-        'kuis_id',
+        'ujian_id',
         'nilai',
         'status',
         'tanggal_penilaian',
@@ -30,8 +30,8 @@ class Nilai extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function kuis()
+    public function ujian()
     {
-        return $this->belongsTo(Kuis::class);
+        return $this->belongsTo(Ujian::class);
     }
 }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('materi', function (Blueprint $table) {
+        Schema::create('video', function (Blueprint $table) {
             $table->id();
             $table->foreignId('modul_id')->constrained('modul')->onDelete('cascade');
             $table->string('judul');
             $table->text('deskripsi')->nullable();
-            $table->string('file_pdf');
+            $table->string('file_video');
             $table->integer('urutan')->default(0);
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materi');
+        Schema::dropIfExists('video');
     }
 };

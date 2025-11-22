@@ -12,16 +12,16 @@ class Soal extends Model
     protected $table = 'soal';
 
     protected $fillable = [
-        'kuis_id',
+        'ujian_id',
         'pertanyaan',
         'kunci_jawaban',
         'kursus_id',
     ];
 
     // Relationships
-    public function kuis()
+    public function ujian()
     {
-        return $this->belongsTo(Kuis::class);
+        return $this->belongsTo(Ujian::class);
     }
 
     public function kursus()
@@ -32,5 +32,10 @@ class Soal extends Model
     public function jawaban()
     {
         return $this->hasMany(Jawaban::class);
+    }
+
+    public function pilihanJawaban()
+    {
+        return $this->hasMany(PilihanJawaban::class);
     }
 }
