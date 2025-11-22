@@ -31,6 +31,9 @@ class User extends Authenticatable
         'tanggal_lahir',
         'tanggal_daftar',
         'tanggal_login_terakhir',
+        'keahlian',
+        'pengalaman',
+        'sertifikasi',
     ];
 
     /**
