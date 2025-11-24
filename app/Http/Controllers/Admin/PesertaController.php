@@ -24,4 +24,17 @@ class PesertaController extends Controller
 
         return response()->json($peserta);
     }
+
+    public function show($id)
+    {
+        $user = User::role('peserta')
+            ->with(['enrollments.kursus'])
+            ->withCount('enrollments as kursus_count')
+            ->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ]);
+    }
 }

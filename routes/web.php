@@ -49,15 +49,36 @@ Route::middleware('auth')->group(function () {
         Route::get('/video/{id}', [\App\Http\Controllers\Admin\VideoController::class, 'show'])->name('video.show');
         Route::get('/materi/{id}', [\App\Http\Controllers\Admin\MateriController::class, 'show'])->name('materi.show');
         Route::get('/ujian/{id}', [\App\Http\Controllers\Admin\UjianController::class, 'show'])->name('ujian.show');
+        
+        // Dashboard API routes
+        Route::get('/dashboard/transaksi-data', [\App\Http\Controllers\Admin\DashboardController::class, 'getTransaksiData'])->name('dashboard.transaksi-data');
+        Route::get('/dashboard/pertumbuhan-data', [\App\Http\Controllers\Admin\DashboardController::class, 'getPertumbuhanData'])->name('dashboard.pertumbuhan-data');
     });
     
+    // Super Admin only routes - Routes yang hanya untuk super admin
+    Route::middleware('role:super admin')->prefix('admin')->name('admin.')->group(function () {
+        // Data Admin
+        Route::get('/admin', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
+        Route::get('/admin/data', [\App\Http\Controllers\Admin\AdminController::class, 'getData'])->name('admin.data');
+        Route::post('/admin', [\App\Http\Controllers\Admin\AdminController::class, 'store'])->name('admin.store');
+        Route::put('/admin/{id}', [\App\Http\Controllers\Admin\AdminController::class, 'update'])->name('admin.update');
+        Route::delete('/admin/{id}', [\App\Http\Controllers\Admin\AdminController::class, 'destroy'])->name('admin.destroy');
+    });
+
     // Admin routes - Routes yang hanya untuk admin dan pengajar
     Route::middleware('role:admin|super admin|pengajar')->prefix('admin')->name('admin.')->group(function () {
+        // Data Peserta
         Route::get('/peserta', [\App\Http\Controllers\Admin\PesertaController::class, 'index'])->name('peserta.index');
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
+        Route::get('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'show'])->name('peserta.show');
+        
+        // Data Pengajar
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');
+        Route::get('/pengajar/data', [\App\Http\Controllers\Admin\PengajarController::class, 'getData'])->name('pengajar.data');
         Route::post('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'store'])->name('pengajar.store');
+        Route::get('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'show'])->name('pengajar.show');
         Route::put('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'update'])->name('pengajar.update');
+        Route::delete('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'destroy'])->name('pengajar.destroy');
         
         // Pelatihan/Kursus CUD routes (Create, Update, Delete)
         Route::post('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'store'])->name('pelatihan.store');
@@ -92,6 +113,24 @@ Route::middleware('auth')->group(function () {
         // Soal routes
         Route::post('/soal', [\App\Http\Controllers\Admin\SoalController::class, 'store'])->name('soal.store');
         Route::delete('/soal/{id}', [\App\Http\Controllers\Admin\SoalController::class, 'destroy'])->name('soal.destroy');
+        
+        // Bank Soal routes
+        Route::get('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'index'])->name('bank-soal.index');
+        Route::get('/bank-soal/data', [\App\Http\Controllers\Admin\BankSoalController::class, 'getData'])->name('bank-soal.data');
+        Route::get('/bank-soal/kursus-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getKursusList'])->name('bank-soal.kursus-list');
+        Route::get('/bank-soal/creators-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getCreatorsList'])->name('bank-soal.creators-list');
+        Route::post('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'store'])->name('bank-soal.store');
+        Route::get('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'show'])->name('bank-soal.show');
+        Route::put('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'update'])->name('bank-soal.update');
+        Route::delete('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'destroy'])->name('bank-soal.destroy');
+        
+        // Kategori Pelatihan routes
+        Route::get('/kategori', [\App\Http\Controllers\Admin\KategoriController::class, 'index'])->name('kategori.index');
+        Route::get('/kategori/data', [\App\Http\Controllers\Admin\KategoriController::class, 'getData'])->name('kategori.data');
+        Route::post('/kategori', [\App\Http\Controllers\Admin\KategoriController::class, 'store'])->name('kategori.store');
+        Route::get('/kategori/{id}', [\App\Http\Controllers\Admin\KategoriController::class, 'show'])->name('kategori.show');
+        Route::put('/kategori/{id}', [\App\Http\Controllers\Admin\KategoriController::class, 'update'])->name('kategori.update');
+        Route::delete('/kategori/{id}', [\App\Http\Controllers\Admin\KategoriController::class, 'destroy'])->name('kategori.destroy');
         
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
