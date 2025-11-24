@@ -403,36 +403,11 @@
                                     <a href="{{ route('kursus.index') }}" class="filter-badge {{ !request('kategori') ? 'active' : '' }}">
                                         Semua
                                     </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'programming']) }}" class="filter-badge {{ request('kategori') == 'programming' ? 'active' : '' }}">
-                                        Programming
+                                    @foreach($categories as $category)
+                                    <a href="{{ route('kursus.index', ['kategori' => $category->id]) }}" class="filter-badge {{ request('kategori') == $category->id ? 'active' : '' }}">
+                                        {{ $category->nama_kategori }}
                                     </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'data_science']) }}" class="filter-badge {{ request('kategori') == 'data_science' ? 'active' : '' }}">
-                                        Data Science
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'design']) }}" class="filter-badge {{ request('kategori') == 'design' ? 'active' : '' }}">
-                                        Design
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'marketing']) }}" class="filter-badge {{ request('kategori') == 'marketing' ? 'active' : '' }}">
-                                        Marketing
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'business']) }}" class="filter-badge {{ request('kategori') == 'business' ? 'active' : '' }}">
-                                        AI & ML
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'other']) }}" class="filter-badge {{ request('kategori') == 'other' ? 'active' : '' }}">
-                                        Web Dev
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'other']) }}" class="filter-badge {{ request('kategori') == 'other' ? 'active' : '' }}">
-                                        Mobile Dev
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'other']) }}" class="filter-badge {{ request('kategori') == 'other' ? 'active' : '' }}">
-                                        Security
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'other']) }}" class="filter-badge {{ request('kategori') == 'other' ? 'active' : '' }}">
-                                        Blockchain
-                                    </a>
-                                    <a href="{{ route('kursus.index', ['kategori' => 'other']) }}" class="filter-badge {{ request('kategori') == 'other' ? 'active' : '' }}">
-                                        Cloud
-                                    </a>
+                                    @endforeach
                                 </div>
                             </div>
                         </form>

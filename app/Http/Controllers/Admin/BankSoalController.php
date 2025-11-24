@@ -4,132 +4,293 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankSoal;
-use App\Models\BankSoalPilihan;
-use App\Models\KategoriSoal;
+use App\Models\KategoriPelatihan;
+use App\Models\Kursus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BankSoalController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        $query = BankSoal::with(['kategori', 'creator', 'pilihan']);
+        return view('admin.bank-soal.index');
+    }
+
+    /**
+     * Get data for DataTable
+     */
+    public function getData(Request $request)
+    {
+        $query = BankSoal::with(['kategori', 'kursus', 'creator']);
+
+        // Search functionality - enhanced to search in kategori, kursus, and tipe
+        if ($request->has('search') && $request->search != '') {
+            $search = strtolower($request->search);
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(pertanyaan) like ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(tipe_soal) like ?', ["%{$search}%"])
+                  ->orWhereHas('kategori', function($q) use ($search) {
+                      $q->whereRaw('LOWER(nama_kategori) like ?', ["%{$search}%"]);
+                  })
+                  ->orWhereHas('kursus', function($q) use ($search) {
+                      $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
+                  });
+            });
+        }
+
+        // Filter by tipe soal
+        if ($request->has('tipe_soal') && $request->tipe_soal != '') {
+            $query->where('tipe_soal', $request->tipe_soal);
+        }
 
         // Filter by kategori
-        if ($request->has('kategori_id') && $request->kategori_id != '') {
-            $query->where('kategori_id', $request->kategori_id);
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori_id', $request->kategori);
         }
 
-        // Filter by tingkat kesulitan
-        if ($request->has('tingkat_kesulitan') && $request->tingkat_kesulitan != '') {
-            $query->where('tingkat_kesulitan', $request->tingkat_kesulitan);
+        // Filter by kursus
+        if ($request->has('kursus') && $request->kursus != '') {
+            $query->where('kursus_id', $request->kursus);
         }
 
-        // Search
-        if ($request->has('search') && $request->search != '') {
-            $query->where('pertanyaan', 'LIKE', '%' . $request->search . '%');
+        // Filter by creator
+        if ($request->has('creator') && $request->creator != '') {
+            $query->where('created_by', $request->creator);
         }
 
-        $bankSoal = $query->latest()->paginate(20);
-        $kategoris = KategoriSoal::all();
+        $soal = $query->latest()->get();
 
-        return view('admin.bank-soal.index', compact('bankSoal', 'kategoris'));
+        return response()->json([
+            'data' => $soal->map(function($item, $index) {
+                return [
+                    'id' => $item->id,
+                    'no' => $index + 1,
+                    'pertanyaan' => $item->pertanyaan,
+                    'tipe_soal' => $item->tipe_soal,
+                    'kategori' => $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'),
+                    'poin' => $item->poin ?? 1,
+                    'created_by' => $item->creator ? $item->creator->name : '-',
+                    'created_at' => $item->created_at->format('d/m/Y')
+                ];
+            })
+        ]);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'kategori_id' => 'required|exists:kategori_soal,id',
-            'pertanyaan' => 'required|string',
-            'tingkat_kesulitan' => 'required|in:mudah,sedang,sulit',
-            'pilihan' => 'required|array|min:2',
-            'pilihan.*' => 'required|string',
-            'kunci_jawaban' => 'required|integer|min:0',
-        ]);
-
-        // Convert index to letter
-        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        $kunciJawabanLetter = $letters[$validated['kunci_jawaban']] ?? 'A';
-
-        // Create bank soal
-        $bankSoal = BankSoal::create([
-            'kategori_id' => $validated['kategori_id'],
-            'pertanyaan' => $validated['pertanyaan'],
-            'tingkat_kesulitan' => $validated['tingkat_kesulitan'],
-            'kunci_jawaban' => $kunciJawabanLetter,
-            'created_by' => Auth::id(),
-        ]);
-
-        // Create pilihan jawaban
-        foreach ($validated['pilihan'] as $index => $pilihan) {
-            BankSoalPilihan::create([
-                'bank_soal_id' => $bankSoal->id,
-                'pilihan' => $pilihan,
-                'is_correct' => $index == $validated['kunci_jawaban'],
+        try {
+            $validated = $request->validate([
+                'pertanyaan' => 'required|string',
+                'tipe_soal' => 'required|in:pilihan_ganda,multi_jawaban,essay',
+                'opsi_jawaban' => 'nullable|string',
+                'jawaban_benar' => 'nullable|string',
+                'kategori_id' => 'nullable|exists:kategori_pelatihan,id',
+                'kursus_id' => 'nullable|exists:kursus,id',
+                'poin' => 'nullable|integer|min:1|max:5',
+                'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
             ]);
+
+            $data = [
+                'pertanyaan' => $validated['pertanyaan'],
+                'tipe_soal' => $validated['tipe_soal'],
+                'created_by' => Auth::id(),
+            ];
+
+            // Add optional fields
+            if (isset($validated['kategori_id'])) {
+                $data['kategori_id'] = $validated['kategori_id'];
+            }
+            if (isset($validated['kursus_id'])) {
+                $data['kursus_id'] = $validated['kursus_id'];
+            }
+            if (isset($validated['poin'])) {
+                $data['poin'] = $validated['poin'];
+            }
+
+            // Handle opsi_jawaban - decode JSON string
+            if (isset($validated['opsi_jawaban'])) {
+                $data['opsi_jawaban'] = json_decode($validated['opsi_jawaban'], true);
+            }
+
+            // Handle jawaban_benar - decode JSON string and generate kunci_jawaban
+            if (isset($validated['jawaban_benar'])) {
+                $decoded = json_decode($validated['jawaban_benar'], true);
+                $data['jawaban_benar'] = $decoded;
+                
+                // Generate kunci_jawaban string dari opsi yang dipilih
+                if (isset($data['opsi_jawaban']) && !empty($data['opsi_jawaban'])) {
+                    if (is_array($decoded)) {
+                        // Multi jawaban: gabungkan semua jawaban yang benar
+                        $kunciArray = [];
+                        foreach ($decoded as $index) {
+                            if (isset($data['opsi_jawaban'][$index])) {
+                                $kunciArray[] = $data['opsi_jawaban'][$index];
+                            }
+                        }
+                        $data['kunci_jawaban'] = implode(', ', $kunciArray);
+                    } else {
+                        // Pilihan ganda: ambil satu jawaban
+                        if (isset($data['opsi_jawaban'][$decoded])) {
+                            $data['kunci_jawaban'] = $data['opsi_jawaban'][$decoded];
+                        }
+                    }
+                }
+            }
+
+            // Handle file upload
+            if ($request->hasFile('lampiran')) {
+                $file = $request->file('lampiran');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('bank-soal', $filename, 'public');
+                $data['lampiran'] = $path;
+            }
+
+            BankSoal::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Soal berhasil ditambahkan'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $soal = BankSoal::with(['kategori', 'kursus', 'creator'])->findOrFail($id);
+        return response()->json(['data' => $soal]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        try {
+            $soal = BankSoal::findOrFail($id);
+
+            $validated = $request->validate([
+                'pertanyaan' => 'required|string',
+                'tipe_soal' => 'required|in:pilihan_ganda,multi_jawaban,essay',
+                'opsi_jawaban' => 'nullable|string',
+                'jawaban_benar' => 'nullable|string',
+                'kategori_id' => 'nullable|exists:kategori_pelatihan,id',
+                'kursus_id' => 'nullable|exists:kursus,id',
+                'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+            ]);
+
+            $data = [
+                'pertanyaan' => $validated['pertanyaan'],
+                'tipe_soal' => $validated['tipe_soal'],
+            ];
+
+            // Add optional fields
+            if (isset($validated['kategori_id'])) {
+                $data['kategori_id'] = $validated['kategori_id'];
+            }
+            if (isset($validated['kursus_id'])) {
+                $data['kursus_id'] = $validated['kursus_id'];
+            }
+            if (isset($validated['poin'])) {
+                $data['poin'] = $validated['poin'];
+            }
+
+            // Handle opsi_jawaban - decode JSON string
+            if (isset($validated['opsi_jawaban'])) {
+                $data['opsi_jawaban'] = json_decode($validated['opsi_jawaban'], true);
+            }
+
+            // Handle jawaban_benar - decode JSON string and generate kunci_jawaban
+            if (isset($validated['jawaban_benar'])) {
+                $decoded = json_decode($validated['jawaban_benar'], true);
+                $data['jawaban_benar'] = $decoded;
+                
+                // Generate kunci_jawaban string dari opsi yang dipilih
+                if (isset($data['opsi_jawaban']) && !empty($data['opsi_jawaban'])) {
+                    if (is_array($decoded)) {
+                        // Multi jawaban: gabungkan semua jawaban yang benar
+                        $kunciArray = [];
+                        foreach ($decoded as $index) {
+                            if (isset($data['opsi_jawaban'][$index])) {
+                                $kunciArray[] = $data['opsi_jawaban'][$index];
+                            }
+                        }
+                        $data['kunci_jawaban'] = implode(', ', $kunciArray);
+                    } else {
+                        // Pilihan ganda: ambil satu jawaban
+                        if (isset($data['opsi_jawaban'][$decoded])) {
+                            $data['kunci_jawaban'] = $data['opsi_jawaban'][$decoded];
+                        }
+                    }
+                }
+            }
+
+            // Handle file upload
+            if ($request->hasFile('lampiran')) {
+                // Delete old file
+                if ($soal->lampiran) {
+                    Storage::disk('public')->delete($soal->lampiran);
+                }
+
+                $file = $request->file('lampiran');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('bank-soal', $filename, 'public');
+                $data['lampiran'] = $path;
+            }
+
+            $soal->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Soal berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $soal = BankSoal::findOrFail($id);
+
+        // Delete file if exists
+        if ($soal->lampiran) {
+            Storage::disk('public')->delete($soal->lampiran);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Soal berhasil ditambahkan ke bank soal'
-        ]);
-    }
-
-    public function edit($id)
-    {
-        $bankSoal = BankSoal::with(['kategori', 'pilihan'])->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $bankSoal
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'kategori_id' => 'required|exists:kategori_soal,id',
-            'pertanyaan' => 'required|string',
-            'tingkat_kesulitan' => 'required|in:mudah,sedang,sulit',
-            'pilihan' => 'required|array|min:2',
-            'pilihan.*' => 'required|string',
-            'kunci_jawaban' => 'required|integer|min:0',
-        ]);
-
-        $bankSoal = BankSoal::findOrFail($id);
-
-        // Convert index to letter
-        $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        $kunciJawabanLetter = $letters[$validated['kunci_jawaban']] ?? 'A';
-
-        // Update bank soal
-        $bankSoal->update([
-            'kategori_id' => $validated['kategori_id'],
-            'pertanyaan' => $validated['pertanyaan'],
-            'tingkat_kesulitan' => $validated['tingkat_kesulitan'],
-            'kunci_jawaban' => $kunciJawabanLetter,
-        ]);
-
-        // Delete old pilihan and create new ones
-        $bankSoal->pilihan()->delete();
-        foreach ($validated['pilihan'] as $index => $pilihan) {
-            BankSoalPilihan::create([
-                'bank_soal_id' => $bankSoal->id,
-                'pilihan' => $pilihan,
-                'is_correct' => $index == $validated['kunci_jawaban'],
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Soal berhasil diupdate'
-        ]);
-    }
-
-    public function destroy($id)
-    {
-        $bankSoal = BankSoal::findOrFail($id);
-        $bankSoal->delete();
+        $soal->delete();
 
         return response()->json([
             'success' => true,
@@ -137,15 +298,27 @@ class BankSoalController extends Controller
         ]);
     }
 
-    public function getByKategori($kategoriId)
+    /**
+     * Get kursus list for filter
+     */
+    public function getKursusList()
     {
-        $bankSoal = BankSoal::with('pilihan')
-            ->where('kategori_id', $kategoriId)
-            ->get();
+        $kursus = Kursus::select('id', 'judul')->get();
+        return response()->json(['data' => $kursus]);
+    }
 
-        return response()->json([
-            'success' => true,
-            'data' => $bankSoal
-        ]);
+    /**
+     * Get creators list for filter
+     */
+    public function getCreatorsList()
+    {
+        $creators = BankSoal::with('creator:id,name')
+            ->select('created_by')
+            ->distinct()
+            ->get()
+            ->pluck('creator')
+            ->filter()
+            ->values();
+        return response()->json(['data' => $creators]);
     }
 }

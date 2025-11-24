@@ -1,15 +1,15 @@
 {{--
 ========================================
-HALAMAN DATA PENGAJAR - ADMIN
+HALAMAN DATA ADMIN - ADMIN PANEL
 ========================================
-Halaman untuk mengelola data pengajar
+Halaman untuk mengelola data admin
 Features: CRUD, Search, Filter, Export
 ========================================
 --}}
 
 @extends('layouts.template')
 
-@section('title', 'Data Pengajar - Admin')
+@section('title', 'Data Admin - Admin Panel')
 
 {{-- Load CSS dan Fonts --}}
 @push('styles')
@@ -19,7 +19,7 @@ Features: CRUD, Search, Filter, Export
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    {{-- Custom CSS untuk halaman pengajar --}}
+    {{-- Custom CSS untuk halaman admin --}}
     <style>
         /* ----- Global Font Setting ----- */
         * {
@@ -192,10 +192,10 @@ Features: CRUD, Search, Filter, Export
         }
 
         /* ========================================
-       TOMBOL TAMBAH PENGAJAR
+       TOMBOL TAMBAH ADMIN
        ======================================== */
 
-        /* Tombol primary untuk tambah data pengajar */
+        /* Tombol primary untuk tambah data admin */
         .btn-add {
             padding: 0 1.5rem;
             background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
@@ -242,7 +242,7 @@ Features: CRUD, Search, Filter, Export
        DATA TABLE
        ======================================== */
 
-        /* Tabel utama untuk menampilkan data pengajar */
+        /* Tabel utama untuk menampilkan data admin */
         .data-table {
             width: 100%;
             border-collapse: separate;
@@ -569,7 +569,7 @@ Features: CRUD, Search, Filter, Export
        FILE UPLOAD AREA
        ======================================== */
 
-        /* Area drag & drop untuk upload file sertifikasi */
+        /* Area drag & drop untuk upload file */
         .upload-area {
             border: 2px dashed #CBD5E1;
             /* Dashed border */
@@ -985,7 +985,7 @@ Features: CRUD, Search, Filter, Export
             <div style="padding: 0 2rem 2rem;">
                 {{-- Page Header --}}
                 <div class="page-header">
-                    <h1>Halaman Data Pengajar</h1>
+                    <h1>Halaman Data Admin</h1>
                 </div>
 
                 {{-- Table Container dengan Search & Filter --}}
@@ -999,8 +999,8 @@ Features: CRUD, Search, Filter, Export
                                 <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5" fill="none" />
                                 <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5" />
                             </svg>
-                            {{-- Input pencarian (nama, email, kursus) --}}
-                            <input type="text" id="searchInput" placeholder="Cari nama, email, atau kursus.....">
+                            {{-- Input pencarian (nama, email) --}}
+                            <input type="text" id="searchInput" placeholder="Cari nama atau email.....">
                         </div>
 
                         {{-- Filter Actions: Status & Tombol Tambah --}}
@@ -1012,36 +1012,34 @@ Features: CRUD, Search, Filter, Export
                                 <option value="inactive">Nonaktif</option>
                             </select>
 
-                            {{-- Tombol Tambah Pengajar Baru --}}
+                            {{-- Tombol Tambah Admin Baru --}}
                             <button class="btn-add" onclick="openAddModal()">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                Tambah Pengajar
+                                Tambah Admin
                             </button>
                         </div>
                     </div>
 
-                    {{-- Tabel Data Pengajar --}}
+                    {{-- Tabel Data Admin --}}
                     <div style="overflow-x: auto;">
                         <table class="data-table">
                             {{-- Header Tabel --}}
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama Pengajar</th>
+                                    <th>Nama Admin</th>
                                     <th>Email</th>
-                                    <th>Kursus yang Diajarkan</th>
+                                    <th>No Telepon</th>
                                     <th>Status</th>
-                                    <th>Jumlah Kelas</th>
-                                    <th>Total Siswa</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             {{-- Body tabel - akan diisi via JavaScript --}}
-                            <tbody id="pengajarTableBody">
+                            <tbody id="adminTableBody">
                                 <!-- Data akan dimuat via JavaScript -->
                             </tbody>
                         </table>
@@ -1052,7 +1050,7 @@ Features: CRUD, Search, Filter, Export
     </div>
 
     {{-- ========================================
-    MODAL: DETAIL PENGAJAR (READ-ONLY)
+    MODAL: DETAIL ADMIN (READ-ONLY)
     ======================================== --}}
     <div id="detailModal" class="modal-overlay">
         <div class="modal-content">
@@ -1066,8 +1064,8 @@ Features: CRUD, Search, Filter, Export
 
             {{-- Header Modal --}}
             <div class="modal-header">
-                <h2>Detail Data Pengajar</h2>
-                <p>Informasi lengkap mengenai pengajar</p>
+                <h2>Detail Data Admin</h2>
+                <p>Informasi lengkap mengenai admin</p>
             </div>
 
             {{-- Form Detail (Read-Only) --}}
@@ -1108,24 +1106,6 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Kursus yang Diajarkan --}}
-                <div class="form-group">
-                    <label class="form-label">Kursus yang Diajarkan</label>
-                    <input type="text" class="form-input" id="detailKursus" readonly>
-                </div>
-
-                {{-- Jumlah Kelas dan Total Siswa (2 kolom) --}}
-                <div class="form-row-2">
-                    <div>
-                        <label class="form-label">Jumlah Kelas</label>
-                        <input type="text" class="form-input" id="detailJumlahKelas" readonly>
-                    </div>
-                    <div>
-                        <label class="form-label">Total Siswa</label>
-                        <input type="text" class="form-input" id="detailTotalSiswa" readonly>
-                    </div>
-                </div>
-
                 {{-- Status dan Tanggal Bergabung (2 kolom) --}}
                 <div class="form-row-2">
                     <div>
@@ -1138,24 +1118,6 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Keahlian (Textarea) --}}
-                <div class="form-group">
-                    <label class="form-label">Keahlian</label>
-                    <textarea class="form-input" id="detailKeahlian" rows="2" readonly></textarea>
-                </div>
-
-                {{-- Pengalaman (Textarea) --}}
-                <div class="form-group">
-                    <label class="form-label">Pengalaman</label>
-                    <textarea class="form-input" id="detailPengalaman" rows="2" readonly></textarea>
-                </div>
-
-                {{-- Sertifikasi (akan diisi via JS) --}}
-                <div class="form-group">
-                    <label class="form-label">Sertifikasi</label>
-                    <div id="detailSertifikasiContainer" style="margin-top: 0.5rem;"></div>
-                </div>
-
                 {{-- Action Button --}}
                 <div class="modal-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeModal('detailModal')">Tutup</button>
@@ -1164,7 +1126,7 @@ Features: CRUD, Search, Filter, Export
         </div>
     </div>
 
-    {{-- MODAL ADD/EDIT PENGAJAR - Form untuk menambah atau mengedit data pengajar --}}
+    {{-- MODAL ADD/EDIT ADMIN - Form untuk menambah atau mengedit data admin --}}
     <div id="formModal" class="modal-overlay">
         <div class="modal-content">
             {{-- Tombol Close --}}
@@ -1177,13 +1139,13 @@ Features: CRUD, Search, Filter, Export
 
             {{-- Header Modal (title berubah sesuai mode add/edit) --}}
             <div class="modal-header">
-                <h2 id="formModalTitle">Tambah Pengajar Baru</h2>
-                <p id="formModalDesc">Lengkapi form di bawah untuk menambah pengajar</p>
+                <h2 id="formModalTitle">Tambah Admin Baru</h2>
+                <p id="formModalDesc">Lengkapi form di bawah untuk menambah admin</p>
             </div>
 
-            {{-- Form Input Data Pengajar --}}
-            <form id="pengajarForm" enctype="multipart/form-data">
-                <input type="hidden" id="pengajarId">
+            {{-- Form Input Data Admin --}}
+            <form id="adminForm" enctype="multipart/form-data">
+                <input type="hidden" id="adminId">
 
                 {{-- Nama Lengkap (Required) --}}
                 <div class="form-group">
@@ -1285,61 +1247,6 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Keahlian (Textarea) --}}
-                <div class="form-group">
-                    <label class="form-label">Keahlian</label>
-                    <textarea class="form-input" id="formKeahlian" rows="2"
-                        placeholder="Contoh: Python, Machine Learning, Data Science"></textarea>
-                </div>
-
-                {{-- Pengalaman (Textarea) --}}
-                <div class="form-group">
-                    <label class="form-label">Pengalaman</label>
-                    <textarea class="form-input" id="formPengalaman" rows="3"
-                        placeholder="Jelaskan pengalaman mengajar atau bekerja"></textarea>
-                </div>
-
-                {{-- Upload Sertifikasi dengan Drag & Drop --}}
-                <div class="form-group">
-                    <label class="form-label">Upload Sertifikasi</label>
-                    <input type="file" id="formSertifikasi" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-
-                    {{-- Upload Area (Click or Drag & Drop) --}}
-                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('formSertifikasi').click()">
-                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                        <div class="upload-text">Klik atau drag & drop file</div>
-                        <div class="upload-hint">PDF, JPG, PNG (Max: 2MB)</div>
-                    </div>
-
-                    {{-- File Preview (akan tampil setelah file dipilih) --}}
-                    <div class="file-preview" id="filePreview">
-                        <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <div class="file-info">
-                            <div class="file-name" id="fileName"></div>
-                            <div class="file-size" id="fileSize"></div>
-                        </div>
-                        <button type="button" class="file-remove" onclick="removeFile(event)">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    {{-- Info file sertifikasi yang sudah ada (untuk mode Edit) --}}
-                    <div id="currentSertifikasi" style="margin-top: 0.5rem; display: none;">
-                        <small style="color: #059669; font-size: 0.75rem;">📎 File saat ini: <span
-                                id="sertifikasiFileName"></span></small>
-                    </div>
-                    <div class="error-message" id="fileError"></div>
-                </div>
-
                 {{-- Action Buttons - Batal dan Simpan --}}
                 <div class="modal-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeModal('formModal')">Batal</button>
@@ -1349,7 +1256,7 @@ Features: CRUD, Search, Filter, Export
         </div>
     </div>
 
-    {{-- MODAL KONFIRMASI HAPUS - Popup konfirmasi sebelum menghapus pengajar --}}
+    {{-- MODAL KONFIRMASI HAPUS - Popup konfirmasi sebelum menghapus admin --}}
     <div id="deleteModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 400px;">
             {{-- Tombol Close --}}
@@ -1363,7 +1270,7 @@ Features: CRUD, Search, Filter, Export
             {{-- Header Modal Konfirmasi --}}
             <div class="modal-header">
                 <h2>Konfirmasi Hapus</h2>
-                <p>Apakah Anda yakin ingin menghapus pengajar ini?</p>
+                <p>Apakah Anda yakin ingin menghapus admin ini?</p>
             </div>
 
             {{-- Action Buttons - Batal dan Hapus --}}
@@ -1385,7 +1292,7 @@ Features: CRUD, Search, Filter, Export
             </div>
             {{-- Title dan Message (akan diupdate via JS) --}}
             <h3 class="success-title" id="successTitle">Berhasil!</h3>
-            <p class="success-message" id="successMessage">Data pengajar berhasil ditambahkan</p>
+            <p class="success-message" id="successMessage">Data admin berhasil ditambahkan</p>
             <button class="btn btn-submit" onclick="closeModal('successModal')" style="width: 100%;">OK</button>
         </div>
     </div>
@@ -1411,21 +1318,21 @@ Features: CRUD, Search, Filter, Export
         {{-- CONFIG - CSRF Token dan API Routes untuk JavaScript --}}
         const csrfToken = '{{ csrf_token() }}';
         const apiRoutes = {
-            getData: '{{ route("admin.pengajar.data") }}',
-            store: '{{ route("admin.pengajar.store") }}'
+            getData: '{{ route("admin.admin.data") }}',
+            store: '{{ route("admin.admin.store") }}'
         };
 
         /* ========================================
-       PENGAJAR MANAGEMENT JAVASCRIPT
-       Script untuk halaman Data Pengajar Admin
+       ADMIN MANAGEMENT JAVASCRIPT
+       Script untuk halaman Data Admin
        ======================================== */
 
         // ========================================
         // GLOBAL VARIABLES
         // ========================================
 
-        let pengajarData = [];  // Array untuk menyimpan semua data pengajar
-        let deleteId = null;    // ID pengajar yang akan dihapus
+        let adminData = [];  // Array untuk menyimpan semua data admin
+        let deleteId = null;    // ID admin yang akan dihapus
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -1522,10 +1429,10 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Load data pengajar dari server saat halaman dimuat
+         * Load data admin dari server saat halaman dimuat
          */
         document.addEventListener('DOMContentLoaded', function () {
-            loadPengajarData();
+            loadAdminData();
 
             // Setup auto-clear error saat user mulai mengetik
             clearFieldError('formName', 'nameError');
@@ -1536,36 +1443,36 @@ Features: CRUD, Search, Filter, Export
         });
 
         /**
-         * Fetch data pengajar dari API
+         * Fetch data admin dari API
          */
-        function loadPengajarData() {
+        function loadAdminData() {
             fetch(apiRoutes.getData)
                 .then(response => {
                     return response.json();
                 })
                 .then(data => {
                     // Urutkan data berdasarkan ID dari kecil ke besar
-                    pengajarData = data.sort((a, b) => a.id - b.id);
-                    renderTable(pengajarData);
+                    adminData = data.sort((a, b) => a.id - b.id);
+                    renderTable(adminData);
                 })
                 .catch(error => {
-                    showToast('Gagal Memuat Data', 'Tidak dapat memuat data pengajar. Silakan refresh halaman.', 'error');
+                    showToast('Gagal Memuat Data', 'Tidak dapat memuat data admin. Silakan refresh halaman.', 'error');
                 });
         }
 
         /**
-         * Render tabel dengan data pengajar
-         * @param {Array} data - Array data pengajar yang akan ditampilkan
+         * Render tabel dengan data admin
+         * @param {Array} data - Array data admin yang akan ditampilkan
          */
         function renderTable(data) {
-            const tbody = document.getElementById('pengajarTableBody');
+            const tbody = document.getElementById('adminTableBody');
 
             // Jika tidak ada data
             if (data.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" style="text-align: center; padding: 2rem; color: #94A3B8;">
-                        Tidak ada data pengajar
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #94A3B8;">
+                        Tidak ada data admin
                     </td>
                 </tr>
             `;
@@ -1574,26 +1481,19 @@ Features: CRUD, Search, Filter, Export
 
             // Render setiap baris data
             tbody.innerHTML = data.map((item, index) => {
-                // Ambil nama kursus (max 2, sisanya ...)
-                const kursusNames = item.kursus && item.kursus.length > 0
-                    ? item.kursus.map(k => k.judul).slice(0, 2).join(', ') + (item.kursus.length > 2 ? '...' : '')
-                    : '-';
-                const jumlahKelas = item.kursus_count || 0;
-                const totalSiswa = item.total_siswa || 0;
                 const status = item.status || 'active';
                 const statusDisplay = status === 'active' ? 'Aktif' : 'Nonaktif';
+                const phone = item.phone || '-';
 
                 return `
             <tr onclick="showDetail(${item.id})">
                 <td>${String(item.id).padStart(3, '0')}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
-                <td>${kursusNames}</td>
+                <td>${phone}</td>
                 <td>
                     <span class="status-badge ${status}">${statusDisplay}</span>
                 </td>
-                <td>${jumlahKelas}</td>
-                <td>${totalSiswa}</td>
                 <td onclick="event.stopPropagation()">
                     <div class="action-buttons">
                         <button class="btn-action btn-edit" onclick="openEditModal(${item.id})" title="Edit">
@@ -1650,18 +1550,12 @@ Features: CRUD, Search, Filter, Export
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
 
-            const filtered = pengajarData.filter(item => {
-                // Search di nama, email, dan nama kursus
+            const filtered = adminData.filter(item => {
+                // Search di nama dan email
                 const nameMatch = item.name.toLowerCase().includes(searchTerm);
                 const emailMatch = item.email.toLowerCase().includes(searchTerm);
 
-                // Search di nama kursus
-                let kursusMatch = false;
-                if (item.kursus && item.kursus.length > 0) {
-                    kursusMatch = item.kursus.some(k => k.judul.toLowerCase().includes(searchTerm));
-                }
-
-                const matchSearch = nameMatch || emailMatch || kursusMatch;
+                const matchSearch = nameMatch || emailMatch;
                 const matchStatus = !statusFilter || (item.status || 'active') === statusFilter;
                 return matchSearch && matchStatus;
             });
@@ -1677,43 +1571,24 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Menampilkan modal detail pengajar (readonly)
-         * @param {number} id - ID pengajar yang akan ditampilkan
+         * Menampilkan modal detail admin (readonly)
+         * @param {number} id - ID admin yang akan ditampilkan
          */
         function showDetail(id) {
-            const pengajar = pengajarData.find(p => p.id === id);
-            if (!pengajar) return;
-
-            const kursusNames = pengajar.kursus && pengajar.kursus.length > 0
-                ? pengajar.kursus.map(k => k.judul).join(', ')
-                : 'Belum ada kursus';
+            const admin = adminData.find(p => p.id === id);
+            if (!admin) return;
 
             // Populate form fields
-            document.getElementById('detailName').value = pengajar.name;
-            document.getElementById('detailEmail').value = pengajar.email;
-            document.getElementById('detailPhone').value = pengajar.phone || '-';
-            document.getElementById('detailAddress').value = pengajar.address || '-';
-            document.getElementById('detailTanggalLahir').value = pengajar.tanggal_lahir || '';
-            document.getElementById('detailJenisKelamin').value = pengajar.jenis_kelamin === 'L' ? 'Laki-laki' : pengajar.jenis_kelamin === 'P' ? 'Perempuan' : '-';
-            document.getElementById('detailKeahlian').value = pengajar.keahlian || '-';
-            document.getElementById('detailPengalaman').value = pengajar.pengalaman || '-';
+            document.getElementById('detailName').value = admin.name;
+            document.getElementById('detailEmail').value = admin.email;
+            document.getElementById('detailPhone').value = admin.phone || '-';
+            document.getElementById('detailAddress').value = admin.address || '-';
+            document.getElementById('detailTanggalLahir').value = admin.tanggal_lahir || '';
+            document.getElementById('detailJenisKelamin').value = admin.jenis_kelamin === 'L' ? 'Laki-laki' : admin.jenis_kelamin === 'P' ? 'Perempuan' : '-';
 
-            // Sertifikasi
-            const sertifikasiContainer = document.getElementById('detailSertifikasiContainer');
-            if (pengajar.sertifikasi) {
-                const fileName = pengajar.sertifikasi.split('/').pop();
-                const filePath = `/storage/${pengajar.sertifikasi}`;
-                sertifikasiContainer.innerHTML = `<a href="${filePath}" target="_blank" style="color: #5D3FFF; text-decoration: none; font-size: 0.875rem;">📎 ${fileName}</a>`;
-            } else {
-                sertifikasiContainer.innerHTML = '<span style="color: #94A3B8; font-size: 0.875rem;">Tidak ada sertifikasi</span>';
-            }
-
-            document.getElementById('detailKursus').value = kursusNames;
-            document.getElementById('detailJumlahKelas').value = (pengajar.kursus_count || 0) + ' Kelas';
-            document.getElementById('detailTotalSiswa').value = (pengajar.total_siswa || 0) + ' Siswa';
-            const statusDisplay = (pengajar.status || 'active') === 'active' ? 'Aktif' : (pengajar.status === 'inactive' ? 'Nonaktif' : 'Ditangguhkan');
+            const statusDisplay = (admin.status || 'active') === 'active' ? 'Aktif' : (admin.status === 'inactive' ? 'Nonaktif' : 'Ditangguhkan');
             document.getElementById('detailStatus').value = statusDisplay;
-            document.getElementById('detailDate').value = pengajar.created_at ? pengajar.created_at.split('T')[0] : '';
+            document.getElementById('detailDate').value = admin.created_at ? admin.created_at.split('T')[0] : '';
 
             // Show modal
             document.getElementById('detailModal').classList.add('active');
@@ -1724,16 +1599,16 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Membuka modal untuk tambah pengajar baru
+         * Membuka modal untuk tambah admin baru
          */
         function openAddModal() {
             // Set judul modal
-            document.getElementById('formModalTitle').textContent = 'Tambah Pengajar Baru';
-            document.getElementById('formModalDesc').textContent = 'Lengkapi form di bawah untuk menambah pengajar';
+            document.getElementById('formModalTitle').textContent = 'Tambah Admin Baru';
+            document.getElementById('formModalDesc').textContent = 'Lengkapi form di bawah untuk menambah admin';
 
             // Reset form
-            document.getElementById('pengajarForm').reset();
-            document.getElementById('pengajarId').value = '';
+            document.getElementById('adminForm').reset();
+            document.getElementById('adminId').value = '';
 
             // Password required untuk tambah data
             document.getElementById('formPassword').required = true;
@@ -1745,15 +1620,9 @@ Features: CRUD, Search, Filter, Export
             // Show password fields
             document.getElementById('passwordGroup').style.display = 'block';
             document.getElementById('confirmPasswordGroup').style.display = 'block';
-            document.getElementById('currentSertifikasi').style.display = 'none';
 
             // Clear all errors
             clearAllErrors();
-
-            // Reset upload area
-            document.getElementById('filePreview').classList.remove('active');
-            document.getElementById('uploadArea').style.display = 'block';
-            document.getElementById('formSertifikasi').value = '';
 
             // Show modal
             document.getElementById('formModal').classList.add('active');
@@ -1764,28 +1633,26 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Membuka modal untuk edit data pengajar
-         * @param {number} id - ID pengajar yang akan diedit
+         * Membuka modal untuk edit data admin
+         * @param {number} id - ID admin yang akan diedit
          */
         function openEditModal(id) {
-            const pengajar = pengajarData.find(p => p.id === id);
-            if (!pengajar) return;
+            const admin = adminData.find(p => p.id === id);
+            if (!admin) return;
 
             // Set judul modal
-            document.getElementById('formModalTitle').textContent = 'Edit Data Pengajar';
-            document.getElementById('formModalDesc').textContent = 'Perbarui informasi pengajar di bawah ini';
+            document.getElementById('formModalTitle').textContent = 'Edit Data Admin';
+            document.getElementById('formModalDesc').textContent = 'Perbarui informasi admin di bawah ini';
 
             // Populate form dengan data yang ada
-            document.getElementById('pengajarId').value = pengajar.id;
-            document.getElementById('formName').value = pengajar.name;
-            document.getElementById('formEmail').value = pengajar.email;
-            document.getElementById('formPhone').value = pengajar.phone || '';
-            document.getElementById('formAddress').value = pengajar.address || '';
-            document.getElementById('formTanggalLahir').value = pengajar.tanggal_lahir || '';
-            document.getElementById('formJenisKelamin').value = pengajar.jenis_kelamin || '';
-            document.getElementById('formStatus').value = pengajar.status || 'active';
-            document.getElementById('formKeahlian').value = pengajar.keahlian || '';
-            document.getElementById('formPengalaman').value = pengajar.pengalaman || '';
+            document.getElementById('adminId').value = admin.id;
+            document.getElementById('formName').value = admin.name;
+            document.getElementById('formEmail').value = admin.email;
+            document.getElementById('formPhone').value = admin.phone || '';
+            document.getElementById('formAddress').value = admin.address || '';
+            document.getElementById('formTanggalLahir').value = admin.tanggal_lahir || '';
+            document.getElementById('formJenisKelamin').value = admin.jenis_kelamin || '';
+            document.getElementById('formStatus').value = admin.status || 'active';
             document.getElementById('formPassword').value = '';
             document.getElementById('formPasswordConfirm').value = '';
 
@@ -1797,27 +1664,6 @@ Features: CRUD, Search, Filter, Export
             document.getElementById('passwordGroup').style.display = 'none';
             document.getElementById('confirmPasswordGroup').style.display = 'none';
 
-            // Reset upload area
-            document.getElementById('filePreview').classList.remove('active');
-            document.getElementById('uploadArea').style.display = 'block';
-            document.getElementById('formSertifikasi').value = '';
-
-            // Show current sertifikasi if exists
-            if (pengajar.sertifikasi) {
-                const fileName = pengajar.sertifikasi.split('/').pop();
-                const filePath = `/storage/${pengajar.sertifikasi}`;
-                const currentSertContainer = document.getElementById('currentSertifikasi');
-                
-                currentSertContainer.innerHTML = `
-                    <div style="margin-top: 0.5rem; padding: 0.75rem; background: #F0FDF4; border-radius: 8px; border: 1px solid #BBF7D0;">
-                        <small style="color: #059669; font-size: 0.75rem;">📎 File saat ini: <a href="${filePath}" target="_blank" style="color: #059669; text-decoration: underline;">${fileName}</a></small>
-                    </div>
-                `;
-                currentSertContainer.style.display = 'block';
-            } else {
-                document.getElementById('currentSertifikasi').style.display = 'none';
-            }
-
             // Show modal
             document.getElementById('formModal').classList.add('active');
         }
@@ -1827,15 +1673,15 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Handle form submit untuk tambah/edit pengajar
+         * Handle form submit untuk tambah/edit admin
          */
-        document.getElementById('pengajarForm').addEventListener('submit', function (e) {
+        document.getElementById('adminForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             // Clear all previous errors
             clearAllErrors();
 
-            const id = document.getElementById('pengajarId').value;
+            const id = document.getElementById('adminId').value;
             const password = document.getElementById('formPassword').value;
             const passwordConfirm = document.getElementById('formPasswordConfirm').value;
 
@@ -1862,16 +1708,9 @@ Features: CRUD, Search, Filter, Export
             formData.append('tanggal_lahir', document.getElementById('formTanggalLahir').value);
             formData.append('jenis_kelamin', document.getElementById('formJenisKelamin').value);
             formData.append('status', document.getElementById('formStatus').value);
-            formData.append('keahlian', document.getElementById('formKeahlian').value);
-            formData.append('pengalaman', document.getElementById('formPengalaman').value);
 
             if (password) {
                 formData.append('password', password);
-            }
-
-            const sertifikasiFile = document.getElementById('formSertifikasi').files[0];
-            if (sertifikasiFile) {
-                formData.append('sertifikasi', sertifikasiFile);
             }
 
             formData.append('_token', csrfToken);
@@ -1880,7 +1719,7 @@ Features: CRUD, Search, Filter, Export
             }
 
             // Tentukan URL berdasarkan mode (create/update)
-            const url = id ? `/admin/pengajar/${id}` : apiRoutes.store;
+            const url = id ? `/admin/admin/${id}` : apiRoutes.store;
 
             // Submit data
             fetch(url, {
@@ -1901,7 +1740,7 @@ Features: CRUD, Search, Filter, Export
                         document.getElementById('successModal').classList.add('active');
 
                         // Reload data
-                        loadPengajarData();
+                        loadAdminData();
                     } else {
                         // Handle validation errors dari server
                         if (data.errors) {
@@ -1910,8 +1749,7 @@ Features: CRUD, Search, Filter, Export
                                 'name': { errorId: 'nameError', inputId: 'formName' },
                                 'email': { errorId: 'emailError', inputId: 'formEmail' },
                                 'password': { errorId: 'passwordError', inputId: 'formPassword' },
-                                'phone': { errorId: 'phoneError', inputId: 'formPhone' },
-                                'sertifikasi': { errorId: 'fileError', inputId: 'formSertifikasi' }
+                                'phone': { errorId: 'phoneError', inputId: 'formPhone' }
                             };
 
                             // Tampilkan error pertama dan scroll ke field tersebut
@@ -1945,7 +1783,7 @@ Features: CRUD, Search, Filter, Export
 
         /**
          * Membuka modal konfirmasi hapus
-         * @param {number} id - ID pengajar yang akan dihapus
+         * @param {number} id - ID admin yang akan dihapus
          */
         function openDeleteModal(id) {
             deleteId = id;
@@ -1958,7 +1796,7 @@ Features: CRUD, Search, Filter, Export
         function confirmDelete() {
             if (!deleteId) return;
 
-            fetch(`/admin/pengajar/${deleteId}`, {
+            fetch(`/admin/admin/${deleteId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
@@ -1975,11 +1813,11 @@ Features: CRUD, Search, Filter, Export
                         document.getElementById('successModal').classList.add('active');
 
                         // Reload data
-                        loadPengajarData();
+                        loadAdminData();
                         deleteId = null;
                     } else {
                         closeModal('deleteModal');
-                        showToast('Gagal Menghapus', data.message || 'Tidak dapat menghapus data pengajar', 'warning');
+                        showToast('Gagal Menghapus', data.message || 'Tidak dapat menghapus data admin', 'warning');
                     }
                 })
                 .catch(error => {

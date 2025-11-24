@@ -35,6 +35,16 @@
                         <span class="nav-text">Halaman Utama</span>
                     </a>
                 </li>
+                @if(Auth::user()->hasRole('super admin'))
+                <li class="nav-item {{ request()->routeIs('admin.admin.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.admin.index') }}" class="nav-link">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="currentColor" stroke-width="1.5" fill="none" />
+                        </svg>
+                        <span class="nav-text">Data Admin</span>
+                    </a>
+                </li>
+                @endif
                 <li class="nav-item {{ request()->routeIs('admin.peserta.index') ? 'active' : '' }}">
                     <a href="{{ route('admin.peserta.index') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,14 +61,41 @@
                         <span class="nav-text">Data Pengajar</span>
                     </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.video.*') || request()->routeIs('admin.materi.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.pelatihan.index') }}" class="nav-link">
+                <li class="nav-item has-submenu {{ request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.bank-soal.*') || request()->routeIs('admin.kategori.*') ? 'open' : '' }}">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); this.parentElement.classList.toggle('open');">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                             <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
-                        <span class="nav-text">Data Kursus</span>
+                        <span class="nav-text">Data Pelatihan</span>
                     </a>
+                    <ul class="submenu">
+                        <li class="nav-item {{ request()->routeIs('admin.pelatihan.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.pelatihan.index') }}" class="nav-link">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="nav-text">Data Kursus</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.bank-soal.index') }}" class="nav-link">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <span class="nav-text">Bank Soal</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.kategori.index') }}" class="nav-link">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <span class="nav-text">Data Kategori</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item {{ request()->routeIs('admin.bank-soal.*') || request()->routeIs('admin.kategori-soal.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.bank-soal.index') }}" class="nav-link">

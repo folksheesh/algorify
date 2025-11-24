@@ -214,6 +214,58 @@
     flex: 1;
 }
 
+/* Dropdown menu styles */
+.nav-item.has-submenu {
+    position: relative;
+}
+
+.nav-item.has-submenu > .nav-link {
+    position: relative;
+}
+
+.nav-item.has-submenu > .nav-link::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    transition: transform 0.2s ease;
+}
+
+.nav-item.has-submenu.open > .nav-link::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-left: 32px;
+    margin-top: 4px;
+}
+
+.nav-item.has-submenu.open .submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.submenu .nav-item .nav-link {
+    font-size: 14px;
+    padding: 10px 16px;
+}
+
+.submenu .nav-item .nav-icon {
+    width: 16px;
+    height: 16px;
+}
+
 /* ============================================
    5. SIDEBAR FOOTER (Logout Button)
    ============================================ */

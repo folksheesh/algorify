@@ -4,6 +4,7 @@ namespace App\Http\Controllers; // Namespace controller
 
 use Illuminate\Http\Request; // Import class Request untuk HTTP
 use App\Models\Kursus; // Import model Kursus
+use App\Models\KategoriPelatihan; // Import model KategoriPelatihan
 
 // Controller ini menangani permintaan terkait data kursus
 class KursusController extends Controller
@@ -16,7 +17,7 @@ class KursusController extends Controller
 
         // Filter berdasarkan kategori jika parameter kategori ada dan tidak kosong
         if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('kategori', $request->kategori);
+            $query->where('kategori_id', $request->kategori);
         }
 
         // Pencarian berdasarkan judul, deskripsi, atau deskripsi singkat
@@ -30,9 +31,12 @@ class KursusController extends Controller
 
         // Urutkan dari yang terbaru dan paginasi 9 data per halaman
         $kursus = $query->latest()->paginate(9);
+        
+        // Ambil semua kategori untuk filter
+        $categories = KategoriPelatihan::all();
 
-        // Tampilkan ke view kursus.index dengan data kursus
-        return view('kursus.index', compact('kursus'));
+        // Tampilkan ke view kursus.index dengan data kursus dan kategori
+        return view('kursus.index', compact('kursus', 'categories'));
     }
 
     // Menampilkan detail satu kursus berdasarkan id

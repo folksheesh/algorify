@@ -27,9 +27,19 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
+        // Seed kategori
+        $this->call([
+            KategoriSeeder::class,
+        ]);
+
         // Seed kursus
         $this->call([
             KursusSeeder::class,
+        ]);
+
+        // Seed bank soal
+        $this->call([
+            BankSoalSeeder::class,
         ]);
 
         // Seed enrollments
