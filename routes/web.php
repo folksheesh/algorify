@@ -92,6 +92,29 @@ Route::middleware('auth')->group(function () {
         // Soal routes
         Route::post('/soal', [\App\Http\Controllers\Admin\SoalController::class, 'store'])->name('soal.store');
         Route::delete('/soal/{id}', [\App\Http\Controllers\Admin\SoalController::class, 'destroy'])->name('soal.destroy');
+        Route::get('/soal/template', [\App\Http\Controllers\Admin\SoalController::class, 'downloadTemplate'])->name('soal.template');
+        Route::post('/soal/import', [\App\Http\Controllers\Admin\SoalController::class, 'import'])->name('soal.import');
+        Route::get('/soal/export/{ujianId}', [\App\Http\Controllers\Admin\SoalController::class, 'export'])->name('soal.export');
+        Route::post('/soal/add-from-bank', [\App\Http\Controllers\Admin\SoalController::class, 'addFromBank'])->name('soal.add-from-bank');
+        
+        // Urutan routes (drag and drop)
+        Route::post('/urutan/modul', [\App\Http\Controllers\Admin\UrutanController::class, 'updateModulOrder'])->name('urutan.modul');
+        Route::post('/urutan/materi', [\App\Http\Controllers\Admin\UrutanController::class, 'updateMateriOrder'])->name('urutan.materi');
+        Route::post('/urutan/video', [\App\Http\Controllers\Admin\UrutanController::class, 'updateVideoOrder'])->name('urutan.video');
+        
+        // Bank Soal routes
+        Route::get('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'index'])->name('bank-soal.index');
+        Route::post('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'store'])->name('bank-soal.store');
+        Route::get('/bank-soal/{id}/edit', [\App\Http\Controllers\Admin\BankSoalController::class, 'edit'])->name('bank-soal.edit');
+        Route::put('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'update'])->name('bank-soal.update');
+        Route::delete('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'destroy'])->name('bank-soal.destroy');
+        Route::get('/bank-soal/kategori/{kategoriId}', [\App\Http\Controllers\Admin\BankSoalController::class, 'getByKategori'])->name('bank-soal.by-kategori');
+        
+        // Kategori Soal routes
+        Route::get('/kategori-soal', [\App\Http\Controllers\Admin\KategoriSoalController::class, 'index'])->name('kategori-soal.index');
+        Route::post('/kategori-soal', [\App\Http\Controllers\Admin\KategoriSoalController::class, 'store'])->name('kategori-soal.store');
+        Route::put('/kategori-soal/{id}', [\App\Http\Controllers\Admin\KategoriSoalController::class, 'update'])->name('kategori-soal.update');
+        Route::delete('/kategori-soal/{id}', [\App\Http\Controllers\Admin\KategoriSoalController::class, 'destroy'])->name('kategori-soal.destroy');
         
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');

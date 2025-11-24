@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SortableJS for Drag & Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         * {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -569,6 +571,88 @@
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
         }
+
+        /* Drag and Drop Styles */
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #F1F5F9;
+        }
+        
+        .sortable-chosen {
+            cursor: grabbing !important;
+        }
+        
+        .sortable-drag {
+            opacity: 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        @hasanyrole('admin|pengajar')
+        .week-item, .materi-item {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .drag-handle {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .week-item:hover .drag-handle,
+        .materi-item:hover .drag-handle {
+            opacity: 1;
+            cursor: grab;
+        }
+        
+        .week-item:hover, .materi-item:hover {
+            background: #F8FAFC;
+        }
+        
+        .week-item:active .drag-handle,
+        .materi-item:active .drag-handle {
+            cursor: grabbing;
+        }
+        
+        /* Tooltip for drag handle */
+        .drag-handle-tooltip {
+            position: relative;
+        }
+        
+        .drag-handle-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 10px;
+            padding: 0.375rem 0.75rem;
+            background: #1E293B;
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .drag-handle-tooltip:hover::after {
+            opacity: 1;
+        }
+        @endhasanyrole
+
+        /* Toast Animation */
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 @endpush
 
@@ -614,9 +698,16 @@
                 @if($kursus->modul->count() > 0)
                     <div class="weeks-list">
                         @foreach($kursus->modul as $index => $modul)
-                            <div class="week-item" id="week-{{ $modul->id }}">
+                            <div class="week-item" id="week-{{ $modul->id }}" data-id="{{ $modul->id }}">
                                 <div class="week-header" onclick="toggleWeek({{ $modul->id }})">
                                     <div class="week-title-section">
+                                        @hasanyrole('admin|pengajar')
+                                        <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan">
+                                            <svg class="drag-handle" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px; color: #667eea; margin-right: 0.5rem;">
+                                                <path d="M7 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H7zM13 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM13 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/>
+                                            </svg>
+                                        </div>
+                                        @endhasanyrole
                                         <svg class="expand-icon" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                                         </svg>
@@ -699,7 +790,14 @@
                                                     $data = $item['data']; 
                                                     $routeName = $item['type'] === 'video' ? 'admin.video.show' : ($item['type'] === 'pdf' ? 'admin.materi.show' : 'admin.ujian.show');
                                                 @endphp
-                                                <div class="materi-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;">
+                                                <div class="materi-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;" data-id="{{ $data->id }}" data-type="{{ $item['type'] }}">
+                                                    @hasanyrole('admin|pengajar')
+                                                    <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan" style="display: flex; align-items: center; margin-right: 0.75rem; flex-shrink: 0;">
+                                                        <svg class="drag-handle" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px; color: #667eea;">
+                                                            <path d="M7 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H7zM13 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM13 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/>
+                                                        </svg>
+                                                    </div>
+                                                    @endhasanyrole
                                                     <a href="{{ route($routeName, $data->id) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
                                                         @if($item['type'] === 'video')
                                                             <div style="width: 40px; height: 40px; background: #EEF2FF; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
@@ -802,6 +900,16 @@
         </div>
             </div>
         </main>
+    </div>
+
+    <!-- Toast Notification untuk Drag & Drop -->
+    <div id="dragToast" style="position: fixed; top: 20px; right: 20px; background: white; padding: 1rem 1.5rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; z-index: 10000; animation: slideIn 0.3s ease;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="#10B981">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span style="font-weight: 600; color: #1A1A1A; font-size: 0.875rem;">Urutan berhasil diperbarui</span>
+        </div>
     </div>
 
     <!-- Modal Tambah/Edit Minggu -->
@@ -1639,5 +1747,151 @@
                 }
             }
         });
+
+        // ===================================
+        // DRAG AND DROP FUNCTIONALITY
+        // ===================================
+        @hasanyrole('admin|pengajar')
+        // Initialize Sortable for module list
+        const weeksList = document.querySelector('.weeks-list');
+        if (weeksList) {
+            new Sortable(weeksList, {
+                animation: 150,
+                handle: '.week-header',
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function (evt) {
+                    updateModulOrder();
+                }
+            });
+        }
+
+        // Initialize Sortable for each materi list
+        document.querySelectorAll('.materi-list').forEach(function(materiList) {
+            new Sortable(materiList, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function (evt) {
+                    updateMateriOrder(materiList);
+                }
+            });
+        });
+
+        // Update module order via AJAX
+        function updateModulOrder() {
+            const modulElements = document.querySelectorAll('.week-item');
+            const orders = [];
+            
+            modulElements.forEach((element, index) => {
+                const modulId = element.id.replace('week-', '');
+                orders.push({
+                    id: parseInt(modulId),
+                    urutan: index
+                });
+            });
+
+            fetch('{{ route("admin.urutan.modul") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ orders: orders })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('✅ Urutan modul berhasil diperbarui');
+                    showToast();
+                } else {
+                    alert('Gagal memperbarui urutan modul');
+                    location.reload(); // Reload to revert changes
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memperbarui urutan');
+                location.reload();
+            });
+        }
+
+        // Update materi order via AJAX
+        function updateMateriOrder(materiList) {
+            const materiElements = materiList.querySelectorAll('.materi-item');
+            const videoOrders = [];
+            const materiOrders = [];
+            
+            materiElements.forEach((element, index) => {
+                const itemId = element.getAttribute('data-id');
+                const itemType = element.getAttribute('data-type');
+                
+                if (!itemId) return; // Skip ujian/quiz
+                
+                if (itemType === 'video') {
+                    videoOrders.push({
+                        id: parseInt(itemId),
+                        urutan: index
+                    });
+                } else if (itemType === 'pdf') {
+                    materiOrders.push({
+                        id: parseInt(itemId),
+                        urutan: index
+                    });
+                }
+            });
+
+            // Update video orders
+            if (videoOrders.length > 0) {
+                fetch('{{ route("admin.urutan.video") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ orders: videoOrders })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Urutan video berhasil diperbarui');
+                        showToast();
+                    }
+                })
+                .catch(error => console.error('Error updating video order:', error));
+            }
+
+            // Update materi orders
+            if (materiOrders.length > 0) {
+                fetch('{{ route("admin.urutan.materi") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ orders: materiOrders })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Urutan materi berhasil diperbarui');
+                        showToast();
+                    }
+                })
+                .catch(error => console.error('Error updating materi order:', error));
+            }
+        }
+
+        // Show toast notification
+        function showToast() {
+            const toast = document.getElementById('dragToast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+        @endhasanyrole
     </script>
 @endsection

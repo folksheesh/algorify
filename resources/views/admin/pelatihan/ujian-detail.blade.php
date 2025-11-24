@@ -365,12 +365,39 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <h1 class="quiz-title">{{ $ujian->judul }}</h1>
                         @hasanyrole('admin|pengajar')
-                        <button onclick="openAddSoalModal()" class="btn btn-primary" style="margin-left: auto;">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
-                            </svg>
-                            Tambah Soal
-                        </button>
+                        <div style="display: flex; gap: 0.5rem; margin-left: auto;">
+                            <button onclick="downloadTemplate()" class="btn btn-secondary" style="background: #10B981;">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                Template
+                            </button>
+                            <button onclick="openImportModal()" class="btn btn-secondary" style="background: #F59E0B;">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Import
+                            </button>
+                            <button onclick="exportSoal()" class="btn btn-secondary" style="background: #3B82F6;">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                                </svg>
+                                Export
+                            </button>
+                            <button onclick="openBankSoalModal()" class="btn btn-secondary" style="background: #8B5CF6;">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" fill="currentColor"/>
+                                </svg>
+                                Dari Bank Soal
+                            </button>
+                            <button onclick="openAddSoalModal()" class="btn btn-primary">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Tambah Soal
+                            </button>
+                        </div>
                         @endhasanyrole
                     </div>
                 </div>
@@ -429,12 +456,39 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <h1 class="quiz-title">{{ $ujian->judul }}</h1>
                         @hasanyrole('admin|pengajar')
-                        <button onclick="openAddSoalModal()" class="btn btn-primary" style="margin-left: auto;">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
-                            </svg>
-                            Tambah Soal
-                        </button>
+                        <div style="display: flex; gap: 0.5rem; margin-left: auto;">
+                            <button onclick="downloadTemplate()" class="btn btn-secondary" style="background: #10B981;" title="Download Template Excel">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                Template
+                            </button>
+                            <button onclick="openImportModal()" class="btn btn-secondary" style="background: #F59E0B;" title="Import Soal dari Excel">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Import
+                            </button>
+                            <button onclick="exportSoal()" class="btn btn-secondary" style="background: #3B82F6;" title="Export Soal ke Excel">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                                </svg>
+                                Export
+                            </button>
+                            <button onclick="openBankSoalModal()" class="btn btn-secondary" style="background: #8B5CF6;" title="Tambah dari Bank Soal">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" fill="currentColor"/>
+                                </svg>
+                                Dari Bank Soal
+                            </button>
+                            <button onclick="openAddSoalModal()" class="btn btn-primary">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Tambah Soal
+                            </button>
+                        </div>
                         @endhasanyrole
                     </div>
                 </div>
@@ -729,7 +783,70 @@
                 });
             });
         }
+
+        // Import form submission
+        const formImport = document.getElementById('formImport');
+        if (formImport) {
+            formImport.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                fetch('{{ route("admin.soal.import") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Soal berhasil diimport!');
+                        closeImportModal();
+                        location.reload();
+                    } else {
+                        alert('Gagal mengimport soal: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengimport soal');
+                });
+            });
+        }
     });
+
+    // Import/Export functions
+    function openImportModal() {
+        document.getElementById('modalImport').classList.add('active');
+    }
+
+    function closeImportModal() {
+        document.getElementById('modalImport').classList.remove('active');
+        document.getElementById('formImport').reset();
+        document.getElementById('fileName').textContent = 'Pilih file atau drag & drop di sini';
+        document.querySelector('.file-upload-label').classList.remove('has-file');
+    }
+
+    function updateFileName() {
+        const input = document.getElementById('fileInput');
+        const label = document.querySelector('.file-upload-label');
+        const fileName = document.getElementById('fileName');
+        
+        if (input.files.length > 0) {
+            fileName.textContent = input.files[0].name;
+            label.classList.add('has-file');
+        } else {
+            fileName.textContent = 'Pilih file atau drag & drop di sini';
+            label.classList.remove('has-file');
+        }
+    }
+
+    function downloadTemplate() {
+        window.location.href = '{{ route("admin.soal.template") }}';
+    }
+
+    function exportSoal() {
+        window.location.href = '{{ route("admin.soal.export", $ujian->id) }}';
+    }
 </script>
 
 <!-- Modal Tambah Soal -->
@@ -817,6 +934,79 @@
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                     </svg>
                     Simpan Soal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Import Soal -->
+<div id="modalImport" class="modal-overlay">
+    <div class="modal-container-soal" style="max-width: 600px;">
+        <div class="modal-header-soal">
+            <div>
+                <h2 class="modal-title-soal">
+                    <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; margin-right: 0.5rem;">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Import Soal dari Excel
+                </h2>
+                <p class="modal-subtitle-soal">Upload file Excel (.xlsx) untuk mengimport soal</p>
+            </div>
+            <button class="modal-close-soal" type="button" onclick="closeImportModal()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+        <form id="formImport" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="ujian_id" value="{{ $ujian->id }}">
+            <div class="modal-body-soal">
+                <div class="form-group-soal">
+                    <div class="info-box-soal" style="margin-bottom: 1rem; background: #EFF6FF; border-color: #3B82F6;">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="#3B82F6">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <div>
+                            <strong>Format File Excel:</strong>
+                            <ul style="margin: 0.5rem 0 0 1.5rem; font-size: 0.875rem;">
+                                <li>Kolom: Pertanyaan | Pilihan A | Pilihan B | Pilihan C | Pilihan D | Kunci Jawaban (A/B/C/D) | Kategori</li>
+                                <li>Download template untuk melihat contoh format</li>
+                                <li>File maksimal 2MB</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <label class="form-label-soal">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; margin-right: 0.25rem;">
+                            <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                        </svg>
+                        File Excel <span style="color: #EF4444;">*</span>
+                    </label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" required style="display: none;" onchange="updateFileName()">
+                        <label for="fileInput" class="file-upload-label">
+                            <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span id="fileName">Pilih file atau drag & drop di sini</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-soal">
+                <button type="button" class="btn-cancel-soal" onclick="closeImportModal()">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Batal
+                </button>
+                <button type="submit" class="btn-submit-soal">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Import Soal
                 </button>
             </div>
         </form>
@@ -1135,6 +1325,50 @@
 
 .btn-delete-pilihan-soal:hover {
     background: #FEcaca;
+}
+
+/* File Upload Styles */
+.file-upload-container {
+    margin-top: 0.5rem;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border: 2px dashed #D1D5DB;
+    border-radius: 12px;
+    background: #F9FAFB;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    gap: 0.75rem;
+}
+
+.file-upload-label:hover {
+    border-color: #667eea;
+    background: #F5F3FF;
+}
+
+.file-upload-label svg {
+    color: #667eea;
+}
+
+.file-upload-label span {
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+.file-upload-label.has-file {
+    border-color: #10B981;
+    background: #ECFDF5;
+}
+
+.file-upload-label.has-file span {
+    color: #10B981;
+    font-weight: 500;
 }
 </style>
 
