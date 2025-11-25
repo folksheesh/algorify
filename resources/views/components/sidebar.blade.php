@@ -97,7 +97,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item {{ request()->routeIs('admin.bank-soal.*') || request()->routeIs('admin.kategori-soal.*') ? 'active' : '' }}">
+                <!-- <li class="nav-item {{ request()->routeIs('admin.bank-soal.*') || request()->routeIs('admin.kategori-soal.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.bank-soal.index') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" fill="currentColor"/>
@@ -105,7 +105,7 @@
                         </svg>
                         <span class="nav-text">Bank Soal</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item {{ request()->routeIs('admin.transaksi.index') ? 'active' : '' }}">
                     <a href="{{ route('admin.transaksi.index') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

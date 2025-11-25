@@ -45,23 +45,16 @@ class MateriController extends Controller
             'modul_id' => 'required|exists:modul,id',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'file_pdf' => 'required|file|mimes:pdf|max:10240', // 10MB
+            'konten' => 'required|string',
         ]);
 
         // Auto-generate urutan
         $maxUrutan = Materi::where('modul_id', $request->modul_id)->max('urutan');
         $validated['urutan'] = $maxUrutan ? $maxUrutan + 1 : 1;
 
-        if ($request->hasFile('file_pdf')) {
-            $file = $request->file('file_pdf');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('pdfs', $filename, 'public');
-            $validated['file_pdf'] = $path;
-        }
-
         Materi::create($validated);
 
-        return response()->json(['success' => true, 'message' => 'PDF berhasil ditambahkan!']);
+        return response()->json(['success' => true, 'message' => 'Materi berhasil ditambahkan!']);
     }
 
     public function edit($id)
@@ -77,37 +70,48 @@ class MateriController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'file_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'konten' => 'required|string',
         ]);
-
-        if ($request->hasFile('file_pdf')) {
-            // Delete old file
-            if ($materi->file_pdf) {
-                Storage::disk('public')->delete($materi->file_pdf);
-            }
-            
-            $file = $request->file('file_pdf');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('pdfs', $filename, 'public');
-            $validated['file_pdf'] = $path;
-        }
 
         $materi->update($validated);
 
-        return response()->json(['success' => true, 'message' => 'PDF berhasil diperbarui!']);
+        return response()->json(['success' => true, 'message' => 'Materi berhasil diperbarui!']);
     }
 
     public function destroy($id)
     {
         $materi = Materi::findOrFail($id);
         
-        // Delete associated file
-        if ($materi->file_pdf) {
-            Storage::disk('public')->delete($materi->file_pdf);
+        // Delete associated file if exists
+        if ($materi->file_path) {
+            Storage::disk('public')->delete($materi->file_path);
         }
         
         $materi->delete();
 
-        return response()->json(['success' => true, 'message' => 'PDF berhasil dihapus!']);
+        return response()->json(['success' => true, 'message' => 'Materi berhasil dihapus!']);
+    }
+    
+    /**
+     * Upload image untuk konten editor
+     */
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('materi_content', $filename, 'public');
+            
+            return response()->json([
+                'success' => true,
+                'url' => Storage::url($path)
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No image uploaded'], 400);
     }
 }

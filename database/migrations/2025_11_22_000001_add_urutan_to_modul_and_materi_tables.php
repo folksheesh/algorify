@@ -12,15 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('modul', function (Blueprint $table) {
-            $table->integer('urutan')->default(0)->after('deskripsi');
+            if (!Schema::hasColumn('modul', 'urutan')) {
+                $table->integer('urutan')->default(0)->after('deskripsi');
+            }
         });
 
         Schema::table('materi', function (Blueprint $table) {
-            $table->integer('urutan')->default(0)->after('file_path');
+            if (!Schema::hasColumn('materi', 'urutan')) {
+                $table->integer('urutan')->default(0)->after('file_path');
+            }
         });
 
         Schema::table('video', function (Blueprint $table) {
-            $table->integer('urutan')->default(0)->after('durasi');
+            if (!Schema::hasColumn('video', 'urutan')) {
+                $table->integer('urutan')->default(0)->after('durasi');
+            }
         });
     }
 

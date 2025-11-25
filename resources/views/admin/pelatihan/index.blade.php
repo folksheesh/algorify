@@ -131,12 +131,20 @@
             height: 60%;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            margin: 0;
         }
         .course-thumbnail {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 0;
+            margin: 0;
         }
         .course-badge {
             position: absolute;
@@ -332,7 +340,7 @@
         }
         .modal-body {
             padding: 2rem;
-            padding-bottom: 5rem;
+            padding-bottom: 6rem;
             overflow-y: auto;
             flex: 1 1 0;
             min-height: 0;
@@ -340,7 +348,7 @@
         }
         .modal-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 2rem;
         }
         .modal-left {
@@ -363,11 +371,13 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1.25rem;
         }
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+            margin-bottom: 1.25rem;
         }
         .form-label {
             font-size: 0.8125rem;
@@ -445,6 +455,108 @@
         .upload-hint {
             font-size: 0.6875rem;
             color: #94A3B8;
+        }
+        .btn-upload {
+            margin-top: 0.75rem;
+            padding: 0.5rem 1.25rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-upload:hover {
+            background: #5568d3;
+        }
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        .toast-notification.success {
+            border-left: 4px solid #10B981;
+        }
+        .toast-notification.error {
+            border-left: 4px solid #EF4444;
+        }
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .toast-icon.success {
+            color: #10B981;
+        }
+        .toast-icon.error {
+            color: #EF4444;
+        }
+        .toast-content {
+            flex: 1;
+        }
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1E293B;
+            margin-bottom: 0.25rem;
+        }
+        .toast-message {
+            font-size: 0.8125rem;
+            color: #64748B;
+        }
+        .toast-close {
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .toast-close:hover {
+            background: #F1F5F9;
+            color: #64748B;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        .toast-notification.hiding {
+            animation: slideOutRight 0.3s ease-out forwards;
         }
         .preview-image {
             width: 100%;
@@ -686,157 +798,143 @@
                             <input type="hidden" name="kursus_id" id="kursusId">
                             
                             <div class="modal-body">
-                                <div class="modal-grid">
-                                    <!-- Left Column -->
-                                    <div class="modal-left">
-                                        <h3 style="font-size: 0.875rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem;">Informasi Dasar</h3>
-                                        
-                                        <div class="form-group">
-                                            <label class="form-label">
-                                                Nama Kursus <span class="required">*</span>
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                name="judul" 
-                                                id="judul"
-                                                class="form-input" 
-                                                placeholder="Contoh: Peran & Tugas Frontend Developer"
-                                                required
-                                            >
-                                        </div>
+                                <!-- Upload Gambar Section -->
+                                <div class="form-group" style="margin-bottom: 2rem;">
+                                    <label class="form-label">
+                                        Upload Gambar Kursus
+                                    </label>
+                                    <input 
+                                        type="file" 
+                                        name="thumbnail" 
+                                        id="thumbnail"
+                                        accept="image/png,image/jpeg,image/jpg"
+                                        style="display: none;"
+                                        onchange="previewThumbnail(event)"
+                                    >
+                                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('thumbnail').click()">
+                                        <svg class="upload-icon" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <p class="upload-text">Drag & drop Gambar</p>
+                                        <p class="upload-hint">Format: PNG atau JPG (Max 500KB)</p>
+                                        <button type="button" class="btn-upload" onclick="event.stopPropagation(); document.getElementById('thumbnail').click();">Pilih File</button>
+                                    </div>
+                                    <div id="previewContainer" class="preview-container" style="display: none;">
+                                        <img id="previewImage" class="preview-image" alt="Preview">
+                                        <button type="button" class="preview-remove" onclick="removeThumbnail(event)">
+                                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
 
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    Kategori <span class="required">*</span>
-                                                </label>
-                                                <select name="kategori" id="kategori" class="form-select" required>
-                                                    <option value="">Pilih Kategori</option>
-                                                    <option value="programming">Programming</option>
-                                                    <option value="design">UI/UX Design</option>
-                                                    <option value="data_science">Data Science</option>
-                                                    <option value="business">Business</option>
-                                                    <option value="marketing">Marketing</option>
-                                                    <option value="other">Lainnya</option>
-                                                </select>
-                                            </div>
+                                <!-- Informasi Dasar Section -->
+                                <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Informasi Dasar</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Nama Kursus <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="judul" 
+                                        id="judul"
+                                        class="form-input" 
+                                        placeholder="Contoh: Peran & Tugas Frontend Developer"
+                                        required
+                                    >
+                                    @error('judul')
+                                        <span style="color: #DC2626; font-size: 0.75rem;">{{ $message }}</span>
+                                    @enderror
+                                </div>
 
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    Tipe Kursus <span class="required">*</span>
-                                                </label>
-                                                <select name="status" id="status" class="form-select" required>
-                                                    <option value="">Pilih Tipe</option>
-                                                    <option value="published">Online</option>
-                                                    <option value="draft">Hybrid</option>
-                                                    <option value="archived">Offline</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-label">
-                                                Deskripsi Kursus
-                                            </label>
-                                            <textarea 
-                                                name="deskripsi" 
-                                                id="deskripsi"
-                                                class="form-textarea" 
-                                                placeholder="Jelaskan tentang kursus ini..."
-                                                rows="3"
-                                            ></textarea>
-                                        </div>
-
-                                        <div class="section-divider"></div>
-
-                                        <h3 style="font-size: 0.875rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem;">Detail Kursus</h3>
-                                        
-                                        <div class="form-group">
-                                            <label class="form-label">
-                                                Nama Pengajar <span class="required">*</span>
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                name="pengajar" 
-                                                id="pengajar"
-                                                class="form-input" 
-                                                placeholder="Nama pengajar/instruktur"
-                                                value="{{ auth()->user()->name }}"
-                                                required
-                                            >
-                                        </div>
-
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    Durasi <span class="required">*</span>
-                                                </label>
-                                                <input 
-                                                    type="text" 
-                                                    name="durasi" 
-                                                    id="durasi"
-                                                    class="form-input" 
-                                                    placeholder="Contoh: 8 Minggu"
-                                                    required
-                                                >
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    Harga <span class="required">*</span>
-                                                </label>
-                                                <input 
-                                                    type="text" 
-                                                    name="harga" 
-                                                    id="harga"
-                                                    class="form-input" 
-                                                    placeholder="Contoh: Rp 2.500.000"
-                                                    required
-                                                >
-                                            </div>
-                                        </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Kategori <span class="required">*</span>
+                                        </label>
+                                        <select name="kategori" id="kategori" class="form-select" required>
+                                            <option value="">UI/UX DESIGN</option>
+                                            <option value="programming">Programming</option>
+                                            <option value="design">UI/UX Design</option>
+                                            <option value="data_science">Data Science</option>
+                                            <option value="business">Business</option>
+                                            <option value="marketing">Marketing</option>
+                                            <option value="other">Lainnya</option>
+                                        </select>
                                     </div>
 
-                                    <!-- Right Column -->
-                                    <div class="modal-right">
-                                        <h3 style="font-size: 0.875rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem;">Thumbnail Kursus</h3>
-                                        
-                                        <div class="form-group">
-                                            <input 
-                                                type="file" 
-                                                name="thumbnail" 
-                                                id="thumbnail"
-                                                accept="image/png,image/jpeg,image/jpg"
-                                                style="display: none;"
-                                                onchange="previewThumbnail(event)"
-                                            >
-                                            <div class="upload-area" id="uploadArea" onclick="document.getElementById('thumbnail').click()">
-                                                <svg class="upload-icon" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                                                </svg>
-                                                <p class="upload-text">Upload Thumbnail</p>
-                                                <p class="upload-hint">PNG, JPG maksimal 2MB</p>
-                                            </div>
-                                            <div id="previewContainer" class="preview-container" style="display: none;">
-                                                <img id="previewImage" class="preview-image" alt="Preview">
-                                                <button type="button" class="preview-remove" onclick="removeThumbnail(event)">
-                                                    <svg viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Tipe Kursus <span class="required">*</span>
+                                        </label>
+                                        <select name="tipe_kursus" id="tipe_kursus" class="form-select" required>
+                                            <option value="">Online</option>
+                                            <option value="online">Online</option>
+                                            <option value="hybrid">Hybrid</option>
+                                            <option value="offline">Offline</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                                        <h3 style="font-size: 0.875rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; margin-top: 1rem;">Preview Kartu Kursus</h3>
-                                        
-                                        <div class="preview-card">
-                                            <p class="preview-card-label">No Image</p>
-                                            <div id="previewCardContent">
-                                                <span class="preview-badge" id="previewBadge">UI/UX DESIGN</span>
-                                                <h4 class="preview-title" id="previewTitle">Nama Kursus</h4>
-                                                <p class="preview-info" id="previewType">Online</p>
-                                            </div>
-                                        </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Deskripsi Kursus
+                                    </label>
+                                    <textarea 
+                                        name="deskripsi" 
+                                        id="deskripsi"
+                                        class="form-textarea" 
+                                        placeholder="Jelaskan tentang kursus ini..."
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+
+                                <!-- Detail Kursus Section -->
+                                <h3 style="font-size: 0.9375rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem; margin-top: 1.5rem;">Detail Kursus</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Nama Pengajar <span class="required">*</span>
+                                    </label>
+                                    <select name="pengajar_id" id="pengajar_id" class="form-select" required>
+                                        <option value="">Pilih Pengajar</option>
+                                        @foreach($pengajars as $pengajar)
+                                            <option value="{{ $pengajar->id }}" {{ $pengajar->id == auth()->id() ? 'selected' : '' }}>
+                                                {{ $pengajar->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Durasi <span class="required">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="durasi" 
+                                            id="durasi"
+                                            class="form-input" 
+                                            placeholder="Contoh: 8 Minggu"
+                                            required
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Harga <span class="required">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="harga" 
+                                            id="harga"
+                                            class="form-input" 
+                                            placeholder="Contoh: Rp 2.500.000"
+                                            required
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -864,11 +962,11 @@
                                     <img src="{{ asset('storage/' . $course->thumbnail) }}" 
                                          alt="{{ $course->judul }}" 
                                          class="course-thumbnail"
-                                         onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.objectFit='none';">
+                                         onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';">
                                 @else
                                     <div class="course-thumbnail" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
                                 @endif
-                                <span class="course-badge">{{ strtoupper($course->kategori ?? 'FRONTEND') }}</span>
+                                <span class="course-badge">{{ strtoupper(str_replace('_', ' ', $course->kategori ?? 'OTHER')) }}</span>
                                 @hasrole('peserta')
                                 <button class="course-favorite" onclick="event.stopPropagation();">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
@@ -942,41 +1040,7 @@
                 });
             }
 
-            // Live preview updates
-            const judulInput = document.getElementById('judul');
-            const kategoriSelect = document.getElementById('kategori');
-            const statusSelect = document.getElementById('status');
 
-            if (judulInput) {
-                judulInput.addEventListener('input', function() {
-                    document.getElementById('previewTitle').textContent = this.value || 'Nama Kursus';
-                });
-            }
-
-            if (kategoriSelect) {
-                kategoriSelect.addEventListener('change', function() {
-                    const badges = {
-                        'programming': 'PROGRAMMING',
-                        'design': 'UI/UX DESIGN',
-                        'data_science': 'DATA SCIENCE',
-                        'business': 'BUSINESS',
-                        'marketing': 'MARKETING',
-                        'other': 'OTHER'
-                    };
-                    document.getElementById('previewBadge').textContent = badges[this.value] || 'UI/UX DESIGN';
-                });
-            }
-
-            if (statusSelect) {
-                statusSelect.addEventListener('change', function() {
-                    const types = {
-                        'published': 'Online',
-                        'draft': 'Hybrid',
-                        'archived': 'Offline'
-                    };
-                    document.getElementById('previewType').textContent = types[this.value] || 'Hybrid';
-                });
-            }
         });
 
         // Modal functions
@@ -1011,9 +1075,6 @@
         }
 
         function resetPreview() {
-            document.getElementById('previewTitle').textContent = 'Nama Kursus';
-            document.getElementById('previewBadge').textContent = 'UI/UX DESIGN';
-            document.getElementById('previewType').textContent = 'Online';
             document.getElementById('uploadArea').style.display = 'flex';
             document.getElementById('previewContainer').style.display = 'none';
             document.getElementById('thumbnail').value = '';
@@ -1066,14 +1127,11 @@
                     document.getElementById('kursusId').value = data.id;
                     document.getElementById('judul').value = data.judul;
                     document.getElementById('kategori').value = data.kategori;
-                    document.getElementById('status').value = data.status;
+                    document.getElementById('tipe_kursus').value = data.tipe_kursus || 'online';
                     document.getElementById('deskripsi').value = data.deskripsi || '';
+                    document.getElementById('pengajar_id').value = data.user_id || '{{ auth()->id() }}';
+                    document.getElementById('durasi').value = data.durasi || '';
                     document.getElementById('harga').value = data.harga;
-                    
-                    // Update preview
-                    document.getElementById('previewTitle').textContent = data.judul;
-                    document.getElementById('previewBadge').textContent = data.kategori || 'UI/UX DESIGN';
-                    document.getElementById('previewType').textContent = data.status || 'Online';
                     
                     if (data.thumbnail) {
                         document.getElementById('previewImage').src = '{{ asset("") }}' + data.thumbnail;
@@ -1133,5 +1191,51 @@
                 closeModal();
             }
         });
+
+        // Toast Notification Function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            
+            const icon = type === 'success' 
+                ? '<svg class="toast-icon success" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>'
+                : '<svg class="toast-icon error" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>';
+            
+            const title = type === 'success' ? 'Berhasil!' : 'Error!';
+            
+            toast.innerHTML = `
+                ${icon}
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // Show toast on page load if there are messages
+        @if(session('success'))
+            showToast('{{ session('success') }}', 'success');
+        @endif
+
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                showToast('{{ $error }}', 'error');
+            @endforeach
+        @endif
     </script>
 @endpush

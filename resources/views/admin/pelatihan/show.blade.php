@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- SortableJS for Drag & Drop -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Quill Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
     <style>
         * {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -748,9 +751,9 @@
                                             </button>
                                             <button class="add-section-btn" onclick="openPdfModal({{ $modul->id }})" style="background: #FEF2F2; color: #EF4444; padding: 0.5rem 1rem; font-size: 0.75rem;">
                                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;">
-                                                    <path d="M4 4a2 2 0 012-2h8l4 4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
+                                                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                                 </svg>
-                                                Upload PDF
+                                                Materi Bacaan
                                             </button>
                                             <button class="add-section-btn" onclick="openQuizModal({{ $modul->id }})" style="background: #ECFDF5; color: #10B981; padding: 0.5rem 1rem; font-size: 0.75rem;">
                                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;">
@@ -1004,13 +1007,13 @@
         </div>
     </div>
 
-    <!-- Modal Upload PDF -->
+    <!-- Modal Materi Bacaan -->
     <div id="modalPdf" class="modal-overlay">
         <div class="modal-container">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title" id="pdfModalTitle">Upload PDF</h2>
-                    <p class="modal-subtitle">Upload file bacaan PDF</p>
+                    <h2 class="modal-title" id="pdfModalTitle">Buat Materi Bacaan</h2>
+                    <p class="modal-subtitle">Buat materi bacaan dengan konten rich text</p>
                 </div>
                 <button class="modal-close" type="button" onclick="closePdfModal()">
                     <svg viewBox="0 0 20 20" fill="currentColor">
@@ -1022,29 +1025,20 @@
                 @csrf
                 <input type="hidden" name="_method" id="pdfMethod" value="POST">
                 <input type="hidden" name="modul_id" id="pdfModulId">
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 55vh; overflow-y: auto;">
                     <div class="form-group">
                         <label class="form-label">Judul Bacaan *</label>
-                        <input type="text" name="judul" id="pdfJudul" class="form-input" placeholder="Contoh: Materi Dasar UI/UX" required>
+                        <input type="text" name="judul" id="pdfJudul" class="form-input" placeholder="Contoh: Pengenalan Dasar UI/UX" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea name="deskripsi" id="pdfDeskripsi" class="form-input" rows="3" placeholder="Deskripsi singkat tentang materi bacaan ini"></textarea>
+                        <label class="form-label">Deskripsi Singkat</label>
+                        <textarea name="deskripsi" id="pdfDeskripsi" class="form-input" rows="2" placeholder="Deskripsi singkat yang muncul di preview"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Upload File PDF *</label>
-                        <div class="upload-area" onclick="document.getElementById('pdfFile').click()">
-                            <div class="upload-icon" id="pdfIcon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 15L12 3M12 3L8 7M12 3L16 7" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M3 15V18C3 19.1046 3.89543 20 5 20H19C20.1046 20 21 19.1046 21 18V15" stroke="#667eea" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #64748B;">Drag & drop PDF atau klik untuk browse</p>
-                                <p style="font-size: 0.75rem; color: #94A3B8;">Format: PDF (Maks 50MB)</p>
-                            </div>
-                            <div id="pdfPreview" style="display: none; font-size: 0.875rem; color: #667eea;"></div>
-                        </div>
-                        <input type="file" id="pdfFile" name="file_pdf" accept=".pdf" style="display: none;" onchange="previewFile(this, 'pdfPreview', 'pdfIcon')">
+                        <label class="form-label">Konten Materi *</label>
+                        <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 0.5rem;">💡 Gunakan tombol image di toolbar untuk menyisipkan gambar ke dalam konten</p>
+                        <input type="hidden" name="konten" id="materiKonten">
+                        <div id="quillEditor" style="height: 400px; background: white; border: 1px solid #E5E7EB; border-radius: 8px;"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1123,9 +1117,11 @@
                         <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi" id="examDeskripsi" class="form-input" rows="3" placeholder="Deskripsi singkat tentang ujian ini"></textarea>
                     </div>
-                    <p style="font-size: 0.875rem; color: #6B7280; margin-top: 1rem; padding: 0.75rem; background: #F3F4F6; border-radius: 6px;">
-                        💡 Soal dan pengaturan waktu dapat ditambahkan setelah ujian dibuat
-                    </p>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Pengerjaan (menit) *</label>
+                        <input type="number" name="waktu_pengerjaan" id="examWaktu" class="form-input" placeholder="Contoh: 60" min="1" required>
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Masukkan waktu dalam menit (contoh: 60 untuk 1 jam)</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeExamModal()">Batal</button>
@@ -1369,11 +1365,17 @@
                 });
             }
             
-            // PDF form submit
+            // Materi form submit
             const formPdf = document.getElementById('formPdf');
             if (formPdf) {
                 formPdf.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    // Sync Quill content before submit
+                    if (quillEditor) {
+                        document.getElementById('materiKonten').value = quillEditor.root.innerHTML;
+                    }
+                    
                     const formData = new FormData(this);
                     const method = document.getElementById('pdfMethod').value;
                     
@@ -1391,7 +1393,13 @@
                         if (data.success) {
                             closePdfModal();
                             location.reload();
+                        } else {
+                            alert('Gagal menyimpan materi: ' + (data.message || 'Unknown error'));
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menyimpan materi');
                     });
                 });
             }
@@ -1501,7 +1509,7 @@
             document.body.style.overflow = '';
         }
         
-        // Modal PDF Functions
+        // Modal Materi Functions
         function openPdfModal(modulId) {
             const form = document.getElementById('formPdf');
             const modal = document.getElementById('modalPdf');
@@ -1511,11 +1519,12 @@
             document.getElementById('pdfMethod').value = 'POST';
             form.action = '{{ route("admin.materi.store") }}';
             document.getElementById('pdfModulId').value = modulId;
-            document.getElementById('pdfModalTitle').textContent = 'Upload PDF';
+            document.getElementById('pdfModalTitle').textContent = 'Buat Materi Bacaan';
             
-            // Reset preview
-            document.getElementById('pdfPreview').style.display = 'none';
-            document.getElementById('pdfIcon').style.display = 'block';
+            // Reset Quill editor
+            if (quillEditor) {
+                quillEditor.setText('');
+            }
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1601,7 +1610,7 @@
                 });
         }
         
-        // Edit Materi (PDF) Function
+        // Edit Materi Function
         function editMateri(id) {
             fetch(`/admin/materi/${id}/edit`)
                 .then(response => response.json())
@@ -1614,12 +1623,11 @@
                     document.getElementById('pdfJudul').value = data.judul;
                     document.getElementById('pdfDeskripsi').value = data.deskripsi || '';
                     document.getElementById('pdfModulId').value = data.modul_id;
-                    document.getElementById('pdfModalTitle').textContent = 'Edit PDF';
+                    document.getElementById('pdfModalTitle').textContent = 'Edit Materi Bacaan';
                     
-                    if (data.file_pdf) {
-                        document.getElementById('pdfPreview').textContent = 'File saat ini: ' + data.file_pdf.split('/').pop();
-                        document.getElementById('pdfPreview').style.display = 'block';
-                        document.getElementById('pdfIcon').style.display = 'none';
+                    // Load konten to Quill editor
+                    if (quillEditor && data.konten) {
+                        quillEditor.root.innerHTML = data.konten;
                     }
                     
                     modal.classList.add('active');
@@ -1627,7 +1635,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengambil data PDF');
+                    alert('Terjadi kesalahan saat mengambil data materi');
                 });
         }
         
@@ -1665,6 +1673,7 @@
                         document.getElementById('examJudul').value = data.judul;
                         document.getElementById('examDeskripsi').value = data.deskripsi || '';
                         document.getElementById('examModulId').value = data.modul_id;
+                        document.getElementById('examWaktu').value = data.waktu_pengerjaan || '';
                         document.getElementById('examModalTitle').textContent = 'Edit Ujian';
                     }
                     
@@ -1893,5 +1902,63 @@
             }, 2000);
         }
         @endhasanyrole
+
+        // Initialize Quill editor
+        let quillEditor;
+        if (document.getElementById('quillEditor')) {
+            quillEditor = new Quill('#quillEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Tulis konten materi di sini...'
+            });
+            
+            // Handle image upload
+            quillEditor.getModule('toolbar').addHandler('image', function() {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.click();
+                
+                input.onchange = async function() {
+                    const file = input.files[0];
+                    if (file) {
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        
+                        try {
+                            const response = await fetch('{{ route("admin.materi.upload-image") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: formData
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                                const range = quillEditor.getSelection();
+                                quillEditor.insertEmbed(range.index, 'image', data.url);
+                            } else {
+                                alert('Gagal upload gambar: ' + (data.message || 'Unknown error'));
+                            }
+                        } catch (error) {
+                            alert('Error upload gambar: ' + error);
+                        }
+                    }
+                };
+            });
+        }
+
+
     </script>
 @endsection

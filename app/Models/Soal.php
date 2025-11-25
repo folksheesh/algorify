@@ -14,7 +14,10 @@ class Soal extends Model
     protected $fillable = [
         'ujian_id',
         'pertanyaan',
+        'tipe_soal',
+        'lampiran_foto',
         'kunci_jawaban',
+        'pembahasan',
         'kursus_id',
     ];
 

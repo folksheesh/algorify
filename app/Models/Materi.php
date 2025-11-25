@@ -15,7 +15,9 @@ class Materi extends Model
         'modul_id',
         'judul',
         'deskripsi',
-        'file_pdf',
+        'konten',
+        'featured_image',
+        'file_path',
         'urutan',
     ];
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kursus;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,10 @@ class PelatihanController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        return view('admin.pelatihan.index', compact('kursus'));
+        // Get all users with pengajar role
+        $pengajars = User::role('pengajar')->orWhere('id', Auth::id())->get();
+        
+        return view('admin.pelatihan.index', compact('kursus', 'pengajars'));
     }
 
     public function show($id)
@@ -41,20 +45,29 @@ class PelatihanController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
-            'status' => 'required|in:draft,published,archived',
+            'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
-            'harga' => 'required|numeric|min:0',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'pengajar_id' => 'required|exists:users,id',
+            'durasi' => 'required|string|max:100',
+            'harga' => 'required|string|max:100',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
         ]);
 
         // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
             $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-            $validated['thumbnail'] = 'storage/' . $thumbnailPath;
+            $validated['thumbnail'] = $thumbnailPath;
         }
 
-        // Set the instructor (current user)
-        $validated['user_id'] = Auth::id();
+        // Set the instructor from form
+        $validated['user_id'] = $request->pengajar_id;
+        
+        // Get pengajar name and store it
+        $pengajar = User::find($request->pengajar_id);
+        $validated['pengajar'] = $pengajar->name;
+        
+        // Map tipe_kursus to status for database
+        $validated['status'] = 'published'; // Default status
 
         Kursus::create($validated);
 
@@ -75,23 +88,34 @@ class PelatihanController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
-            'status' => 'required|in:draft,published,archived',
+            'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
-            'harga' => 'required|numeric|min:0',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'pengajar_id' => 'required|exists:users,id',
+            'durasi' => 'required|string|max:100',
+            'harga' => 'required|string|max:100',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
         ]);
 
         // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
             // Delete old thumbnail if exists
             if ($kursus->thumbnail) {
-                $oldPath = str_replace('storage/', '', $kursus->thumbnail);
-                Storage::disk('public')->delete($oldPath);
+                Storage::disk('public')->delete($kursus->thumbnail);
             }
             
             $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-            $validated['thumbnail'] = 'storage/' . $thumbnailPath;
+            $validated['thumbnail'] = $thumbnailPath;
         }
+        
+        // Set the instructor from form
+        $validated['user_id'] = $request->pengajar_id;
+        
+        // Get pengajar name and store it
+        $pengajar = User::find($request->pengajar_id);
+        $validated['pengajar'] = $pengajar->name;
+        
+        // Map tipe_kursus to status for database
+        $validated['status'] = $kursus->status; // Keep existing status
 
         $kursus->update($validated);
 
@@ -105,8 +129,7 @@ class PelatihanController extends Controller
 
         // Delete thumbnail if exists
         if ($kursus->thumbnail) {
-            $path = str_replace('storage/', '', $kursus->thumbnail);
-            Storage::disk('public')->delete($path);
+            Storage::disk('public')->delete($kursus->thumbnail);
         }
 
         $kursus->delete();

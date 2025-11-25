@@ -248,7 +248,126 @@
     .check-icon {
         flex-shrink: 0;
     }
+
+    .materi-content {
+        font-size: 1rem;
+    }
+
+    .materi-content h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 2rem 0 1rem;
+        color: #1F2937;
+    }
+
+    .materi-content h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 1.5rem 0 1rem;
+        color: #1F2937;
+    }
+
+    .materi-content h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.75rem;
+        color: #374151;
+    }
+
+    .materi-content p {
+        margin-bottom: 1rem;
+    }
+
+    .materi-content ul, .materi-content ol {
+        margin: 1rem 0 1rem 1.5rem;
+    }
+
+    .materi-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    .materi-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .materi-content code {
+        background: #F3F4F6;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+    }
+
+    .materi-content pre {
+        background: #1F2937;
+        color: #F9FAFB;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+
+    .materi-content blockquote {
+        border-left: 4px solid #667eea;
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: #6B7280;
+    }
+
+    .complete-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        background: #10B981;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .complete-btn:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .complete-btn.completed {
+        background: #6B7280;
+    }
+
+    .complete-btn.completed:hover {
+        background: #4B5563;
+    }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    function markAsComplete() {
+        const btn = document.querySelector('.complete-btn');
+        const btnText = document.getElementById('completeBtnText');
+        
+        // TODO: Implement actual completion tracking with backend
+        // For now, just toggle the button state
+        if (btn.classList.contains('completed')) {
+            btn.classList.remove('completed');
+            btnText.textContent = 'Tandai Sudah Selesai';
+        } else {
+            btn.classList.add('completed');
+            btnText.textContent = '✓ Sudah Selesai';
+        }
+    }
+</script>
 @endpush
 
 @section('content')
@@ -267,12 +386,12 @@
         <!-- Main Content -->
         <div class="main-content">
             
-            <!-- PDF Header -->
+            <!-- Reading Header -->
             <div class="pdf-header">
                 <div class="pdf-meta">
                     <div class="pdf-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke="white" stroke-width="2" fill="none"/>
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
                     <span style="font-size: 0.875rem; opacity: 0.9;">{{ $materi->modul->judul }}</span>
@@ -281,31 +400,30 @@
             </div>
 
             
-            <!-- PDF Body -->
+            <!-- Reading Content -->
             <div class="pdf-body">
-                
-                <!-- PDF Viewer -->
-                <div class="pdf-viewer">
-                    <svg class="pdf-file-icon" viewBox="0 0 24 24" fill="none">
-                        <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke="#DC2626" stroke-width="2" fill="none"/>
-                    </svg>
-                    <h3 class="pdf-filename">{{ basename($materi->file_pdf) }}</h3>
-                    <a href="{{ asset('storage/' . $materi->file_pdf) }}" target="_blank" class="open-pdf-btn">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                        </svg>
-                        Buka PDF
-                    </a>
-                </div>
 
                 <!-- Description -->
                 @if($materi->deskripsi)
                 <div class="pdf-description">
-                    <h3 class="section-title">Deskripsi</h3>
-                    <p class="description-text">{{ $materi->deskripsi }}</p>
+                    <p class="description-text" style="font-size: 1.125rem; font-style: italic; color: #6B7280; border-left: 4px solid #667eea; padding-left: 1rem; margin-bottom: 2rem;">{{ $materi->deskripsi }}</p>
                 </div>
                 @endif
+
+                <!-- Main Content -->
+                <div class="materi-content" style="line-height: 1.8; color: #374151;">
+                    {!! $materi->konten !!}
+                </div>
+
+                <!-- Mark as Complete Button -->
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #E5E7EB; text-align: center;">
+                    <button class="complete-btn" onclick="markAsComplete()">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span id="completeBtnText">Tandai Sudah Selesai</span>
+                    </button>
+                </div>
 
             </div>
 
@@ -359,14 +477,14 @@
                                     </svg>
                                 @else
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke="{{ $isCurrent ? 'white' : '#DC2626' }}" stroke-width="2" fill="none"/>
+                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="{{ $isCurrent ? 'white' : '#DC2626' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 @endif
                             </div>
                             
                             <div class="material-info">
                                 <div class="material-title">{{ $itemData->judul }}</div>
-                                <div class="material-type">{{ $isVideo ? 'Video' : 'PDF' }}</div>
+                                <div class="material-type">{{ $isVideo ? 'Video' : 'Bacaan' }}</div>
                             </div>
 
                             @if($isCurrent)

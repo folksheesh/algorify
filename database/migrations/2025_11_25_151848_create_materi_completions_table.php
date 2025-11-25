@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kategori_soal', function (Blueprint $table) {
+        Schema::create('materi_completions', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('kode')->unique();
-            $table->text('deskripsi')->nullable();
-            $table->string('warna')->default('#667eea');
             $table->timestamps();
         });
     }
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategori_soal');
+        Schema::dropIfExists('materi_completions');
     }
 };

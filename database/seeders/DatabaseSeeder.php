@@ -37,6 +37,16 @@ class DatabaseSeeder extends Seeder
             KursusSeeder::class,
         ]);
 
+        // Seed Web Development content (Modul, Video, Materi, Ujian, Soal)
+        $this->call([
+            ModulSeeder::class,
+            VideoSeeder::class,
+            MateriSeeder::class,
+            UjianSeeder::class,
+            SoalSeeder::class,
+            PilihanJawabanSeeder::class,
+        ]);
+
         // Seed bank soal
         $this->call([
             BankSoalSeeder::class,

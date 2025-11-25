@@ -23,6 +23,7 @@ class UjianController extends Controller
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tipe' => 'required|in:quiz,ujian',
+            'waktu_pengerjaan' => 'required|integer|min:1',
         ]);
 
         // Get kursus_id from modul
@@ -35,6 +36,7 @@ class UjianController extends Controller
             'deskripsi' => $validated['deskripsi'],
             'tipe' => $validated['tipe'] === 'quiz' ? 'practice' : 'exam',
             'status' => 'active',
+            'waktu_pengerjaan' => $validated['waktu_pengerjaan'],
         ]);
 
         return response()->json([
@@ -55,12 +57,14 @@ class UjianController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'waktu_pengerjaan' => 'required|integer|min:1',
         ]);
 
         $ujian = Ujian::findOrFail($id);
         $ujian->update([
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
+            'waktu_pengerjaan' => $validated['waktu_pengerjaan'],
         ]);
 
         return response()->json([

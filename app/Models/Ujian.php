@@ -16,10 +16,12 @@ class Ujian extends Model
         'modul_id',
         'judul',
         'deskripsi',
+        'waktu_pengerjaan',
         'waktu_mulai',
         'waktu_selesai',
         'status',
         'tipe',
+        'minimum_score',
     ];
 
     protected $casts = [

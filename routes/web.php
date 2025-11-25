@@ -98,11 +98,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/video/{id}', [\App\Http\Controllers\Admin\VideoController::class, 'update'])->name('video.update');
         Route::delete('/video/{id}', [\App\Http\Controllers\Admin\VideoController::class, 'destroy'])->name('video.destroy');
         
-        // Materi (PDF) CUD routes
+        // Materi (Reading Content) CUD routes
         Route::post('/materi', [\App\Http\Controllers\Admin\MateriController::class, 'store'])->name('materi.store');
         Route::get('/materi/{id}/edit', [\App\Http\Controllers\Admin\MateriController::class, 'edit'])->name('materi.edit');
         Route::put('/materi/{id}', [\App\Http\Controllers\Admin\MateriController::class, 'update'])->name('materi.update');
         Route::delete('/materi/{id}', [\App\Http\Controllers\Admin\MateriController::class, 'destroy'])->name('materi.destroy');
+        Route::post('/materi/upload-image', [\App\Http\Controllers\Admin\MateriController::class, 'uploadImage'])->name('materi.upload-image');
         
         // Ujian CUD routes
         Route::post('/ujian', [\App\Http\Controllers\Admin\UjianController::class, 'store'])->name('ujian.store');
@@ -112,6 +113,8 @@ Route::middleware('auth')->group(function () {
         
         // Soal routes
         Route::post('/soal', [\App\Http\Controllers\Admin\SoalController::class, 'store'])->name('soal.store');
+        Route::get('/soal/{id}/edit', [\App\Http\Controllers\Admin\SoalController::class, 'edit'])->name('soal.edit');
+        Route::put('/soal/{id}', [\App\Http\Controllers\Admin\SoalController::class, 'update'])->name('soal.update');
         Route::delete('/soal/{id}', [\App\Http\Controllers\Admin\SoalController::class, 'destroy'])->name('soal.destroy');
         Route::get('/soal/template', [\App\Http\Controllers\Admin\SoalController::class, 'downloadTemplate'])->name('soal.template');
         Route::post('/soal/import', [\App\Http\Controllers\Admin\SoalController::class, 'import'])->name('soal.import');
@@ -170,6 +173,10 @@ Route::middleware('auth')->group(function () {
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
         Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
+        
+        // Ujian routes
+        Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
+        Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
     });
 });
 
