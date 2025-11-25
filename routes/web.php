@@ -62,7 +62,62 @@ Route::middleware('auth')->group(function () {
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
         Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
+        Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
     });
+});
+
+// DOKU notification webhook (outside auth middleware)
+Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentController::class, 'notification'])->name('doku.notification');
+
+// Debug DOKU Signature
+Route::get('/debug/doku-test', function() {
+    $body = [
+        'order' => [
+            'amount' => 700000,
+            'invoice_number' => 'TEST-' . time(),
+            'currency' => 'IDR',
+        ],
+        'payment' => [
+            'payment_due_date' => 60,
+        ],
+        'customer' => [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ],
+    ];
+    
+    $path = '/checkout/v1/payment';
+    $sig = \App\Services\DokuSignatureService::generate($body, $path);
+    
+    $endpoint = config('doku.base_url') . $path;
+    
+    $response = \Http::withHeaders([
+        'Client-Id' => config('doku.client_id'),
+        'Request-Id' => $sig['request_id'],
+        'Request-Timestamp' => $sig['request_timestamp'],
+        'Signature' => $sig['signature'],
+        'Content-Type' => 'application/json',
+    ])
+    ->withOptions(['verify' => false])
+    ->withBody($sig['json_body'], 'application/json')
+    ->post($endpoint);
+    
+    return response()->json([
+        'request' => [
+            'endpoint' => $endpoint,
+            'client_id' => config('doku.client_id'),
+            'headers' => [
+                'Request-Id' => $sig['request_id'],
+                'Request-Timestamp' => $sig['request_timestamp'],
+                'Signature' => $sig['signature'],
+            ],
+            'body' => $sig['json_body'],
+        ],
+        'response' => [
+            'status' => $response->status(),
+            'body' => $response->json(),
+        ],
+    ], 200, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
 require __DIR__.'/auth.php';

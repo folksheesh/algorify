@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
@@ -12,11 +11,11 @@ class AnalitikController extends Controller
     public function index()
     {
         try {
-            // Statistics
-            $totalPendapatan = Transaksi::where('status', 'lunas')->sum('jumlah');
+            // Statistics (use enum values: pending, success, failed, expired)
+            $totalPendapatan = Transaksi::where('status', 'success')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
-            $lunasCount = Transaksi::where('status', 'lunas')->count();
-            $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
+            $successCount = Transaksi::where('status', 'success')->count();
+            $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($successCount / $totalTransaksi) * 100, 1) : 0;
 
             return view('admin.analitik.index', compact(
                 'totalPendapatan',

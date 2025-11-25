@@ -39,11 +39,11 @@ class TransaksiController extends Controller
 
             $transaksi = $query->paginate(10);
 
-            // Hitung statistik
-            $totalPendapatan = Transaksi::where('status', 'lunas')->sum('jumlah');
+            // Hitung statistik (enum: pending, success, failed, expired)
+            $totalPendapatan = Transaksi::where('status', 'success')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
-            $lunasCount = Transaksi::where('status', 'lunas')->count();
-            $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
+            $successCount = Transaksi::where('status', 'success')->count();
+            $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($successCount / $totalTransaksi) * 100, 1) : 0;
 
             return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan'));
         } catch (\Exception $e) {
@@ -58,7 +58,7 @@ class TransaksiController extends Controller
                     'kursus' => (object)['nama' => 'Laravel untuk Pemula'],
                     'jumlah' => 150000,
                     'metode_pembayaran' => 'Bank Transfer',
-                    'status' => 'lunas',
+                    'status' => 'success',
                     'created_at' => now()->subDays(2),
                 ],
                 (object)[
@@ -78,7 +78,7 @@ class TransaksiController extends Controller
                     'kursus' => (object)['nama' => 'Python Programming'],
                     'jumlah' => 175000,
                     'metode_pembayaran' => 'Bank Transfer',
-                    'status' => 'lunas',
+                    'status' => 'success',
                     'created_at' => now()->subDays(3),
                 ],
                 (object)[
@@ -98,7 +98,7 @@ class TransaksiController extends Controller
                     'kursus' => (object)['nama' => 'JavaScript Modern'],
                     'jumlah' => 180000,
                     'metode_pembayaran' => 'E-Wallet',
-                    'status' => 'lunas',
+                    'status' => 'success',
                     'created_at' => now()->subHours(12),
                 ],
                 (object)[
@@ -118,7 +118,7 @@ class TransaksiController extends Controller
                     'kursus' => (object)['nama' => 'Database Design'],
                     'jumlah' => 165000,
                     'metode_pembayaran' => 'Virtual Account',
-                    'status' => 'lunas',
+                    'status' => 'success',
                     'created_at' => now()->subDays(5),
                 ],
             ];
