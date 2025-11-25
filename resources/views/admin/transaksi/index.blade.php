@@ -208,23 +208,24 @@
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
         }
-        .status-badge.lunas {
+        .status-badge.success {
             background: #D1FAE5;
             color: #059669;
-            margin-left: 0.5rem;
         }
         .status-badge.pending {
             background: #FEF3C7;
             color: #D97706;
         }
-        .status-badge.gagal {
+        .status-badge.failed {
             background: #FEE2E2;
             color: #DC2626;
         }
-        .status-badge svg {
-            width: 12px;
-            height: 12px;
+        .status-badge.expired {
+            background: #F3F4F6;
+            color: #6B7280;
         }
         .method-badge {
             display: inline-flex;
@@ -336,7 +337,7 @@
                             <div class="stat-label">Total Transaksi</div>
                             <div class="stat-value">{{ $totalTransaksi }}</div>
                             <div class="stat-change neutral">
-                                <span>{{ \App\Models\Transaksi::where('status', 'lunas')->count() }} Lunas</span>
+                                <span>{{ \App\Models\Transaksi::where('status', 'success')->count() }} Lunas</span>
                             </div>
                         </div>
                     </div>
@@ -351,7 +352,7 @@
                         <div class="filter-group" style="flex: 0.8;">
                             <select id="filterStatus" class="filter-select">
                                 <option value="">Semua Status</option>
-                                <option value="lunas">Lunas</option>
+                                <option value="success">Lunas</option>
                                 <option value="pending">Pending</option>
                             </select>
                         </div>
@@ -423,24 +424,35 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="status-badge {{ $item->status }}">
-                                            @if($item->status == 'lunas')
-                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                        @if($item->status == 'success')
+                                            <span class="status-badge success">
+                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                 </svg>
                                                 Lunas
-                                            @elseif($item->status == 'pending')
-                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                            </span>
+                                        @elseif($item->status == 'pending')
+                                            <span class="status-badge pending">
+                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                                 </svg>
                                                 Pending
-                                            @else
-                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                            </span>
+                                        @elseif($item->status == 'failed')
+                                            <span class="status-badge failed">
+                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                                                 </svg>
                                                 Gagal
-                                            @endif
-                                        </span>
+                                            </span>
+                                        @else
+                                            <span class="status-badge expired">
+                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                                </svg>
+                                                {{ ucfirst($item->status) }}
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

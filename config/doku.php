@@ -7,4 +7,5 @@ return [
     'base_url'      => env('DOKU_IS_PRODUCTION', false)
         ? 'https://api.doku.com'
         : 'https://api-sandbox.doku.com',
+    'disable_ssl_verify' => env('DOKU_DISABLE_SSL_VERIFY', false),
 ];

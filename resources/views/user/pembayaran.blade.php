@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
@@ -116,9 +116,9 @@
                 <p class="subtitle">Pilih metode pembayaran melalui DOKU Payment Gateway</p>
 
                 @if(isset($paymentUrl) && $paymentUrl)
-                <a href="{{ $paymentUrl }}" class="btn-primary">
+                <button id="pay-button" data-url="{{ $paymentUrl }}" class="btn-primary">
                     Bayar dengan DOKU
-                </a>
+                </button>
                 @else
                 <button disabled class="btn-primary btn-disabled">
                     Link Pembayaran Tidak Tersedia
@@ -140,7 +140,90 @@
     </main>
 </div>
 
+<!-- DOKU Payment Popup Modal -->
+<div id="doku-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); width: 90%; max-width: 1000px; height: 85vh; max-height: 800px; position: relative; margin: auto;">
+        <!-- Close Button -->
+        <button id="close-modal" style="position: absolute; top: 16px; right: 16px; background: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        
+        <!-- Loading State -->
+        <div id="loading-state" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+            <div style="text-align: center;">
+                <div style="display: inline-block; width: 48px; height: 48px; border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="margin-top: 16px; color: #6b7280; font-size: 14px;">Memuat halaman pembayaran...</p>
+            </div>
+        </div>
+        
+        <!-- Iframe -->
+        <iframe id="doku-iframe" style="width: 100%; height: 100%; border: none; border-radius: 12px; display: none;"></iframe>
+    </div>
+</div>
+
+<style>
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if(isset($paymentUrl) && $paymentUrl)
+    const payButton = document.getElementById('pay-button');
+    const modal = document.getElementById('doku-modal');
+    const iframe = document.getElementById('doku-iframe');
+    const loadingState = document.getElementById('loading-state');
+    const closeButton = document.getElementById('close-modal');
+    
+    if (!payButton) return;
+    
+    const paymentUrl = payButton.getAttribute('data-url');
+    if (!paymentUrl) return;
+    
+    // Open modal
+    payButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        modal.style.display = 'flex';
+        loadingState.style.display = 'flex';
+        iframe.style.display = 'none';
+        iframe.src = paymentUrl;
+    });
+    
+    // Iframe loaded
+    iframe.addEventListener('load', function() {
+        loadingState.style.display = 'none';
+        iframe.style.display = 'block';
+    });
+    
+    // Close modal
+    closeButton.addEventListener('click', function() {
+        modal.style.display = 'none';
+        iframe.src = '';
+    });
+    
+    // Close on background click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            iframe.src = '';
+        }
+    });
+    
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            modal.style.display = 'none';
+            iframe.src = '';
+        }
+    });
+    @endif
+    
     // Auto check payment status every 5 seconds
     @if($transaksi->status === 'pending')
     const checkInterval = setInterval(async () => {
@@ -150,9 +233,11 @@
             
             if (data.status === 'success') {
                 clearInterval(checkInterval);
+                modal.style.display = 'none';
                 window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
             } else if (data.status === 'failed' || data.status === 'expired') {
                 clearInterval(checkInterval);
+                modal.style.display = 'none';
                 location.reload();
             }
         } catch (error) {
@@ -160,5 +245,6 @@
         }
     }, 5000);
     @endif
+});
 </script>
 @endsection

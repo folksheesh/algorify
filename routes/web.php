@@ -120,4 +120,40 @@ Route::get('/debug/doku-test', function() {
     ], 200, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
+// Update transaction status manually (for testing)
+Route::get('/debug/update-transaction/{kode}', function($kode) {
+    $transaksi = \App\Models\Transaksi::where('kode_transaksi', $kode)->first();
+    
+    if (!$transaksi) {
+        return response()->json(['error' => 'Transaction not found'], 404);
+    }
+    
+    $transaksi->status = 'success';
+    $transaksi->save();
+    
+    // Activate enrollment
+    $enrollment = \App\Models\Enrollment::where('user_id', $transaksi->user_id)
+        ->where('kursus_id', $transaksi->kursus_id)
+        ->first();
+    
+    if ($enrollment) {
+        $enrollment->status = 'active';
+        $enrollment->save();
+    } else {
+        $enrollment = \App\Models\Enrollment::create([
+            'user_id' => $transaksi->user_id,
+            'kursus_id' => $transaksi->kursus_id,
+            'tanggal_daftar' => now(),
+            'status' => 'active',
+            'progress' => 0,
+        ]);
+    }
+    
+    return response()->json([
+        'success' => true,
+        'transaction' => $transaksi,
+        'enrollment' => $enrollment,
+    ]);
+});
+
 require __DIR__.'/auth.php';

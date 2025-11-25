@@ -9,6 +9,7 @@ use App\Models\Enrollment;
 use App\Models\Transaksi;
 use Illuminate\Support\Str;
 use App\Services\DokuSignatureService;
+use Illuminate\Support\Facades\Auth;
 
 class EnrollmentController extends Controller
 {
@@ -17,10 +18,22 @@ class EnrollmentController extends Controller
      */
     public function showPayment($id)
     {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $user = Auth::user();
         $kursus = Kursus::with('pengajar')->findOrFail($id);
         
+        // Ensure pengajar is loaded
+        if (!$kursus->pengajar) {
+            \Log::error("Kursus {$id} has no pengajar (user_id may be invalid)");
+            abort(500, 'Data kursus tidak lengkap');
+        }
+        
         // Check if user already enrolled
-        $existingEnrollment = Enrollment::where('user_id', auth()->id())
+        $existingEnrollment = Enrollment::where('user_id', $user->id)
             ->where('kursus_id', $id)
             ->first();
         
@@ -30,22 +43,31 @@ class EnrollmentController extends Controller
         }
 
         // Create or get existing pending transaction
-        $transaksi = Transaksi::firstOrCreate(
-            [
-                'user_id' => auth()->id(),
+        $transaksi = Transaksi::where('user_id', $user->id)
+            ->where('kursus_id', $id)
+            ->whereIn('status', ['pending', 'success'])
+            ->first();
+
+        // If no transaction or transaction expired/failed, create new one
+        if (!$transaksi || in_array($transaksi->status, ['failed', 'expired'])) {
+            $transaksi = Transaksi::create([
+                'user_id' => $user->id,
                 'kursus_id' => $id,
-                'status' => 'pending'
-            ],
-            [
                 'kode_transaksi' => 'TRX-' . strtoupper(Str::random(10)),
                 'jumlah' => $kursus->harga,
                 'nominal_pembayaran' => $kursus->harga,
-                // Use allowed enum value to satisfy DB constraint
+                'status' => 'pending',
                 'metode_pembayaran' => 'e_wallet',
-            ]
-        );
+            ]);
+        }
 
-        // Generate DOKU Payment URL with detailed error capture
+        // If transaction is already success, redirect to courses
+        if ($transaksi->status === 'success') {
+            return redirect()->route('user.pelatihan-saya.index')
+                ->with('success', 'Pembayaran sudah berhasil!');
+        }
+
+        // Generate DOKU Payment URL only for pending transactions
         [$paymentUrl, $snapError] = $this->getSnapToken($transaksi, $kursus);
         
         return view('user.pembayaran', compact('kursus', 'transaksi', 'paymentUrl', 'snapError'));
@@ -56,11 +78,18 @@ class EnrollmentController extends Controller
      */
     private function getSnapToken($transaksi, $kursus)
     {
+        // Double check user authentication
+        if (!Auth::check()) {
+            \Log::error('DOKU Payment Error: User not authenticated');
+            return [null, 'User not authenticated'];
+        }
+
         $baseUrl = config('doku.base_url');
         $path = '/checkout/v1/payment';
         $endpoint = $baseUrl . $path;
 
         // Prepare request body
+        $user = Auth::user();
         $body = [
             'order' => [
                 'amount' => (int) $transaksi->jumlah,
@@ -71,8 +100,8 @@ class EnrollmentController extends Controller
                 'payment_due_date' => 60, // minutes
             ],
             'customer' => [
-                'name' => auth()->user()->name,
-                'email' => auth()->user()->email,
+                'name' => $user->name ?? 'Guest',
+                'email' => $user->email ?? 'guest@example.com',
             ],
         ];
 
@@ -142,10 +171,16 @@ class EnrollmentController extends Controller
      */
     public function enroll(Request $request, $id)
     {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $user = Auth::user();
         $kursus = Kursus::findOrFail($id);
         
         // Check if user already enrolled
-        $existingEnrollment = Enrollment::where('user_id', auth()->id())
+        $existingEnrollment = Enrollment::where('user_id', $user->id)
             ->where('kursus_id', $id)
             ->first();
         
@@ -156,7 +191,7 @@ class EnrollmentController extends Controller
         
         // Create enrollment
         $enrollment = Enrollment::create([
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'kursus_id' => $kursus->id,
             'tanggal_daftar' => now(),
             'status' => $kursus->harga > 0 ? 'pending' : 'active',
@@ -257,10 +292,27 @@ class EnrollmentController extends Controller
      */
     public function checkStatus($kode_transaksi)
     {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
         $transaksi = Transaksi::where('kode_transaksi', $kode_transaksi)
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->with('kursus')
             ->firstOrFail();
+
+        // If still pending, try to check DOKU status
+        if ($transaksi->status === 'pending') {
+            try {
+                \Artisan::call('doku:check-status', ['--kode' => $kode_transaksi]);
+                // Refresh transaction from database
+                $transaksi->refresh();
+            } catch (\Exception $e) {
+                \Log::error('Error checking DOKU status: ' . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'status' => $transaksi->status,
