@@ -6,53 +6,7 @@
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-        .page-header { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); margin-bottom: 1.5rem; }
-        .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #1E293B; margin: 0 0 0.25rem 0; }
-        .page-header p { color: #64748B; font-size: 0.875rem; margin: 0; }
-        .table-container { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); margin-top: 1.5rem; }
-        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; }
-        .search-box { position: relative; flex: 1; max-width: 400px; }
-        .search-box input { width: 100%; padding: 0.625rem 1rem 0.625rem 2.75rem; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.875rem; height: 40px; box-sizing: border-box; }
-        .search-box input:focus { outline: none; border-color: #5D3FFF; box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1); }
-        .search-box svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; }
-        .btn-add { padding: 0 1.5rem; background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%); color: white; border: none; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; height: 40px; box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2); }
-        .btn-add:hover { background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3); }
-        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .data-table thead { background: #5D3FFF; color: white; }
-        .data-table thead th { padding: 1rem; text-align: center; font-weight: 600; font-size: 0.875rem; }
-        .data-table thead th:first-child { border-radius: 8px 0 0 0; }
-        .data-table thead th:last-child { border-radius: 0 8px 0 0; }
-        .data-table tbody tr { border-bottom: 1px solid #F1F5F9; transition: all 0.2s; }
-        .data-table tbody tr:hover { background: #F8FAFC; transform: scale(1.01); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
-        .data-table tbody td { padding: 1rem; font-size: 0.875rem; color: #334155; text-align: center; }
-        .action-buttons { display: flex; gap: 0.5rem; justify-content: center; }
-        .btn-action { padding: 0.5rem; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; background: transparent; }
-        .btn-action:hover { transform: scale(1.1); }
-        .btn-edit { color: #F59E0B; }
-        .btn-delete { color: #EF4444; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 1rem; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: white; border-radius: 16px; padding: 2rem 2.5rem; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
-        .modal-header h2 { font-size: 1.375rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0; }
-        .modal-header p { color: #64748B; font-size: 0.8125rem; margin: 0 0 1.5rem 0; }
-        .modal-close { position: absolute; top: 1.75rem; right: 2rem; background: transparent; border: none; color: #94A3B8; cursor: pointer; font-size: 1.5rem; }
-        .modal-close:hover { color: #64748B; }
-        .form-group { margin-bottom: 0.875rem; }
-        .form-label { display: block; font-size: 0.8125rem; font-weight: 500; color: #0F172A; margin-bottom: 0.375rem; }
-        .form-input { width: 100%; padding: 0.75rem 0.875rem; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 0.8125rem; background: white; color: #475569; transition: all 0.2s; box-sizing: border-box; }
-        .form-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-        textarea.form-input { font-family: 'Inter', sans-serif; line-height: 1.5; resize: vertical; min-height: 100px; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 0.625rem; margin-top: 1.25rem; }
-        .btn { padding: 0.625rem 1.75rem; border-radius: 6px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
-        .btn-cancel { background: white; color: #64748B; border: 1px solid #CBD5E1; }
-        .btn-cancel:hover { background: #F8FAFC; border-color: #94A3B8; }
-        .btn-submit { background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%); color: white; box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2); }
-        .btn-submit:hover { background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%); box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3); }
-        .btn-danger { background: #EF4444; color: white; }
-        .btn-danger:hover { background: #DC2626; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('resources/css/admin/kategori-index.css') }}">
 @endpush
 
 @section('content')
