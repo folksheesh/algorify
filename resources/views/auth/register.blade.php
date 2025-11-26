@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/bootstrap-icons/font/bootstrap-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/custom/login.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 48px !important;
+            padding: 8px 12px !important;
+            border: 1px solid #dfe3e7 !important;
+            border-radius: 0.5rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 32px !important;
+            color: #6c757d !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 46px !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #dfe3e7 !important;
+            border-radius: 0.5rem !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #435EBE !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -96,6 +119,66 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                            <select class="form-control form-control-xl @error('jenis_kelamin') is-invalid @enderror" name="jenis_kelamin" id="jenis_kelamin">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="domisili" class="form-label">Domisili (Provinsi)</label>
+                            <select class="form-control form-control-xl @error('domisili') is-invalid @enderror" name="domisili" id="domisili">
+                                <option value="">Pilih Provinsi</option>
+                                <option value="Aceh" {{ old('domisili') == 'Aceh' ? 'selected' : '' }}>Aceh</option>
+                                <option value="Sumatera Utara" {{ old('domisili') == 'Sumatera Utara' ? 'selected' : '' }}>Sumatera Utara</option>
+                                <option value="Sumatera Barat" {{ old('domisili') == 'Sumatera Barat' ? 'selected' : '' }}>Sumatera Barat</option>
+                                <option value="Riau" {{ old('domisili') == 'Riau' ? 'selected' : '' }}>Riau</option>
+                                <option value="Kepulauan Riau" {{ old('domisili') == 'Kepulauan Riau' ? 'selected' : '' }}>Kepulauan Riau</option>
+                                <option value="Jambi" {{ old('domisili') == 'Jambi' ? 'selected' : '' }}>Jambi</option>
+                                <option value="Sumatera Selatan" {{ old('domisili') == 'Sumatera Selatan' ? 'selected' : '' }}>Sumatera Selatan</option>
+                                <option value="Bangka Belitung" {{ old('domisili') == 'Bangka Belitung' ? 'selected' : '' }}>Bangka Belitung</option>
+                                <option value="Bengkulu" {{ old('domisili') == 'Bengkulu' ? 'selected' : '' }}>Bengkulu</option>
+                                <option value="Lampung" {{ old('domisili') == 'Lampung' ? 'selected' : '' }}>Lampung</option>
+                                <option value="DKI Jakarta" {{ old('domisili') == 'DKI Jakarta' ? 'selected' : '' }}>DKI Jakarta</option>
+                                <option value="Banten" {{ old('domisili') == 'Banten' ? 'selected' : '' }}>Banten</option>
+                                <option value="Jawa Barat" {{ old('domisili') == 'Jawa Barat' ? 'selected' : '' }}>Jawa Barat</option>
+                                <option value="Jawa Tengah" {{ old('domisili') == 'Jawa Tengah' ? 'selected' : '' }}>Jawa Tengah</option>
+                                <option value="DI Yogyakarta" {{ old('domisili') == 'DI Yogyakarta' ? 'selected' : '' }}>DI Yogyakarta</option>
+                                <option value="Jawa Timur" {{ old('domisili') == 'Jawa Timur' ? 'selected' : '' }}>Jawa Timur</option>
+                                <option value="Bali" {{ old('domisili') == 'Bali' ? 'selected' : '' }}>Bali</option>
+                                <option value="Nusa Tenggara Barat" {{ old('domisili') == 'Nusa Tenggara Barat' ? 'selected' : '' }}>Nusa Tenggara Barat</option>
+                                <option value="Nusa Tenggara Timur" {{ old('domisili') == 'Nusa Tenggara Timur' ? 'selected' : '' }}>Nusa Tenggara Timur</option>
+                                <option value="Kalimantan Barat" {{ old('domisili') == 'Kalimantan Barat' ? 'selected' : '' }}>Kalimantan Barat</option>
+                                <option value="Kalimantan Tengah" {{ old('domisili') == 'Kalimantan Tengah' ? 'selected' : '' }}>Kalimantan Tengah</option>
+                                <option value="Kalimantan Selatan" {{ old('domisili') == 'Kalimantan Selatan' ? 'selected' : '' }}>Kalimantan Selatan</option>
+                                <option value="Kalimantan Timur" {{ old('domisili') == 'Kalimantan Timur' ? 'selected' : '' }}>Kalimantan Timur</option>
+                                <option value="Kalimantan Utara" {{ old('domisili') == 'Kalimantan Utara' ? 'selected' : '' }}>Kalimantan Utara</option>
+                                <option value="Sulawesi Utara" {{ old('domisili') == 'Sulawesi Utara' ? 'selected' : '' }}>Sulawesi Utara</option>
+                                <option value="Sulawesi Tengah" {{ old('domisili') == 'Sulawesi Tengah' ? 'selected' : '' }}>Sulawesi Tengah</option>
+                                <option value="Sulawesi Selatan" {{ old('domisili') == 'Sulawesi Selatan' ? 'selected' : '' }}>Sulawesi Selatan</option>
+                                <option value="Sulawesi Tenggara" {{ old('domisili') == 'Sulawesi Tenggara' ? 'selected' : '' }}>Sulawesi Tenggara</option>
+                                <option value="Gorontalo" {{ old('domisili') == 'Gorontalo' ? 'selected' : '' }}>Gorontalo</option>
+                                <option value="Sulawesi Barat" {{ old('domisili') == 'Sulawesi Barat' ? 'selected' : '' }}>Sulawesi Barat</option>
+                                <option value="Maluku" {{ old('domisili') == 'Maluku' ? 'selected' : '' }}>Maluku</option>
+                                <option value="Maluku Utara" {{ old('domisili') == 'Maluku Utara' ? 'selected' : '' }}>Maluku Utara</option>
+                                <option value="Papua" {{ old('domisili') == 'Papua' ? 'selected' : '' }}>Papua</option>
+                                <option value="Papua Barat" {{ old('domisili') == 'Papua Barat' ? 'selected' : '' }}>Papua Barat</option>
+                                <option value="Papua Tengah" {{ old('domisili') == 'Papua Tengah' ? 'selected' : '' }}>Papua Tengah</option>
+                                <option value="Papua Pegunungan" {{ old('domisili') == 'Papua Pegunungan' ? 'selected' : '' }}>Papua Pegunungan</option>
+                                <option value="Papua Selatan" {{ old('domisili') == 'Papua Selatan' ? 'selected' : '' }}>Papua Selatan</option>
+                                <option value="Papua Barat Daya" {{ old('domisili') == 'Papua Barat Daya' ? 'selected' : '' }}>Papua Barat Daya</option>
+                            </select>
+                            @error('domisili')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" value="1" id="agree" required>
                             <label class="form-check-label" for="agree">
@@ -157,5 +240,16 @@
                 });
             }
         })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#domisili').select2({
+                placeholder: 'Pilih Provinsi',
+                allowClear: true,
+                width: '100%'
+            });
+        });
     </script>
 @endpush

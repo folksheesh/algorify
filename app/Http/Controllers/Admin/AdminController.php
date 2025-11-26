@@ -30,7 +30,7 @@ class AdminController extends Controller
     {
         $query = User::role('admin')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         return response()->json($query);
     }

@@ -13,7 +13,7 @@
     <!-- Quill Editor -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
-    @vite(['resources/css/admin/pelatihan-show.css'])
+    {{-- @vite(['resources/css/admin/pelatihan-show.css']) --}}
 @endpush
 
 @section('content')

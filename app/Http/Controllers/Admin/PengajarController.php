@@ -64,10 +64,10 @@ class PengajarController extends Controller
             }]);
 
         // Ambil data dan urutkan berdasarkan tanggal dibuat (terbaru dulu)
-        $pengajar = $query->orderBy('created_at', 'desc')->get();
+        $pengajar = $query->orderBy('created_at', 'desc')->paginate(10);
 
         // Hitung total siswa untuk setiap pengajar dari semua kursusnya
-        $pengajar->map(function($item) {
+        $pengajar->getCollection()->transform(function($item) {
             $item->total_siswa = $item->kursus->sum('total_siswa');
             return $item;
         });

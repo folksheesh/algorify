@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('foto_profil')->nullable()->after('jenis_kelamin');
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->after('foto_profil');
             $table->date('tanggal_lahir')->nullable()->after('status');
-            $table->timestamp('tanggal_daftar')->useCurrent()->after('tanggal_lahir');
+            $table->string('domisili')->nullable()->after('tanggal_lahir');
+            $table->timestamp('tanggal_daftar')->useCurrent()->after('domisili');
             $table->timestamp('tanggal_login_terakhir')->nullable()->after('tanggal_daftar');
         });
     }
@@ -35,6 +36,7 @@ return new class extends Migration
                 'foto_profil',
                 'status',
                 'tanggal_lahir',
+                'domisili',
                 'tanggal_daftar',
                 'tanggal_login_terakhir'
             ]);

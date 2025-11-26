@@ -25,6 +25,7 @@ class User extends Authenticatable
         'profesi',
         'pendidikan',
         'address',
+        'domisili',
         'jenis_kelamin',
         'foto_profil',
         'status',
