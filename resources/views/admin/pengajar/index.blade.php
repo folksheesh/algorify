@@ -82,7 +82,7 @@ Features: CRUD, Search, Filter, Export
                                     <th>Email</th>
                                     <th>Kursus yang Diajarkan</th>
                                     <th>Status</th>
-                                    <th>Jumlah Kelas</th>
+                                    <th>Jumlah Kursus</th>
                                     <th>Total Siswa</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -140,10 +140,10 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Domisili --}}
+                {{-- Alamat --}}
                 <div class="form-group">
-                    <label class="form-label">Domisili (Provinsi)</label>
-                    <input type="text" class="form-input" id="detailDomisili" readonly>
+                    <label class="form-label">Alamat</label>
+                    <input type="text" class="form-input" id="detailAlamat" readonly>
                 </div>
 
                 {{-- Tanggal Lahir dan Jenis Kelamin (2 kolom) --}}
@@ -161,13 +161,13 @@ Features: CRUD, Search, Filter, Export
                 {{-- Kursus yang Diajarkan --}}
                 <div class="form-group">
                     <label class="form-label">Kursus yang Diajarkan</label>
-                    <input type="text" class="form-input" id="detailKursus" readonly>
+                    <textarea class="form-input" id="detailKursus" rows="2" readonly></textarea>
                 </div>
 
-                {{-- Jumlah Kelas dan Total Siswa (2 kolom) --}}
+                {{-- Jumlah Kursus dan Total Siswa (2 kolom) --}}
                 <div class="form-row-2">
                     <div>
-                        <label class="form-label">Jumlah Kelas</label>
+                        <label class="form-label">Jumlah Kursus</label>
                         <input type="text" class="form-input" id="detailJumlahKelas" readonly>
                     </div>
                     <div>
@@ -252,13 +252,13 @@ Features: CRUD, Search, Filter, Export
                 {{-- No Telepon dan Tanggal Lahir (2 kolom) --}}
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label class="form-label">No. Telepon</label>
-                        <input type="text" class="form-input" id="formPhone" placeholder="08xxxxxxxxxx">
+                        <label class="form-label">No. Telepon *</label>
+                        <input type="text" class="form-input" id="formPhone" required placeholder="08xxxxxxxxxx">
                         <div class="error-message" id="phoneError"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tanggal Lahir</label>
-                        <input type="date" class="form-input" id="formTanggalLahir">
+                        <label class="form-label">Tanggal Lahir *</label>
+                        <input type="date" class="form-input" id="formTanggalLahir" required>
                     </div>
                 </div>
 
@@ -309,57 +309,19 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Domisili (Provinsi) --}}
+                {{-- Alamat (Kabupaten/Kota) --}}
                 <div class="form-group">
-                    <label class="form-label">Domisili (Provinsi)</label>
-                    <select class="form-input" id="formDomisili">
-                        <option value="">Pilih Provinsi</option>
-                        <option value="Aceh">Aceh</option>
-                        <option value="Sumatera Utara">Sumatera Utara</option>
-                        <option value="Sumatera Barat">Sumatera Barat</option>
-                        <option value="Riau">Riau</option>
-                        <option value="Kepulauan Riau">Kepulauan Riau</option>
-                        <option value="Jambi">Jambi</option>
-                        <option value="Sumatera Selatan">Sumatera Selatan</option>
-                        <option value="Bangka Belitung">Bangka Belitung</option>
-                        <option value="Bengkulu">Bengkulu</option>
-                        <option value="Lampung">Lampung</option>
-                        <option value="DKI Jakarta">DKI Jakarta</option>
-                        <option value="Banten">Banten</option>
-                        <option value="Jawa Barat">Jawa Barat</option>
-                        <option value="Jawa Tengah">Jawa Tengah</option>
-                        <option value="DI Yogyakarta">DI Yogyakarta</option>
-                        <option value="Jawa Timur">Jawa Timur</option>
-                        <option value="Bali">Bali</option>
-                        <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                        <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                        <option value="Kalimantan Barat">Kalimantan Barat</option>
-                        <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                        <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                        <option value="Kalimantan Timur">Kalimantan Timur</option>
-                        <option value="Kalimantan Utara">Kalimantan Utara</option>
-                        <option value="Sulawesi Utara">Sulawesi Utara</option>
-                        <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                        <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                        <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                        <option value="Gorontalo">Gorontalo</option>
-                        <option value="Sulawesi Barat">Sulawesi Barat</option>
-                        <option value="Maluku">Maluku</option>
-                        <option value="Maluku Utara">Maluku Utara</option>
-                        <option value="Papua">Papua</option>
-                        <option value="Papua Barat">Papua Barat</option>
-                        <option value="Papua Tengah">Papua Tengah</option>
-                        <option value="Papua Pegunungan">Papua Pegunungan</option>
-                        <option value="Papua Selatan">Papua Selatan</option>
-                        <option value="Papua Barat Daya">Papua Barat Daya</option>
+                    <label class="form-label">Alamat (Kabupaten/Kota) *</label>
+                    <select class="form-input" id="formAlamat" required>
+                        <option value="">Pilih kabupaten/kota</option>
                     </select>
                 </div>
 
                 {{-- Jenis Kelamin dan Status (2 kolom) --}}
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label class="form-label">Jenis Kelamin</label>
-                        <select class="form-input" id="formJenisKelamin">
+                        <label class="form-label">Jenis Kelamin *</label>
+                        <select class="form-input" id="formJenisKelamin" required>
                             <option value="">Pilih Jenis Kelamin</option>
                             <option value="L">Laki-laki</option>
                             <option value="P">Perempuan</option>
@@ -496,13 +458,34 @@ Features: CRUD, Search, Filter, Export
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/indonesia-cities.js') }}"></script>
     <script>
-        // Initialize Select2 for domisili dropdown
+        // Initialize Select2 for alamat dropdown dengan data kota
         $(document).ready(function() {
-            $('#formDomisili').select2({
-                placeholder: 'Pilih Provinsi',
+            const alamatSelect = $('#formAlamat');
+            
+            // Populate cities
+            indonesiaCities.forEach(function(city) {
+                alamatSelect.append(new Option(city, city, false, false));
+            });
+            
+            // Initialize Select2
+            alamatSelect.select2({
+                placeholder: 'Pilih kabupaten/kota',
                 allowClear: true,
-                dropdownParent: $('#formModal')
+                dropdownParent: $('#formModal'),
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    if (typeof data.text === 'undefined') {
+                        return null;
+                    }
+                    if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
             });
         });
     </script>
@@ -814,10 +797,7 @@ Features: CRUD, Search, Filter, Export
                 return matchSearch && matchStatus;
             });
 
-            // Urutkan hasil filter berdasarkan ID dari kecil ke besar
-            const sortedFiltered = filtered.sort((a, b) => a.id - b.id);
-
-            renderTable(sortedFiltered);
+            renderTable(filtered);
         }
 
         // ========================================
@@ -836,11 +816,10 @@ Features: CRUD, Search, Filter, Export
                 ? pengajar.kursus.map(k => k.judul).join(', ')
                 : 'Belum ada kursus';
 
-            // Populate form fields
             document.getElementById('detailName').value = pengajar.name;
             document.getElementById('detailEmail').value = pengajar.email;
             document.getElementById('detailPhone').value = pengajar.phone || '-';
-            document.getElementById('detailDomisili').value = pengajar.domisili || '-';
+            document.getElementById('detailAlamat').value = pengajar.address || '-';
             document.getElementById('detailTanggalLahir').value = pengajar.tanggal_lahir || '';
             document.getElementById('detailJenisKelamin').value = pengajar.jenis_kelamin === 'L' ? 'Laki-laki' : pengajar.jenis_kelamin === 'P' ? 'Perempuan' : '-';
             document.getElementById('detailKeahlian').value = pengajar.keahlian || '-';
@@ -857,7 +836,7 @@ Features: CRUD, Search, Filter, Export
             }
 
             document.getElementById('detailKursus').value = kursusNames;
-            document.getElementById('detailJumlahKelas').value = (pengajar.kursus_count || 0) + ' Kelas';
+            document.getElementById('detailJumlahKelas').value = (pengajar.kursus_count || 0) + ' Kursus';
             document.getElementById('detailTotalSiswa').value = (pengajar.total_siswa || 0) + ' Siswa';
             const statusDisplay = (pengajar.status || 'active') === 'active' ? 'Aktif' : (pengajar.status === 'inactive' ? 'Nonaktif' : 'Ditangguhkan');
             document.getElementById('detailStatus').value = statusDisplay;
@@ -882,6 +861,9 @@ Features: CRUD, Search, Filter, Export
             // Reset form
             document.getElementById('pengajarForm').reset();
             document.getElementById('pengajarId').value = '';
+
+            // Reset Select2
+            $('#formAlamat').val(null).trigger('change');
 
             // Password required untuk tambah data
             document.getElementById('formPassword').required = true;
@@ -928,7 +910,8 @@ Features: CRUD, Search, Filter, Export
             document.getElementById('formName').value = pengajar.name;
             document.getElementById('formEmail').value = pengajar.email;
             document.getElementById('formPhone').value = pengajar.phone || '';
-            document.getElementById('formDomisili').value = pengajar.domisili || '';
+            document.getElementById('formAlamat').value = pengajar.address || '';
+            $('#formAlamat').trigger('change'); // Update Select2
             document.getElementById('formTanggalLahir').value = pengajar.tanggal_lahir || '';
             document.getElementById('formJenisKelamin').value = pengajar.jenis_kelamin || '';
             document.getElementById('formStatus').value = pengajar.status || 'active';
@@ -1006,7 +989,7 @@ Features: CRUD, Search, Filter, Export
             formData.append('name', document.getElementById('formName').value);
             formData.append('email', document.getElementById('formEmail').value);
             formData.append('phone', document.getElementById('formPhone').value);
-            formData.append('domisili', document.getElementById('formDomisili').value);
+            formData.append('address', document.getElementById('formAlamat').value);
             formData.append('tanggal_lahir', document.getElementById('formTanggalLahir').value);
             formData.append('jenis_kelamin', document.getElementById('formJenisKelamin').value);
             formData.append('status', document.getElementById('formStatus').value);

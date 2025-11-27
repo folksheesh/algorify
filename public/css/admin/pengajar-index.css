@@ -21,12 +21,24 @@
         .select2-dropdown {
             border: 1px solid #E2E8F0 !important;
             border-radius: 10px !important;
+            z-index: 99999 !important;
         }
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
             background-color: #5D3FFF !important;
         }
         .select2-container {
             width: 100% !important;
+        }
+        .select2-container--open {
+            z-index: 99999 !important;
+        }
+        .select2-results {
+            max-height: 160px !important;
+            overflow-y: auto !important;
+        }
+        .select2-results__option {
+            padding: 8px 12px !important;
+            cursor: pointer !important;
         }
 
         /* ----- Global Font Setting ----- */
@@ -408,9 +420,10 @@
             /* Dark semi-transparent */
             z-index: 9999;
             /* Di atas semua element */
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 1rem;
+            padding: 2rem 1rem;
+            overflow-y: auto;
         }
 
         /* Show modal saat diberi class active */
@@ -425,11 +438,13 @@
             padding: 2rem 2.5rem;
             max-width: 560px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            /* Scroll jika konten terlalu panjang */
+            min-height: auto;
+            max-height: none;
+            overflow: visible;
+            /* Allow dropdown to overflow */
             position: relative;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            margin: auto;
         }
 
         /* Header dalam modal (judul dan deskripsi) */
@@ -563,6 +578,59 @@
         /* Focus state untuk select */
         .modal-content select.form-input:focus {
             background-color: white;
+        }
+
+        /* Select2 Custom Styling untuk Modal */
+        .select2-container {
+            width: 100% !important;
+            z-index: 9999 !important;
+        }
+        .select2-container--default .select2-selection--single {
+            height: 48px !important;
+            padding: 8px 12px !important;
+            border: 1px solid #dfe3e7 !important;
+            border-radius: 0.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            background-color: white !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 32px !important;
+            color: #334155 !important;
+            padding-left: 0 !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #94A3B8 !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 46px !important;
+            right: 8px !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #dfe3e7 !important;
+            border-radius: 0.5rem !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+            z-index: 10000 !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #5D3FFF !important;
+            color: white !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #dfe3e7 !important;
+            border-radius: 0.375rem !important;
+            padding: 8px 12px !important;
+        }
+        .select2-results__option {
+            padding: 8px 12px !important;
+            font-size: 0.875rem !important;
+        }
+        /* Ensure modal has proper overflow for dropdown */
+        .modal-overlay {
+            overflow-y: auto !important;
+        }
+        .modal-content {
+            overflow: visible !important;
         }
 
         /* ========================================
@@ -737,6 +805,7 @@
             width: 100%;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            margin: auto;
         }
 
         /* Icon checkmark dalam lingkaran hijau */

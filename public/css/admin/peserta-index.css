@@ -79,8 +79,14 @@
     border-radius: 0 8px 0 0;
 }
 
+.data-table tbody tr {
+    transition: all 0.2s ease;
+}
+
 .data-table tbody tr:hover {
     background: #F8FAFC;
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .data-table tbody td {

@@ -43,9 +43,11 @@ class TransaksiController extends Controller
             $totalPendapatan = Transaksi::where('status', 'lunas')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
             $lunasCount = Transaksi::where('status', 'lunas')->count();
+            $pendingCount = Transaksi::where('status', 'pending')->count();
+            $failedCount = Transaksi::where('status', 'gagal')->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
 
-            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan'));
+            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan', 'lunasCount', 'pendingCount', 'failedCount'));
         } catch (\Exception $e) {
             Log::error('Error fetching transactions: ' . $e->getMessage());
             
@@ -133,9 +135,12 @@ class TransaksiController extends Controller
             
             $totalPendapatan = 1070000;
             $totalTransaksi = 7;
+            $lunasCount = 4;
+            $pendingCount = 3;
+            $failedCount = 0;
             $tingkatKeberhasilan = 57.1;
             
-            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan'));
+            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan', 'lunasCount', 'pendingCount', 'failedCount'));
         }
     }
 }

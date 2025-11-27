@@ -112,8 +112,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Domisili</label>
-                    <input type="text" class="form-input" id="modalDomisili" readonly>
+                    <label class="form-label">Alamat</label>
+                    <input type="text" class="form-input" id="modalAlamat" readonly>
                 </div>
 
                 <div class="form-row-2">
@@ -287,7 +287,7 @@
             document.getElementById('modalId').value = peserta.id; // Real database ID
             document.getElementById('modalDate').value = peserta.created_at ? peserta.created_at.split('T')[0] : '';
             document.getElementById('modalPhone').value = peserta.phone || peserta.no_hp || '-';
-            document.getElementById('modalDomisili').value = peserta.domisili || '-';
+            document.getElementById('modalAlamat').value = peserta.address || '-';
             document.getElementById('modalJenisKelamin').value = peserta.jenis_kelamin === 'L' ? 'Laki-laki' : peserta.jenis_kelamin === 'P' ? 'Perempuan' : '-';
             document.getElementById('modalKursusCount').value = peserta.kursus_count || 0;
             document.getElementById('modalKursus').value = peserta.kursus_names || 'Belum mengikuti kursus';
