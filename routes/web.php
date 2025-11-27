@@ -28,8 +28,24 @@ Route::get('/dashboard', function () {
         return view('admin.dashboard', compact('totalPeserta', 'totalPengajar', 'totalKursus'));
     }
     
-    // Student Dashboard
-    return view('dashboard');
+    // Student Dashboard - Get user's enrollments and recommended courses
+    $enrollments = \App\Models\Enrollment::where('user_id', $user->id)
+        ->with(['kursus.pengajar', 'kursus.modul'])
+        ->where('status', 'active')
+        ->latest()
+        ->take(3)
+        ->get();
+    
+    // Get recommended courses (published courses not enrolled yet)
+    $enrolledKursusIds = $enrollments->pluck('kursus_id')->toArray();
+    $recommendedCourses = \App\Models\Kursus::with('pengajar')
+        ->where('status', 'published')
+        ->whereNotIn('id', $enrolledKursusIds)
+        ->inRandomOrder()
+        ->take(6)
+        ->get();
+    
+    return view('dashboard', compact('enrollments', 'recommendedCourses'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
