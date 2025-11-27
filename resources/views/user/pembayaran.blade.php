@@ -30,6 +30,16 @@
     .error-box p { color: #991b1b; font-size: 14px; margin: 0; }
     .error-box strong { font-weight: 700; }
     
+    /* Warning notification */
+    .warning-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .warning-box p { color: #92400e; font-size: 14px; margin: 0; }
+    .warning-box strong { font-weight: 700; }
+    
+    /* Info notification */
+    .info-box { background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+    .info-box p { color: #1e40af; font-size: 14px; margin: 0; }
+    .info-box strong { font-weight: 700; }
+    
     .instructions { margin-bottom: 20px; }
     .instructions h6 { font-weight: 600; margin-bottom: 10px; }
     .instructions ul { list-style: none; padding-left: 15px; }
@@ -48,6 +58,18 @@
     <!-- Main Content -->
     <main class="main-content">
         <h1 class="page-title">Pembayaran</h1>
+
+        @if(isset($transactionMessage) && $transactionMessage)
+            @if($transactionMessage['type'] === 'warning')
+            <div class="warning-box">
+                <p><strong>⚠️ Perhatian!</strong> {{ $transactionMessage['message'] }}</p>
+            </div>
+            @elseif($transactionMessage['type'] === 'error')
+            <div class="error-box">
+                <p><strong>❌ Transaksi Gagal!</strong> {{ $transactionMessage['message'] }}</p>
+            </div>
+            @endif
+        @endif
 
         @if(isset($snapError) && $snapError)
         <div class="error-box">
@@ -96,15 +118,15 @@
                     </div>
                     <div class="summary-row">
                         <span class="summary-label">Status:</span>
-                        <span class="summary-value">
+                        <span class="summary-value" id="payment-status">
                             @if($transaksi->status === 'pending')
                                 <span style="color: #f59e0b;">Menunggu Pembayaran</span>
                             @elseif($transaksi->status === 'success')
-                                <span style="color: #10b981;">Berhasil</span>
+                                <span style="color: #10b981;">✓ Berhasil</span>
                             @elseif($transaksi->status === 'failed')
-                                <span style="color: #ef4444;">Gagal</span>
+                                <span style="color: #ef4444;">✗ Gagal</span>
                             @elseif($transaksi->status === 'expired')
-                                <span style="color: #6b7280;">Kadaluarsa</span>
+                                <span style="color: #6b7280;">⌛ Kadaluarsa</span>
                             @endif
                         </span>
                     </div>
@@ -141,25 +163,48 @@
 </div>
 
 <!-- DOKU Payment Popup Modal -->
-<div id="doku-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); width: 90%; max-width: 1000px; height: 85vh; max-height: 800px; position: relative; margin: auto;">
-        <!-- Close Button -->
-        <button id="close-modal" style="position: absolute; top: 16px; right: 16px; background: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
+<div id="doku-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(93, 63, 255, 0.15), rgba(16, 185, 129, 0.15)); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); width: 92%; max-width: 1100px; height: 88vh; max-height: 850px; position: relative; margin: auto; overflow: hidden; border: 2px solid rgba(93, 63, 255, 0.1);">
+        <!-- Header Bar -->
+        <div style="background: linear-gradient(135deg, #5D3FFF, #7C3AED); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 32px; height: 32px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <svg style="width: 18px; height: 18px; color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: white; font-size: 16px; font-weight: 600;">DOKU Payment Gateway</h3>
+                    <p style="margin: 0; color: rgba(255, 255, 255, 0.8); font-size: 12px;">Secure Payment · SSL Encrypted</p>
+                </div>
+            </div>
+            <button id="close-modal" style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.25)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.15)'">
+                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
         
         <!-- Loading State -->
-        <div id="loading-state" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+        <div id="loading-state" style="display: flex; align-items: center; justify-content: center; height: calc(100% - 66px); background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
             <div style="text-align: center;">
-                <div style="display: inline-block; width: 48px; height: 48px; border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                <p style="margin-top: 16px; color: #6b7280; font-size: 14px;">Memuat halaman pembayaran...</p>
+                <div style="position: relative; width: 80px; height: 80px; margin: 0 auto 24px;">
+                    <div style="position: absolute; width: 100%; height: 100%; border: 4px solid #e5e7eb; border-radius: 50%;"></div>
+                    <div style="position: absolute; width: 100%; height: 100%; border: 4px solid transparent; border-top-color: #5D3FFF; border-right-color: #5D3FFF; border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;"></div>
+                </div>
+                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 18px; font-weight: 600;">Memuat Halaman Pembayaran</h4>
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">Mohon tunggu sebentar...</p>
+                <div style="display: flex; gap: 6px; justify-content: center; margin-top: 16px;">
+                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out infinite;"></div>
+                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out 0.2s infinite;"></div>
+                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out 0.4s infinite;"></div>
+                </div>
             </div>
         </div>
         
         <!-- Iframe -->
-        <iframe id="doku-iframe" style="width: 100%; height: 100%; border: none; border-radius: 12px; display: none;"></iframe>
+        <iframe id="doku-iframe" style="width: 100%; height: calc(100% - 66px); border: none; display: none; background: white;"></iframe>
     </div>
 </div>
 
@@ -167,6 +212,10 @@
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
 }
 </style>
 
@@ -224,27 +273,75 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     @endif
     
-    // Auto check payment status every 5 seconds
-    @if($transaksi->status === 'pending')
+    // Auto check payment status every 3 seconds with live UI update
+    let checkCount = 0;
+    const maxChecks = 200; // 10 minutes max (200 * 3 seconds)
+    const statusElement = document.getElementById('payment-status');
+    
+    function updateStatusDisplay(status) {
+        const statusMap = {
+            'pending': '<span style="color: #f59e0b;">Menunggu Pembayaran</span>',
+            'success': '<span style="color: #10b981;">✓ Berhasil</span>',
+            'failed': '<span style="color: #ef4444;">✗ Gagal</span>',
+            'expired': '<span style="color: #6b7280;">⌛ Kadaluarsa</span>'
+        };
+        
+        if (statusElement && statusMap[status]) {
+            statusElement.innerHTML = statusMap[status];
+            console.log('Status updated to:', status);
+        }
+    }
+    
     const checkInterval = setInterval(async () => {
+        checkCount++;
+        
         try {
             const response = await fetch('{{ route("user.transaksi.status", $transaksi->kode_transaksi) }}');
             const data = await response.json();
             
+            console.log('Payment check #' + checkCount + ':', data.status);
+            
+            // Update status display in real-time
+            updateStatusDisplay(data.status);
+            
             if (data.status === 'success') {
                 clearInterval(checkInterval);
-                modal.style.display = 'none';
-                window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
+                
+                // Close modal if open
+                const modal = document.getElementById('doku-modal');
+                if (modal && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                }
+                
+                // Show success message and redirect
+                setTimeout(() => {
+                    alert('Pembayaran berhasil! Anda akan diarahkan ke halaman Pelatihan Saya.');
+                    window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
+                }, 500);
             } else if (data.status === 'failed' || data.status === 'expired') {
                 clearInterval(checkInterval);
-                modal.style.display = 'none';
-                location.reload();
+                
+                // Close modal if open
+                const modal = document.getElementById('doku-modal');
+                if (modal && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                }
+                
+                setTimeout(() => {
+                    alert('Pembayaran gagal atau kadaluarsa. Silakan coba lagi.');
+                    location.reload();
+                }, 500);
+            }
+            
+            // Stop checking after max attempts
+            if (checkCount >= maxChecks) {
+                clearInterval(checkInterval);
+                console.log('Max check attempts reached');
             }
         } catch (error) {
             console.error('Error checking status:', error);
         }
-    }, 5000);
-    @endif
+    }, 3000); // Check every 3 seconds
 });
 </script>
 @endsection

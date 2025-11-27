@@ -336,8 +336,15 @@
                         <div>
                             <div class="stat-label">Total Transaksi</div>
                             <div class="stat-value">{{ $totalTransaksi }}</div>
-                            <div class="stat-change neutral">
-                                <span>{{ \App\Models\Transaksi::where('status', 'success')->count() }} Lunas</span>
+                            <div class="stat-change neutral" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <span style="color: #10b981;">✓ {{ $successCount ?? 0 }} Lunas</span>
+                                <span style="color: #f59e0b;">⏳ {{ $pendingCount ?? 0 }} Pending</span>
+                                @if(($failedCount ?? 0) > 0)
+                                <span style="color: #ef4444;">✗ {{ $failedCount }} Gagal</span>
+                                @endif
+                                @if(($expiredCount ?? 0) > 0)
+                                <span style="color: #64748B;">⌛ {{ $expiredCount }} Expired</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -354,6 +361,8 @@
                                 <option value="">Semua Status</option>
                                 <option value="success">Lunas</option>
                                 <option value="pending">Pending</option>
+                                <option value="failed">Gagal</option>
+                                <option value="expired">Kadaluarsa</option>
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">

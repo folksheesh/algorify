@@ -48,6 +48,30 @@ class EnrollmentController extends Controller
             ->whereIn('status', ['pending', 'success'])
             ->first();
 
+        // Store message for expired/failed transactions
+        $transactionMessage = null;
+        
+        // Check if there's an old expired/failed transaction
+        $oldTransaction = Transaksi::where('user_id', $user->id)
+            ->where('kursus_id', $id)
+            ->whereIn('status', ['failed', 'expired'])
+            ->latest()
+            ->first();
+        
+        if ($oldTransaction) {
+            if ($oldTransaction->status === 'expired') {
+                $transactionMessage = [
+                    'type' => 'warning',
+                    'message' => 'Transaksi sebelumnya telah kadaluarsa. Silakan lakukan pembayaran ulang.'
+                ];
+            } elseif ($oldTransaction->status === 'failed') {
+                $transactionMessage = [
+                    'type' => 'error',
+                    'message' => 'Transaksi sebelumnya gagal. Silakan coba lagi dengan metode pembayaran lain.'
+                ];
+            }
+        }
+
         // If no transaction or transaction expired/failed, create new one
         if (!$transaksi || in_array($transaksi->status, ['failed', 'expired'])) {
             $transaksi = Transaksi::create([
@@ -70,7 +94,7 @@ class EnrollmentController extends Controller
         // Generate DOKU Payment URL only for pending transactions
         [$paymentUrl, $snapError] = $this->getSnapToken($transaksi, $kursus);
         
-        return view('user.pembayaran', compact('kursus', 'transaksi', 'paymentUrl', 'snapError'));
+        return view('user.pembayaran', compact('kursus', 'transaksi', 'paymentUrl', 'snapError', 'transactionMessage'));
     }
 
     /**

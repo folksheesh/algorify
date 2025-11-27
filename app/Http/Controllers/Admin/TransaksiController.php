@@ -43,9 +43,21 @@ class TransaksiController extends Controller
             $totalPendapatan = Transaksi::where('status', 'success')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
             $successCount = Transaksi::where('status', 'success')->count();
+            $pendingCount = Transaksi::where('status', 'pending')->count();
+            $failedCount = Transaksi::where('status', 'failed')->count();
+            $expiredCount = Transaksi::where('status', 'expired')->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($successCount / $totalTransaksi) * 100, 1) : 0;
 
-            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan'));
+            return view('admin.transaksi.index', compact(
+                'transaksi', 
+                'totalPendapatan', 
+                'totalTransaksi', 
+                'successCount',
+                'pendingCount',
+                'failedCount',
+                'expiredCount',
+                'tingkatKeberhasilan'
+            ));
         } catch (\Exception $e) {
             Log::error('Error fetching transactions: ' . $e->getMessage());
             
@@ -133,9 +145,22 @@ class TransaksiController extends Controller
             
             $totalPendapatan = 1070000;
             $totalTransaksi = 7;
+            $successCount = 4;
+            $pendingCount = 2;
+            $failedCount = 0;
+            $expiredCount = 1;
             $tingkatKeberhasilan = 57.1;
             
-            return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan'));
+            return view('admin.transaksi.index', compact(
+                'transaksi', 
+                'totalPendapatan', 
+                'totalTransaksi', 
+                'successCount',
+                'pendingCount',
+                'failedCount',
+                'expiredCount',
+                'tingkatKeberhasilan'
+            ));
         }
     }
 }

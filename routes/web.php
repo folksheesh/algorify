@@ -74,6 +74,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/pelatihan-saya', [\App\Http\Controllers\User\PelatihanSayaController::class, 'index'])->name('pelatihan-saya.index');
         Route::get('/sertifikat', [\App\Http\Controllers\User\SertifikatSayaController::class, 'index'])->name('sertifikat.index');
+        Route::get('/sertifikat/generate/{enrollment}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'generate'])->name('sertifikat.generate');
+        Route::get('/sertifikat/download/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'download'])->name('sertifikat.download');
+        Route::get('/sertifikat/preview/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'preview'])->name('sertifikat.preview');
         
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
