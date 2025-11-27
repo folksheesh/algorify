@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kursus;
 use App\Models\User;
+use App\Repositories\ProgressRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class PelatihanController extends Controller
 {
+    protected ProgressRepository $progressRepository;
+
+    public function __construct(ProgressRepository $progressRepository)
+    {
+        $this->progressRepository = $progressRepository;
+    }
+
     public function index()
     {
         // Get all courses with their related data
@@ -33,11 +41,22 @@ class PelatihanController extends Controller
                 },
                 'video' => function($q) {
                     $q->orderBy('urutan', 'asc');
-                }
+                },
+                'ujian'
             ]);
         }])->findOrFail($id);
         
-        return view('admin.pelatihan.show', compact('kursus'));
+        // Get user's progress data if user is enrolled
+        $userProgress = null;
+        $completedItems = [];
+        
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $userProgress = $this->progressRepository->calculateProgress($userId, $id);
+            $completedItems = $this->progressRepository->getCompletedItems($userId, $id);
+        }
+        
+        return view('admin.pelatihan.show', compact('kursus', 'userProgress', 'completedItems'));
     }
 
     public function store(Request $request)

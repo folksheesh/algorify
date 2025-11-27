@@ -222,6 +222,30 @@
         background: #DC2626;
     }
     
+    .material-icon.bacaan {
+        background: #D1FAE5;
+    }
+    
+    .material-icon.bacaan.active {
+        background: #10B981;
+    }
+    
+    .material-icon.quiz {
+        background: #FEF3C7;
+    }
+    
+    .material-icon.quiz.active {
+        background: #F59E0B;
+    }
+    
+    .material-icon.ujian {
+        background: #FEE2E2;
+    }
+    
+    .material-icon.ujian.active {
+        background: #EF4444;
+    }
+    
     .material-info {
         flex: 1;
         min-width: 0;
@@ -348,11 +372,107 @@
     .complete-btn.completed:hover {
         background: #4B5563;
     }
+
+    /* Toast Notification */
+    .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 10000;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        max-width: 380px;
+        border-left: 4px solid #EF4444;
+    }
+
+    .toast-notification.active {
+        transform: translateX(0);
+    }
+
+    .toast-notification.success {
+        border-left-color: #10B981;
+    }
+
+    .toast-notification.success .toast-icon {
+        color: #10B981;
+    }
+
+    .toast-notification.error {
+        border-left-color: #EF4444;
+    }
+
+    .toast-notification.error .toast-icon {
+        color: #EF4444;
+    }
+
+    .toast-notification.warning {
+        border-left-color: #F59E0B;
+    }
+
+    .toast-notification.warning .toast-icon {
+        color: #F59E0B;
+    }
+
+    .toast-icon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        color: #EF4444;
+    }
+
+    .toast-content {
+        flex: 1;
+    }
+
+    .toast-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1F2937;
+        margin-bottom: 2px;
+    }
+
+    .toast-message {
+        font-size: 13px;
+        color: #6B7280;
+    }
 </style>
 @endpush
 
 @push('scripts')
+<!-- Toast Notification -->
+<div id="toastNotification" class="toast-notification">
+    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <div class="toast-content">
+        <div class="toast-title" id="toastTitle">Error</div>
+        <div class="toast-message" id="toastMessage">Terjadi kesalahan</div>
+    </div>
+</div>
 <script>
+    function showToast(title, message, type = 'error') {
+        const toast = document.getElementById('toastNotification');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        toast.className = 'toast-notification ' + type;
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+        toast.classList.add('active');
+        
+        setTimeout(() => {
+            toast.classList.remove('active');
+        }, 4000);
+    }
+
     function markAsComplete() {
         const btn = document.querySelector('.complete-btn');
         const btnText = document.getElementById('completeBtnText');
@@ -374,7 +494,7 @@
 <div class="page-container">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}" class="back-btn">
+    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}?open_modul={{ $materi->modul_id }}" class="back-btn">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -415,15 +535,17 @@
                     {!! $materi->konten !!}
                 </div>
 
-                <!-- Mark as Complete Button -->
+                <!-- Mark as Complete Button (for peserta role) -->
+                @hasrole('peserta')
                 <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #E5E7EB; text-align: center;">
-                    <button class="complete-btn" onclick="markAsComplete()">
+                    <button id="markAsReadBtn" class="btn-mark-read" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
-                        <span id="completeBtnText">Tandai Sudah Selesai</span>
+                        Tandai Sudah Dibaca
                     </button>
                 </div>
+                @endhasrole
 
             </div>
 
@@ -439,17 +561,17 @@
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Modul</div>
-                        <div class="info-value">{{ $materi->modul->judul }}</div>
+                        <div class="info-value">{{ $materi->modul->judul ?? '-' }}</div>
                     </div>
                     
                     <div class="info-item">
                         <div class="info-label">Kursus</div>
-                        <div class="info-value">{{ $materi->modul->kursus->judul }}</div>
+                        <div class="info-value">{{ $materi->modul->kursus->judul ?? '-' }}</div>
                     </div>
                     
                     <div class="info-item">
                         <div class="info-label">Pengajar</div>
-                        <div class="info-value">{{ $materi->modul->kursus->pengajar->name }}</div>
+                        <div class="info-value">{{ $materi->modul->kursus->pengajar->name ?? '-' }}</div>
                     </div>
                 </div>
             </div>
@@ -461,34 +583,88 @@
                 <div class="materials-list">
                     @foreach($allItems as $item)
                         @php
-                            $isVideo = $item['type'] === 'video';
+                            $itemType = $item['type'];
                             $itemData = $item['data'];
-                            $isCurrent = (!$isVideo && $itemData->id === $materi->id);
-                            $routeName = $isVideo ? 'admin.video.show' : 'admin.materi.show';
+                            $isCurrent = ($itemType === 'bacaan' && $itemData->id === $materi->id);
+                            
+                            // Determine route based on type
+                            if ($itemType === 'video') {
+                                $routeName = 'admin.video.show';
+                            } elseif ($itemType === 'bacaan') {
+                                $routeName = 'admin.materi.show';
+                            } else {
+                                $routeName = 'admin.ujian.show';
+                            }
+                            
+                            // Determine icon class
+                            $iconClass = match($itemType) {
+                                'video' => 'video',
+                                'bacaan' => 'bacaan',
+                                'quiz' => 'quiz',
+                                'ujian' => 'ujian',
+                                default => 'video'
+                            };
+                            
+                            // Determine label
+                            $typeLabel = match($itemType) {
+                                'video' => 'Video',
+                                'bacaan' => 'Bacaan',
+                                'quiz' => 'Quiz',
+                                'ujian' => 'Ujian',
+                                default => 'Materi'
+                            };
                         @endphp
                         
                         <a href="{{ route($routeName, $itemData->id) }}" class="material-item {{ $isCurrent ? 'active' : '' }}">
                             
-                            <div class="material-icon {{ $isVideo ? 'video' : 'pdf' }} {{ $isCurrent ? 'active' : '' }}">
-                                @if($isVideo)
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" fill="{{ $isCurrent ? 'white' : '#7C3AED' }}"/>
-                                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="{{ $isCurrent ? 'white' : '#7C3AED' }}" stroke-width="2"/>
+                            @if($item['completed'] ?? false)
+                                {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
+                                <div class="material-icon" style="background: #D1FAE5;">
+                                    <svg width="16" height="16" viewBox="0 0 20 20" fill="#10B981">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
-                                @else
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="{{ $isCurrent ? 'white' : '#DC2626' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                @endif
-                            </div>
+                                </div>
+                            @else
+                                <div class="material-icon {{ $iconClass }} {{ $isCurrent ? 'active' : '' }}">
+                                    @if($itemType === 'video')
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" fill="{{ $isCurrent ? 'white' : '#7C3AED' }}"/>
+                                            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="{{ $isCurrent ? 'white' : '#7C3AED' }}" stroke-width="2"/>
+                                        </svg>
+                                    @elseif($itemType === 'bacaan')
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M12 6.25278V19.2528M12 6.25278C10.8321 5.47686 9.24649 5 7.5 5C5.75351 5 4.16789 5.47686 3 6.25278V19.2528C4.16789 18.4769 5.75351 18 7.5 18C9.24649 18 10.8321 18.4769 12 19.2528M12 6.25278C13.1679 5.47686 14.7535 5 16.5 5C18.2465 5 19.8321 5.47686 21 6.25278V19.2528C19.8321 18.4769 18.2465 18 16.5 18C14.7535 18 13.1679 18.4769 12 19.2528" stroke="{{ $isCurrent ? 'white' : '#10B981' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    @elseif($itemType === 'quiz')
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="{{ $isCurrent ? 'white' : '#F59E0B' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    @else
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="{{ $isCurrent ? 'white' : '#EF4444' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    @endif
+                                </div>
+                            @endif
                             
                             <div class="material-info">
                                 <div class="material-title">{{ $itemData->judul }}</div>
-                                <div class="material-type">{{ $isVideo ? 'Video' : 'Bacaan' }}</div>
+                                <div class="material-type" style="{{ ($item['completed'] ?? false) ? 'color: #10B981;' : '' }}">
+                                    @if($item['completed'] ?? false)
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                                            <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Selesai
+                                        </span>
+                                    @else
+                                        {{ $typeLabel }}
+                                    @endif
+                                </div>
                             </div>
 
-                            @if($isCurrent)
-                                <svg class="check-icon" width="16" height="16" viewBox="0 0 20 20" fill="#DC2626">
+                            @if($isCurrent && !($item['completed'] ?? false))
+                                <svg class="check-icon" width="16" height="16" viewBox="0 0 20 20" fill="#10B981">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                             @endif
@@ -502,4 +678,109 @@
     </div>
 
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markReadBtn = document.getElementById('markAsReadBtn');
+    const materiId = {{ $materi->id }};
+    const isAlreadyCompleted = {{ isset($materiCompleted) && $materiCompleted ? 'true' : 'false' }};
+    
+    // If already completed, update button state
+    if (isAlreadyCompleted && markReadBtn) {
+        markReadBtn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Sudah Dibaca
+        `;
+        markReadBtn.style.background = '#10B981';
+        markReadBtn.classList.add('completed');
+        markReadBtn.disabled = true;
+    }
+    
+    if (markReadBtn && !isAlreadyCompleted) {
+        markReadBtn.addEventListener('click', function() {
+            // Disable button while processing
+            markReadBtn.disabled = true;
+            markReadBtn.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"/>
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke-width="4"/>
+                </svg>
+                Menyimpan...
+            `;
+            
+            fetch('{{ route("user.progress.reading") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    materi_id: materiId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show completion state
+                    markReadBtn.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Sudah Dibaca
+                    `;
+                    markReadBtn.style.background = '#10B981';
+                    markReadBtn.classList.add('completed');
+                    
+                    // Update progress bar if exists
+                    if (data.course_progress) {
+                        updateProgressBar(data.course_progress.percentage);
+                    }
+                } else {
+                    showToast('Gagal', 'Gagal menandai materi: ' + data.message, 'error');
+                    resetButton();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error', 'Terjadi kesalahan saat menandai materi', 'error');
+                resetButton();
+            });
+            
+            function resetButton() {
+                markReadBtn.disabled = false;
+                markReadBtn.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Tandai Sudah Dibaca
+                `;
+            }
+        });
+    }
+    
+    function updateProgressBar(percentage) {
+        const progressBar = document.querySelector('.course-progress-bar');
+        const progressText = document.querySelector('.course-progress-text');
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+        }
+        if (progressText) {
+            progressText.textContent = percentage + '% Selesai';
+        }
+    }
+});
+</script>
+<style>
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.btn-mark-read.completed {
+    cursor: default;
+}
+</style>
+@endpush
 @endsection

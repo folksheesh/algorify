@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('bank_soal', function (Blueprint $table) {
-            // Drop old foreign key that references kategori_soal
+            // Drop old foreign key that references kursus
             $table->dropForeign(['kategori_id']);
             
-            // Add new foreign key that references kategori_pelatihan
+            // Add new foreign key that references kursus
             $table->foreign('kategori_id')
                   ->references('id')
-                  ->on('kategori_pelatihan')
+                  ->on('kursus')
                   ->onDelete('set null');
         });
     }
@@ -32,10 +32,10 @@ return new class extends Migration
             // Drop the correct foreign key
             $table->dropForeign(['kategori_id']);
             
-            // Restore old foreign key to kategori_soal
+            // Restore old foreign key to kursus
             $table->foreign('kategori_id')
                   ->references('id')
-                  ->on('kategori_soal')
+                  ->on('kursus')
                   ->onDelete('cascade');
         });
     }

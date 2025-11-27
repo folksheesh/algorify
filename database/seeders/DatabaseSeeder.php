@@ -47,6 +47,11 @@ class DatabaseSeeder extends Seeder
             PilihanJawabanSeeder::class,
         ]);
 
+        // Seed pelatihan lengkap (Laravel course dengan modul, video, bacaan, quiz, ujian)
+        $this->call([
+            PelatihanLengkapSeeder::class,
+        ]);
+
         // Seed bank soal
         $this->call([
             BankSoalSeeder::class,

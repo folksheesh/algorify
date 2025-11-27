@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('resources/css/admin/ujian-detail.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/ujian-detail.css') }}">
 @endpush
 
 @section('content')
@@ -32,7 +32,7 @@
 <div class="page-container">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}" class="back-btn">
+    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="back-btn">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -133,7 +133,41 @@
                     </div>
                     @endif
 
-                    <form id="quizForm">
+                    @hasrole('peserta')
+                    @if(!$showResults)
+                    <!-- Start Quiz Screen -->
+                    <div id="quizStartScreen" style="text-align: center; padding: 3rem 2rem;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1F2937; margin-bottom: 0.5rem;">{{ $ujian->judul }}</h2>
+                        <p style="color: #6B7280; margin-bottom: 1.5rem;">{{ $ujian->deskripsi ?? 'Kuis ini berisi beberapa pertanyaan untuk menguji pemahaman Anda.' }}</p>
+                        
+                        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">{{ $ujian->soal->count() }}</div>
+                                <div style="font-size: 0.875rem; color: #6B7280;">Pertanyaan</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #10B981;">{{ $ujian->minimum_score ?? 70 }}</div>
+                                <div style="font-size: 0.875rem; color: #6B7280;">Nilai Minimum</div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" onclick="showStartQuizModal()" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); transition: all 0.2s;">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                            </svg>
+                            Mulai Kuis
+                        </button>
+                    </div>
+                    @endif
+                    @endhasrole
+
+                    <form id="quizForm" @hasrole('peserta') @if(!$showResults) style="display: none;" @endif @endhasrole>
                         @foreach($ujian->soal as $index => $soal)
                         <div class="question-card">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -260,12 +294,23 @@
 
                         <div class="action-buttons">
                             @if($showResults)
-                                <a href="{{ route('admin.ujian.show', $ujian->id) }}" class="btn btn-primary" style="text-decoration: none;">
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Coba Lagi
-                                </a>
+                                @if($hasil && $hasil->nilai >= ($ujian->minimum_score ?? 70))
+                                    {{-- Sudah Lulus - Tombol Selesai ke halaman pelatihan --}}
+                                    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}" class="btn btn-success" style="text-decoration: none;">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Selesai
+                                    </a>
+                                @else
+                                    {{-- Belum Lulus - Tombol Coba Lagi --}}
+                                    <a href="{{ route('admin.ujian.show', $ujian->id) }}" class="btn btn-primary" style="text-decoration: none;">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Coba Lagi
+                                    </a>
+                                @endif
                             @else
                                 <button type="button" class="btn btn-secondary" onclick="window.history.back()">Batal</button>
                                 <button type="submit" class="btn btn-success">
@@ -341,6 +386,53 @@
                     <p class="description-text">{{ $ujian->deskripsi }}</p>
                     @endif
 
+                    <!-- Start Screen untuk Ujian (Exam) -->
+                    @hasanyrole('peserta')
+                    <div id="examStartScreen" class="start-screen" style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); border-radius: 12px; margin-bottom: 1.5rem;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1E293B; margin-bottom: 0.75rem;">Siap Mengerjakan Ujian?</h2>
+                        <p style="color: #64748B; margin-bottom: 1.5rem; font-size: 0.95rem;">Pastikan Anda sudah siap sebelum memulai ujian. Waktu akan mulai berjalan setelah Anda memulai.</p>
+                        
+                        <div class="start-info" style="display: inline-flex; gap: 2rem; background: white; padding: 1rem 2rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #6366F1;">{{ $ujian->soal->count() }}</div>
+                                <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Jumlah Soal</div>
+                            </div>
+                            <div style="width: 1px; background: #E5E7EB;"></div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #10B981;">{{ $ujian->minimum_score ?? 70 }}</div>
+                                <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Nilai Minimum</div>
+                            </div>
+                            <div style="width: 1px; background: #E5E7EB;"></div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #F59E0B;">60</div>
+                                <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Menit</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem; padding: 1rem; background: #FEF3C7; border-radius: 8px; border-left: 4px solid #F59E0B;">
+                            <p style="color: #92400E; font-size: 0.875rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="#F59E0B">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <strong>Perhatian:</strong> Ujian akan dimulai setelah Anda menekan tombol di bawah. Pastikan koneksi internet stabil.
+                            </p>
+                        </div>
+                        
+                        <button onclick="startExam()" class="btn btn-primary" style="padding: 0.875rem 2rem; font-size: 1rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                            </svg>
+                            Mulai Ujian
+                        </button>
+                    </div>
+                    @endhasanyrole
+
+                    <div id="examFormContainer" style="@hasanyrole('peserta')display: none;@endhasanyrole">
                     <form id="examForm">
                         @foreach($ujian->soal as $index => $soal)
                         <div class="question-card" id="question-{{ $index + 1 }}" style="{{ $index === 0 ? '' : 'display: none;' }}">
@@ -418,11 +510,12 @@
                             </button>
                         </div>
                     </form>
+                    </div><!-- End examFormContainer -->
                 </div>
             </div>
 
             <!-- Sidebar -->
-            <div>
+            <div id="examSidebar" style="@hasanyrole('peserta')display: none;@endhasanyrole">
                 <!-- Timer -->
                 <div class="timer-card">
                     <div class="timer-label">Sisa Waktu</div>
@@ -462,7 +555,204 @@
 
 </div>
 
+{{-- TOAST NOTIFICATION - Notifikasi di pojok kanan atas --}}
+<div id="toastNotification" class="toast-notification">
+    <div class="toast-icon-wrapper" id="toastIconWrapper">
+        <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </div>
+    <div class="toast-content">
+        <div class="toast-title" id="toastTitle">Notifikasi</div>
+        <div class="toast-message" id="toastMessage">Pesan notifikasi</div>
+    </div>
+    <button class="toast-close" onclick="closeToast()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+    </button>
+</div>
+
+<style>
+/* Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.25rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    z-index: 10001;
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 320px;
+    max-width: 450px;
+    animation: toastSlideIn 0.3s ease;
+    border-left: 4px solid #10B981;
+}
+
+.toast-notification.active {
+    display: flex;
+}
+
+.toast-notification.success {
+    border-left-color: #10B981;
+}
+
+.toast-notification.error {
+    border-left-color: #EF4444;
+}
+
+.toast-notification.warning {
+    border-left-color: #F59E0B;
+}
+
+.toast-notification.info {
+    border-left-color: #3B82F6;
+}
+
+.toast-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toast-notification.success .toast-icon-wrapper {
+    background: #D1FAE5;
+    color: #10B981;
+}
+
+.toast-notification.error .toast-icon-wrapper {
+    background: #FEE2E2;
+    color: #EF4444;
+}
+
+.toast-notification.warning .toast-icon-wrapper {
+    background: #FEF3C7;
+    color: #F59E0B;
+}
+
+.toast-notification.info .toast-icon-wrapper {
+    background: #DBEAFE;
+    color: #3B82F6;
+}
+
+.toast-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1E293B;
+    margin-bottom: 0.125rem;
+}
+
+.toast-message {
+    font-size: 0.8125rem;
+    color: #64748B;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: #94A3B8;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.toast-close:hover {
+    background: #F1F5F9;
+    color: #64748B;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+</style>
+
 <script>
+    // Toast Notification Function
+    let toastTimeout = null;
+    
+    function showToast(title, message, type = 'success') {
+        const toast = document.getElementById('toastNotification');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIconWrapper = document.getElementById('toastIconWrapper');
+        
+        // Clear existing timeout
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+        }
+        
+        // Set content
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+        
+        // Set type class
+        toast.className = 'toast-notification ' + type + ' active';
+        
+        // Set icon based on type
+        const iconSvg = document.getElementById('toastIcon');
+        if (type === 'success') {
+            iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+        } else if (type === 'error') {
+            iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+        } else if (type === 'warning') {
+            iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>';
+        } else {
+            iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+        }
+        
+        // Auto hide after 4 seconds
+        toastTimeout = setTimeout(() => {
+            closeToast();
+        }, 4000);
+    }
+    
+    function closeToast() {
+        const toast = document.getElementById('toastNotification');
+        toast.style.animation = 'toastSlideOut 0.3s ease forwards';
+        setTimeout(() => {
+            toast.classList.remove('active');
+            toast.style.animation = '';
+        }, 300);
+    }
+
     // Radio button selection highlighting
     document.querySelectorAll('.option-item').forEach(item => {
         item.addEventListener('click', function() {
@@ -500,10 +790,198 @@
         });
     });
 
+    // Function to start quiz (show form and hide start screen)
+    function showStartQuizModal() {
+        // Hide start screen by ID
+        const startScreen = document.getElementById('quizStartScreen');
+        if (startScreen) {
+            startScreen.style.display = 'none';
+        }
+        
+        // Show quiz form
+        const quizForm = document.getElementById('quizForm');
+        if (quizForm) {
+            quizForm.style.display = 'block';
+        }
+    }
+
+    // Bank Soal Variables
+    let bankSoalData = [];
+    let filteredBankSoal = [];
+    let selectedSoalIds = new Set();
+    const kursusKategori = "{{ $ujian->modul->kursus->kategori ?? '' }}";
+    const ujianId = {{ $ujian->id }};
+
     // Function to open Bank Soal modal
     function openBankSoalModal() {
-        alert('Fitur Bank Soal akan segera hadir!');
-        // TODO: Implement bank soal modal
+        document.getElementById('modalBankSoal').classList.add('active');
+        loadBankSoalData();
+    }
+
+    // Function to close Bank Soal modal
+    function closeBankSoalModal() {
+        document.getElementById('modalBankSoal').classList.remove('active');
+        selectedSoalIds.clear();
+        updateSelectedCount();
+    }
+
+    // Load Bank Soal data from server
+    async function loadBankSoalData() {
+        const listContainer = document.getElementById('bankSoalList');
+        listContainer.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #64748B;">
+                <svg width="48" height="48" viewBox="0 0 20 20" fill="#CBD5E1" style="margin: 0 auto 1rem; animation: spin 1s linear infinite;">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                </svg>
+                Memuat soal dari bank soal...
+            </div>
+        `;
+
+        try {
+            // Build query with kategori filter
+            const params = new URLSearchParams();
+            if (kursusKategori) {
+                params.append('kategori_nama', kursusKategori);
+            }
+            
+            const response = await fetch(`{{ route('admin.bank-soal.data') }}?${params.toString()}`);
+            const result = await response.json();
+            
+            bankSoalData = result.data || [];
+            filteredBankSoal = [...bankSoalData];
+            
+            renderBankSoalList();
+        } catch (error) {
+            console.error('Error loading bank soal:', error);
+            listContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #EF4444;">
+                    <svg width="48" height="48" viewBox="0 0 20 20" fill="#FCA5A5" style="margin: 0 auto 1rem;">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    Gagal memuat data. Silakan coba lagi.
+                </div>
+            `;
+        }
+    }
+
+    // Filter Bank Soal
+    function filterBankSoal() {
+        const search = document.getElementById('bankSoalSearch').value.toLowerCase();
+        const tipe = document.getElementById('bankSoalTipe').value;
+        
+        filteredBankSoal = bankSoalData.filter(item => {
+            const matchSearch = !search || item.pertanyaan.toLowerCase().includes(search);
+            const matchTipe = !tipe || item.tipe_soal === tipe;
+            return matchSearch && matchTipe;
+        });
+        
+        renderBankSoalList();
+    }
+
+    // Render Bank Soal list
+    function renderBankSoalList() {
+        const listContainer = document.getElementById('bankSoalList');
+        
+        if (filteredBankSoal.length === 0) {
+            listContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #64748B;">
+                    <svg width="48" height="48" viewBox="0 0 20 20" fill="#CBD5E1" style="margin: 0 auto 1rem;">
+                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                    </svg>
+                    <p style="margin: 0;">Tidak ada soal ditemukan untuk kategori ini</p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.8125rem;">Silakan tambah soal baru di halaman Bank Soal</p>
+                </div>
+            `;
+            return;
+        }
+
+        listContainer.innerHTML = filteredBankSoal.map(item => {
+            const isSelected = selectedSoalIds.has(item.id);
+            const tipeBadge = item.tipe_soal === 'pilihan_ganda' 
+                ? '<span style="background: #DBEAFE; color: #1E40AF; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">Pilihan Ganda</span>'
+                : '<span style="background: #FEF3C7; color: #92400E; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">Multi Jawaban</span>';
+            
+            return `
+                <div class="bank-soal-item ${isSelected ? 'selected' : ''}" 
+                     onclick="toggleSoalSelection(${item.id})"
+                     style="display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border: 2px solid ${isSelected ? '#8B5CF6' : '#E2E8F0'}; border-radius: 10px; cursor: pointer; transition: all 0.2s; background: ${isSelected ? '#F5F3FF' : 'white'};">
+                    <div style="flex-shrink: 0; width: 24px; height: 24px; border: 2px solid ${isSelected ? '#8B5CF6' : '#CBD5E1'}; border-radius: 6px; display: flex; align-items: center; justify-content: center; background: ${isSelected ? '#8B5CF6' : 'white'}; transition: all 0.2s;">
+                        ${isSelected ? '<svg width="14" height="14" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>' : ''}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            ${tipeBadge}
+                            <span style="font-size: 0.75rem; color: #64748B;">${item.poin} Poin</span>
+                        </div>
+                        <p style="margin: 0; font-size: 0.875rem; color: #1E293B; line-height: 1.5;">${item.pertanyaan.length > 150 ? item.pertanyaan.substring(0, 150) + '...' : item.pertanyaan}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Toggle soal selection
+    function toggleSoalSelection(id) {
+        if (selectedSoalIds.has(id)) {
+            selectedSoalIds.delete(id);
+        } else {
+            selectedSoalIds.add(id);
+        }
+        renderBankSoalList();
+        updateSelectedCount();
+    }
+
+    // Update selected count
+    function updateSelectedCount() {
+        document.getElementById('selectedCount').textContent = selectedSoalIds.size;
+    }
+
+    // Add selected soal to ujian
+    async function addSelectedSoal() {
+        if (selectedSoalIds.size === 0) {
+            showToast('Peringatan', 'Pilih minimal satu soal untuk ditambahkan', 'warning');
+            return;
+        }
+
+        const submitBtn = document.querySelector('#modalBankSoal .btn-submit-soal');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="animation: spin 1s linear infinite;">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            Menambahkan...
+        `;
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('{{ route("admin.soal.add-from-bank") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    ujian_id: ujianId,
+                    bank_soal_ids: Array.from(selectedSoalIds)
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Berhasil', `${selectedSoalIds.size} soal berhasil ditambahkan ke {{ $ujian->tipe === 'practice' ? 'kuis' : 'ujian' }}`, 'success');
+                closeBankSoalModal();
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Gagal', result.message || 'Gagal menambahkan soal', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Error', 'Terjadi kesalahan saat menambahkan soal', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
     }
 
     @if($ujian->tipe === 'exam')
@@ -619,13 +1097,57 @@
         }
     }
 
-    // Start timer when page loads (only for students/peserta role)
+    // Start timer when exam is started (only for students/peserta role)
     @hasanyrole('admin|super admin|pengajar')
-        // Admin, super admin, and pengajar don't have countdown timer
+        // Admin, super admin, and pengajar don't have countdown timer and start exam directly
         console.log('Timer disabled for admin/pengajar role');
-    @else
         startTimer();
+    @else
+        // Timer will be started when startExam() is called
+        console.log('Timer will start when exam begins');
     @endhasanyrole
+    
+    // Function to start exam (for peserta only)
+    function startExam() {
+        // Hide start screen
+        const startScreen = document.getElementById('examStartScreen');
+        if (startScreen) {
+            startScreen.style.display = 'none';
+        }
+        
+        // Show form container
+        const formContainer = document.getElementById('examFormContainer');
+        if (formContainer) {
+            formContainer.style.display = 'block';
+        }
+        
+        // Show sidebar (timer and navigation)
+        const sidebar = document.getElementById('examSidebar');
+        if (sidebar) {
+            sidebar.style.display = 'block';
+        }
+        
+        // Hide back button during exam
+        const backBtn = document.querySelector('.back-btn');
+        if (backBtn) {
+            backBtn.style.display = 'none';
+        }
+        
+        // Add exam-active class for full width layout
+        const examContainer = document.querySelector('.exam-container');
+        if (examContainer) {
+            examContainer.classList.add('exam-active');
+        }
+        
+        // Add exam-mode class to page container for reduced padding
+        const pageContainer = document.querySelector('.page-container');
+        if (pageContainer) {
+            pageContainer.classList.add('exam-mode');
+        }
+        
+        // Start the timer
+        startTimer();
+    }
     
     // Initialize navigation state
     initializeNavigationState();
@@ -637,109 +1159,115 @@
         e.preventDefault();
         
         @hasanyrole('peserta')
-        if (confirm('Apakah Anda yakin ingin menyelesaikan kuis ini?')) {
-            const formData = new FormData(this);
-            const jawaban = {};
-            
-            // Collect all answers
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('soal_')) {
-                    const soalId = key.replace('soal_', '').replace('[]', '');
-                    if (key.includes('[]')) {
-                        // Multiple answer
-                        if (!jawaban[soalId]) {
-                            jawaban[soalId] = [];
-                        }
-                        jawaban[soalId].push(value);
-                    } else {
-                        // Single answer
-                        jawaban[soalId] = value;
-                    }
-                }
-            }
-            
-            // Submit to backend for quiz (practice type)
-            fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ 
-                    jawaban: jawaban,
-                    is_practice: true 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // For quiz, reload with results parameter
-                    window.location.href = window.location.href + '?show_results=1';
-                } else {
-                    alert('Gagal menyelesaikan kuis: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menyelesaikan kuis');
-            });
-        }
+        // Langsung submit tanpa konfirmasi
+        submitQuiz();
         @else
-        alert('Fitur ini hanya untuk peserta');
+        showToast('Info', 'Fitur ini hanya untuk peserta', 'info');
         @endhasanyrole
     });
+    
+    function submitQuiz() {
+        const formData = new FormData(document.getElementById('quizForm'));
+        const jawaban = {};
+        
+        // Collect all answers
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('soal_')) {
+                const soalId = key.replace('soal_', '').replace('[]', '');
+                if (key.includes('[]')) {
+                    // Multiple answer
+                    if (!jawaban[soalId]) {
+                        jawaban[soalId] = [];
+                    }
+                    jawaban[soalId].push(value);
+                } else {
+                    // Single answer
+                    jawaban[soalId] = value;
+                }
+            }
+        }
+        
+        // Submit to backend for quiz (practice type)
+        fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ 
+                jawaban: jawaban,
+                is_practice: true 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // For quiz, reload with results parameter (tanpa alert)
+                window.location.href = window.location.href.split('?')[0] + '?show_results=1';
+            } else {
+                showToast('Gagal', 'Gagal menyelesaikan kuis: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Terjadi kesalahan saat menyelesaikan kuis', 'error');
+        });
+    }
     @else
     document.getElementById('examForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
         @hasanyrole('peserta')
-        if (confirm('Apakah Anda yakin ingin menyelesaikan ujian ini?')) {
-            const formData = new FormData(this);
-            const jawaban = {};
-            
-            // Collect all answers
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('soal_')) {
-                    const soalId = key.replace('soal_', '').replace('[]', '');
-                    if (key.includes('[]')) {
-                        // Multiple answer
-                        if (!jawaban[soalId]) {
-                            jawaban[soalId] = [];
-                        }
-                        jawaban[soalId].push(value);
-                    } else {
-                        // Single answer
-                        jawaban[soalId] = value;
-                    }
-                }
-            }
-            
-            // Submit to backend
-            fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ jawaban: jawaban })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '{{ route("user.ujian.result", $ujian->id) }}';
-                } else {
-                    alert('Gagal menyelesaikan ujian: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menyelesaikan ujian');
-            });
-        }
+        // Langsung submit tanpa konfirmasi
+        submitExam();
         @else
-        alert('Fitur ini hanya untuk peserta');
+        showToast('Info', 'Fitur ini hanya untuk peserta', 'info');
         @endhasanyrole
     });
+    
+    function submitExam() {
+        const formData = new FormData(document.getElementById('examForm'));
+        const jawaban = {};
+        
+        // Collect all answers
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('soal_')) {
+                const soalId = key.replace('soal_', '').replace('[]', '');
+                if (key.includes('[]')) {
+                    // Multiple answer
+                    if (!jawaban[soalId]) {
+                        jawaban[soalId] = [];
+                    }
+                    jawaban[soalId].push(value);
+                } else {
+                    // Single answer
+                    jawaban[soalId] = value;
+                }
+            }
+        }
+        
+        // Submit to backend (tanpa alert)
+        fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ jawaban: jawaban })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '{{ route("user.ujian.result", $ujian->id) }}';
+            } else {
+                showToast('Gagal', 'Gagal menyelesaikan ujian: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Terjadi kesalahan saat menyelesaikan ujian', 'error');
+        });
+    }
     @endif
 
     // Modal Soal Functions
@@ -848,12 +1376,12 @@
                     document.getElementById('modalSoal').classList.add('active');
                     document.body.style.overflow = 'hidden';
                 } else {
-                    alert('Gagal mengambil data soal');
+                    showToast('Gagal', 'Gagal mengambil data soal', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengambil data soal');
+                showToast('Error', 'Terjadi kesalahan saat mengambil data soal', 'error');
             });
     }
 
@@ -869,14 +1397,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    showToast('Berhasil', 'Soal berhasil dihapus', 'success');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
-                    alert('Gagal menghapus soal: ' + (data.message || 'Unknown error'));
+                    showToast('Gagal', 'Gagal menghapus soal: ' + (data.message || 'Unknown error'), 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat menghapus soal');
+                showToast('Error', 'Terjadi kesalahan saat menghapus soal', 'error');
             });
         }
     }
@@ -1006,11 +1535,11 @@
                 })
                 .then(data => {
                     if (data && data.success) {
-                        alert('Soal berhasil disimpan!');
+                        showToast('Berhasil', 'Soal berhasil disimpan!', 'success');
                         closeAddSoalModal();
-                        location.reload();
+                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        alert('Gagal menyimpan soal: ' + (data.message || 'Unknown error'));
+                        showToast('Gagal', 'Gagal menyimpan soal: ' + (data.message || 'Unknown error'), 'error');
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;
                     }
@@ -1055,11 +1584,11 @@
                 })
                 .then(data => {
                     if (data && data.success) {
-                        alert('Soal berhasil diimport!');
+                        showToast('Berhasil', 'Soal berhasil diimport!', 'success');
                         closeImportModal();
-                        location.reload();
+                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        alert('Gagal mengimport soal: ' + (data.message || 'Unknown error'));
+                        showToast('Gagal', 'Gagal mengimport soal: ' + (data.message || 'Unknown error'), 'error');
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;
                     }
@@ -1357,6 +1886,84 @@
     </div>
 </div>
 
+<!-- Modal Bank Soal -->
+<div id="modalBankSoal" class="modal-overlay">
+    <div class="modal-container-soal" style="max-width: 900px; max-height: 85vh;">
+        <div class="modal-header-soal" style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);">
+            <div>
+                <h2 class="modal-title-soal">
+                    <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; margin-right: 0.5rem;">
+                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                    </svg>
+                    Tambah Soal dari Bank Soal
+                </h2>
+                <p class="modal-subtitle-soal">Pilih soal yang ingin ditambahkan ke {{ $ujian->tipe === 'practice' ? 'kuis' : 'ujian' }} ini</p>
+            </div>
+            <button class="modal-close-soal" type="button" onclick="closeBankSoalModal()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body-soal" style="padding: 1.5rem 2rem; max-height: 55vh; overflow-y: auto;">
+            <!-- Filter & Search -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <input type="text" id="bankSoalSearch" placeholder="Cari pertanyaan..." 
+                           style="width: 100%; padding: 0.625rem 1rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem;"
+                           onkeyup="filterBankSoal()">
+                </div>
+                <div>
+                    <select id="bankSoalTipe" style="padding: 0.625rem 1rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; min-width: 150px;" onchange="filterBankSoal()">
+                        <option value="">Semua Tipe</option>
+                        <option value="pilihan_ganda">Pilihan Ganda</option>
+                        <option value="multi_jawaban">Multi Jawaban</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Info kategori -->
+            <div style="background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <span style="font-size: 0.875rem; color: #5B21B6;">
+                    Menampilkan soal dari kategori: <strong>{{ $ujian->modul->kursus->kategori ?? 'Semua' }}</strong>
+                </span>
+            </div>
+            
+            <!-- Soal List -->
+            <div id="bankSoalList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="text-align: center; padding: 2rem; color: #64748B;">
+                    <svg width="48" height="48" viewBox="0 0 20 20" fill="#CBD5E1" style="margin: 0 auto 1rem;">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                    </svg>
+                    Memuat soal...
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer-soal" style="border-top: 1px solid #E2E8F0; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 0.875rem; color: #64748B;">
+                <span id="selectedCount">0</span> soal dipilih
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="button" class="btn-cancel-soal" onclick="closeBankSoalModal()">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Batal
+                </button>
+                <button type="button" class="btn-submit-soal" onclick="addSelectedSoal()" style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                    Tambahkan Soal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Modal Soal Styles */
 .modal-overlay {
@@ -1381,6 +1988,11 @@
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .modal-container-soal {

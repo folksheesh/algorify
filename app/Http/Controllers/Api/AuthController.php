@@ -47,7 +47,17 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
+
+        // Assign role peserta untuk API register
+        if (method_exists($user, 'assignRole')) {
+            try {
+                $user->assignRole('peserta');
+            } catch (\Throwable $e) {
+                // Ignore if role doesn't exist
+            }
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

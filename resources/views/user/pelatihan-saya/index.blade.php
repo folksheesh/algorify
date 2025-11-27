@@ -68,19 +68,31 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
         .course-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
         }
-        .course-thumbnail {
+        .course-thumbnail-wrapper {
             width: 100%;
             height: 180px;
-            object-fit: cover;
+            overflow: hidden;
+            flex-shrink: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .course-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
         .course-content {
             padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .course-title {
             font-size: 1.125rem;
@@ -150,7 +162,7 @@
         .course-footer {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            margin-top: auto;
         }
         .btn-continue {
             flex: 1;
@@ -172,21 +184,32 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
-        .enrollment-code {
+        .btn-certificate {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 0.875rem;
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #64748B;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        .enrollment-code svg {
-            width: 14px;
-            height: 14px;
+        .btn-certificate:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        .btn-certificate svg {
+            width: 18px;
+            height: 18px;
         }
         .empty-state {
             text-align: center;
@@ -291,11 +314,13 @@
                     <!-- Courses Grid -->
                     <div class="courses-grid" id="coursesGrid">
                         @foreach($enrollments as $enrollment)
-                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}">
-                            <img src="{{ asset($enrollment->kursus->thumbnail ?? 'template/assets/static/images/samples/origami.jpg') }}" 
-                                 alt="{{ $enrollment->kursus->judul }}" 
-                                 class="course-thumbnail"
-                                 onerror="this.src='{{ asset('template/assets/static/images/samples/origami.jpg') }}'">
+                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}'">
+                            <div class="course-thumbnail-wrapper">
+                                <img src="{{ asset($enrollment->kursus->thumbnail ?? 'template/assets/static/images/samples/origami.jpg') }}" 
+                                     alt="{{ $enrollment->kursus->judul }}" 
+                                     class="course-thumbnail"
+                                     onerror="this.src='{{ asset('template/assets/static/images/samples/origami.jpg') }}'">
+                            </div>
                             <div class="course-content">
                                 <h3 class="course-title">{{ $enrollment->kursus->judul }}</h3>
                                 <p class="course-description">{{ $enrollment->kursus->deskripsi_singkat }}</p>
@@ -329,16 +354,19 @@
                                     </div>
                                 </div>
                                 
-                                <div class="course-footer">
-                                    <a href="{{ route('kursus.show', $enrollment->kursus->id) }}" class="btn-continue">
-                                        Lanjutkan Belajar
-                                    </a>
-                                    <div class="enrollment-code" title="Kode Enrollment">
-                                        <svg viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        {{ $enrollment->kode }}
-                                    </div>
+                                <div class="course-footer" onclick="event.stopPropagation()">
+                                    @if(($enrollment->progress ?? 0) >= 100 || $enrollment->status === 'completed')
+                                        <a href="{{ route('user.sertifikat.index') }}" class="btn-certificate">
+                                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                            </svg>
+                                            Cek Sertifikat
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}" class="btn-continue">
+                                            Lanjutkan Belajar
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

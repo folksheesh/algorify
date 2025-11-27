@@ -60,6 +60,7 @@ class AdminController extends Controller
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'status' => $validated['status'] ?? 'active',
+            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
 
         $user->assignRole('admin');

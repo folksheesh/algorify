@@ -34,6 +34,7 @@ class User extends Authenticatable
         'keahlian',
         'pengalaman',
         'sertifikasi',
+        'kode_unik',
     ];
 
     /**
@@ -91,5 +92,37 @@ class User extends Authenticatable
     public function nilai()
     {
         return $this->hasMany(Nilai::class);
+    }
+
+    /**
+     * Generate kode unik berdasarkan role
+     * PST-XXXXXX untuk peserta
+     * PJR-XXXXXX untuk pengajar
+     * ADM-XXXXXX untuk admin
+     */
+    public static function generateKodeUnik(string $role): string
+    {
+        $prefix = match(strtolower($role)) {
+            'peserta' => 'PST',
+            'pengajar' => 'PJR',
+            'admin', 'super admin' => 'ADM',
+            default => 'USR',
+        };
+
+        do {
+            $randomNumber = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $kodeUnik = $prefix . '-' . $randomNumber;
+        } while (self::where('kode_unik', $kodeUnik)->exists());
+
+        return $kodeUnik;
+    }
+
+    /**
+     * Update kode unik jika role berubah
+     */
+    public function updateKodeUnikForRole(string $role): void
+    {
+        $this->kode_unik = self::generateKodeUnik($role);
+        $this->save();
     }
 }

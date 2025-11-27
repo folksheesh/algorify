@@ -5,10 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Video;
+use App\Repositories\ProgressRepository;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
+    protected ProgressRepository $progressRepository;
+
+    public function __construct(ProgressRepository $progressRepository)
+    {
+        $this->progressRepository = $progressRepository;
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -83,30 +92,58 @@ class VideoController extends Controller
 
     public function show($id)
     {
-        $video = Video::with(['modul.kursus.pengajar'])->findOrFail($id);
+        $video = Video::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian'])->findOrFail($id);
         
-        // Get all materials in the same module (videos + materi)
+        // Get all materials in the same module (videos + materi + ujian)
         $modul = $video->modul;
         $allItems = collect();
+        $completedItems = [];
         
-        foreach ($modul->video as $v) {
-            $allItems->push([
-                'type' => 'video',
-                'data' => $v,
-                'urutan' => $v->urutan
-            ]);
+        // Get user's completed items for this course
+        if (Auth::check() && $modul) {
+            $kursusId = $modul->kursus_id;
+            $userId = Auth::id();
+            $completedItems = $this->progressRepository->getCompletedItems($userId, $kursusId);
         }
         
-        foreach ($modul->materi as $m) {
-            $allItems->push([
-                'type' => 'pdf',
-                'data' => $m,
-                'urutan' => $m->urutan
-            ]);
+        if ($modul) {
+            foreach ($modul->video ?? [] as $v) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $v->id);
+                $allItems->push([
+                    'type' => 'video',
+                    'data' => $v,
+                    'urutan' => $v->urutan,
+                    'completed' => $isCompleted,
+                ]);
+            }
+            
+            foreach ($modul->materi ?? [] as $m) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'materi' && $item['id'] == $m->id);
+                $allItems->push([
+                    'type' => 'bacaan',
+                    'data' => $m,
+                    'urutan' => $m->urutan + 100, // Bacaan setelah video
+                    'completed' => $isCompleted,
+                ]);
+            }
+            
+            foreach ($modul->ujian ?? [] as $u) {
+                $type = $u->tipe === 'exam' ? 'ujian' : 'quiz';
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === $type && $item['id'] == $u->id);
+                $allItems->push([
+                    'type' => $type,
+                    'data' => $u,
+                    'urutan' => 200 + ($u->id ?? 0), // Quiz/Ujian di akhir
+                    'completed' => $isCompleted,
+                ]);
+            }
         }
         
         $allItems = $allItems->sortBy('urutan')->values();
         
-        return view('admin.pelatihan.video-detail', compact('video', 'allItems'));
+        // Get current video's completion status
+        $videoCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $video->id);
+        
+        return view('admin.pelatihan.video-detail', compact('video', 'allItems', 'videoCompleted'));
     }
 }

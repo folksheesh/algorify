@@ -20,6 +20,25 @@ class EnrollmentSeeder extends Seeder
         
         // Get Blockchain Development course
         $blockchainCourse = Kursus::where('judul', 'Blockchain Development')->first();
+        $analisisDataCourse = Kursus::where('judul', 'Analisis Data')->first();
+        $fullstackLaravelDevelopmentCourse = Kursus::where('judul', 'Fullstack Laravel Development')->first();
+
+
+         Enrollment::create([
+                    'user_id' => $zein->id,
+                    'kursus_id' => $analisisDataCourse->id,
+                    'status' => 'active',
+                    'progress' => 0,
+                    'tanggal_daftar' => now(),
+                ]);
+
+                 Enrollment::create([
+                    'user_id' => $zein->id,
+                    'kursus_id' => $fullstackLaravelDevelopmentCourse->id,
+                    'status' => 'active',
+                    'progress' => 0,
+                    'tanggal_daftar' => now(),
+                ]);
         
         if ($zein && $blockchainCourse) {
             // Check if enrollment already exists

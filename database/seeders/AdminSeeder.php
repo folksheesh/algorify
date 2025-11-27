@@ -29,6 +29,7 @@ class AdminSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S2 Teknologi Informasi',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
         $admin->assignRole('admin');
 
@@ -42,6 +43,7 @@ class AdminSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S2 Computer Science',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
         $superAdmin->assignRole('super admin');
     }

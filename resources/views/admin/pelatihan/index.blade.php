@@ -5,10 +5,10 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/pelatihan-index.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    @vite(['resources/css/admin/pelatihan-index.css'])
 @endpush
 
 @section('content')
@@ -416,7 +416,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Gagal memuat data kursus');
+                    showToast('Gagal memuat data kursus', 'error');
                 });
         }
 
@@ -432,15 +432,15 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Kursus berhasil dihapus');
+                        showToast('Kursus berhasil dihapus', 'success');
                         location.reload();
                     } else {
-                        alert('Gagal menghapus kursus');
+                        showToast('Gagal menghapus kursus', 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus kursus');
+                    showToast('Terjadi kesalahan saat menghapus kursus', 'error');
                 });
             }
         }

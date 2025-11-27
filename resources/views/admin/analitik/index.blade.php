@@ -392,6 +392,70 @@
             from { transform: translateY(50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 380px;
+            border-left: 4px solid #EF4444;
+        }
+        .toast-notification.active {
+            transform: translateX(0);
+        }
+        .toast-notification.success {
+            border-left-color: #10B981;
+        }
+        .toast-notification.success .toast-icon {
+            color: #10B981;
+        }
+        .toast-notification.error {
+            border-left-color: #EF4444;
+        }
+        .toast-notification.error .toast-icon {
+            color: #EF4444;
+        }
+        .toast-notification.warning {
+            border-left-color: #F59E0B;
+        }
+        .toast-notification.warning .toast-icon {
+            color: #F59E0B;
+        }
+        .toast-notification.info {
+            border-left-color: #3B82F6;
+        }
+        .toast-notification.info .toast-icon {
+            color: #3B82F6;
+        }
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: #EF4444;
+        }
+        .toast-content {
+            flex: 1;
+        }
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1F2937;
+            margin-bottom: 2px;
+        }
+        .toast-message {
+            font-size: 13px;
+            color: #6B7280;
+        }
     </style>
 @endpush
 
@@ -746,7 +810,33 @@
 @endsection
 
 @push('scripts')
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Info</div>
+            <div class="toast-message" id="toastMessage">Pesan</div>
+        </div>
+    </div>
     <script>
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = 'toast-notification ' + type;
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 4000);
+        }
+
         document.documentElement.setAttribute('data-bs-theme', 'light');
         
         // Revenue Chart
@@ -906,11 +996,11 @@
         }
         
         function downloadCertificate() {
-            alert('Mengunduh sertifikat...');
+            showToast('Info', 'Mengunduh sertifikat...', 'info');
         }
         
         function viewHistory() {
-            alert('Menampilkan riwayat lengkap...');
+            showToast('Info', 'Menampilkan riwayat lengkap...', 'info');
         }
         
         // Close modal when clicking outside

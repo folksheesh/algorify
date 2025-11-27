@@ -82,6 +82,7 @@ class GoogleController extends Controller
                 'email' => $googleUser->getEmail(),
                 // Simpan password acak karena kolom password biasanya wajib
                 'password' => Hash::make(Str::random(24)),
+                'kode_unik' => User::generateKodeUnik('peserta'),
             ]);
 
             // Jika paket manajemen peran (Spatie) tersedia, coba beri peran 'peserta'

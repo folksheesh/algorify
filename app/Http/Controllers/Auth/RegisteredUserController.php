@@ -75,6 +75,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Hash agar tidak tersimpan teks asli
+            'kode_unik' => User::generateKodeUnik('peserta'), // Generate kode unik untuk peserta
         ]);
 
         // Jika model User mendukung assignRole (biasanya karena Spatie terpasang),

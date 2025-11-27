@@ -29,6 +29,7 @@ class UserSeeder extends Seeder
             'address' => 'Bandung, Indonesia',
             'pendidikan' => 'S3 Computer Science',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $budi->assignRole('pengajar');
 
@@ -41,6 +42,7 @@ class UserSeeder extends Seeder
             'address' => 'Surabaya, Indonesia',
             'pendidikan' => 'S2 Cyber Security',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $sarah->assignRole('pengajar');
 
@@ -53,6 +55,7 @@ class UserSeeder extends Seeder
             'address' => 'Yogyakarta, Indonesia',
             'pendidikan' => 'S1 Desain Komunikasi Visual',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $andi->assignRole('pengajar');
 
@@ -65,6 +68,7 @@ class UserSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S1 Teknik Informatika',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $dewi->assignRole('pengajar');
 
@@ -78,6 +82,7 @@ class UserSeeder extends Seeder
             'address' => 'Semarang, Indonesia',
             'pendidikan' => 'S1 Teknik Informatika',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $zein->assignRole('peserta');
 
@@ -90,6 +95,7 @@ class UserSeeder extends Seeder
             'address' => 'Malang, Indonesia',
             'pendidikan' => 'S1 Sistem Informasi',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $siti->assignRole('peserta');
 
@@ -102,6 +108,7 @@ class UserSeeder extends Seeder
             'address' => 'Medan, Indonesia',
             'pendidikan' => 'D3 Teknik Komputer',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $rudi->assignRole('peserta');
 
@@ -114,6 +121,7 @@ class UserSeeder extends Seeder
             'address' => 'Bali, Indonesia',
             'pendidikan' => 'S1 Marketing',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $linda->assignRole('peserta');
 
@@ -126,6 +134,7 @@ class UserSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'SMK Rekayasa Perangkat Lunak',
             'email_verified_at' => now(),
+            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $arief->assignRole('peserta');
     }

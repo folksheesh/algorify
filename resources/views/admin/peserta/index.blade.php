@@ -40,7 +40,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>No</th>
                                     <th>Nama Peserta</th>
                                     <th>Email</th>
                                     <th>Status Transaksi</th>
@@ -54,6 +54,16 @@
                                 <!-- Data akan dimuat via JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <div class="pagination-info">
+                            Menampilkan <span id="showingStart">0</span> - <span id="showingEnd">0</span> dari <span id="totalData">0</span> data
+                        </div>
+                        <div class="pagination-buttons" id="paginationButtons">
+                            <!-- Pagination buttons akan dimuat via JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,6 +135,9 @@
         document.documentElement.setAttribute('data-bs-theme', 'light');
 
         let pesertaData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
         // Load data saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
@@ -137,16 +150,22 @@
                 .then(response => response.json())
                 .then(data => {
                     pesertaData = data;
-                    renderTable(pesertaData);
+                    filteredData = data;
+                    currentPage = 1;
+                    renderTable();
+                    renderPagination();
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-        // Fungsi untuk render tabel
-        function renderTable(data) {
+        // Fungsi untuk render tabel dengan pagination
+        function renderTable() {
             const tbody = document.getElementById('pesertaTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, endIndex);
             
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 2rem; color: #94A3B8;">
@@ -154,12 +173,13 @@
                         </td>
                     </tr>
                 `;
+                updatePaginationInfo(0, 0, 0);
                 return;
             }
 
-            tbody.innerHTML = data.map((item, index) => `
+            tbody.innerHTML = paginatedData.map((item, index) => `
                 <tr onclick="showDetail(${item.id})" style="cursor: pointer;">
-                    <td>${index + 1}</td>
+                    <td>${startIndex + index + 1}</td>
                     <td>${item.name}</td>
                     <td>${item.email}</td>
                     <td>
@@ -188,6 +208,65 @@
                     </td>
                 </tr>
             `).join('');
+            
+            updatePaginationInfo(startIndex + 1, Math.min(endIndex, filteredData.length), filteredData.length);
+        }
+
+        // Update info pagination
+        function updatePaginationInfo(start, end, total) {
+            document.getElementById('showingStart').textContent = total > 0 ? start : 0;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalData').textContent = total;
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const container = document.getElementById('paginationButtons');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                    onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            container.innerHTML = html;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+            renderPagination();
         }
 
         // Format tanggal
@@ -214,14 +293,16 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
 
-            let filtered = pesertaData.filter(item => {
+            filteredData = pesertaData.filter(item => {
                 const matchSearch = item.name.toLowerCase().includes(searchTerm) || 
                                    item.email.toLowerCase().includes(searchTerm);
                 const matchStatus = !statusFilter || (item.status || 'Aktif') === statusFilter;
                 return matchSearch && matchStatus;
             });
 
-            renderTable(filtered);
+            currentPage = 1;
+            renderTable();
+            renderPagination();
         }
 
         // Show detail modal

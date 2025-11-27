@@ -177,6 +177,15 @@ Route::middleware('auth')->group(function () {
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
+        
+        // Progress tracking routes
+        Route::post('/course/video/progress', [\App\Http\Controllers\User\ProgressController::class, 'updateVideoProgress'])->name('progress.video');
+        Route::post('/course/reading/complete', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');
+        Route::post('/course/quiz/score', [\App\Http\Controllers\User\ProgressController::class, 'submitQuizScore'])->name('progress.quiz');
+        Route::post('/course/exam/score', [\App\Http\Controllers\User\ProgressController::class, 'submitExamScore'])->name('progress.exam');
+        Route::get('/course/{kursusId}/progress', [\App\Http\Controllers\User\ProgressController::class, 'getCourseProgress'])->name('progress.course');
+        Route::get('/course/{kursusId}/completed-items', [\App\Http\Controllers\User\ProgressController::class, 'getCompletedItems'])->name('progress.completed');
+        Route::get('/course/item/{type}/{id}/status', [\App\Http\Controllers\User\ProgressController::class, 'getItemStatus'])->name('progress.item-status');
     });
 });
 

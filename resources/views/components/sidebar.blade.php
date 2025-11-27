@@ -150,7 +150,7 @@
                         <span class="nav-text">Halaman Utama</span>
                     </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('user.pelatihan-saya.index') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('user.pelatihan-saya.index') || request()->routeIs('admin.pelatihan.show') || request()->routeIs('admin.video.show') || request()->routeIs('admin.materi.show') || request()->routeIs('admin.ujian.show') || request()->routeIs('user.ujian.result') ? 'active' : '' }}">
                     <a href="{{ route('user.pelatihan-saya.index') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5" fill="none" />

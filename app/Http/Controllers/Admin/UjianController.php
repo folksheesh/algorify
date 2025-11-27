@@ -13,7 +13,31 @@ class UjianController extends Controller
     {
         $ujian = Ujian::with(['modul.kursus', 'soal.pilihanJawaban'])->findOrFail($id);
         
-        return view('admin.pelatihan.ujian-detail', compact('ujian'));
+        // Get all items from the same module for navigation
+        $allItems = collect();
+        
+        if ($ujian->modul) {
+            // Add videos from this module
+            foreach ($ujian->modul->video as $video) {
+                $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan ?? 0]);
+            }
+            
+            // Add materi/bacaan from this module
+            foreach ($ujian->modul->materi as $materi) {
+                $allItems->push(['type' => 'bacaan', 'data' => $materi, 'urutan' => $materi->urutan ?? 0]);
+            }
+            
+            // Add quiz and ujian from this module
+            foreach ($ujian->modul->ujian as $ujianItem) {
+                $type = ($ujianItem->tipe === 'practice') ? 'quiz' : 'ujian';
+                $allItems->push(['type' => $type, 'data' => $ujianItem, 'urutan' => 999]); // Put quiz/ujian at end
+            }
+        }
+        
+        // Sort by urutan
+        $allItems = $allItems->sortBy('urutan')->values();
+        
+        return view('admin.pelatihan.ujian-detail', compact('ujian', 'allItems'));
     }
 
     public function store(Request $request)

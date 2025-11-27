@@ -116,6 +116,16 @@
         .select2-search--dropdown .select2-search__field { border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.5rem; font-size: 0.8125rem; }
         .select2-results__option { font-size: 0.8125rem; padding: 0.5rem 0.875rem; }
         .select2-results__option--highlighted { background-color: #F5F3FF !important; color: #5D3FFF !important; }
+
+        /* Pagination Styles */
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #E2E8F0; }
+        .pagination-info { font-size: 0.875rem; color: #64748B; }
+        .pagination-buttons { display: flex; gap: 0.5rem; align-items: center; }
+        .pagination-btn { display: flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 0.75rem; border: 1px solid #E2E8F0; border-radius: 8px; background: white; color: #334155; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .pagination-btn:hover:not(.disabled):not(.active) { border-color: #5D3FFF; color: #5D3FFF; background: rgba(93, 63, 255, 0.05); }
+        .pagination-btn.active { background: #5D3FFF; border-color: #5D3FFF; color: white; }
+        .pagination-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-ellipsis { padding: 0 0.5rem; color: #94A3B8; }
     </style>
 @endpush
 
@@ -211,8 +221,13 @@
                         </tbody>
                     </table>
                     
-                    <div style="margin-top: 1.5rem;">
-                        <p style="font-size: 0.875rem; color: #64748B; margin: 0;" id="dataInfo">Menampilkan...</p>
+                    <!-- Pagination Container -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <div class="pagination-info">
+                            Menampilkan <span id="showingStart">0</span> - <span id="showingEnd">0</span> dari <span id="totalData">0</span> data
+                        </div>
+                        <div class="pagination-buttons" id="paginationButtons">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -339,6 +354,12 @@
     let editingId = null;        // ID soal yang sedang diedit
     let opsiCounter = 0;         // Counter untuk membuat ID unik pada setiap opsi
     const MAX_OPTIONS = 6;       // Batas maksimal pilihan jawaban
+    
+    // Pagination variables
+    let soalData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
 
     // ============================================
     // TOAST NOTIFICATION SYSTEM
@@ -462,48 +483,120 @@
             // Fetch data dari server
             const response = await fetch(`{{ route("admin.bank-soal.data") }}?${params.toString()}`);
             const result = await response.json();
-            const tbody = document.getElementById('soalTableBody');
-            const dataInfo = document.getElementById('dataInfo');
             
-            // Handle empty data
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6">Tidak ada data soal</td></tr>';
-                if (dataInfo) dataInfo.textContent = 'Menampilkan 0 dari 0 soal';
-                return;
-            }
-
-            // Update info
-            if (dataInfo) dataInfo.textContent = `Menampilkan ${result.data.length} dari ${result.data.length} soal`;
-
-            // Render table rows
-            tbody.innerHTML = result.data.map(item => `
-                <tr onclick="viewSoal(${item.id})" style="cursor: pointer;">
-                    <td>${item.no}</td>
-                    <td style="text-align:left; max-width:300px;">${item.pertanyaan.substring(0, 80)}${item.pertanyaan.length > 80 ? '...' : ''}</td>
-                    <td>${item.kategori}</td>
-                    <td><span class="type-badge ${item.tipe_soal}">${item.tipe_soal === 'pilihan_ganda' ? 'Pilihan Ganda' : 'Pilihan Ganda Multi'}</span></td>
-                    <td>${item.poin || 1}</td>
-                    <td onclick="event.stopPropagation()">
-                        <div class="action-buttons">
-                            <button class="btn-action btn-edit" onclick="editSoal(${item.id})" title="Edit">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-action btn-delete" onclick="deleteSoal(${item.id})" title="Hapus">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            soalData = result.data;
+            filteredData = soalData;
+            currentPage = 1;
+            
+            renderTable();
+            renderPagination();
         } catch (error) {
             console.error('Error loading data:', error);
             document.getElementById('soalTableBody').innerHTML = '<tr><td colspan="6">Error loading data</td></tr>';
+            updatePaginationInfo(0, 0, 0);
             showToast('Gagal memuat data soal', 'error');
         }
+    }
+
+    /**
+     * Render table dengan pagination
+     */
+    function renderTable() {
+        const tbody = document.getElementById('soalTableBody');
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedData = filteredData.slice(startIndex, endIndex);
+        
+        // Handle empty data
+        if (filteredData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">Tidak ada data soal</td></tr>';
+            updatePaginationInfo(0, 0, 0);
+            return;
+        }
+
+        // Render table rows
+        tbody.innerHTML = paginatedData.map((item, index) => `
+            <tr onclick="viewSoal(${item.id})" style="cursor: pointer;">
+                <td>${startIndex + index + 1}</td>
+                <td style="text-align:left; max-width:300px;">${item.pertanyaan.substring(0, 80)}${item.pertanyaan.length > 80 ? '...' : ''}</td>
+                <td>${item.kategori}</td>
+                <td><span class="type-badge ${item.tipe_soal}">${item.tipe_soal === 'pilihan_ganda' ? 'Pilihan Ganda' : 'Pilihan Ganda Multi'}</span></td>
+                <td>${item.poin || 1}</td>
+                <td onclick="event.stopPropagation()">
+                    <div class="action-buttons">
+                        <button class="btn-action btn-edit" onclick="editSoal(${item.id})" title="Edit">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                            </svg>
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteSoal(${item.id})" title="Hapus">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+        
+        updatePaginationInfo(startIndex + 1, Math.min(endIndex, filteredData.length), filteredData.length);
+    }
+
+    // Update info pagination
+    function updatePaginationInfo(start, end, total) {
+        document.getElementById('showingStart').textContent = total > 0 ? start : 0;
+        document.getElementById('showingEnd').textContent = end;
+        document.getElementById('totalData').textContent = total;
+    }
+
+    // Render pagination buttons
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+        const container = document.getElementById('paginationButtons');
+        
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        let html = '';
+        
+        // Previous button
+        html += `<button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                        onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>`;
+        
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                onclick="goToPage(${i})">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                html += `<span class="pagination-ellipsis">...</span>`;
+            }
+        }
+        
+        // Next button
+        html += `<button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                        onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>`;
+        
+        container.innerHTML = html;
+    }
+
+    // Go to specific page
+    function goToPage(page) {
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderTable();
+        renderPagination();
     }
 
     function toggleOpsi() {

@@ -8,12 +8,20 @@ use App\Models\Soal;
 use App\Models\Jawaban;
 use App\Models\Nilai;
 use App\Models\PilihanJawaban;
+use App\Repositories\ProgressRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UjianController extends Controller
 {
+    protected ProgressRepository $progressRepository;
+
+    public function __construct(ProgressRepository $progressRepository)
+    {
+        $this->progressRepository = $progressRepository;
+    }
+
     /**
      * Submit jawaban ujian
      */
@@ -28,6 +36,30 @@ class UjianController extends Controller
             $jawaban = $request->input('jawaban', []);
             
             foreach ($jawaban as $soalId => $jawabanValue) {
+                // Get the soal to check correct answer
+                $soal = Soal::with('pilihanJawaban')->find($soalId);
+                $status = 'pending';
+                
+                if ($soal) {
+                    // Get correct answer IDs
+                    $correctAnswerIds = $soal->pilihanJawaban()
+                        ->where('is_correct', true)
+                        ->pluck('id')
+                        ->map(fn($id) => (string)$id)
+                        ->toArray();
+                    
+                    // Check if answer is correct
+                    if ($soal->tipe_soal === 'multiple') {
+                        $userAnswerIds = is_array($jawabanValue) ? array_map('strval', $jawabanValue) : [];
+                        sort($userAnswerIds);
+                        sort($correctAnswerIds);
+                        $status = ($userAnswerIds == $correctAnswerIds) ? 'correct' : 'incorrect';
+                    } else {
+                        $answerValue = is_array($jawabanValue) ? (string)$jawabanValue[0] : (string)$jawabanValue;
+                        $status = in_array($answerValue, $correctAnswerIds) ? 'correct' : 'incorrect';
+                    }
+                }
+                
                 Jawaban::updateOrCreate(
                     [
                         'soal_id' => $soalId,
@@ -35,7 +67,7 @@ class UjianController extends Controller
                     ],
                     [
                         'jawaban' => is_array($jawabanValue) ? json_encode($jawabanValue) : $jawabanValue,
-                        'status' => 'submitted',
+                        'status' => $status,
                     ]
                 );
             }
@@ -83,6 +115,10 @@ class UjianController extends Controller
             
             $nilai = $totalSoal > 0 ? ($benarCount / $totalSoal) * 100 : 0;
             
+            // Determine pass/fail status based on minimum score
+            $minimumScore = $ujian->minimum_score ?? 70;
+            $status = $nilai >= $minimumScore ? 'passed' : 'failed';
+            
             // Save score
             Nilai::updateOrCreate(
                 [
@@ -91,16 +127,35 @@ class UjianController extends Controller
                 ],
                 [
                     'nilai' => $nilai,
-                    'status' => 'completed',
+                    'status' => $status,
                     'tanggal_penilaian' => now(),
                 ]
             );
+            
+            // Update progress tracking
+            $itemType = $ujian->tipe === 'practice' ? 'quiz' : 'ujian';
+            if ($itemType === 'quiz') {
+                $this->progressRepository->updateQuizProgress($user->id, $ujian->id, $nilai, $minimumScore);
+            } else {
+                $this->progressRepository->updateUjianProgress($user->id, $ujian->id, $nilai, $minimumScore);
+            }
+            
+            // Get updated course progress
+            $kursusId = $ujian->modul->kursus_id;
+            $courseProgress = $this->progressRepository->calculateProgress($user->id, $kursusId);
             
             DB::commit();
             
             return response()->json([
                 'success' => true,
-                'message' => 'Ujian berhasil diselesaikan!'
+                'message' => 'Ujian berhasil diselesaikan!',
+                'data' => [
+                    'score' => $nilai,
+                    'passed' => $nilai >= $minimumScore,
+                    'minimum_score' => $minimumScore,
+                    'show_checklist' => $nilai >= $minimumScore,
+                ],
+                'course_progress' => $courseProgress,
             ]);
                 
         } catch (\Exception $e) {
@@ -118,7 +173,7 @@ class UjianController extends Controller
     public function result($id)
     {
         $user = Auth::user();
-        $ujian = Ujian::with(['soal', 'kursus'])->findOrFail($id);
+        $ujian = Ujian::with(['soal', 'kursus', 'modul'])->findOrFail($id);
         
         // Get score
         $nilai = Nilai::where('user_id', $user->id)

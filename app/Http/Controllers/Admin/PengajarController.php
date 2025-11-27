@@ -126,6 +126,7 @@ class PengajarController extends Controller
             'pengalaman' => $validated['pengalaman'] ?? null,
             'sertifikasi' => $sertifikasiPath,
             'status' => $validated['status'] ?? 'active',
+            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
 
         // Assign role 'pengajar' ke user yang baru dibuat

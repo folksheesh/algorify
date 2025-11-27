@@ -260,37 +260,72 @@ class SoalController extends Controller
 
     public function addFromBank(Request $request)
     {
-        $validated = $request->validate([
-            'ujian_id' => 'required|exists:ujian,id',
-            'bank_soal_ids' => 'required|array',
-            'bank_soal_ids.*' => 'required|exists:bank_soal,id',
-        ]);
-
-        $ujian = \App\Models\Ujian::findOrFail($validated['ujian_id']);
-        $bankSoals = \App\Models\BankSoal::with('pilihan')->whereIn('id', $validated['bank_soal_ids'])->get();
-
-        foreach ($bankSoals as $bankSoal) {
-            // Create soal from bank soal
-            $soal = Soal::create([
-                'ujian_id' => $ujian->id,
-                'kursus_id' => $ujian->kursus_id,
-                'pertanyaan' => $bankSoal->pertanyaan,
-                'kunci_jawaban' => $bankSoal->kunci_jawaban,
+        try {
+            $validated = $request->validate([
+                'ujian_id' => 'required|exists:ujian,id',
+                'bank_soal_ids' => 'required|array',
+                'bank_soal_ids.*' => 'required|exists:bank_soal,id',
             ]);
 
-            // Copy pilihan jawaban
-            foreach ($bankSoal->pilihan as $pilihanBank) {
-                PilihanJawaban::create([
-                    'soal_id' => $soal->id,
-                    'pilihan' => $pilihanBank->pilihan,
-                    'is_correct' => $pilihanBank->is_correct,
-                ]);
-            }
-        }
+            $ujian = \App\Models\Ujian::findOrFail($validated['ujian_id']);
+            $bankSoals = \App\Models\BankSoal::whereIn('id', $validated['bank_soal_ids'])->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => count($bankSoals) . ' soal berhasil ditambahkan dari bank soal'
-        ]);
+            $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+            foreach ($bankSoals as $bankSoal) {
+                // Determine kunci_jawaban from jawaban_benar
+                // jawaban_benar bisa berupa array [0, 1] atau integer 0
+                $jawabanBenar = $bankSoal->jawaban_benar;
+                
+                // Normalize jawaban_benar ke array
+                if (!is_array($jawabanBenar)) {
+                    $jawabanBenar = $jawabanBenar !== null ? [$jawabanBenar] : [];
+                }
+                
+                $kunciJawabanLetters = array_map(function($index) use ($letters) {
+                    return $letters[$index] ?? 'A';
+                }, $jawabanBenar);
+                $kunciJawabanText = implode(', ', $kunciJawabanLetters);
+
+                // Determine tipe_soal based on jawaban_benar count
+                $tipeSoal = count($jawabanBenar) > 1 ? 'multiple' : 'single';
+
+                // Create soal from bank soal
+                $soal = Soal::create([
+                    'ujian_id' => $ujian->id,
+                    'kursus_id' => $ujian->kursus_id,
+                    'pertanyaan' => $bankSoal->pertanyaan,
+                    'tipe_soal' => $tipeSoal,
+                    'lampiran_foto' => $bankSoal->lampiran,
+                    'kunci_jawaban' => $kunciJawabanText,
+                ]);
+
+                // Copy pilihan jawaban from opsi_jawaban array
+                $opsiJawaban = $bankSoal->opsi_jawaban ?? [];
+                foreach ($opsiJawaban as $index => $pilihan) {
+                    PilihanJawaban::create([
+                        'soal_id' => $soal->id,
+                        'pilihan' => $pilihan,
+                        'is_correct' => in_array($index, $jawabanBenar),
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => count($bankSoals) . ' soal berhasil ditambahkan dari bank soal'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

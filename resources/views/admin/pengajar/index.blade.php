@@ -852,6 +852,70 @@ Features: CRUD, Search, Filter, Export
         }
 
         /* ========================================
+       PAGINATION STYLES
+       ======================================== */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E2E8F0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: #64748B;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 0.75rem;
+            border: 1px solid #E2E8F0;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover:not(.disabled):not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+            background: #F5F3FF;
+        }
+
+        .pagination-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            padding: 0 0.5rem;
+            color: #94A3B8;
+        }
+
+        /* ========================================
        ERROR & NOTIFICATION MESSAGES
        ======================================== */
 
@@ -1030,7 +1094,7 @@ Features: CRUD, Search, Filter, Export
                             {{-- Header Tabel --}}
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>No</th>
                                     <th>Nama Pengajar</th>
                                     <th>Email</th>
                                     <th>Kursus yang Diajarkan</th>
@@ -1045,6 +1109,15 @@ Features: CRUD, Search, Filter, Export
                                 <!-- Data akan dimuat via JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <div class="pagination-info">
+                            Menampilkan <span id="showingStart">0</span> - <span id="showingEnd">0</span> dari <span id="totalData">0</span> data
+                        </div>
+                        <div class="pagination-buttons" id="paginationButtons">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1425,7 +1498,10 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         let pengajarData = [];  // Array untuk menyimpan semua data pengajar
+        let filteredData = [];  // Array untuk data yang sudah difilter
         let deleteId = null;    // ID pengajar yang akan dihapus
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -1546,7 +1622,10 @@ Features: CRUD, Search, Filter, Export
                 .then(data => {
                     // Urutkan data berdasarkan ID dari kecil ke besar
                     pengajarData = data.sort((a, b) => a.id - b.id);
-                    renderTable(pengajarData);
+                    filteredData = pengajarData;
+                    currentPage = 1;
+                    renderTable();
+                    renderPagination();
                 })
                 .catch(error => {
                     showToast('Gagal Memuat Data', 'Tidak dapat memuat data pengajar. Silakan refresh halaman.', 'error');
@@ -1554,14 +1633,16 @@ Features: CRUD, Search, Filter, Export
         }
 
         /**
-         * Render tabel dengan data pengajar
-         * @param {Array} data - Array data pengajar yang akan ditampilkan
+         * Render tabel dengan data pengajar (dengan pagination)
          */
-        function renderTable(data) {
+        function renderTable() {
             const tbody = document.getElementById('pengajarTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, endIndex);
 
             // Jika tidak ada data
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 2rem; color: #94A3B8;">
@@ -1569,11 +1650,12 @@ Features: CRUD, Search, Filter, Export
                     </td>
                 </tr>
             `;
+                updatePaginationInfo(0, 0, 0);
                 return;
             }
 
             // Render setiap baris data
-            tbody.innerHTML = data.map((item, index) => {
+            tbody.innerHTML = paginatedData.map((item, index) => {
                 // Ambil nama kursus (max 2, sisanya ...)
                 const kursusNames = item.kursus && item.kursus.length > 0
                     ? item.kursus.map(k => k.judul).slice(0, 2).join(', ') + (item.kursus.length > 2 ? '...' : '')
@@ -1585,7 +1667,7 @@ Features: CRUD, Search, Filter, Export
 
                 return `
             <tr onclick="showDetail(${item.id})">
-                <td>${String(item.id).padStart(3, '0')}</td>
+                <td>${startIndex + index + 1}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
                 <td>${kursusNames}</td>
@@ -1611,6 +1693,65 @@ Features: CRUD, Search, Filter, Export
             </tr>
         `;
             }).join('');
+            
+            updatePaginationInfo(startIndex + 1, Math.min(endIndex, filteredData.length), filteredData.length);
+        }
+
+        // Update info pagination
+        function updatePaginationInfo(start, end, total) {
+            document.getElementById('showingStart').textContent = total > 0 ? start : 0;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalData').textContent = total;
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const container = document.getElementById('paginationButtons');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                    onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            container.innerHTML = html;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+            renderPagination();
         }
 
         /**
@@ -1650,7 +1791,7 @@ Features: CRUD, Search, Filter, Export
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
 
-            const filtered = pengajarData.filter(item => {
+            filteredData = pengajarData.filter(item => {
                 // Search di nama, email, dan nama kursus
                 const nameMatch = item.name.toLowerCase().includes(searchTerm);
                 const emailMatch = item.email.toLowerCase().includes(searchTerm);
@@ -1667,9 +1808,11 @@ Features: CRUD, Search, Filter, Export
             });
 
             // Urutkan hasil filter berdasarkan ID dari kecil ke besar
-            const sortedFiltered = filtered.sort((a, b) => a.id - b.id);
+            filteredData = filteredData.sort((a, b) => a.id - b.id);
 
-            renderTable(sortedFiltered);
+            currentPage = 1;
+            renderTable();
+            renderPagination();
         }
 
         // ========================================
