@@ -207,7 +207,7 @@
     }
     
     .material-icon.video {
-        background: #EDE9FE;
+        background: #EEF2FF;
     }
     
     .material-icon.video.active {
@@ -215,35 +215,35 @@
     }
     
     .material-icon.pdf {
-        background: #FEE2E2;
+        background: #FEF2F2;
     }
     
     .material-icon.pdf.active {
-        background: #DC2626;
+        background: #EF4444;
     }
     
     .material-icon.bacaan {
-        background: #D1FAE5;
+        background: #FEF2F2;
     }
     
     .material-icon.bacaan.active {
-        background: #10B981;
+        background: #EF4444;
     }
     
     .material-icon.quiz {
-        background: #FEF3C7;
+        background: #ECFDF5;
     }
     
     .material-icon.quiz.active {
-        background: #F59E0B;
+        background: #10B981;
     }
     
     .material-icon.ujian {
-        background: #FEE2E2;
+        background: #FEF3C7;
     }
     
     .material-icon.ujian.active {
-        background: #EF4444;
+        background: #F59E0B;
     }
     
     .material-info {
@@ -333,6 +333,13 @@
         border-radius: 8px;
         overflow-x: auto;
         margin: 1rem 0;
+    }
+
+    .materi-content pre code {
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        color: inherit;
     }
 
     .materi-content blockquote {
@@ -494,12 +501,20 @@
 <div class="page-container">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}?open_modul={{ $materi->modul_id }}" class="back-btn">
+    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}?open_modul={{ $materi->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Kembali ke Modul
     </a>
+    <script>
+        function navigateToModul(e, url) {
+            e.preventDefault();
+            // Replace current history entry so back won't return here
+            window.history.replaceState(null, '', url);
+            window.location.href = url;
+        }
+    </script>
 
     <div class="content-wrapper">
         
@@ -627,21 +642,21 @@
                             @else
                                 <div class="material-icon {{ $iconClass }} {{ $isCurrent ? 'active' : '' }}">
                                     @if($itemType === 'video')
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" fill="{{ $isCurrent ? 'white' : '#7C3AED' }}"/>
-                                            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="{{ $isCurrent ? 'white' : '#7C3AED' }}" stroke-width="2"/>
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#667eea' }}">
+                                            <path d="M6 4l10 6-10 6V4z"/>
                                         </svg>
                                     @elseif($itemType === 'bacaan')
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M12 6.25278V19.2528M12 6.25278C10.8321 5.47686 9.24649 5 7.5 5C5.75351 5 4.16789 5.47686 3 6.25278V19.2528C4.16789 18.4769 5.75351 18 7.5 18C9.24649 18 10.8321 18.4769 12 19.2528M12 6.25278C13.1679 5.47686 14.7535 5 16.5 5C18.2465 5 19.8321 5.47686 21 6.25278V19.2528C19.8321 18.4769 18.2465 18 16.5 18C14.7535 18 13.1679 18.4769 12 19.2528" stroke="{{ $isCurrent ? 'white' : '#10B981' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#EF4444' }}">
+                                            <path d="M4 4a2 2 0 012-2h8l4 4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
                                         </svg>
                                     @elseif($itemType === 'quiz')
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="{{ $isCurrent ? 'white' : '#F59E0B' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#10B981' }}">
+                                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
                                     @else
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="{{ $isCurrent ? 'white' : '#EF4444' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#F59E0B' }}">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                                         </svg>
                                     @endif
                                 </div>

@@ -5,32 +5,68 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ujian;
 use App\Models\Soal;
+use App\Repositories\ProgressRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UjianController extends Controller
 {
+    protected ProgressRepository $progressRepository;
+
+    public function __construct(ProgressRepository $progressRepository)
+    {
+        $this->progressRepository = $progressRepository;
+    }
+
     public function show($id)
     {
-        $ujian = Ujian::with(['modul.kursus', 'soal.pilihanJawaban'])->findOrFail($id);
+        $ujian = Ujian::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban'])->findOrFail($id);
         
         // Get all items from the same module for navigation
+        $modul = $ujian->modul;
         $allItems = collect();
+        $completedItems = [];
         
-        if ($ujian->modul) {
+        // Get user's completed items for this course
+        if (Auth::check() && $modul) {
+            $kursusId = $modul->kursus_id;
+            $userId = Auth::id();
+            $completedItems = $this->progressRepository->getCompletedItems($userId, $kursusId);
+        }
+        
+        if ($modul) {
             // Add videos from this module
-            foreach ($ujian->modul->video as $video) {
-                $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan ?? 0]);
+            foreach ($modul->video ?? [] as $video) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $video->id);
+                $allItems->push([
+                    'type' => 'video', 
+                    'data' => $video, 
+                    'urutan' => $video->urutan ?? 0,
+                    'completed' => $isCompleted,
+                ]);
             }
             
             // Add materi/bacaan from this module
-            foreach ($ujian->modul->materi as $materi) {
-                $allItems->push(['type' => 'bacaan', 'data' => $materi, 'urutan' => $materi->urutan ?? 0]);
+            foreach ($modul->materi ?? [] as $materi) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'materi' && $item['id'] == $materi->id);
+                $allItems->push([
+                    'type' => 'bacaan', 
+                    'data' => $materi, 
+                    'urutan' => ($materi->urutan ?? 0) + 100,
+                    'completed' => $isCompleted,
+                ]);
             }
             
             // Add quiz and ujian from this module
-            foreach ($ujian->modul->ujian as $ujianItem) {
+            foreach ($modul->ujian ?? [] as $ujianItem) {
                 $type = ($ujianItem->tipe === 'practice') ? 'quiz' : 'ujian';
-                $allItems->push(['type' => $type, 'data' => $ujianItem, 'urutan' => 999]); // Put quiz/ujian at end
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === $type && $item['id'] == $ujianItem->id);
+                $allItems->push([
+                    'type' => $type, 
+                    'data' => $ujianItem, 
+                    'urutan' => 200 + ($ujianItem->id ?? 0),
+                    'completed' => $isCompleted,
+                ]);
             }
         }
         

@@ -32,16 +32,24 @@
 <div class="page-container">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="back-btn">
+    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Kembali ke Modul
     </a>
+    <script>
+        function navigateToModul(e, url) {
+            e.preventDefault();
+            // Replace current history entry so back won't return here
+            window.history.replaceState(null, '', url);
+            window.location.href = url;
+        }
+    </script>
 
     @if($ujian->tipe === 'practice')
-        <!-- Quiz Layout (Simple) -->
-        <div class="quiz-container">
+        <!-- Quiz Layout (dengan Sidebar Navigasi Materi) -->
+        <div class="quiz-container" style="display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem;">
             <div class="main-content">
                 <!-- Quiz Header -->
                 <div class="quiz-header">
@@ -322,6 +330,119 @@
                             @endif
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigasi Materi untuk Quiz -->
+            <div class="quiz-sidebar">
+                <!-- Module Info -->
+                <div class="sidebar-card" style="background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #1F2937; margin-bottom: 1rem;">Informasi Modul</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.25rem;">Modul</div>
+                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->judul ?? '-' }}</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.25rem;">Kursus</div>
+                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->judul ?? '-' }}</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.25rem;">Pengajar</div>
+                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->pengajar->name ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Materials -->
+                <div class="sidebar-card" style="background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 1.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #1F2937; margin-bottom: 1rem;">Materi Lainnya</h3>
+                    
+                    <div class="materials-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        @foreach($allItems as $item)
+                            @php
+                                $itemType = $item['type'];
+                                $itemData = $item['data'];
+                                $isCurrent = ($itemType === 'quiz' && $itemData->id === $ujian->id);
+                                
+                                // Determine route based on type
+                                if ($itemType === 'video') {
+                                    $routeName = 'admin.video.show';
+                                } elseif ($itemType === 'bacaan') {
+                                    $routeName = 'admin.materi.show';
+                                } else {
+                                    $routeName = 'admin.ujian.show';
+                                }
+                                
+                                // Determine label
+                                $typeLabel = match($itemType) {
+                                    'video' => 'Video',
+                                    'bacaan' => 'Bacaan',
+                                    'quiz' => 'Quiz',
+                                    'ujian' => 'Ujian',
+                                    default => 'Materi'
+                                };
+                            @endphp
+                            
+                            <a href="{{ route($routeName, $itemData->id) }}" class="material-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; border-radius: 8px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; {{ $isCurrent ? 'background: #ECFDF5; border-color: #10B981;' : '' }}" onmouseover="this.style.background='{{ $isCurrent ? '#ECFDF5' : '#F9FAFB' }}'" onmouseout="this.style.background='{{ $isCurrent ? '#ECFDF5' : '' }}'">
+                                
+                                @if($item['completed'] ?? false)
+                                    {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
+                                    <div style="width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #D1FAE5;">
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="#10B981">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                @else
+                                    <div style="width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: {{ $itemType === 'video' ? ($isCurrent ? '#667eea' : '#EEF2FF') : ($itemType === 'bacaan' ? ($isCurrent ? '#EF4444' : '#FEF2F2') : ($itemType === 'quiz' ? ($isCurrent ? '#10B981' : '#ECFDF5') : ($isCurrent ? '#F59E0B' : '#FEF3C7'))) }};">
+                                        @if($itemType === 'video')
+                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#667eea' }}">
+                                                <path d="M6 4l10 6-10 6V4z"/>
+                                            </svg>
+                                        @elseif($itemType === 'bacaan')
+                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#EF4444' }}">
+                                                <path d="M4 4a2 2 0 012-2h8l4 4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
+                                            </svg>
+                                        @elseif($itemType === 'quiz')
+                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#10B981' }}">
+                                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                        @else
+                                            <svg width="16" height="16" viewBox="0 0 20 20" fill="{{ $isCurrent ? 'white' : '#F59E0B' }}">
+                                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                @endif
+                                
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 0.875rem; font-weight: 600; color: {{ $isCurrent ? '#10B981' : '#1F2937' }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $itemData->judul }}</div>
+                                    <div style="font-size: 0.75rem; color: {{ ($item['completed'] ?? false) ? '#10B981' : '#6B7280' }};">
+                                        @if($item['completed'] ?? false)
+                                            <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Selesai
+                                            </span>
+                                        @else
+                                            {{ $typeLabel }}
+                                        @endif
+                                    </div>
+                                </div>
+
+                                @if($isCurrent && !($item['completed'] ?? false))
+                                    <svg width="16" height="16" viewBox="0 0 20 20" fill="#10B981" style="flex-shrink: 0;">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

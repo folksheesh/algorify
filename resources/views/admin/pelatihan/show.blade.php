@@ -135,16 +135,16 @@
                                         $allItems = collect();
                                         foreach($modul->video as $video) {
                                             $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $video->id);
-                                            $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan, 'completed' => $isCompleted]);
+                                            $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan ?? 0, 'completed' => $isCompleted]);
                                         }
                                         foreach($modul->materi as $pdf) {
                                             $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === 'materi' && $item['id'] == $pdf->id);
-                                            $allItems->push(['type' => 'pdf', 'data' => $pdf, 'urutan' => $pdf->urutan, 'completed' => $isCompleted]);
+                                            $allItems->push(['type' => 'pdf', 'data' => $pdf, 'urutan' => ($pdf->urutan ?? 0) + 100, 'completed' => $isCompleted]);
                                         }
                                         foreach($modul->ujian as $ujian) {
                                             $type = $ujian->tipe === 'practice' ? 'quiz' : 'ujian';
                                             $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === $type && $item['id'] == $ujian->id);
-                                            $allItems->push(['type' => $type, 'data' => $ujian, 'urutan' => 999, 'completed' => $isCompleted]);
+                                            $allItems->push(['type' => $type, 'data' => $ujian, 'urutan' => 200 + ($ujian->id ?? 0), 'completed' => $isCompleted]);
                                         }
                                         $allItems = $allItems->sortBy('urutan');
                                     @endphp
@@ -1424,5 +1424,20 @@
         }
 
 
+    </script>
+    <script>
+        // Prevent back navigation to video/materi/ujian pages - force back to pelatihan saya
+        (function() {
+            var pelatihanSayaUrl = '{{ auth()->user()->hasRole("peserta") ? route("user.pelatihan-saya.index") : route("admin.pelatihan.index") }}';
+            
+            // Push state to create barrier
+            history.pushState(null, '', location.href);
+            
+            // Intercept back button
+            window.onpopstate = function() {
+                history.pushState(null, '', location.href);
+                window.location.replace(pelatihanSayaUrl);
+            };
+        })();
     </script>
 @endsection

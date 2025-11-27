@@ -6,6 +6,11 @@
 .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: #667eea; text-decoration: none; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 600; transition: opacity 0.2s; }
 .back-btn:hover { opacity: 0.8; }
 .quiz-container { max-width: 1200px; margin: 0 auto; }
+/* Quiz sidebar responsive */
+@media (max-width: 1024px) {
+    .quiz-container { display: block !important; }
+    .quiz-sidebar { margin-top: 1.5rem; }
+}
 .exam-container { max-width: 900px; margin: 0 auto; transition: all 0.3s ease; }
 /* Mode ujian aktif - full width dengan grid */
 .exam-container.exam-active { display: grid; grid-template-columns: 1fr 280px; max-width: 100%; gap: 1rem; }
