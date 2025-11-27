@@ -32,6 +32,10 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+// Public certificate verification page (standalone)
+Route::get('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'index'])->name('verify.sertifikat.index');
+Route::post('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'verify'])->name('verify.sertifikat.verify');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -169,6 +173,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/pelatihan-saya', [\App\Http\Controllers\User\PelatihanSayaController::class, 'index'])->name('pelatihan-saya.index');
         Route::get('/sertifikat', [\App\Http\Controllers\User\SertifikatSayaController::class, 'index'])->name('sertifikat.index');
+        Route::get('/sertifikat/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'show'])->name('sertifikat.show');
         
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
