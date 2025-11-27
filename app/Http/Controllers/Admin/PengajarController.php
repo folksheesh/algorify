@@ -25,17 +25,8 @@ class PengajarController extends Controller
      */
     public function index()
     {
-        // Get all instructors (users with 'pengajar' role) with their courses count
-        $pengajar = User::role('pengajar')
-            ->withCount('kursus')
-            ->with('kursus')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        
-        // Get all courses for dropdown
-        $kursus = Kursus::orderBy('judul', 'asc')->get();
-        
-        return view('admin.pengajar.index', compact('pengajar', 'kursus'));
+        // Data akan dimuat via AJAX, tidak perlu load semua di sini
+        return view('admin.pengajar.index');
     }
 
     /**

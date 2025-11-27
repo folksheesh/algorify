@@ -174,6 +174,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
         Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
         
+        // Payment status and completion routes
+        Route::post('/pembayaran/{kode_transaksi}/complete', [\App\Http\Controllers\User\EnrollmentController::class, 'completePayment'])->name('pembayaran.complete');
+        Route::get('/pembayaran/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkPaymentStatus'])->name('pembayaran.status');
+        
+        Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
+        
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
