@@ -35,6 +35,8 @@ Route::get('/dashboard', function () {
 // Public certificate verification page (standalone)
 Route::get('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'index'])->name('verify.sertifikat.index');
 Route::post('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'verify'])->name('verify.sertifikat.verify');
+// Allow direct QR scan links like /verifikasi-sertifikat/scan/CERT-...
+Route::get('/verifikasi-sertifikat/scan/{token}', [\App\Http\Controllers\CertificateVerificationController::class, 'scan'])->name('verify.sertifikat.scan');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

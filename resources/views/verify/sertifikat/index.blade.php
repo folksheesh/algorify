@@ -52,16 +52,6 @@
                     @if(isset($result) && $result)
                         {{-- Enhanced 'valid certificate' card to match design provided by user --}}
                         @php
-                            // try to load enrollment (nilai_akhir) if available
-                            $enrollment = null;
-                            try {
-                                $enrollment = \App\Models\Enrollment::where('user_id', $result->user_id)
-                                    ->where('kursus_id', $result->kursus_id)
-                                    ->first();
-                            } catch (\Exception $e) {
-                                $enrollment = null;
-                            }
-
                             // status label mapping
                             $statusMap = [
                                 'active' => 'Aktif',
@@ -71,8 +61,7 @@
 
                             $statusLabel = $statusMap[$result->status_sertifikat] ?? ucfirst($result->status_sertifikat ?? '—');
 
-                            // QR URL pointing to public verification for this nomor
-                            $qrUrl = route('verify.sertifikat.index', ['q' => $result->nomor_sertifikat]);
+                            // QR removed — no QR code displayed for verified certificates as requested
                         @endphp
 
                         <div style="background:white; border-radius:12px; padding:1.25rem; box-shadow:0 6px 28px rgba(16,24,40,0.08); margin-bottom:1rem; border:3px solid #10b981;">
@@ -133,26 +122,9 @@
 
                                     <hr style="border:none; border-top:1px solid #eef2f7; margin:1rem 0;" />
 
-                                    <div style="display:flex; gap:1.25rem; align-items:flex-start;">
-                                        <div style="flex:0 0 120px; background:#fff; border-radius:8px; padding:0.6rem; box-shadow:0 0 0 1px #eef2f7 inset; display:flex; align-items:center; justify-content:center;">
-                                            <img src="https://chart.googleapis.com/chart?chs=160x160&cht=qr&chl={{ urlencode($qrUrl) }}" alt="QR Code" style="width:120px; height:120px; display:block;" />
-                                        </div>
+                                    {{-- QR code removed per request — only certificate details are shown for valid certificates --}}
 
-                                        <div style="flex:1; color:#475569;">
-                                            <div style="font-weight:700; color:#0f172a;">QR Code Verifikasi</div>
-                                            <div style="margin-top:0.4rem;">Scan QR code ini untuk memverifikasi sertifikat secara langsung</div>
-                                        </div>
-                                    </div>
-
-                                    <div style="display:flex; gap:1rem; justify-content:space-between; margin-top:1rem;">
-                                        <a href="{{ route('verify.sertifikat.index') }}" class="btn btn-outline" style="padding:0.7rem 1.25rem; border-radius:8px;">Verifikasi Sertifikat Lain</a>
-
-                                        @if($result->file_path)
-                                            <a href="{{ asset('storage/' . $result->file_path) }}" download class="btn btn-primary" style="padding:0.7rem 1.25rem; border-radius:8px;">⬇ Download Bukti Verifikasi</a>
-                                        @else
-                                            <button type="button" onclick="downloadVerificationProof({{ json_encode([ 'nomor' => $result->nomor_sertifikat, 'nama' => $result->user->name ?? '-', 'pelatihan' => $result->kursus->judul ?? '-' ]) }})" class="btn btn-primary" style="padding:0.7rem 1.25rem; border-radius:8px;">⬇ Download Bukti Verifikasi</button>
-                                        @endif
-                                    </div>
+                                    {{-- Actions removed per request: only display verification details for valid certificates. --}}
                                 </div>
                             </div>
                         </div>
@@ -184,25 +156,4 @@
     </div>
 @endsection
 
-@push('scripts')
-    <script>
-        // Small helper to download a simple JSON proof for demo purposes
-        function downloadVerificationProof(data) {
-            try {
-                const payload = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-                const filename = (data && data.nomor) ? `bukti-verifikasi-${data.nomor}.json` : 'bukti-verifikasi.json';
-                const blob = new Blob([payload], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                URL.revokeObjectURL(url);
-            } catch (e) {
-                alert('Gagal menyiapkan file unduhan.');
-            }
-        }
-    </script>
-@endpush
+{{-- No demo download helper — downloads come from real certificate file_path only. --}}

@@ -83,6 +83,6 @@ class CertificateDemoSeeder extends Seeder
         } else {
             $this->command->info("Demo certificate already present: {$nomor}");
         }
-        $this->command->info("Try: /verifikasi-sertifikat?q={$nomor}");
+        $this->command->info("Try: /verifikasi-sertifikat?q={$nomor} or /verifikasi-sertifikat/scan/{$nomor}");
     }
 }
