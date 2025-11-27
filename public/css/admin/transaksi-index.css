@@ -1,3 +1,23 @@
+/* Header halaman dengan judul */
+.page-header {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Judul halaman */
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+}
+
 .stats-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

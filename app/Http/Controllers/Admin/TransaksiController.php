@@ -15,36 +15,71 @@ class TransaksiController extends Controller
             $query = Transaksi::with(['user', 'kursus'])
                 ->orderBy('created_at', 'desc');
 
-            // Filter berdasarkan status
+            // Filter berdasarkan status (map dari database: success->lunas, expired->gagal)
             if ($request->filled('status')) {
-                $query->where('status', $request->status);
+                $status = $request->status;
+                if ($status === 'lunas') {
+                    $query->where('status', 'success');
+                } elseif ($status === 'gagal') {
+                    $query->whereIn('status', ['expired', 'failed']);
+                } else {
+                    $query->where('status', $status);
+                }
             }
 
-            // Filter berdasarkan kursus
-            if ($request->filled('kursus_id')) {
-                $query->where('kursus_id', $request->kursus_id);
+            // Filter berdasarkan metode pembayaran (bukan kursus)
+            if ($request->filled('metode_pembayaran')) {
+                $query->where('metode_pembayaran', $request->metode_pembayaran);
             }
 
-            // Search
+            // Filter berdasarkan periode waktu
+            if ($request->filled('periode')) {
+                $periode = $request->periode;
+                switch ($periode) {
+                    case 'hari_ini':
+                        $query->whereDate('created_at', today());
+                        break;
+                    case '7_hari':
+                        $query->where('created_at', '>=', now()->subDays(7));
+                        break;
+                    case 'bulan_ini':
+                        $query->whereMonth('created_at', now()->month)
+                              ->whereYear('created_at', now()->year);
+                        break;
+                    case 'bulan_lalu':
+                        $query->whereMonth('created_at', now()->subMonth()->month)
+                              ->whereYear('created_at', now()->subMonth()->year);
+                        break;
+                    case 'tahun_ini':
+                        $query->whereYear('created_at', now()->year);
+                        break;
+                    // 'semua' tidak perlu filter
+                }
+            }
+
+            // Search (kode transaksi, nama user, kursus, dan tanggal)
             if ($request->filled('search')) {
                 $search = $request->search;
                 $query->where(function($q) use ($search) {
                     $q->where('kode_transaksi', 'like', '%' . $search . '%')
                       ->orWhereHas('user', function($q) use ($search) {
-                          $q->where('name', 'like', '%' . $search . '%')
-                            ->orWhere('email', 'like', '%' . $search . '%');
-                      });
+                          $q->where('name', 'like', '%' . $search . '%');
+                      })
+                      ->orWhereHas('kursus', function($q) use ($search) {
+                          $q->where('judul', 'like', '%' . $search . '%');
+                      })
+                      ->orWhere('created_at', 'like', '%' . $search . '%');
                 });
             }
 
             $transaksi = $query->paginate(10);
 
-            // Hitung statistik
-            $totalPendapatan = Transaksi::where('status', 'lunas')->sum('jumlah');
+            // Hitung statistik - Total pendapatan hanya dari status 'success' di database
+            $totalPendapatan = Transaksi::where('status', 'success')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
-            $lunasCount = Transaksi::where('status', 'lunas')->count();
+            $lunasCount = Transaksi::where('status', 'success')->count();
             $pendingCount = Transaksi::where('status', 'pending')->count();
-            $failedCount = Transaksi::where('status', 'gagal')->count();
+            $failedCount = Transaksi::whereIn('status', ['expired', 'failed'])->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
 
             return view('admin.transaksi.index', compact('transaksi', 'totalPendapatan', 'totalTransaksi', 'tingkatKeberhasilan', 'lunasCount', 'pendingCount', 'failedCount'));

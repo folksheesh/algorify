@@ -13,13 +13,10 @@
         @include('components.sidebar')
         <main class="main-content">
             <div style="padding: 0 2rem 2rem;">
-                <!-- Hero Banner -->
-                <section class="hero-banner" style="margin-bottom: 2rem;">
-                    <div class="hero-content">
-                        <h1 class="hero-title">Transaksi</h1>
-                        <p class="hero-description">Kelola dan pantau transaksi pelatihan TIK</p>
-                    </div>
-                </section>
+                {{-- Page Header --}}
+                <div class="page-header">
+                    <h1>Halaman Data Transaksi</h1>
+                </div>
 
                 <!-- Info Banner -->
                 <div class="info-banner">
@@ -94,7 +91,7 @@
                 <div class="filter-section">
                     <div class="filter-row">
                         <div class="filter-group" style="flex: 1.2;">
-                            <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi atau nama...">
+                            <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi, tanggal, nama, atau kursus...">
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
                             <select id="filterStatus" class="filter-select">
@@ -105,13 +102,21 @@
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
-                            <select id="filterKursus" class="filter-select">
-                                <option value="">Semua Kursus</option>
+                            <select id="filterMetode" class="filter-select">
+                                <option value="">Semua Metode</option>
+                                <option value="bank_transfer">Transfer Bank</option>
+                                <option value="e_wallet">E-Wallet</option>
+                                <option value="credit_card">Kartu Kredit</option>
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
-                            <select id="filterBulan" class="filter-select">
-                                <option value="">Semua Bulan</option>
+                            <select id="filterPeriode" class="filter-select">
+                                <option value="">Semua Waktu</option>
+                                <option value="hari_ini">Hari Ini</option>
+                                <option value="7_hari">7 Hari Terakhir</option>
+                                <option value="bulan_ini">Bulan Ini</option>
+                                <option value="bulan_lalu">Bulan Lalu</option>
+                                <option value="tahun_ini">Tahun Ini</option>
                             </select>
                         </div>
                     </div>
@@ -137,7 +142,7 @@
                             </thead>
                             <tbody>
                                 @foreach($transaksi as $item)
-                                <tr>
+                                <tr class="table-row-hover">
                                     <td class="transaction-code">{{ $item->kode_transaksi }}</td>
                                     <td>{{ $item->created_at->format('d M Y, H:i') }}</td>
                                     <td>
@@ -150,29 +155,35 @@
                                     <td class="amount">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                                     <td>
                                         <span class="method-badge">
-                                            @if($item->metode_pembayaran == 'transfer')
+                                            @if($item->metode_pembayaran == 'bank_transfer')
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                                                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                                                 </svg>
                                                 Transfer Bank
-                                            @elseif($item->metode_pembayaran == 'ewallet')
+                                            @elseif($item->metode_pembayaran == 'e_wallet')
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                                                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                                                 </svg>
                                                 E-Wallet
+                                            @elseif($item->metode_pembayaran == 'credit_card')
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Kartu Kredit
                                             @else
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                                                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                                                 </svg>
-                                                Virtual Account
+                                                {{ ucfirst(str_replace('_', ' ', $item->metode_pembayaran)) }}
                                             @endif
                                         </span>
                                     </td>
                                     <td>
-                                        @if($item->status == 'lunas')
+                                        @if($item->status == 'success')
                                             <span class="status-badge success">
                                                 <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -186,7 +197,7 @@
                                                 </svg>
                                                 Pending
                                             </span>
-                                        @elseif($item->status == 'gagal')
+                                        @elseif($item->status == 'expired' || $item->status == 'failed')
                                             <span class="status-badge failed">
                                                 <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -207,8 +218,45 @@
                             </tbody>
                         </table>
 
-                        <div style="padding: 1.5rem; border-top: 1px solid #E2E8F0;">
-                            {{ $transaksi->links() }}
+                        <!-- Pagination with custom styling like peserta page -->
+                        <div style="padding: 1.5rem; border-top: 1px solid #E2E8F0; display: flex; justify-content: center; gap: 0.5rem;">
+                            @if ($transaksi->onFirstPage())
+                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; color: #94A3B8; cursor: not-allowed; font-size: 0.875rem;">
+                                    ← Previous
+                                </button>
+                            @else
+                                <a href="{{ $transaksi->previousPageUrl() }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s;" 
+                                   onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
+                                   onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
+                                    ← Previous
+                                </a>
+                            @endif
+
+                            @foreach ($transaksi->getUrlRange(1, $transaksi->lastPage()) as $page => $url)
+                                @if ($page == $transaksi->currentPage())
+                                    <button style="padding: 0.5rem 1rem; border: 1px solid #667eea; border-radius: 6px; background: #667eea; color: white; font-weight: 600; font-size: 0.875rem; min-width: 40px;">
+                                        {{ $page }}
+                                    </button>
+                                @else
+                                    <a href="{{ $url }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s; min-width: 40px; text-align: center;"
+                                       onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
+                                       onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
+                                        {{ $page }}
+                                    </a>
+                                @endif
+                            @endforeach
+
+                            @if ($transaksi->hasMorePages())
+                                <a href="{{ $transaksi->nextPageUrl() }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s;"
+                                   onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
+                                   onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
+                                    Next →
+                                </a>
+                            @else
+                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; color: #94A3B8; cursor: not-allowed; font-size: 0.875rem;">
+                                    Next →
+                                </button>
+                            @endif
                         </div>
                     @else
                         <div class="empty-state">
@@ -233,44 +281,67 @@
         // Search and filter functionality
         const searchInput = document.getElementById('searchTable');
         const statusFilter = document.getElementById('filterStatus');
-        const kursusFilter = document.getElementById('filterKursus');
-        const bulanFilter = document.getElementById('filterBulan');
+        const metodeFilter = document.getElementById('filterMetode');
+        const periodeFilter = document.getElementById('filterPeriode');
         
         function filterTable() {
             const searchTerm = searchInput.value.toLowerCase();
             const statusValue = statusFilter.value.toLowerCase();
-            const kursusValue = kursusFilter.value.toLowerCase();
-            const bulanValue = bulanFilter.value;
+            const metodeValue = metodeFilter.value.toLowerCase();
+            const periodeValue = periodeFilter.value;
             const rows = document.querySelectorAll('.data-table tbody tr');
             
             rows.forEach(row => {
                 const kodeTransaksi = row.cells[0].textContent.toLowerCase();
-                const tanggal = row.cells[1].textContent;
+                const tanggal = row.cells[1].textContent.toLowerCase();
                 const peserta = row.cells[2].textContent.toLowerCase();
                 const kursus = row.cells[3].textContent.toLowerCase();
+                const metode = row.cells[5].textContent.toLowerCase();
                 const status = row.cells[6].textContent.toLowerCase().trim();
                 
-                // Search filter
+                // Search filter - dapat mencari kode transaksi, tanggal, nama, atau kursus
                 const matchSearch = searchTerm === '' || 
                                    kodeTransaksi.includes(searchTerm) || 
+                                   tanggal.includes(searchTerm) ||
                                    peserta.includes(searchTerm) || 
                                    kursus.includes(searchTerm);
                 
                 // Status filter
                 const matchStatus = statusValue === '' || status.includes(statusValue);
                 
-                // Kursus filter
-                const matchKursus = kursusValue === '' || kursus.includes(kursusValue);
+                // Metode pembayaran filter
+                const matchMetode = metodeValue === '' || metode.includes(metodeValue.replace('_', ' '));
                 
-                // Bulan filter (extract month from date)
-                let matchBulan = true;
-                if (bulanValue !== '') {
-                    const monthNames = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
-                    const monthIndex = parseInt(bulanValue) - 1;
-                    matchBulan = tanggal.toLowerCase().includes(monthNames[monthIndex]);
+                // Periode filter (untuk client-side filtering tambahan)
+                let matchPeriode = true;
+                if (periodeValue !== '') {
+                    const now = new Date();
+                    const rowDate = new Date(row.cells[1].getAttribute('data-date') || row.cells[1].textContent);
+                    
+                    switch(periodeValue) {
+                        case 'hari_ini':
+                            matchPeriode = rowDate.toDateString() === now.toDateString();
+                            break;
+                        case '7_hari':
+                            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                            matchPeriode = rowDate >= sevenDaysAgo;
+                            break;
+                        case 'bulan_ini':
+                            matchPeriode = rowDate.getMonth() === now.getMonth() && 
+                                          rowDate.getFullYear() === now.getFullYear();
+                            break;
+                        case 'bulan_lalu':
+                            const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+                            matchPeriode = rowDate.getMonth() === lastMonth.getMonth() && 
+                                          rowDate.getFullYear() === lastMonth.getFullYear();
+                            break;
+                        case 'tahun_ini':
+                            matchPeriode = rowDate.getFullYear() === now.getFullYear();
+                            break;
+                    }
                 }
                 
-                if (matchSearch && matchStatus && matchKursus && matchBulan) {
+                if (matchSearch && matchStatus && matchMetode && matchPeriode) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -280,7 +351,23 @@
         
         searchInput.addEventListener('input', filterTable);
         statusFilter.addEventListener('change', filterTable);
-        kursusFilter.addEventListener('change', filterTable);
-        bulanFilter.addEventListener('change', filterTable);
+        metodeFilter.addEventListener('change', filterTable);
+        periodeFilter.addEventListener('change', filterTable);
     </script>
+    
+    <style>
+        /* Hover effect untuk table row dengan scale */
+        .table-row-hover {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .table-row-hover:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-color: #F8FAFC;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 @endpush
