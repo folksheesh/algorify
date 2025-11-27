@@ -24,7 +24,7 @@ class SertifikatSayaController extends Controller
                 $query->where('progress', '>=', 100)
                       ->orWhere('nilai_akhir', '>=', 70);
             })
-            ->with(['kursus.pengajar', 'kursus.moduls'])
+            ->with(['kursus.pengajar'])
             ->latest()
             ->get();
         
@@ -56,7 +56,7 @@ class SertifikatSayaController extends Controller
         
         $enrollment = Enrollment::where('id', $enrollmentId)
             ->where('user_id', $user->id)
-            ->with(['kursus.pengajar', 'kursus.moduls'])
+            ->with(['kursus.pengajar'])
             ->firstOrFail();
         
         // Check if already has certificate
@@ -81,7 +81,7 @@ class SertifikatSayaController extends Controller
             'judul' => $enrollment->kursus->judul,
             'deskripsi' => 'Telah menyelesaikan pelatihan ' . $enrollment->kursus->judul,
             'tanggal_terbit' => now(),
-            'status_sertifikat' => 'aktif',
+            'status_sertifikat' => 'active',
         ]);
         
         return redirect()->route('user.sertifikat.download', $certificate->id)

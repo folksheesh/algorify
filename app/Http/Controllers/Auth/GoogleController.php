@@ -24,7 +24,8 @@ class GoogleController extends Controller
     public function redirectToGoogle(): RedirectResponse
     {
         // Gunakan driver 'google' dari Socialite untuk memulai redirect
-        return Socialite::driver('google')->redirect();
+        // Tambahkan stateless() untuk menghindari masalah session
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     /**
@@ -68,43 +69,57 @@ class GoogleController extends Controller
             return redirect()->route('google.redirect');
         }
 
-        // Ambil data user dari Google
-        $googleUser = Socialite::driver('google')->user();
+        try {
+            // TEMPORARY FIX: Disable SSL verification untuk development (HAPUS di production!)
+            $googleUser = Socialite::driver('google')
+                ->stateless()
+                ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+                ->user();
 
-        // Cari user di database berdasarkan email (umumnya unik)
-        $user = User::where('email', $googleUser->getEmail())->first();
+            // Cari user di database berdasarkan email (umumnya unik)
+            $user = User::where('email', $googleUser->getEmail())->first();
 
-        if (! $user) {
-            // Jika user belum ada, buat user baru dengan data dari Google.
-            // Gunakan nama yang tersedia: nama lengkap, nickname, atau fallback.
-            $user = User::create([
-                'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Google User',
-                'email' => $googleUser->getEmail(),
-                // Simpan password acak karena kolom password biasanya wajib
-                'password' => Hash::make(Str::random(24)),
-            ]);
+            if (! $user) {
+                // Jika user belum ada, buat user baru dengan data dari Google.
+                // Gunakan nama yang tersedia: nama lengkap, nickname, atau fallback.
+                $user = User::create([
+                    'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Google User',
+                    'email' => $googleUser->getEmail(),
+                    // Simpan password acak karena kolom password biasanya wajib
+                    'password' => Hash::make(Str::random(24)),
+                ]);
 
-            // Jika paket manajemen peran (Spatie) tersedia, coba beri peran 'peserta'
-            // Kami bungkus dengan try/catch agar tidak crash jika role/table belum ada.
-            if (method_exists($user, 'assignRole')) {
-                try {
-                    $user->assignRole('peserta');
-                } catch (\Throwable $e) {
-                    // Jika role belum ada, coba buat role lalu assign lagi.
+                // Jika paket manajemen peran (Spatie) tersedia, coba beri peran 'peserta'
+                // Kami bungkus dengan try/catch agar tidak crash jika role/table belum ada.
+                if (method_exists($user, 'assignRole')) {
                     try {
-                        \Spatie\Permission\Models\Role::findOrCreate('peserta');
                         $user->assignRole('peserta');
-                    } catch (\Throwable $e2) {
-                        // Jika tetap gagal, kita abaikan agar proses login tetap jalan.
+                    } catch (\Throwable $e) {
+                        // Jika role belum ada, coba buat role lalu assign lagi.
+                        try {
+                            \Spatie\Permission\Models\Role::findOrCreate('peserta');
+                            $user->assignRole('peserta');
+                        } catch (\Throwable $e2) {
+                            // Jika tetap gagal, kita abaikan agar proses login tetap jalan.
+                        }
                     }
                 }
             }
+
+            // Login user ke aplikasi (remember = true agar sesi persisten)
+            Auth::login($user, true);
+
+            // Arahkan user ke halaman tujuan (dashboard) atau ke halaman yang diminta sebelumnya
+            return redirect()->intended(route('dashboard'));
+        } catch (\Exception $e) {
+            // Log error untuk debugging
+            \Log::error('Google OAuth Error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Tangani error apapun yang terjadi saat OAuth
+            return redirect()->route('login')->with('oauth_error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
         }
-
-        // Login user ke aplikasi (remember = true agar sesi persisten)
-        Auth::login($user, true);
-
-        // Arahkan user ke halaman tujuan (dashboard) atau ke halaman yang diminta sebelumnya
-        return redirect()->intended(route('dashboard'));
     }
 }

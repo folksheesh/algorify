@@ -193,64 +193,6 @@
             @endif
 
             <div class="cert-container">
-                @php
-                    // Dummy certificate for testing
-                    $dummyEnrollment = (object)[
-                        'kursus' => (object)[
-                            'judul' => 'Desain UI/UX Fundamental',
-                            'pengajar' => (object)[
-                                'name' => 'Okti Prashant Kumar Singh'
-                            ]
-                        ],
-                        'progress' => 100,
-                        'nilai_akhir' => 85,
-                        'has_certificate' => true,
-                        'certificate' => (object)[
-                            'id' => 999,
-                            'nomor_sertifikat' => 'CERT-2025-ABCD123456'
-                        ]
-                    ];
-                @endphp
-
-                <!-- Dummy Certificate Card -->
-                <div class="cert-card">
-                    <div class="cert-icon-wrapper">
-                        <svg class="cert-icon-svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
-                            <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
-                        </svg>
-                    </div>
-
-                    <h2 class="cert-title">{{ $dummyEnrollment->kursus->judul }}</h2>
-                    <p class="cert-subtitle">Oleh {{ $dummyEnrollment->kursus->pengajar->name }}</p>
-
-                    <div class="cert-details">
-                        <div class="cert-detail-row">
-                            <span class="cert-detail-label">Progress:</span>
-                            <span class="cert-detail-value">{{ number_format($dummyEnrollment->progress, 0) }}%</span>
-                        </div>
-                        <div class="cert-detail-row">
-                            <span class="cert-detail-label">Nilai Akhir:</span>
-                            <span class="cert-detail-value">{{ $dummyEnrollment->nilai_akhir }}/100</span>
-                        </div>
-                        <div class="cert-detail-row">
-                            <span class="cert-detail-label">Status:</span>
-                            <span class="cert-detail-value">
-                                <span style="color: #10B981;">✓ Tersedia</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <a href="#" 
-                       class="btn-download" 
-                       onclick="event.preventDefault(); showDownloadModal('{{ $dummyEnrollment->kursus->judul }}', '{{ $dummyEnrollment->certificate->nomor_sertifikat }}', '#');">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                        </svg>
-                        Download Sertifikat (PDF)
-                    </a>
-                </div>
-
                 @if($completedEnrollments->count() > 0)
                     @foreach($completedEnrollments as $enrollment)
                         <!-- Certificate Card -->
@@ -315,7 +257,17 @@
                             @endif
                         </div>
                     @endforeach
-
+                @else
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <h2 class="empty-title">Belum Ada Pelatihan yang Diselesaikan</h2>
+                        <p class="empty-text">Selesaikan pelatihan dengan progress 100% atau nilai minimal 70 untuk mendapatkan sertifikat</p>
+                        <a href="{{ route('user.pelatihan-saya.index') }}" class="btn-explore">
+                            Lihat Pelatihan Saya
+                        </a>
+                    </div>
+                    
                     <!-- Info Box -->
                     <div class="info-box">
                         <div class="info-box-title">
@@ -350,15 +302,6 @@
                                 <span>Sertifikat dapat didownload dalam format PDF</span>
                             </li>
                         </ul>
-                @else
-                    <!-- Empty State -->
-                    <div class="empty-state">
-                        <div class="empty-icon">📜</div>
-                        <h2 class="empty-title">Belum Ada Pelatihan yang Diselesaikan</h2>
-                        <p class="empty-text">Selesaikan pelatihan dengan progress 100% atau nilai minimal 70 untuk mendapatkan sertifikat</p>
-                        <a href="{{ route('user.pelatihan-saya.index') }}" class="btn-explore">
-                            Lihat Pelatihan Saya
-                        </a>
                     </div>
                 @endif
             </div>
