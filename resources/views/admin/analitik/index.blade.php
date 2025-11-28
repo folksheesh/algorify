@@ -512,7 +512,11 @@
                             <div class="stat-label">Total Transaksi</div>
                             <div class="stat-value">{{ $totalTransaksi }}</div>
                             <div class="stat-change">
-                                <span>{{ isset($topKursus) ? collect($topKursus)->where('fill_rate', '>=', 90)->count() : 9 }} Lunas</span>
+                                <span style="color: #10b981;">{{ $successCount ?? 0 }} Lunas</span>
+                                <span style="color: #f59e0b; margin-left: 0.5rem;">{{ $pendingCount ?? 0 }} Pending</span>
+                                @if(isset($failedCount) && $failedCount > 0)
+                                <span style="color: #ef4444; margin-left: 0.5rem;">{{ $failedCount }} Gagal</span>
+                                @endif
                             </div>
                         </div>
                     </div>

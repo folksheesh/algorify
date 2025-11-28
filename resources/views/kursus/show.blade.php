@@ -220,10 +220,10 @@
                                 <h2 class="section-title">Instruktur</h2>
                                 <div class="instructor-card">
                                     <div class="instructor-avatar-large">
-                                        {{ strtoupper(substr($kursus->pengajar->name, 0, 1)) }}
+                                        {{ $kursus->pengajar ? strtoupper(substr($kursus->pengajar->name ?? 'N', 0, 1)) : 'N' }}
                                     </div>
                                     <div class="instructor-info">
-                                        <div class="instructor-name-detail">{{ $kursus->pengajar->name }}</div>
+                                        <div class="instructor-name-detail">{{ $kursus->pengajar->name ?? 'N/A' }}</div>
                                         <div class="instructor-role">{{ $kursus->pengajar->profesi ?? 'Instruktur' }}</div>
                                     </div>
                                 </div>
