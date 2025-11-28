@@ -34,7 +34,14 @@ Route::get('/dashboard', function () {
         ->latest()
         ->get();
     
-    return view('dashboard', compact('enrollments'));
+    // Get recommended courses (latest courses that user hasn't enrolled in)
+    $enrolledKursusIds = $enrollments->pluck('kursus_id')->toArray();
+    $recommendedCourses = \App\Models\Kursus::whereNotIn('id', $enrolledKursusIds)
+        ->latest()
+        ->limit(6)
+        ->get();
+    
+    return view('dashboard', compact('enrollments', 'recommendedCourses'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
