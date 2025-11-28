@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -20,7 +19,7 @@ Route::get('/dashboard', function () {
     $user = Auth::user();
     
     // Check if user has admin or super admin role
-    if ($user->hasRole(['admin', 'super admin'])) {
+    if ($user->hasAnyRole(['admin', 'super admin'])) {
         // Admin Dashboard - Get stats
         $totalPeserta = \App\Models\User::role('peserta')->count();
         $totalPengajar = \App\Models\User::role('pengajar')->count();
@@ -29,24 +28,8 @@ Route::get('/dashboard', function () {
         return view('admin.dashboard', compact('totalPeserta', 'totalPengajar', 'totalKursus'));
     }
     
-    // Student Dashboard - Get user's enrollments and recommended courses
-    $enrollments = \App\Models\Enrollment::where('user_id', $user->id)
-        ->with(['kursus.pengajar', 'kursus.modul'])
-        ->where('status', 'active')
-        ->latest()
-        ->take(3)
-        ->get();
-    
-    // Get recommended courses (published courses not enrolled yet)
-    $enrolledKursusIds = $enrollments->pluck('kursus_id')->toArray();
-    $recommendedCourses = \App\Models\Kursus::with('pengajar')
-        ->where('status', 'published')
-        ->whereNotIn('id', $enrolledKursusIds)
-        ->inRandomOrder()
-        ->take(6)
-        ->get();
-    
-    return view('dashboard', compact('enrollments', 'recommendedCourses'));
+    // Student Dashboard
+    return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -186,118 +169,21 @@ Route::middleware('auth')->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/pelatihan-saya', [\App\Http\Controllers\User\PelatihanSayaController::class, 'index'])->name('pelatihan-saya.index');
         Route::get('/sertifikat', [\App\Http\Controllers\User\SertifikatSayaController::class, 'index'])->name('sertifikat.index');
-        Route::get('/sertifikat/generate/{enrollment}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'generate'])->name('sertifikat.generate');
-        Route::get('/sertifikat/download/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'download'])->name('sertifikat.download');
-        Route::get('/sertifikat/preview/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'preview'])->name('sertifikat.preview');
         
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
         Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
         
+        // Payment status and completion routes
+        Route::post('/pembayaran/{kode_transaksi}/complete', [\App\Http\Controllers\User\EnrollmentController::class, 'completePayment'])->name('pembayaran.complete');
+        Route::get('/pembayaran/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkPaymentStatus'])->name('pembayaran.status');
+        
+        Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
+        
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
-        
-        // Progress tracking routes
-        Route::post('/course/video/progress', [\App\Http\Controllers\User\ProgressController::class, 'updateVideoProgress'])->name('progress.video');
-        Route::post('/course/reading/complete', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');
-        Route::post('/course/quiz/score', [\App\Http\Controllers\User\ProgressController::class, 'submitQuizScore'])->name('progress.quiz');
-        Route::post('/course/exam/score', [\App\Http\Controllers\User\ProgressController::class, 'submitExamScore'])->name('progress.exam');
-        Route::get('/course/{kursusId}/progress', [\App\Http\Controllers\User\ProgressController::class, 'getCourseProgress'])->name('progress.course');
-        Route::get('/course/{kursusId}/completed-items', [\App\Http\Controllers\User\ProgressController::class, 'getCompletedItems'])->name('progress.completed');
-        Route::get('/course/item/{type}/{id}/status', [\App\Http\Controllers\User\ProgressController::class, 'getItemStatus'])->name('progress.item-status');
-        Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
     });
-});
-
-// DOKU notification webhook (outside auth middleware)
-Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentController::class, 'notification'])->name('doku.notification');
-
-// Debug DOKU Signature
-Route::get('/debug/doku-test', function() {
-    $body = [
-        'order' => [
-            'amount' => 700000,
-            'invoice_number' => 'TEST-' . time(),
-            'currency' => 'IDR',
-        ],
-        'payment' => [
-            'payment_due_date' => 60,
-        ],
-        'customer' => [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ],
-    ];
-    
-    $path = '/checkout/v1/payment';
-    $sig = \App\Services\DokuSignatureService::generate($body, $path);
-    
-    $endpoint = config('doku.base_url') . $path;
-    
-    $response = \Http::withHeaders([
-        'Client-Id' => config('doku.client_id'),
-        'Request-Id' => $sig['request_id'],
-        'Request-Timestamp' => $sig['request_timestamp'],
-        'Signature' => $sig['signature'],
-        'Content-Type' => 'application/json',
-    ])
-    ->withOptions(['verify' => false])
-    ->withBody($sig['json_body'], 'application/json')
-    ->post($endpoint);
-    
-    return response()->json([
-        'request' => [
-            'endpoint' => $endpoint,
-            'client_id' => config('doku.client_id'),
-            'headers' => [
-                'Request-Id' => $sig['request_id'],
-                'Request-Timestamp' => $sig['request_timestamp'],
-                'Signature' => $sig['signature'],
-            ],
-            'body' => $sig['json_body'],
-        ],
-        'response' => [
-            'status' => $response->status(),
-            'body' => $response->json(),
-        ],
-    ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-});
-
-// Update transaction status manually (for testing)
-Route::get('/debug/update-transaction/{kode}', function($kode) {
-    $transaksi = \App\Models\Transaksi::where('kode_transaksi', $kode)->first();
-    
-    if (!$transaksi) {
-        return response()->json(['error' => 'Transaction not found'], 404);
-    }
-    
-    $transaksi->status = 'success';
-    $transaksi->save();
-    
-    // Activate enrollment
-    $enrollment = \App\Models\Enrollment::where('user_id', $transaksi->user_id)
-        ->where('kursus_id', $transaksi->kursus_id)
-        ->first();
-    
-    if ($enrollment) {
-        $enrollment->status = 'active';
-        $enrollment->save();
-    } else {
-        $enrollment = \App\Models\Enrollment::create([
-            'user_id' => $transaksi->user_id,
-            'kursus_id' => $transaksi->kursus_id,
-            'tanggal_daftar' => now(),
-            'status' => 'active',
-            'progress' => 0,
-        ]);
-    }
-    
-    return response()->json([
-        'success' => true,
-        'transaction' => $transaksi,
-        'enrollment' => $enrollment,
-    ]);
 });
 
 require __DIR__.'/auth.php';

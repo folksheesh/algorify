@@ -22,6 +22,7 @@ class Kursus extends Model
         'status',
         'harga',
         'thumbnail',
+        'pengajar',
         'durasi',
         'tipe_kursus',
     ];
@@ -54,9 +55,9 @@ class Kursus extends Model
         return $this->hasMany(Materi::class);
     }
 
-    public function ujian()
+    public function kuis()
     {
-        return $this->hasMany(Ujian::class);
+        return $this->hasMany(Kuis::class);
     }
 
     public function soal()
@@ -80,5 +81,11 @@ class Kursus extends Model
         return $this->belongsToMany(User::class, 'enrollment')
             ->withPivot('kode', 'tanggal_daftar', 'status', 'progress', 'nilai_akhir')
             ->withTimestamps();
+    }
+    
+    // Accessor untuk nama (alias dari judul)
+    public function getNamaAttribute()
+    {
+        return $this->judul;
     }
 }
