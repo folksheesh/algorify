@@ -28,8 +28,13 @@ Route::get('/dashboard', function () {
         return view('admin.dashboard', compact('totalPeserta', 'totalPengajar', 'totalKursus'));
     }
     
-    // Student Dashboard
-    return view('dashboard');
+    // Student Dashboard - Get user's enrollments
+    $enrollments = \App\Models\Enrollment::where('user_id', $user->id)
+        ->with(['kursus'])
+        ->latest()
+        ->get();
+    
+    return view('dashboard', compact('enrollments'));
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
