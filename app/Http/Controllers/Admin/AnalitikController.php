@@ -6,177 +6,210 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class AnalitikController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Statistics
-            $totalPendapatan = Transaksi::where('status', 'lunas')->sum('jumlah');
+            $sortBy = $request->get('sort', 'pendapatan'); // pendapatan, peserta, fill_rate
+            $search = $request->get('search', '');
+            $statusFilter = $request->get('status', '');
+            $year = $request->get('year', date('Y')); // Default to current year
+            
+            // Statistics - ambil dari transaksi dengan status success
+            $totalPendapatan = Transaksi::where('status', 'success')->sum('jumlah');
             $totalTransaksi = Transaksi::count();
-            $lunasCount = Transaksi::where('status', 'lunas')->count();
+            $lunasCount = Transaksi::where('status', 'success')->count();
             $pendingCount = Transaksi::where('status', 'pending')->count();
-            $failedCount = Transaksi::where('status', 'gagal')->count();
+            $gagalCount = Transaksi::where('status', 'expired')->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
 
-            // Top Kursus berdasarkan pendapatan
-            $topKursus = \App\Models\Kursus::withCount('enrollments')
-                ->with(['enrollments' => function($query) {
-                    $query->whereHas('transaksi', function($q) {
-                        $q->where('status', 'lunas');
-                    });
-                }])
+            // Top Kursus berdasarkan sort parameter
+            $topKursusData = \App\Models\Kursus::withCount('enrollments')
                 ->get()
                 ->map(function($kursus, $index) {
-                    $pendapatan = $kursus->enrollments->sum(function($enrollment) {
-                        return $enrollment->transaksi->where('status', 'lunas')->sum('jumlah');
-                    });
-                    
-                    $fillRate = $kursus->kapasitas > 0 ? round(($kursus->enrollments_count / $kursus->kapasitas) * 100, 0) : 0;
+                    // Hitung pendapatan dari transaksi yang success untuk kursus ini
+                    $pendapatan = \App\Models\Transaksi::whereHas('enrollment', function($query) use ($kursus) {
+                        $query->where('kursus_id', $kursus->id);
+                    })->where('status', 'success')->sum('jumlah');
                     
                     return (object)[
-                        'no' => $index + 1,
-                        'nama' => $kursus->nama,
+                        'nama' => $kursus->judul, // Field nama kursus adalah 'judul'
                         'peserta' => $kursus->enrollments_count,
-                        'kapasitas' => $kursus->kapasitas ?? 0,
-                        'fill_rate' => $fillRate,
                         'pendapatan' => $pendapatan
                     ];
-                })
-                ->sortByDesc('pendapatan')
-                ->take(5)
-                ->values();
+                });
+            
+            // Sort based on parameter
+            switch($sortBy) {
+                case 'peserta':
+                    $topKursusData = $topKursusData->sortByDesc('peserta');
+                    break;
+                default:
+                    $topKursusData = $topKursusData->sortByDesc('pendapatan');
+            }
+            
+            $topKursus = $topKursusData->take(5)->values()->map(function($item, $index) {
+                $item->no = $index + 1;
+                return $item;
+            });
 
-            // Distribusi Profesi (dari data user yang punya enrollment)
-            $distribusiProfesi = \App\Models\User::role('peserta')
-                ->whereHas('enrollments')
+            // Distribusi Profesi - dari tabel users dengan role peserta (Top 5 + Others)
+            $distribusiProfesiRaw = \App\Models\User::role('peserta')
                 ->whereNotNull('profesi')
+                ->where('profesi', '!=', '')
                 ->selectRaw('profesi, COUNT(*) as jumlah')
                 ->groupBy('profesi')
-                ->get()
-                ->map(function($item) use ($lunasCount) {
-                    return (object)[
-                        'profesi' => $item->profesi,
-                        'jumlah' => $item->jumlah,
-                        'percentage' => $lunasCount > 0 ? round(($item->jumlah / $lunasCount) * 100, 1) : 0
-                    ];
-                });
+                ->orderByRaw('COUNT(*) DESC')
+                ->get();
+            
+            $totalProfesi = $distribusiProfesiRaw->sum('jumlah');
+            
+            // Take top 5 and group the rest as "Others"
+            $top5Profesi = $distribusiProfesiRaw->take(5);
+            $othersCount = $distribusiProfesiRaw->skip(5)->sum('jumlah');
+            
+            $distribusiProfesi = $top5Profesi->map(function($item) use ($totalProfesi) {
+                return (object)[
+                    'profesi' => $item->profesi,
+                    'jumlah' => $item->jumlah,
+                    'percentage' => $totalProfesi > 0 ? round(($item->jumlah / $totalProfesi) * 100, 1) : 0
+                ];
+            });
+            
+            // Add "Others" if there are more than 5 categories
+            if ($othersCount > 0) {
+                $distribusiProfesi->push((object)[
+                    'profesi' => 'Lainnya',
+                    'jumlah' => $othersCount,
+                    'percentage' => $totalProfesi > 0 ? round(($othersCount / $totalProfesi) * 100, 1) : 0
+                ]);
+            }
 
-            // Distribusi Lokasi (dari kolom address user)
-            $distribusiLokasi = \App\Models\User::role('peserta')
-                ->whereHas('enrollments')
+            // Distribusi Lokasi - dari address di tabel users (Top 5 + Others)
+            $distribusiLokasiRaw = \App\Models\User::role('peserta')
                 ->whereNotNull('address')
+                ->where('address', '!=', '')
                 ->selectRaw('address as lokasi, COUNT(*) as jumlah')
                 ->groupBy('address')
-                ->get()
-                ->map(function($item) use ($lunasCount) {
-                    return (object)[
-                        'lokasi' => $item->lokasi,
-                        'jumlah' => $item->jumlah,
-                        'percentage' => $lunasCount > 0 ? round(($item->jumlah / $lunasCount) * 100, 1) : 0
-                    ];
-                })
-                ->sortByDesc('jumlah')
-                ->take(6);
+                ->orderByRaw('COUNT(*) DESC')
+                ->get();
+                
+            $totalLokasi = $distribusiLokasiRaw->sum('jumlah');
+            
+            // Take top 5 and group the rest as "Others"
+            $top5Lokasi = $distribusiLokasiRaw->take(5);
+            $othersCountLokasi = $distribusiLokasiRaw->skip(5)->sum('jumlah');
+            
+            $distribusiLokasi = $top5Lokasi->map(function($item) use ($totalLokasi) {
+                return (object)[
+                    'lokasi' => $item->lokasi,
+                    'jumlah' => $item->jumlah,
+                    'percentage' => $totalLokasi > 0 ? round(($item->jumlah / $totalLokasi) * 100, 1) : 0
+                ];
+            });
+            
+            // Add "Others" if there are more than 5 categories
+            if ($othersCountLokasi > 0) {
+                $distribusiLokasi->push((object)[
+                    'lokasi' => 'Lainnya',
+                    'jumlah' => $othersCountLokasi,
+                    'percentage' => $totalLokasi > 0 ? round(($othersCountLokasi / $totalLokasi) * 100, 1) : 0
+                ]);
+            }
+            
+            $distribusiLokasi = $distribusiLokasi->values();
 
-            // Data Nilai Peserta
-            $students = \App\Models\Enrollment::with(['user', 'kursus'])
+            // Distribusi Umur - dari tanggal_lahir tabel users role peserta
+            $distribusiUmurRaw = \App\Models\User::role('peserta')
+                ->whereNotNull('tanggal_lahir')
                 ->get()
-                ->map(function($enrollment) {
-                    return (object)[
-                        'id' => 'PST' . str_pad($enrollment->user->id, 3, '0', STR_PAD_LEFT),
-                        'nama' => $enrollment->user->name,
-                        'email' => $enrollment->user->email,
-                        'pelatihan' => $enrollment->kursus->nama,
-                        'tanggal_mulai' => $enrollment->created_at,
-                        'status' => $enrollment->status == 'selesai' ? 'Selesai' : 'Berlangsung',
-                        'progress' => $enrollment->progress ?? 0,
-                        'nilai' => $enrollment->nilai_akhir
-                    ];
+                ->map(function($user) {
+                    $umur = \Carbon\Carbon::parse($user->tanggal_lahir)->age;
+                    if ($umur >= 17 && $umur <= 25) return '17-25 tahun';
+                    if ($umur >= 26 && $umur <= 35) return '26-35 tahun';
+                    if ($umur >= 36 && $umur <= 45) return '36-45 tahun';
+                    if ($umur >= 46) return '46+ tahun';
+                    return null;
                 })
-                ->take(20);
+                ->filter()
+                ->groupBy(function($item) { return $item; })
+                ->map(function($group) { return count($group); });
+            
+            $totalUmur = $distribusiUmurRaw->sum();
+            $distribusiUmur = $distribusiUmurRaw->map(function($jumlah, $kelompok) use ($totalUmur) {
+                return (object)[
+                    'kelompok' => $kelompok,
+                    'jumlah' => $jumlah,
+                    'percentage' => $totalUmur > 0 ? round(($jumlah / $totalUmur) * 100, 1) : 0
+                ];
+            })->values();
 
-            // Grafik Pendapatan per Bulan (tahun berjalan)
+            // Data Nilai Peserta dengan pagination dan search
+            $studentsQuery = \App\Models\Enrollment::with(['user', 'kursus']);
+            
+            // Apply search filter
+            if ($search) {
+                $studentsQuery->where(function($query) use ($search) {
+                    $query->whereHas('user', function($q) use ($search) {
+                        $q->where('name', 'ILIKE', '%' . $search . '%')
+                          ->orWhere('email', 'ILIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('kursus', function($q) use ($search) {
+                        $q->where('judul', 'ILIKE', '%' . $search . '%'); // Field nama kursus adalah 'judul'
+                    })
+                    ->orWhere('tanggal_daftar', 'LIKE', '%' . $search . '%');
+                });
+            }
+            
+            // Apply status filter
+            if ($statusFilter) {
+                $studentsQuery->where('status', $statusFilter);
+            }
+            
+            // Pagination dengan 10 items per page
+            $students = $studentsQuery->paginate(10);
+
+            // Grafik Pendapatan per Bulan (tahun dipilih) - PostgreSQL compatible, status success
             $revenueByMonth = [];
             for ($i = 1; $i <= 12; $i++) {
-                $revenue = Transaksi::where('status', 'lunas')
-                    ->whereYear('created_at', date('Y'))
-                    ->whereMonth('created_at', $i)
+                $revenue = Transaksi::where('status', 'success')
+                    ->whereRaw('EXTRACT(YEAR FROM created_at) = ?', [$year])
+                    ->whereRaw('EXTRACT(MONTH FROM created_at) = ?', [$i])
                     ->sum('jumlah');
                 $revenueByMonth[] = round($revenue / 1000000, 1); // Konversi ke juta
             }
+            
+            // Generate available years (from 2024 to current year)
+            $availableYears = range(2024, date('Y'));
+            rsort($availableYears); // Sort descending (newest first)
 
             return view('admin.analitik.index', compact(
                 'totalPendapatan',
                 'totalTransaksi',
                 'tingkatKeberhasilan',
+                'lunasCount',
                 'pendingCount',
-                'failedCount',
+                'gagalCount',
                 'topKursus',
                 'distribusiProfesi',
                 'distribusiLokasi',
+                'distribusiUmur',
                 'students',
-                'revenueByMonth'
+                'revenueByMonth',
+                'sortBy',
+                'search',
+                'statusFilter',
+                'year',
+                'availableYears'
             ));
         } catch (\Exception $e) {
             Log::error('Error fetching analytics: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             
-            // Dummy data
-            $totalPendapatan = 31530000;
-            $totalTransaksi = 15;
-            $tingkatKeberhasilan = 60.0;
-            
-            $topKursus = [
-                (object)['no' => 1, 'nama' => 'Digital Marketing Masterclass', 'peserta' => 28, 'kapasitas' => 30, 'fill_rate' => 93, 'pendapatan' => 140000000],
-                (object)['no' => 2, 'nama' => 'Agile Project Management', 'peserta' => 25, 'kapasitas' => 25, 'fill_rate' => 100, 'pendapatan' => 200000000],
-                (object)['no' => 3, 'nama' => 'Leadership Excellence Program', 'peserta' => 20, 'kapasitas' => 25, 'fill_rate' => 80, 'pendapatan' => 150000000],
-                (object)['no' => 4, 'nama' => 'Full-Stack Web Development', 'peserta' => 18, 'kapasitas' => 20, 'fill_rate' => 90, 'pendapatan' => 216000000],
-                (object)['no' => 5, 'nama' => 'Desain UI/UX', 'peserta' => 15, 'kapasitas' => 20, 'fill_rate' => 75, 'pendapatan' => 90000000],
-            ];
-            
-            $distribusiProfesi = [
-                (object)['profesi' => 'Manager IT', 'jumlah' => 1, 'percentage' => 33.3],
-                (object)['profesi' => 'Product Manager', 'jumlah' => 1, 'percentage' => 33.3],
-                (object)['profesi' => 'Developer', 'jumlah' => 1, 'percentage' => 33.3],
-            ];
-            
-            $distribusiLokasi = [
-                (object)['lokasi' => 'Jakarta', 'jumlah' => 1, 'percentage' => 35],
-                (object)['lokasi' => 'Bandung', 'jumlah' => 0, 'percentage' => 20],
-                (object)['lokasi' => 'Surabaya', 'jumlah' => 0, 'percentage' => 15],
-                (object)['lokasi' => 'Yogyakarta', 'jumlah' => 0, 'percentage' => 12],
-                (object)['lokasi' => 'Medan', 'jumlah' => 0, 'percentage' => 10],
-                (object)['lokasi' => 'Lainnya', 'jumlah' => 0, 'percentage' => 8],
-            ];
-            
-            $students = [
-                (object)['id' => 'PST001', 'nama' => 'Ahmad Fauzi', 'email' => 'ahmad.fauzi@email.com', 'pelatihan' => 'Web Development Fundamentals', 'tanggal_mulai' => '2025-01-15', 'status' => 'Selesai', 'progress' => 100, 'nilai' => 92],
-                (object)['id' => 'PST002', 'nama' => 'Siti Nurhaliza', 'email' => 'siti.nur@email.com', 'pelatihan' => 'Data Analytics with Python', 'tanggal_mulai' => '2025-02-01', 'status' => 'Berlangsung', 'progress' => 65, 'nilai' => null],
-                (object)['id' => 'PST003', 'nama' => 'Budi Santoso', 'email' => 'budi.santoso@email.com', 'pelatihan' => 'Cyber Security Basics', 'tanggal_mulai' => '2025-01-20', 'status' => 'Selesai', 'progress' => 100, 'nilai' => 88],
-                (object)['id' => 'PST004', 'nama' => 'Dewi Lestari', 'email' => 'dewi.lestari@email.com', 'pelatihan' => 'Mobile App Development', 'tanggal_mulai' => '2025-02-10', 'status' => 'Berlangsung', 'progress' => 45, 'nilai' => null],
-                (object)['id' => 'PST005', 'nama' => 'Eko Prasetyo', 'email' => 'eko.prasetyo@email.com', 'pelatihan' => 'Cloud Computing AWS', 'tanggal_mulai' => '2025-01-10', 'status' => 'Selesai', 'progress' => 100, 'nilai' => 95],
-                (object)['id' => 'PST006', 'nama' => 'Fitri Handayani', 'email' => 'fitri.h@email.com', 'pelatihan' => 'UI/UX Design', 'tanggal_mulai' => '2025-03-01', 'status' => 'Berlangsung', 'progress' => 30, 'nilai' => null],
-                (object)['id' => 'PST007', 'nama' => 'Gunawan Wijaya', 'email' => 'gunawan.w@email.com', 'pelatihan' => 'Web Development Fundamentals', 'tanggal_mulai' => '2025-01-15', 'status' => 'Selesai', 'progress' => 100, 'nilai' => 78],
-                (object)['id' => 'PST008', 'nama' => 'Hana Permata', 'email' => 'hana.permata@email.com', 'pelatihan' => 'Data Analytics with Python', 'tanggal_mulai' => '2025-02-01', 'status' => 'Berlangsung', 'progress' => 70, 'nilai' => null],
-            ];
-
-            $revenueByMonth = [28, 24, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2];
-            $pendingCount = 3;
-            $failedCount = 0;
-
-            return view('admin.analitik.index', compact(
-                'totalPendapatan',
-                'totalTransaksi',
-                'tingkatKeberhasilan',
-                'topKursus',
-                'distribusiProfesi',
-                'distribusiLokasi',
-                'students',
-                'revenueByMonth',
-                'pendingCount',
-                'failedCount'
-            ));
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data analitik');
         }
     }
 }

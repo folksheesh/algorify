@@ -41,6 +41,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s, box-shadow 0.2s;
         }
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
         .stat-card-modern:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -61,13 +66,99 @@
         .stat-info h3 {
             font-size: 0.875rem;
             color: #64748B;
-            margin-bottom: 0.5rem;
+            margin: 0 0 0.5rem 0;
             font-weight: 500;
+            line-height: 1;
         }
         .stat-info p {
             font-size: 2rem;
             font-weight: 700;
             color: #1E293B;
+            margin: 0;
+            line-height: 1;
+        }
+        /* Modern Pie Chart Styles */
+        .pie-chart-container {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pie-legend-modern {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .legend-item-modern {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: #F8FAFC;
+            border-radius: 8px;
+            transition: all 0.2s;
+            gap: 1rem;
+        }
+        .legend-item-modern:hover {
+            background: #F1F5F9;
+            transform: translateX(4px);
+        }
+        .legend-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: #475569;
+            font-weight: 500;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .legend-percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1E293B;
+        }
+        /* Empty State */
+        .empty-state-modern {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            text-align: center;
+            height: 280px;
+        }
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .empty-state-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #94A3B8;
+        }
+        .empty-state-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        .empty-state-description {
+            font-size: 0.875rem;
+            color: #94A3B8;
+            max-width: 300px;
         }
         .charts-grid {
             display: grid;
@@ -119,12 +210,129 @@
         .stat-card-modern {
             cursor: pointer;
         }
+        
+        /* Pie Chart Side by Side Layout */
+        .pie-chart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+        .pie-chart-container {
+            flex: 0 0 200px;
+            height: 200px;
+        }
+        .pie-legend-modern {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1280px) {
+            .stat-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         @media (max-width: 1024px) {
             .stat-cards-grid {
                 grid-template-columns: 1fr;
             }
             .charts-grid {
                 grid-template-columns: 1fr;
+            }
+            .admin-header {
+                padding: 2rem 1.5rem;
+            }
+            .admin-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .pie-chart-wrapper {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .pie-chart-container {
+                flex: 0 0 240px;
+                height: 240px;
+                width: 100%;
+            }
+            .chart-card {
+                padding: 1.25rem;
+            }
+            .stat-card-modern {
+                padding: 1.25rem;
+            }
+            .admin-header {
+                padding: 1.5rem 1rem;
+                margin-top: 1rem;
+            }
+            .admin-header h1 {
+                font-size: 1.5rem;
+            }
+            .admin-header p {
+                font-size: 0.875rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .chart-dropdown {
+                width: 100%;
+            }
+            .stat-icon-wrapper {
+                width: 60px;
+                height: 60px;
+            }
+            .stat-icon-wrapper svg {
+                width: 30px;
+                height: 30px;
+            }
+            .stat-info p {
+                font-size: 1.75rem;
+            }
+            .page-header {
+                padding: 1rem;
+            }
+            .page-header h1 {
+                font-size: 1.25rem;
+            }
+        }
+        
+        /* Responsive container padding */
+        .dashboard-content-wrapper {
+            padding: 0 2rem 2rem;
+        }
+        .dashboard-page-header {
+            margin: 0 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-content-wrapper {
+                padding: 0 1rem 1rem;
+            }
+            .dashboard-page-header {
+                margin: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .dashboard-content-wrapper {
+                padding: 0 0.75rem 0.75rem;
+            }
+            .dashboard-page-header {
+                margin: 0 0.75rem;
             }
         }
     </style>
@@ -138,11 +346,11 @@
             </header>
             
             <!-- Page Header -->
-            <div class="page-header" style="margin: 0 2rem;">
+            <div class="page-header dashboard-page-header">
                 <h1>Dashboard Admin</h1>
             </div>
             
-            <div style="padding: 0 2rem 2rem;">
+            <div class="dashboard-content-wrapper">
                 <!-- Admin Header Banner -->
                 <div class="admin-header">
                     <h1>Halo, Admin!</h1>
@@ -201,15 +409,23 @@
                     <!-- Transaksi Chart -->
                     <div class="chart-card">
                         <div class="chart-header">
-                            <h3 class="chart-title">Transaksi</h3>
+                            <h3 class="chart-title">Metode Transaksi</h3>
                             <select class="chart-dropdown" id="transaksiFilter">
-                                <option value="current_month">Bulan Ini</option>
-                                <option value="last_month">Bulan Lalu</option>
-                                <option value="all">Keseluruhan</option>
+                                <option value="all">Semua Waktu</option>
+                                <option value="current_month">Hari Ini</option>
+                                <option value="7_hari">7 Hari Terakhir</option>
+                                <option value="bulan_ini">Bulan Ini</option>
+                                <option value="bulan_lalu">Bulan Lalu</option>
+                                <option value="tahun_ini">Tahun Ini</option>
                             </select>
                         </div>
-                        <div class="chart-content" style="height: 300px; display: flex; align-items: center; justify-content: center;">
-                            <canvas id="transaksiChart"></canvas>
+                        <div id="transaksiChartContainer">
+                            <div class="pie-chart-wrapper">
+                                <div class="pie-chart-container">
+                                    <canvas id="transaksiChart"></canvas>
+                                </div>
+                                <div id="transaksisLegend" class="pie-legend-modern"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -218,8 +434,7 @@
                         <div class="chart-header">
                             <h3 class="chart-title">Pertumbuhan Peserta</h3>
                             <select class="chart-dropdown" id="pertumbuhanFilter">
-                                <option value="this_year">Tahun Ini</option>
-                                <option value="all">Keseluruhan</option>
+                                <!-- Years will be populated dynamically -->
                             </select>
                         </div>
                         <div class="chart-content" style="height: 300px; display: flex; align-items: center; justify-content: center;">
@@ -242,77 +457,229 @@
         const transaksiCtx = document.getElementById('transaksiChart').getContext('2d');
         let transaksiChart = null;
 
-        // Function to load transaksi data
-        async function loadTransaksiData(filter = 'current_month') {
+        // Function to load transaksi data with modern styling
+        async function loadTransaksiData(filter = 'all') {
             try {
                 const response = await fetch(`{{ route('admin.dashboard.transaksi-data') }}?filter=${filter}`);
                 const data = await response.json();
                 
-                // Destroy existing chart if it exists
-                if (transaksiChart) {
-                    transaksiChart.destroy();
+                const container = document.getElementById('transaksiChartContainer');
+                const legendContainer = document.getElementById('transaksisLegend');
+                
+                // Check if no data
+                if (!data.values || data.values.length === 0 || data.values.every(v => v === 0)) {
+                    // Show empty state
+                    if (transaksiChart) transaksiChart.destroy();
+                    container.innerHTML = `
+                        <div class="empty-state-modern">
+                            <div class="empty-state-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="empty-state-title">Belum Ada Transaksi</div>
+                            <p class="empty-state-description">Data transaksi akan muncul di sini setelah ada pembayaran yang berhasil</p>
+                        </div>
+                    `;
+                    return;
                 }
                 
-                // Create new chart with fetched data
-                transaksiChart = new Chart(transaksiCtx, {
-                    type: 'doughnut',
+                // Reset container
+                container.innerHTML = `
+                    <div class="pie-chart-wrapper">
+                        <div class="pie-chart-container">
+                            <canvas id="transaksiChart"></canvas>
+                        </div>
+                        <div id="transaksisLegend" class="pie-legend-modern"></div>
+                    </div>
+                `;
+                
+                const newCtx = document.getElementById('transaksiChart').getContext('2d');
+                
+                // Map payment method names
+                const methodNames = {
+                    'bank_transfer': 'Transfer Bank',
+                    'e_wallet': 'E-Wallet',
+                    'credit_card': 'Kartu Kredit'
+                };
+                
+                const properLabels = data.labels.map(label => methodNames[label] || label);
+                const total = data.values.reduce((sum, val) => sum + val, 0);
+                const percentages = data.values.map(val => ((val / total) * 100).toFixed(1));
+                
+                const colors = ['#667eea', '#f093fb', '#4facfe'];
+                
+                // Destroy existing chart
+                if (transaksiChart) transaksiChart.destroy();
+                
+                // Create modern pie chart
+                transaksiChart = new Chart(newCtx, {
+                    type: 'pie',
                     data: {
-                        labels: data.labels.length > 0 ? data.labels : ['Tidak ada data'],
+                        labels: properLabels,
                         datasets: [{
-                            data: data.values.length > 0 ? data.values : [1],
-                            backgroundColor: data.values.length > 0 ? [
-                                '#667eea',
-                                '#764ba2',
-                                '#f093fb',
-                                '#4facfe',
-                                '#00f2fe'
-                            ] : ['#E2E8F0'],
-                            borderWidth: 0
+                            data: data.values,
+                            backgroundColor: colors,
+                            borderWidth: 3,
+                            borderColor: '#fff',
+                            hoverOffset: 8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '70%',
                         plugins: {
                             legend: {
-                                position: 'right',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 20,
-                                    font: {
-                                        size: 13
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: '#1E293B',
+                                padding: 12,
+                                titleFont: { size: 13, weight: '600' },
+                                bodyFont: { size: 12 },
+                                borderColor: '#E2E8F0',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.parsed;
+                                        const percentage = percentages[context.dataIndex];
+                                        return ` ${value} transaksi (${percentage}%)`;
                                     }
                                 }
                             }
                         }
                     }
                 });
+                
+                // Create custom modern legend
+                const newLegendContainer = document.getElementById('transaksisLegend');
+                newLegendContainer.innerHTML = properLabels.map((label, i) => `
+                    <div class="legend-item-modern">
+                        <div class="legend-label">
+                            <div class="legend-color" style="background-color: ${colors[i]}"></div>
+                            <span>${label}</span>
+                        </div>
+                        <div class="legend-percentage">${percentages[i]}%</div>
+                    </div>
+                `).join('');
+                
             } catch (error) {
                 console.error('Error loading transaksi data:', error);
+                const container = document.getElementById('transaksiChartContainer');
+                container.innerHTML = `
+                    <div class="empty-state-modern">
+                        <div class="empty-state-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                        <div class="empty-state-title">Terjadi Kesalahan</div>
+                        <p class="empty-state-description">Gagal memuat data transaksi. Silakan refresh halaman.</p>
+                    </div>
+                `;
             }
         }
 
         // Pertumbuhan Peserta Line Chart (Monthly)
-        const pertumbuhanCtx = document.getElementById('pertumbuhanChart').getContext('2d');
         let pertumbuhanChart = null;
 
+        // Populate year dropdown dynamically (scalable, no future years)
+        function populateYearDropdown() {
+            const dropdown = document.getElementById('pertumbuhanFilter');
+            const currentYear = new Date().getFullYear();
+            const startYear = 2024; // Start from 2024
+            
+            dropdown.innerHTML = '<option value="all">Semua Tahun</option>';
+            
+            // Start from current year down to start year (no future years)
+            for (let year = currentYear; year >= startYear; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
+                dropdown.appendChild(option);
+            }
+        }
+        
         // Function to load pertumbuhan data
-        async function loadPertumbuhanData(filter = 'this_year') {
+        async function loadPertumbuhanData(year = new Date().getFullYear()) {
             try {
-                const response = await fetch(`{{ route('admin.dashboard.pertumbuhan-data') }}?filter=${filter}`);
+                const response = await fetch(`{{ route('admin.dashboard.pertumbuhan-data') }}?year=${year}`);
                 const data = await response.json();
                 
-                console.log('Pertumbuhan data:', data); // Debug
+                const labels = data.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+                const values = data.values || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                
+                // Check if all values are zero
+                const hasData = values.some(v => v > 0);
                 
                 // Destroy existing chart if it exists
                 if (pertumbuhanChart) {
                     pertumbuhanChart.destroy();
+                    pertumbuhanChart = null;
                 }
                 
-                // Ensure we have data to display
-                const labels = data.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-                const values = data.values || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                if (!hasData) {
+                    // Show empty state
+                    const canvas = document.getElementById('pertumbuhanChart');
+                    if (canvas && canvas.parentElement) {
+                        const container = canvas.parentElement;
+                        container.innerHTML = `
+                            <div class="empty-state-modern">
+                                <div class="empty-state-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="empty-state-title">Belum Ada Peserta</div>
+                                <p class="empty-state-description">Belum ada peserta yang mendaftar ${year === 'all' ? 'di sistem ini' : 'pada tahun ' + year}</p>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+                
+                // Reset container if showing empty state
+                let canvas = document.getElementById('pertumbuhanChart');
+                if (!canvas) {
+                    const container = document.querySelector('.chart-content');
+                    if (container) {
+                        container.innerHTML = '<canvas id="pertumbuhanChart"></canvas>';
+                        canvas = document.getElementById('pertumbuhanChart');
+                    }
+                }
+                
+                // Get fresh context from canvas
+                if (!canvas) return;
+                const pertumbuhanCtx = canvas.getContext('2d');
+                
+                // Dynamic Y-axis calculation
+                const maxValue = Math.max(...values, 0);
+                let yAxisMax, stepSize;
+                
+                if (maxValue <= 10) {
+                    // For small values (0-10), use max 10 with step 2
+                    yAxisMax = 10;
+                    stepSize = 2;
+                } else if (maxValue <= 30) {
+                    // For medium values (11-30), use max 30 with step 5
+                    yAxisMax = 30;
+                    stepSize = 5;
+                } else if (maxValue <= 50) {
+                    // For higher values (31-50), use max 50 with step 10
+                    yAxisMax = 50;
+                    stepSize = 10;
+                } else if (maxValue <= 100) {
+                    // For values 51-100, use max 100 with step 20
+                    yAxisMax = 100;
+                    stepSize = 20;
+                } else {
+                    // For very high values (>100), round up to nearest 50 with step 25
+                    yAxisMax = Math.ceil(maxValue / 50) * 50;
+                    stepSize = Math.ceil(yAxisMax / 200) * 25;
+                }
                 
                 // Create new chart with fetched data
                 pertumbuhanChart = new Chart(pertumbuhanCtx, {
@@ -333,9 +700,9 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 50,
+                                max: yAxisMax,
                                 ticks: {
-                                    stepSize: 10,
+                                    stepSize: stepSize,
                                     font: {
                                         size: 12
                                     }
@@ -358,7 +725,7 @@
                         },
                         plugins: {
                             legend: {
-                                display: true,
+                                display: false,
                                 position: 'top',
                                 align: 'end',
                                 labels: {
@@ -439,7 +806,8 @@
             }
         }
 
-        // Load initial data
+        // Initialize
+        populateYearDropdown();
         loadTransaksiData();
         loadPertumbuhanData();
 

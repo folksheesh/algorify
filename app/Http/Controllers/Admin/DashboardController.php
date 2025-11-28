@@ -16,20 +16,30 @@ class DashboardController extends Controller
      */
     public function getTransaksiData(Request $request)
     {
-        $filter = $request->get('filter', 'current_month');
+        $filter = $request->get('filter', 'all');
         
         $query = Transaksi::query();
         
         switch ($filter) {
             case 'current_month':
+                $query->whereDate('created_at', Carbon::today());
+                break;
+            case '7_hari':
+                $query->where('created_at', '>=', Carbon::now()->subDays(7));
+                break;
+            case 'bulan_ini':
                 $query->whereMonth('created_at', Carbon::now()->month)
                       ->whereYear('created_at', Carbon::now()->year);
                 break;
-            case 'last_month':
+            case 'bulan_lalu':
                 $query->whereMonth('created_at', Carbon::now()->subMonth()->month)
                       ->whereYear('created_at', Carbon::now()->subMonth()->year);
                 break;
+            case 'tahun_ini':
+                $query->whereYear('created_at', Carbon::now()->year);
+                break;
             case 'all':
+            default:
                 // No filter
                 break;
         }
@@ -46,64 +56,61 @@ class DashboardController extends Controller
     }
     
     /**
-     * Get student growth data for chart
+     * Get student growth data for chart (based on enrollment date, not registration)
      */
     public function getPertumbuhanData(Request $request)
     {
-        $filter = $request->get('filter', 'this_year');
-        
-        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-        $data = array_fill(0, 12, 0);
-        
-        // Get role_id for 'peserta'
-        $pesertaRole = \Spatie\Permission\Models\Role::where('name', 'peserta')->first();
-        
-        if (!$pesertaRole) {
+        try {
+            $year = $request->get('year', 'all');
+            
+            $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            $data = array_fill(0, 12, 0);
+            
+            // Check if Enrollment model exists
+            if (!class_exists('App\Models\Enrollment')) {
+                \Log::warning('Enrollment model not found, using empty data');
+                return response()->json([
+                    'labels' => $months,
+                    'values' => $data
+                ]);
+            }
+            
+            // Get enrollments data instead of user registrations
+            $query = \App\Models\Enrollment::query();
+            
+            // Filter by year (using tanggal_daftar, not created_at)
+            if ($year !== 'all') {
+                $query->whereYear('tanggal_daftar', $year);
+            }
+            
+            // Group by month (based on enrollment date) - PostgreSQL compatible
+            $enrollments = $query->select(DB::raw('EXTRACT(MONTH FROM tanggal_daftar) as month'), DB::raw('count(*) as total'))
+                ->groupBy(DB::raw('EXTRACT(MONTH FROM tanggal_daftar)'))
+                ->get();
+            
+            foreach ($enrollments as $enrollment) {
+                if ($year === 'all') {
+                    // For all years, accumulate
+                    $data[$enrollment->month - 1] += $enrollment->total;
+                } else {
+                    // For specific year, just assign
+                    $data[$enrollment->month - 1] = $enrollment->total;
+                }
+            }
+            
             return response()->json([
                 'labels' => $months,
                 'values' => $data
             ]);
-        }
-        
-        if ($filter === 'this_year') {
-            // Get data for current year only
-            $students = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->where('model_has_roles.role_id', $pesertaRole->id)
-                ->where('model_has_roles.model_type', User::class)
-                ->whereYear('users.created_at', Carbon::now()->year)
-                ->select(DB::raw('MONTH(users.created_at) as month'), DB::raw('count(*) as total'))
-                ->groupBy('month')
-                ->get();
+        } catch (\Exception $e) {
+            \Log::error('Error getting pertumbuhan data: ' . $e->getMessage());
             
-            foreach ($students as $student) {
-                $data[$student->month - 1] = $student->total;
-            }
-        } else {
-            // Get all data grouped by month
-            $students = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->where('model_has_roles.role_id', $pesertaRole->id)
-                ->where('model_has_roles.model_type', User::class)
-                ->select(
-                    DB::raw('YEAR(users.created_at) as year'),
-                    DB::raw('MONTH(users.created_at) as month'),
-                    DB::raw('count(*) as total')
-                )
-                ->groupBy('year', 'month')
-                ->orderBy('year')
-                ->orderBy('month')
-                ->get();
-            
-            // For all time data, accumulate all students per month across all years
-            $monthlyTotals = array_fill(0, 12, 0);
-            foreach ($students as $student) {
-                $monthlyTotals[$student->month - 1] += $student->total;
-            }
-            $data = $monthlyTotals;
+            // Return empty data on error
+            $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return response()->json([
+                'labels' => $months,
+                'values' => array_fill(0, 12, 0)
+            ]);
         }
-        
-        return response()->json([
-            'labels' => $months,
-            'values' => $data
-        ]);
     }
 }
