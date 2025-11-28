@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('kursus', function (Blueprint $table) {
-            $table->dropColumn(['pengajar', 'durasi', 'tipe_kursus']);
+            $table->string('durasi', 100)->nullable()->after('harga');
+            $table->enum('tipe_kursus', ['online', 'hybrid', 'offline'])->default('online')->after('durasi');
         });
     }
 
@@ -22,9 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('kursus', function (Blueprint $table) {
-            $table->string('pengajar')->nullable();
-            $table->string('durasi')->nullable();
-            $table->string('tipe_kursus')->nullable();
+            $table->dropColumn(['durasi', 'tipe_kursus']);
         });
     }
 };

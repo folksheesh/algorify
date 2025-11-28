@@ -22,7 +22,6 @@ class Kursus extends Model
         'status',
         'harga',
         'thumbnail',
-        'pengajar',
         'durasi',
         'tipe_kursus',
     ];
