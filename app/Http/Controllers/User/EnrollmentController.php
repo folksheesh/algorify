@@ -26,11 +26,7 @@ class EnrollmentController extends Controller
         $user = Auth::user();
         $kursus = Kursus::with('pengajar')->findOrFail($id);
         
-        // Ensure pengajar is loaded
-        if (!$kursus->pengajar) {
-            \Log::error("Kursus {$id} has no pengajar (user_id may be invalid)");
-            abort(500, 'Data kursus tidak lengkap');
-        }
+        // Pengajar tidak wajib, lanjut meski tidak ada pengajar
         
         // Check if user already enrolled
         $existingEnrollment = Enrollment::where('user_id', $user->id)
