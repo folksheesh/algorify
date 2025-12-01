@@ -81,6 +81,7 @@ class GoogleController extends Controller
                 // Jika user belum ada, buat user baru dengan data dari Google.
                 // Gunakan nama yang tersedia: nama lengkap, nickname, atau fallback.
                 $user = User::create([
+                    'id' => User::generateId('peserta'), // Generate ID unik untuk peserta
                     'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Google User',
                     'email' => $googleUser->getEmail(),
                     // Simpan password acak karena kolom password biasanya wajib

@@ -16,6 +16,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 // Breeze auth routes (login, register, password reset, etc.)
 
 Route::get('/dashboard', function () {
+    /** @var \App\Models\User $user */
     $user = Auth::user();
     
     // Check if user has admin or super admin role
@@ -159,6 +160,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'destroy'])->name('pengajar.destroy');
         
         // Pelatihan/Kursus CUD routes (Create, Update, Delete)
+        Route::get('/pelatihan/{id}/peserta', [\App\Http\Controllers\Admin\PelatihanController::class, 'peserta'])->name('pelatihan.peserta');
         Route::post('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'store'])->name('pelatihan.store');
         Route::get('/pelatihan/{id}/edit', [\App\Http\Controllers\Admin\PelatihanController::class, 'edit'])->name('pelatihan.edit');
         Route::put('/pelatihan/{id}', [\App\Http\Controllers\Admin\PelatihanController::class, 'update'])->name('pelatihan.update');

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kursus;
 use App\Models\User;
+use App\Models\Enrollment;
+use App\Models\Nilai;
 use App\Repositories\ProgressRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -157,5 +159,61 @@ class PelatihanController extends Controller
             'success' => true,
             'message' => 'Kursus berhasil dihapus'
         ]);
+    }
+
+    /**
+     * Show peserta (students) enrolled in the course with their grades
+     */
+    public function peserta($id)
+    {
+        $kursus = Kursus::with(['modul.ujian'])->findOrFail($id);
+        
+        // Get all enrollments for this course with user data
+        $enrollments = Enrollment::where('kursus_id', $id)
+            ->with('user')
+            ->get();
+        
+        // Get all ujian (exams) for this course
+        $ujianList = $kursus->modul->flatMap(function($modul) {
+            return $modul->ujian;
+        });
+        
+        // Prepare peserta data with their grades
+        $pesertaData = $enrollments->map(function($enrollment) use ($ujianList) {
+            $user = $enrollment->user;
+            
+            // Get nilai for each ujian
+            $nilaiData = [];
+            foreach ($ujianList as $ujian) {
+                $nilai = Nilai::where('user_id', $user->id)
+                    ->where('ujian_id', $ujian->id)
+                    ->first();
+                
+                $nilaiData[] = [
+                    'ujian_id' => $ujian->id,
+                    'ujian_judul' => $ujian->judul,
+                    'ujian_tipe' => $ujian->tipe,
+                    'nilai' => $nilai ? $nilai->nilai : null,
+                    'status' => $nilai ? $nilai->status : 'belum',
+                ];
+            }
+            
+            // Calculate average
+            $nilaiValues = collect($nilaiData)->pluck('nilai')->filter()->values();
+            $rataRata = $nilaiValues->count() > 0 ? $nilaiValues->avg() : null;
+            
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'foto_profil' => $user->foto_profil,
+                'tanggal_daftar' => $enrollment->tanggal_daftar,
+                'progress' => $enrollment->progress,
+                'nilai_list' => $nilaiData,
+                'rata_rata' => $rataRata,
+            ];
+        });
+        
+        return view('admin.pelatihan.peserta', compact('kursus', 'pesertaData', 'ujianList'));
     }
 }

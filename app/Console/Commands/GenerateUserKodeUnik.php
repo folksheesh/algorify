@@ -12,51 +12,30 @@ class GenerateUserKodeUnik extends Command
      *
      * @var string
      */
-    protected $signature = 'users:generate-kode-unik';
+    protected $signature = 'users:show-ids';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate kode unik untuk user yang belum memiliki kode unik';
+    protected $description = 'Tampilkan semua user dengan ID berdasarkan role';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $users = User::whereNull('kode_unik')->orWhere('kode_unik', '')->get();
-
-        if ($users->isEmpty()) {
-            $this->info('Semua user sudah memiliki kode unik.');
-            return 0;
-        }
-
-        $this->info("Menemukan {$users->count()} user tanpa kode unik.");
-
-        $bar = $this->output->createProgressBar($users->count());
-        $bar->start();
-
-        foreach ($users as $user) {
-            // Determine role
-            $role = 'peserta'; // default
-            
-            if ($user->hasRole('super admin') || $user->hasRole('admin')) {
-                $role = 'admin';
-            } elseif ($user->hasRole('pengajar')) {
-                $role = 'pengajar';
-            }
-
-            $user->kode_unik = User::generateKodeUnik($role);
-            $user->save();
-
-            $bar->advance();
-        }
-
-        $bar->finish();
+        $this->info('Daftar User dengan ID:');
         $this->newLine();
-        $this->info('Selesai! Semua user sekarang memiliki kode unik.');
+        
+        $this->table(
+            ['ID', 'Name', 'Email', 'Role'],
+            User::all()->map(function($u) {
+                $roles = $u->getRoleNames()->implode(', ');
+                return [$u->id, $u->name, $u->email, $roles];
+            })
+        );
 
         return 0;
     }

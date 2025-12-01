@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
 
         // Create instructor users
         $budi = User::create([
+            'id' => User::generateId('pengajar'),
             'name' => 'Dr. Budi Santoso',
             'email' => 'budi@algorify.com',
             'password' => Hash::make('password'),
@@ -29,11 +30,11 @@ class UserSeeder extends Seeder
             'address' => 'Bandung, Indonesia',
             'pendidikan' => 'S3 Computer Science',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $budi->assignRole('pengajar');
 
         $sarah = User::create([
+            'id' => User::generateId('pengajar'),
             'name' => 'Sarah Wijaya, M.Kom',
             'email' => 'sarah@algorify.com',
             'password' => Hash::make('password'),
@@ -42,11 +43,11 @@ class UserSeeder extends Seeder
             'address' => 'Surabaya, Indonesia',
             'pendidikan' => 'S2 Cyber Security',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $sarah->assignRole('pengajar');
 
         $andi = User::create([
+            'id' => User::generateId('pengajar'),
             'name' => 'Andi Prasetyo',
             'email' => 'andi@algorify.com',
             'password' => Hash::make('password'),
@@ -55,11 +56,11 @@ class UserSeeder extends Seeder
             'address' => 'Yogyakarta, Indonesia',
             'pendidikan' => 'S1 Desain Komunikasi Visual',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $andi->assignRole('pengajar');
 
         $dewi = User::create([
+            'id' => User::generateId('pengajar'),
             'name' => 'Dewi Kusuma',
             'email' => 'dewi@algorify.com',
             'password' => Hash::make('password'),
@@ -68,12 +69,12 @@ class UserSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S1 Teknik Informatika',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('pengajar'),
         ]);
         $dewi->assignRole('pengajar');
 
         // Create regular student users
         $zein = User::create([
+            'id' => User::generateId('peserta'),
             'name' => 'Muhammad Zein',
             'email' => 'zein@student.com',
             'password' => Hash::make('password'),
@@ -82,11 +83,11 @@ class UserSeeder extends Seeder
             'address' => 'Semarang, Indonesia',
             'pendidikan' => 'S1 Teknik Informatika',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $zein->assignRole('peserta');
 
         $siti = User::create([
+            'id' => User::generateId('peserta'),
             'name' => 'Siti Nurhaliza',
             'email' => 'siti@student.com',
             'password' => Hash::make('password'),
@@ -95,11 +96,11 @@ class UserSeeder extends Seeder
             'address' => 'Malang, Indonesia',
             'pendidikan' => 'S1 Sistem Informasi',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $siti->assignRole('peserta');
 
         $rudi = User::create([
+            'id' => User::generateId('peserta'),
             'name' => 'Rudi Hermawan',
             'email' => 'rudi@student.com',
             'password' => Hash::make('password'),
@@ -108,11 +109,11 @@ class UserSeeder extends Seeder
             'address' => 'Medan, Indonesia',
             'pendidikan' => 'D3 Teknik Komputer',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $rudi->assignRole('peserta');
 
         $linda = User::create([
+            'id' => User::generateId('peserta'),
             'name' => 'Linda Septiani',
             'email' => 'linda@student.com',
             'password' => Hash::make('password'),
@@ -121,11 +122,11 @@ class UserSeeder extends Seeder
             'address' => 'Bali, Indonesia',
             'pendidikan' => 'S1 Marketing',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $linda->assignRole('peserta');
 
         $arief = User::create([
+            'id' => User::generateId('peserta'),
             'name' => 'Arief Rahman',
             'email' => 'arief@student.com',
             'password' => Hash::make('password'),
@@ -134,7 +135,6 @@ class UserSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'SMK Rekayasa Perangkat Lunak',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
         $arief->assignRole('peserta');
     }
