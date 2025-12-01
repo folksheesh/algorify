@@ -99,8 +99,16 @@ class CheckDokuPaymentStatus extends Command
      */
     private function checkTransactionStatus($invoiceNumber)
     {
+        // Check cache first to avoid excessive API calls
+        $cacheKey = "doku_status_{$invoiceNumber}";
+        $cachedStatus = \Cache::get($cacheKey);
+        
+        if ($cachedStatus) {
+            return $cachedStatus;
+        }
+        
         $baseUrl = config('doku.base_url');
-        $path = "/checkout/v1/payment/{$invoiceNumber}/status";
+        $path = "/orders/v1/status/{$invoiceNumber}";
         $endpoint = $baseUrl . $path;
         
         // Generate signature for GET request
@@ -118,23 +126,29 @@ class CheckDokuPaymentStatus extends Command
         $hmac = base64_encode(hash_hmac('sha256', $stringToSign, $secretKey, true));
         $signature = "HMACSHA256={$hmac}";
         
-        // Call DOKU API
-        $response = \Http::withHeaders([
-            'Client-Id' => $clientId,
-            'Request-Id' => $requestId,
-            'Request-Timestamp' => $requestTimestamp,
-            'Signature' => $signature,
-        ])
-        ->withOptions(['verify' => config('doku.disable_ssl_verify', false) ? false : true])
-        ->get($endpoint);
+        // Call DOKU API with timeout
+        $response = \Http::timeout(5) // 5 second timeout
+            ->withHeaders([
+                'Client-Id' => $clientId,
+                'Request-Id' => $requestId,
+                'Request-Timestamp' => $requestTimestamp,
+                'Signature' => $signature,
+            ])
+            ->withOptions(['verify' => config('doku.disable_ssl_verify', false) ? false : true])
+            ->get($endpoint);
         
         if ($response->successful()) {
             $data = $response->json();
             // DOKU returns status in different paths, check common ones
-            return $data['transaction']['status'] 
+            $status = $data['transaction']['status'] 
                 ?? $data['response']['transaction']['status'] 
                 ?? $data['order']['status'] 
                 ?? 'PENDING';
+            
+            // Cache the result for 5 seconds to avoid duplicate calls
+            \Cache::put($cacheKey, $status, 5);
+            
+            return $status;
         }
         
         // If 404, transaction might not exist yet or expired

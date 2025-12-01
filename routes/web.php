@@ -12,6 +12,9 @@ Route::get('/', function () {
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
+// DOKU Payment Callback (no auth required)
+Route::get('/payment/callback', [\App\Http\Controllers\User\EnrollmentController::class, 'paymentCallback'])->name('payment.callback');
+Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentController::class, 'notification'])->name('doku.notification');
 
 // Breeze auth routes (login, register, password reset, etc.)
 

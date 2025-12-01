@@ -75,38 +75,44 @@
                     <img src="{{ asset('template/img/hero-illustration.png') }}" alt="Hero Illustration" class="illustration-graphic">
                 </div>
             </section>
-            <section class="stats-section">
-                @forelse($enrollments as $enrollment)
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
-                            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <p class="stat-value">{{ $enrollment->progress ?? 0 }}% Selesai</p>
-                        <h3 class="stat-label">{{ Str::limit($enrollment->kursus->judul ?? 'Kursus', 30) }}</h3>
-                    </div>
-                    <div class="stat-menu">
-                        <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="menu-button" aria-label="Lihat kursus">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            
+            <section class="courses-section" style="margin-bottom: 2rem;">
+                <header class="section-header">
+                    <h2 class="section-title">Lanjutkan Belajar</h2>
+                    <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem;">
+                        Lihat Semua →
+                    </a>
+                </header>
+                <div class="stats-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+                    @forelse($enrollments as $enrollment)
+                    <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="stat-card" style="text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; padding: 1rem 1.5rem; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+                        <div class="stat-icon" style="background: #EEF2FF; color: #6366F1; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
+                                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
                             </svg>
-                        </a>
-                    </div>
-                </article>
-                @empty
-                <article class="stat-card">
-                    <div class="stat-content" style="width: 100%;">
-                        <p class="stat-value" style="font-size: 0.875rem; color: #64748B;">Belum ada pelatihan yang diikuti</p>
-                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; margin-top: 0.5rem; display: inline-block;">
+                        </div>
+                        <div class="stat-content" style="flex: 1;">
+                            <p class="stat-value" style="font-size: 0.75rem; color: #6366F1; margin: 0; font-weight: 600;">{{ $enrollment->progress ?? 0 }}% Selesai</p>
+                            <h3 class="stat-label" style="font-size: 1rem; color: #1E293B; margin: 0.25rem 0 0 0; font-weight: 600;">{{ Str::limit($enrollment->kursus->judul ?? 'Kursus', 50) }}</h3>
+                        </div>
+                        <div class="stat-menu" style="color: #94A3B8;">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                    </a>
+                    @empty
+                    <div style="background: #fff; border-radius: 12px; padding: 2rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                        <p style="font-size: 0.875rem; color: #64748B; margin: 0 0 0.5rem 0;">Belum ada pelatihan yang diikuti</p>
+                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600;">
                             Jelajahi Pelatihan →
                         </a>
                     </div>
-                </article>
-                @endforelse
+                    @endforelse
+                </div>
             </section>
+
             <section class="courses-section">
                 <header class="section-header">
                     <h2 class="section-title">Rekomendasi Pelatihan</h2>
