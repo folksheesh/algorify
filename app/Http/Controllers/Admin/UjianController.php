@@ -5,15 +5,75 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ujian;
 use App\Models\Soal;
+use App\Repositories\ProgressRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UjianController extends Controller
 {
+    protected ProgressRepository $progressRepository;
+
+    public function __construct(ProgressRepository $progressRepository)
+    {
+        $this->progressRepository = $progressRepository;
+    }
+
     public function show($id)
     {
-        $ujian = Ujian::with(['modul.kursus', 'soal.pilihanJawaban'])->findOrFail($id);
+        $ujian = Ujian::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban'])->findOrFail($id);
         
-        return view('admin.pelatihan.ujian-detail', compact('ujian'));
+        // Get all items from the same module for navigation
+        $modul = $ujian->modul;
+        $allItems = collect();
+        $completedItems = [];
+        
+        // Get user's completed items for this course
+        if (Auth::check() && $modul) {
+            $kursusId = $modul->kursus_id;
+            $userId = Auth::id();
+            $completedItems = $this->progressRepository->getCompletedItems($userId, $kursusId);
+        }
+        
+        if ($modul) {
+            // Add videos from this module
+            foreach ($modul->video ?? [] as $video) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $video->id);
+                $allItems->push([
+                    'type' => 'video', 
+                    'data' => $video, 
+                    'urutan' => $video->urutan ?? 0,
+                    'completed' => $isCompleted,
+                ]);
+            }
+            
+            // Add materi/bacaan from this module
+            foreach ($modul->materi ?? [] as $materi) {
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === 'materi' && $item['id'] == $materi->id);
+                $allItems->push([
+                    'type' => 'bacaan', 
+                    'data' => $materi, 
+                    'urutan' => ($materi->urutan ?? 0) + 100,
+                    'completed' => $isCompleted,
+                ]);
+            }
+            
+            // Add quiz and ujian from this module
+            foreach ($modul->ujian ?? [] as $ujianItem) {
+                $type = ($ujianItem->tipe === 'practice') ? 'quiz' : 'ujian';
+                $isCompleted = collect($completedItems)->contains(fn($item) => $item['type'] === $type && $item['id'] == $ujianItem->id);
+                $allItems->push([
+                    'type' => $type, 
+                    'data' => $ujianItem, 
+                    'urutan' => 200 + ($ujianItem->id ?? 0),
+                    'completed' => $isCompleted,
+                ]);
+            }
+        }
+        
+        // Sort by urutan
+        $allItems = $allItems->sortBy('urutan')->values();
+        
+        return view('admin.pelatihan.ujian-detail', compact('ujian', 'allItems'));
     }
 
     public function store(Request $request)

@@ -18,961 +18,8 @@ Features: CRUD, Search, Filter, Export
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    {{-- Custom CSS untuk halaman pengajar --}}
-    <style>
-        /* ----- Global Font Setting ----- */
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        /* ========================================
-       TABLE CONTAINER & LAYOUT
-       ======================================== */
-
-        /* Container utama untuk tabel */
-        .table-container {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-top: 1.5rem;
-        }
-
-        /* Header tabel - berisi search box, filter, dan tombol tambah */
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 0.75rem;
-        }
-
-        /* ========================================
-       SEARCH BOX
-       ======================================== */
-
-        /* Container untuk search box dengan icon */
-        .search-box {
-            position: relative;
-            width: 458px;
-        }
-
-        /* Input field untuk pencarian */
-        .search-box input {
-            width: 100%;
-            padding: 0.625rem 1rem 0.625rem 2.75rem;
-            /* Extra padding kiri untuk icon */
-            border: 1px solid #E2E8F0;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            height: 40px;
-            box-sizing: border-box;
-        }
-
-        /* State saat input difokuskan */
-        .search-box input:focus {
-            outline: none;
-            border-color: #5D3FFF;
-            /* Purple border saat focus */
-            box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
-            /* Glow effect */
-        }
-
-        /* Styling untuk placeholder text */
-        .search-box input::placeholder {
-            color: #94A3B8;
-        }
-
-        /* Icon search di dalam input */
-        .search-box svg {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94A3B8;
-            pointer-events: none;
-            /* Agar tidak menghalangi input */
-        }
-
-        /* ========================================
-       FILTER & ACTIONS
-       ======================================== */
-
-        /* Container untuk filter dan tombol action */
-        .filter-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-left: auto;
-        }
-
-        /* Dropdown untuk filter status (Aktif/Nonaktif) */
-        .status-dropdown {
-            padding: 0 2.5rem 0 1rem;
-            /* Extra padding kanan untuk arrow icon */
-            border: 1px solid #E2E8F0;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #334155;
-            background: white;
-            cursor: pointer;
-            appearance: none;
-            /* Hilangkan default arrow */
-            transition: all 0.2s;
-            height: 40px;
-            min-width: 180px;
-            box-sizing: border-box;
-            /* Custom arrow icon menggunakan SVG data URI */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.875rem center;
-            background-size: 18px;
-        }
-
-        /* State hover dropdown */
-        .status-dropdown:hover {
-            border-color: #94A3B8;
-            background-color: #F8FAFC;
-        }
-
-        /* State focus dropdown */
-        .status-dropdown:focus {
-            outline: none;
-            border-color: #5D3FFF;
-            box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
-            background-color: white;
-        }
-
-        /* Styling untuk option dalam dropdown */
-        .status-dropdown option {
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            color: #334155;
-            background: white;
-        }
-
-        /* State hover option */
-        .status-dropdown option:hover {
-            background: #F8FAFC;
-        }
-
-        /* State saat option dipilih */
-        .status-dropdown option:checked {
-            background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Responsive design untuk mobile */
-        @media (max-width: 768px) {
-
-            /* Stack header items secara vertikal */
-            .table-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            /* Search box full width */
-            .search-box {
-                width: 100%;
-            }
-
-            /* Filter actions full width */
-            .filter-actions {
-                width: 100%;
-                margin-left: 0;
-            }
-
-            /* Dropdown expand untuk mengisi space */
-            .status-dropdown {
-                flex: 1;
-            }
-        }
-
-        /* ========================================
-       TOMBOL TAMBAH PENGAJAR
-       ======================================== */
-
-        /* Tombol primary untuk tambah data pengajar */
-        .btn-add {
-            padding: 0 1.5rem;
-            background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
-            /* Purple gradient */
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-            height: 40px;
-            box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2);
-            white-space: nowrap;
-            /* Prevent text wrapping */
-        }
-
-        /* Hover effect - lift button */
-        .btn-add:hover {
-            background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%);
-            /* Darker gradient */
-            transform: translateY(-2px);
-            /* Lift effect */
-            box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
-            /* Enhanced shadow */
-        }
-
-        /* Active/click effect */
-        .btn-add:active {
-            transform: translateY(0);
-            /* Remove lift */
-        }
-
-        /* Icon dalam tombol */
-        .btn-add svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* ========================================
-       DATA TABLE
-       ======================================== */
-
-        /* Tabel utama untuk menampilkan data pengajar */
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        /* Header tabel dengan background purple */
-        .data-table thead {
-            background: #5D3FFF;
-            color: white;
-        }
-
-        /* Cell header tabel */
-        .data-table thead th {
-            padding: 1rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            /* Prevent text wrapping */
-        }
-
-        /* Rounded corner kiri atas */
-        .data-table thead th:first-child {
-            border-radius: 8px 0 0 0;
-        }
-
-        /* Rounded corner kanan atas */
-        .data-table thead th:last-child {
-            border-radius: 0 8px 0 0;
-        }
-
-        /* Baris data dalam tabel */
-        .data-table tbody tr {
-            border-bottom: 1px solid #F1F5F9;
-            cursor: pointer;
-            /* Kursor pointer karena bisa diklik untuk detail */
-            transition: all 0.2s;
-        }
-
-        /* Hover effect pada baris - scale sedikit dan beri shadow */
-        .data-table tbody tr:hover {
-            background: #F8FAFC;
-            transform: scale(1.01);
-            /* Zoom sedikit */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Cell dalam baris data */
-        .data-table tbody td {
-            padding: 1rem;
-            font-size: 0.875rem;
-            color: #334155;
-            text-align: center;
-        }
-
-        /* ========================================
-       STATUS BADGE & ACTION BUTTONS
-       ======================================== */
-
-        /* Badge untuk menampilkan status (Aktif/Nonaktif) */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Badge status aktif - hijau */
-        .status-badge.active {
-            background: #D1FAE5;
-            /* Light green background */
-            color: #059669;
-            /* Green text */
-        }
-
-        /* Badge status nonaktif - merah */
-        .status-badge.inactive {
-            background: #FEE2E2;
-            /* Light red background */
-            color: #DC2626;
-            /* Red text */
-        }
-
-        /* Container untuk tombol aksi (Edit, Delete) */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        /* Base styling untuk semua tombol aksi */
-        .btn-action {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-        }
-
-        /* Hover effect - perbesar icon */
-        .btn-action:hover {
-            transform: scale(1.1);
-        }
-
-        /* Tombol view - biru */
-        .btn-view {
-            color: #3B82F6;
-        }
-
-        /* Tombol edit - kuning/orange */
-        .btn-edit {
-            color: #F59E0B;
-        }
-
-        /* Tombol delete - merah */
-        .btn-delete {
-            color: #EF4444;
-        }
-
-        /* ========================================
-       PAGE HEADER
-       ======================================== */
-
-        /* Header halaman dengan judul */
-        .page-header {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Judul halaman */
-        .page-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1E293B;
-            margin: 0;
-        }
-
-        /* ========================================
-       MODAL SYSTEM
-       ======================================== */
-
-        /* Overlay gelap di belakang modal */
-        .modal-overlay {
-            display: none;
-            /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.65);
-            /* Dark semi-transparent */
-            z-index: 9999;
-            /* Di atas semua element */
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        /* Show modal saat diberi class active */
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        /* Container konten modal */
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem 2.5rem;
-            max-width: 560px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            /* Scroll jika konten terlalu panjang */
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Header dalam modal (judul dan deskripsi) */
-        .modal-header {
-            margin-bottom: 1.5rem;
-            padding-right: 2.5rem;
-            /* Space untuk tombol close */
-        }
-
-        /* Judul modal */
-        .modal-header h2 {
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: #0F172A;
-            margin: 0 0 0.5rem 0;
-            letter-spacing: -0.02em;
-        }
-
-        /* Deskripsi/subtitle modal */
-        .modal-header p {
-            color: #64748B;
-            font-size: 0.8125rem;
-            margin: 0;
-            line-height: 1.5;
-            font-weight: 400;
-        }
-
-        /* Tombol close (X) di pojok kanan atas */
-        .modal-close {
-            position: absolute;
-            top: 1.75rem;
-            right: 2rem;
-            background: transparent;
-            border: none;
-            color: #94A3B8;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        /* Hover effect tombol close */
-        .modal-close:hover {
-            color: #64748B;
-        }
-
-        /* ========================================
-       FORM ELEMENTS
-       ======================================== */
-
-        /* Group untuk setiap field form (label + input) */
-        .form-group {
-            margin-bottom: 0.875rem;
-        }
-
-        /* Label untuk form input */
-        .form-label {
-            display: block;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: #0F172A;
-            margin-bottom: 0.375rem;
-            letter-spacing: -0.01em;
-        }
-
-        /* Base styling untuk semua input, textarea, dan select */
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 0.875rem;
-            border: 1px solid #E2E8F0;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            background: white;
-            color: #475569;
-            font-weight: 400;
-            transition: all 0.2s;
-            box-sizing: border-box;
-            resize: vertical;
-            /* Allow vertical resize untuk textarea */
-        }
-
-        /* State saat input difokuskan */
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            /* Focus ring */
-        }
-
-        /* State untuk readonly input (seperti di modal detail) */
-        .form-input:read-only {
-            background: #F1F5F9;
-            /* Gray background */
-            cursor: default;
-            /* Cursor default, bukan text cursor */
-        }
-
-        /* Styling untuk placeholder text */
-        .form-input::placeholder {
-            color: #94A3B8;
-        }
-
-        /* Ensure textarea menggunakan font yang sama */
-        textarea.form-input {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.5;
-        }
-
-        /* ----- Dropdown/Select Styling ----- */
-
-        /* Custom styling untuk select dropdown dalam modal */
-        .modal-content select.form-input {
-            appearance: none;
-            /* Hilangkan default arrow */
-            /* Custom arrow icon menggunakan SVG */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px;
-            padding-right: 2.5rem;
-            /* Space untuk arrow icon */
-            cursor: pointer;
-        }
-
-        /* Hover state untuk select */
-        .modal-content select.form-input:hover {
-            border-color: #94A3B8;
-            background-color: #F8FAFC;
-        }
-
-        /* Focus state untuk select */
-        .modal-content select.form-input:focus {
-            background-color: white;
-        }
-
-        /* ========================================
-       FILE UPLOAD AREA
-       ======================================== */
-
-        /* Area drag & drop untuk upload file sertifikasi */
-        .upload-area {
-            border: 2px dashed #CBD5E1;
-            /* Dashed border */
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            background: #F8FAFC;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        /* Hover effect pada upload area */
-        .upload-area:hover {
-            border-color: #5D3FFF;
-            /* Purple border */
-            background: #F0EDFF;
-            /* Light purple background */
-        }
-
-        /* State saat file di-drag over area ini */
-        .upload-area.dragover {
-            border-color: #5D3FFF;
-            background: #E8E3FF;
-            /* Darker purple background */
-            transform: scale(1.02);
-            /* Zoom sedikit */
-        }
-
-        /* Icon upload (cloud icon) */
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 0.75rem;
-            color: #5D3FFF;
-        }
-
-        /* Text "Klik atau drag & drop file" */
-        .upload-text {
-            color: #334155;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        /* Hint text "PDF, JPG, PNG (Max: 2MB)" */
-        .upload-hint {
-            color: #64748B;
-            font-size: 0.75rem;
-        }
-
-        /* ----- File Preview ----- */
-
-        /* Preview file yang sudah dipilih (nama file + ukuran + tombol remove) */
-        .file-preview {
-            display: none;
-            /* Hidden by default */
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.875rem;
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 6px;
-            margin-top: 0.75rem;
-        }
-
-        /* Show preview saat file dipilih */
-        .file-preview.active {
-            display: flex;
-        }
-
-        /* Icon file (document icon) */
-        .file-icon {
-            width: 36px;
-            height: 36px;
-            color: #5D3FFF;
-            flex-shrink: 0;
-            /* Prevent icon dari shrink */
-        }
-
-        /* Container untuk nama file dan ukuran */
-        .file-info {
-            flex: 1;
-            /* Ambil sisa space */
-        }
-
-        /* Nama file */
-        .file-name {
-            font-size: 0.8125rem;
-            font-weight: 500;
-            color: #334155;
-            margin-bottom: 0.125rem;
-        }
-
-        /* Ukuran file */
-        .file-size {
-            font-size: 0.75rem;
-            color: #64748B;
-        }
-
-        /* Tombol remove file (X button) */
-        .file-remove {
-            padding: 0.375rem;
-            background: transparent;
-            border: none;
-            color: #EF4444;
-            /* Red color */
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        /* Hover effect - background merah muda */
-        .file-remove:hover {
-            background: #FEE2E2;
-        }
-
-        /* ========================================
-       PASSWORD FIELD WITH TOGGLE
-       ======================================== */
-
-        /* Wrapper untuk input password + tombol show/hide */
-        .password-wrapper {
-            position: relative;
-        }
-
-        /* Tombol toggle show/hide password (eye icon) */
-        .password-toggle {
-            position: absolute;
-            right: 0.875rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: #94A3B8;
-            cursor: pointer;
-            padding: 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
-        }
-
-        /* Hover effect - warna purple */
-        .password-toggle:hover {
-            color: #5D3FFF;
-        }
-
-        /* Icon dalam toggle button */
-        .password-toggle svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* ========================================
-       SUCCESS MODAL
-       ======================================== */
-
-        /* Modal khusus untuk menampilkan pesan sukses */
-        .success-modal {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Icon checkmark dalam lingkaran hijau */
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            /* Green gradient */
-            border-radius: 50%;
-            /* Circle shape */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        /* Checkmark icon */
-        .success-icon svg {
-            width: 36px;
-            height: 36px;
-        }
-
-        /* Judul success modal "Berhasil!" */
-        .success-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #0F172A;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Pesan sukses */
-        .success-message {
-            font-size: 0.875rem;
-            color: #64748B;
-            margin-bottom: 1.5rem;
-        }
-
-        /* ========================================
-       FORM LAYOUT & BUTTONS
-       ======================================== */
-
-        /* Layout 2 kolom untuk form fields (misal: Email dan No. Telepon) */
-        .form-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            /* 2 kolom sama besar */
-            gap: 0.75rem;
-            margin-bottom: 0.875rem;
-        }
-
-        /* Container untuk tombol aksi di modal (Batal, Simpan, dll) */
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            /* Align ke kanan */
-            gap: 0.625rem;
-            margin-top: 1.25rem;
-            padding-top: 0;
-        }
-
-        /* ----- Button Styles ----- */
-
-        /* Base styling untuk semua tombol */
-        .btn {
-            padding: 0.625rem 1.75rem;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            letter-spacing: -0.01em;
-        }
-
-        /* Tombol Cancel/Batal - putih dengan border */
-        .btn-cancel {
-            background: white;
-            color: #64748B;
-            border: 1px solid #CBD5E1;
-        }
-
-        /* Hover state tombol cancel */
-        .btn-cancel:hover {
-            background: #F8FAFC;
-            border-color: #94A3B8;
-            color: #475569;
-        }
-
-        /* Tombol Submit/Simpan - purple gradient */
-        .btn-submit {
-            background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
-            color: white;
-            box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2);
-        }
-
-        /* Hover state tombol submit */
-        .btn-submit:hover {
-            background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%);
-            box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
-        }
-
-        /* Tombol Danger/Delete - merah */
-        .btn-danger {
-            background: #EF4444;
-            color: white;
-        }
-
-        /* Hover state tombol danger */
-        .btn-danger:hover {
-            background: #DC2626;
-            /* Darker red */
-        }
-
-        /* ========================================
-       ERROR & NOTIFICATION MESSAGES
-       ======================================== */
-
-        /* ----- Error Message ----- */
-
-        /* Pesan error yang muncul di bawah field form */
-        .error-message {
-            display: none;
-            /* Hidden by default */
-            margin-top: 0.375rem;
-            padding: 0.5rem 0.75rem;
-            background: #FEE2E2;
-            /* Light red background */
-            border: 1px solid #FECACA;
-            /* Red border */
-            border-radius: 6px;
-            color: #DC2626;
-            /* Red text */
-            font-size: 0.75rem;
-            font-weight: 500;
-            animation: slideDown 0.3s ease;
-            /* Slide down animation */
-        }
-
-        /* Show error saat diberi class active */
-        .error-message.active {
-            display: block;
-        }
-
-        /* Animation untuk error message */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-                /* Start dari atas */
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-                /* End di posisi normal */
-            }
-        }
-
-        /* ----- Toast Notification ----- */
-
-        /* Toast notification di pojok kanan atas */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            /* Di atas semua element */
-            display: none;
-            /* Hidden by default */
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 300px;
-            animation: slideInRight 0.3s ease;
-            /* Slide in from right */
-        }
-
-        /* Show toast saat diberi class active */
-        .toast-notification.active {
-            display: flex;
-        }
-
-        /* Toast dengan tipe error - border kiri merah */
-        .toast-notification.error {
-            border-left: 4px solid #EF4444;
-        }
-
-        /* Toast dengan tipe warning - border kiri kuning */
-        .toast-notification.warning {
-            border-left: 4px solid #F59E0B;
-        }
-
-        /* Icon dalam toast */
-        .toast-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-
-        /* Container untuk title dan message toast */
-        .toast-content {
-            flex: 1;
-        }
-
-        /* Title toast (misal: "Error", "Berhasil") */
-        .toast-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-        }
-
-        /* Message toast */
-        .toast-message {
-            font-size: 0.8125rem;
-            color: #64748B;
-        }
-
-        /* Animation slide in dari kanan */
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-                /* Start dari kanan */
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-                /* End di posisi normal */
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('css/admin/pengajar-index.css') }}">
 @endpush
 
 @section('content')
@@ -1035,7 +82,7 @@ Features: CRUD, Search, Filter, Export
                                     <th>Email</th>
                                     <th>Kursus yang Diajarkan</th>
                                     <th>Status</th>
-                                    <th>Jumlah Kelas</th>
+                                    <th>Jumlah Kursus</th>
                                     <th>Total Siswa</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -1046,6 +93,9 @@ Features: CRUD, Search, Filter, Export
                             </tbody>
                         </table>
                     </div>
+                    
+                    {{-- Pagination --}}
+                    <div id="paginationContainer" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;"></div>
                 </div>
             </div>
         </main>
@@ -1093,7 +143,7 @@ Features: CRUD, Search, Filter, Export
                 {{-- Alamat --}}
                 <div class="form-group">
                     <label class="form-label">Alamat</label>
-                    <input type="text" class="form-input" id="detailAddress" readonly>
+                    <input type="text" class="form-input" id="detailAlamat" readonly>
                 </div>
 
                 {{-- Tanggal Lahir dan Jenis Kelamin (2 kolom) --}}
@@ -1111,13 +161,13 @@ Features: CRUD, Search, Filter, Export
                 {{-- Kursus yang Diajarkan --}}
                 <div class="form-group">
                     <label class="form-label">Kursus yang Diajarkan</label>
-                    <input type="text" class="form-input" id="detailKursus" readonly>
+                    <textarea class="form-input" id="detailKursus" rows="2" readonly></textarea>
                 </div>
 
-                {{-- Jumlah Kelas dan Total Siswa (2 kolom) --}}
+                {{-- Jumlah Kursus dan Total Siswa (2 kolom) --}}
                 <div class="form-row-2">
                     <div>
-                        <label class="form-label">Jumlah Kelas</label>
+                        <label class="form-label">Jumlah Kursus</label>
                         <input type="text" class="form-input" id="detailJumlahKelas" readonly>
                     </div>
                     <div>
@@ -1202,13 +252,13 @@ Features: CRUD, Search, Filter, Export
                 {{-- No Telepon dan Tanggal Lahir (2 kolom) --}}
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label class="form-label">No. Telepon</label>
-                        <input type="text" class="form-input" id="formPhone" placeholder="08xxxxxxxxxx">
+                        <label class="form-label">No. Telepon *</label>
+                        <input type="text" class="form-input" id="formPhone" required placeholder="08xxxxxxxxxx">
                         <div class="error-message" id="phoneError"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tanggal Lahir</label>
-                        <input type="date" class="form-input" id="formTanggalLahir">
+                        <label class="form-label">Tanggal Lahir *</label>
+                        <input type="date" class="form-input" id="formTanggalLahir" required>
                     </div>
                 </div>
 
@@ -1259,17 +309,19 @@ Features: CRUD, Search, Filter, Export
                     </div>
                 </div>
 
-                {{-- Alamat (Textarea) --}}
+                {{-- Alamat (Kabupaten/Kota) --}}
                 <div class="form-group">
-                    <label class="form-label">Alamat</label>
-                    <textarea class="form-input" id="formAddress" rows="2" placeholder="Masukkan alamat lengkap"></textarea>
+                    <label class="form-label">Alamat (Kabupaten/Kota) *</label>
+                    <select class="form-input" id="formAlamat" required>
+                        <option value="">Pilih kabupaten/kota</option>
+                    </select>
                 </div>
 
                 {{-- Jenis Kelamin dan Status (2 kolom) --}}
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label class="form-label">Jenis Kelamin</label>
-                        <select class="form-input" id="formJenisKelamin">
+                        <label class="form-label">Jenis Kelamin *</label>
+                        <select class="form-input" id="formJenisKelamin" required>
                             <option value="">Pilih Jenis Kelamin</option>
                             <option value="L">Laki-laki</option>
                             <option value="P">Perempuan</option>
@@ -1404,6 +456,39 @@ Features: CRUD, Search, Filter, Export
 
 {{-- SCRIPTS SECTION - Load JavaScript untuk halaman ini --}}
 @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/indonesia-cities.js') }}"></script>
+    <script>
+        // Initialize Select2 for alamat dropdown dengan data kota
+        $(document).ready(function() {
+            const alamatSelect = $('#formAlamat');
+            
+            // Populate cities
+            indonesiaCities.forEach(function(city) {
+                alamatSelect.append(new Option(city, city, false, false));
+            });
+            
+            // Initialize Select2
+            alamatSelect.select2({
+                placeholder: 'Pilih kabupaten/kota',
+                allowClear: true,
+                dropdownParent: $('#formModal'),
+                matcher: function(params, data) {
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    if (typeof data.text === 'undefined') {
+                        return null;
+                    }
+                    if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                        return data;
+                    }
+                    return null;
+                }
+            });
+        });
+    </script>
     <script>
         {{-- Set tema aplikasi --}}
         document.documentElement.setAttribute('data-bs-theme', 'light');
@@ -1426,6 +511,8 @@ Features: CRUD, Search, Filter, Export
 
         let pengajarData = [];  // Array untuk menyimpan semua data pengajar
         let deleteId = null;    // ID pengajar yang akan dihapus
+        let currentPage = 1;  // Halaman saat ini
+        let totalPages = 1;   // Total halaman pagination
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -1538,15 +625,19 @@ Features: CRUD, Search, Filter, Export
         /**
          * Fetch data pengajar dari API
          */
-        function loadPengajarData() {
-            fetch(apiRoutes.getData)
+        function loadPengajarData(page = 1) {
+            currentPage = page;
+            fetch(`${apiRoutes.getData}?page=${page}`)
                 .then(response => {
                     return response.json();
                 })
-                .then(data => {
-                    // Urutkan data berdasarkan ID dari kecil ke besar
-                    pengajarData = data.sort((a, b) => a.id - b.id);
+                .then(response => {
+                    // Response dari Laravel pagination: {data: [], current_page, last_page, ...}
+                    pengajarData = response.data;
+                    currentPage = response.current_page;
+                    totalPages = response.last_page;
                     renderTable(pengajarData);
+                    renderPagination();
                 })
                 .catch(error => {
                     showToast('Gagal Memuat Data', 'Tidak dapat memuat data pengajar. Silakan refresh halaman.', 'error');
@@ -1582,15 +673,16 @@ Features: CRUD, Search, Filter, Export
                 const totalSiswa = item.total_siswa || 0;
                 const status = item.status || 'active';
                 const statusDisplay = status === 'active' ? 'Aktif' : 'Nonaktif';
+                const statusClass = status === 'active' ? 'aktif' : 'nonaktif';
 
                 return `
             <tr onclick="showDetail(${item.id})">
-                <td>${String(item.id).padStart(3, '0')}</td>
+                <td>${item.id}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
                 <td>${kursusNames}</td>
                 <td>
-                    <span class="status-badge ${status}">${statusDisplay}</span>
+                    <span class="status-badge ${statusClass}">${statusDisplay}</span>
                 </td>
                 <td>${jumlahKelas}</td>
                 <td>${totalSiswa}</td>
@@ -1623,6 +715,45 @@ Features: CRUD, Search, Filter, Export
             const date = new Date(dateString);
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        /**
+         * Render pagination controls
+         */
+        function renderPagination() {
+            const container = document.getElementById('paginationContainer');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // Previous button
+            html += `<button onclick="loadPengajarData(${currentPage - 1})" 
+                        ${currentPage === 1 ? 'disabled' : ''} 
+                        class="pagination-btn">
+                        Sebelumnya
+                    </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button onclick="loadPengajarData(${i})" 
+                                class="pagination-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button onclick="loadPengajarData(${currentPage + 1})" 
+                        ${currentPage === totalPages ? 'disabled' : ''} 
+                        class="pagination-btn">
+                        Selanjutnya
+                    </button>`;
+            
+            container.innerHTML = html;
         }
 
         // ========================================
@@ -1666,10 +797,7 @@ Features: CRUD, Search, Filter, Export
                 return matchSearch && matchStatus;
             });
 
-            // Urutkan hasil filter berdasarkan ID dari kecil ke besar
-            const sortedFiltered = filtered.sort((a, b) => a.id - b.id);
-
-            renderTable(sortedFiltered);
+            renderTable(filtered);
         }
 
         // ========================================
@@ -1688,11 +816,10 @@ Features: CRUD, Search, Filter, Export
                 ? pengajar.kursus.map(k => k.judul).join(', ')
                 : 'Belum ada kursus';
 
-            // Populate form fields
             document.getElementById('detailName').value = pengajar.name;
             document.getElementById('detailEmail').value = pengajar.email;
             document.getElementById('detailPhone').value = pengajar.phone || '-';
-            document.getElementById('detailAddress').value = pengajar.address || '-';
+            document.getElementById('detailAlamat').value = pengajar.address || '-';
             document.getElementById('detailTanggalLahir').value = pengajar.tanggal_lahir || '';
             document.getElementById('detailJenisKelamin').value = pengajar.jenis_kelamin === 'L' ? 'Laki-laki' : pengajar.jenis_kelamin === 'P' ? 'Perempuan' : '-';
             document.getElementById('detailKeahlian').value = pengajar.keahlian || '-';
@@ -1709,7 +836,7 @@ Features: CRUD, Search, Filter, Export
             }
 
             document.getElementById('detailKursus').value = kursusNames;
-            document.getElementById('detailJumlahKelas').value = (pengajar.kursus_count || 0) + ' Kelas';
+            document.getElementById('detailJumlahKelas').value = (pengajar.kursus_count || 0) + ' Kursus';
             document.getElementById('detailTotalSiswa').value = (pengajar.total_siswa || 0) + ' Siswa';
             const statusDisplay = (pengajar.status || 'active') === 'active' ? 'Aktif' : (pengajar.status === 'inactive' ? 'Nonaktif' : 'Ditangguhkan');
             document.getElementById('detailStatus').value = statusDisplay;
@@ -1734,6 +861,9 @@ Features: CRUD, Search, Filter, Export
             // Reset form
             document.getElementById('pengajarForm').reset();
             document.getElementById('pengajarId').value = '';
+
+            // Reset Select2
+            $('#formAlamat').val(null).trigger('change');
 
             // Password required untuk tambah data
             document.getElementById('formPassword').required = true;
@@ -1780,7 +910,8 @@ Features: CRUD, Search, Filter, Export
             document.getElementById('formName').value = pengajar.name;
             document.getElementById('formEmail').value = pengajar.email;
             document.getElementById('formPhone').value = pengajar.phone || '';
-            document.getElementById('formAddress').value = pengajar.address || '';
+            document.getElementById('formAlamat').value = pengajar.address || '';
+            $('#formAlamat').trigger('change'); // Update Select2
             document.getElementById('formTanggalLahir').value = pengajar.tanggal_lahir || '';
             document.getElementById('formJenisKelamin').value = pengajar.jenis_kelamin || '';
             document.getElementById('formStatus').value = pengajar.status || 'active';
@@ -1858,7 +989,7 @@ Features: CRUD, Search, Filter, Export
             formData.append('name', document.getElementById('formName').value);
             formData.append('email', document.getElementById('formEmail').value);
             formData.append('phone', document.getElementById('formPhone').value);
-            formData.append('address', document.getElementById('formAddress').value);
+            formData.append('address', document.getElementById('formAlamat').value);
             formData.append('tanggal_lahir', document.getElementById('formTanggalLahir').value);
             formData.append('jenis_kelamin', document.getElementById('formJenisKelamin').value);
             formData.append('status', document.getElementById('formStatus').value);

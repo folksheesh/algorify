@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\BankSoal;
-use App\Models\KategoriPelatihan;
+use App\Models\Kursus;
 use App\Models\User;
 
 class BankSoalSeeder extends Seeder
@@ -20,11 +20,10 @@ class BankSoalSeeder extends Seeder
             $admin = User::first();
         }
 
-        // Ambil beberapa kategori
-        $programming = KategoriPelatihan::where('slug', 'programming')->first();
-        $dataScience = KategoriPelatihan::where('slug', 'data-science')->first();
-        $webDev = KategoriPelatihan::where('slug', 'web-development')->first();
-        $design = KategoriPelatihan::where('slug', 'design')->first();
+        // Ambil beberapa kursus sebagai kategori
+        $programming = Kursus::where('kategori', 'programming')->first();
+        $dataScience = Kursus::where('kategori', 'data_science')->first();
+        $design = Kursus::where('kategori', 'design')->first();
 
         $soalData = [
             // Soal Programming - Pilihan Ganda
@@ -38,7 +37,6 @@ class BankSoalSeeder extends Seeder
                     'Hyperlinks and Text Markup Language'
                 ],
                 'jawaban_benar' => [0],
-                'kunci_jawaban' => 'Hyper Text Markup Language',
                 'kategori_id' => $programming?->id,
                 'poin' => 2,
                 'created_by' => $admin->id
@@ -53,7 +51,6 @@ class BankSoalSeeder extends Seeder
                     'C++'
                 ],
                 'jawaban_benar' => [2],
-                'kunci_jawaban' => 'JavaScript',
                 'kategori_id' => $programming?->id,
                 'poin' => 1,
                 'created_by' => $admin->id
@@ -68,8 +65,7 @@ class BankSoalSeeder extends Seeder
                     'Untuk membuat animasi 3D'
                 ],
                 'jawaban_benar' => [0],
-                'kunci_jawaban' => 'Untuk styling dan layout halaman web',
-                'kategori_id' => $webDev?->id,
+                'kategori_id' => $programming?->id,
                 'poin' => 2,
                 'created_by' => $admin->id
             ],
@@ -83,8 +79,7 @@ class BankSoalSeeder extends Seeder
                     'DELETE'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'POST',
-                'kategori_id' => $webDev?->id,
+                'kategori_id' => $programming?->id,
                 'poin' => 3,
                 'created_by' => $admin->id
             ],
@@ -98,8 +93,7 @@ class BankSoalSeeder extends Seeder
                     'Express'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Laravel',
-                'kategori_id' => $webDev?->id,
+                'kategori_id' => $programming?->id,
                 'poin' => 2,
                 'created_by' => $admin->id
             ],
@@ -115,7 +109,6 @@ class BankSoalSeeder extends Seeder
                     'Scikit-learn'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Pandas',
                 'kategori_id' => $dataScience?->id,
                 'poin' => 3,
                 'created_by' => $admin->id
@@ -130,7 +123,6 @@ class BankSoalSeeder extends Seeder
                     'Model terlalu cepat training'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Model terlalu kompleks dan menghafal data training',
                 'kategori_id' => $dataScience?->id,
                 'poin' => 4,
                 'created_by' => $admin->id
@@ -145,7 +137,6 @@ class BankSoalSeeder extends Seeder
                     'DBSCAN'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Decision Tree',
                 'kategori_id' => $dataScience?->id,
                 'poin' => 3,
                 'created_by' => $admin->id
@@ -164,8 +155,7 @@ class BankSoalSeeder extends Seeder
                     'Flask'
                 ],
                 'jawaban_benar' => [0, 2, 4],
-                'kunci_jawaban' => 'React, Vue.js, Angular',
-                'kategori_id' => $webDev?->id,
+                'kategori_id' => $programming?->id,
                 'poin' => 5,
                 'created_by' => $admin->id
             ],
@@ -180,7 +170,6 @@ class BankSoalSeeder extends Seeder
                     'Cassandra'
                 ],
                 'jawaban_benar' => [1, 3, 4],
-                'kunci_jawaban' => 'MongoDB, Redis, Cassandra',
                 'kategori_id' => $programming?->id,
                 'poin' => 4,
                 'created_by' => $admin->id
@@ -197,7 +186,6 @@ class BankSoalSeeder extends Seeder
                     'Abstraction'
                 ],
                 'jawaban_benar' => [0, 2, 4, 5],
-                'kunci_jawaban' => 'Encapsulation, Inheritance, Polymorphism, Abstraction',
                 'kategori_id' => $programming?->id,
                 'poin' => 5,
                 'created_by' => $admin->id
@@ -213,7 +201,6 @@ class BankSoalSeeder extends Seeder
                     'Mercurial'
                 ],
                 'jawaban_benar' => [0, 2, 4],
-                'kunci_jawaban' => 'Git, SVN, Mercurial',
                 'kategori_id' => $programming?->id,
                 'poin' => 3,
                 'created_by' => $admin->id
@@ -230,7 +217,6 @@ class BankSoalSeeder extends Seeder
                     'After Effects'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Illustrator',
                 'kategori_id' => $design?->id,
                 'poin' => 2,
                 'created_by' => $admin->id
@@ -245,7 +231,6 @@ class BankSoalSeeder extends Seeder
                     'User Input / User Export'
                 ],
                 'jawaban_benar' => [0],
-                'kunci_jawaban' => 'User Interface / User Experience',
                 'kategori_id' => $design?->id,
                 'poin' => 1,
                 'created_by' => $admin->id
@@ -262,7 +247,6 @@ class BankSoalSeeder extends Seeder
                     'Alignment'
                 ],
                 'jawaban_benar' => [0, 2, 4, 5],
-                'kunci_jawaban' => 'Contrast, Balance, Hierarchy, Alignment',
                 'kategori_id' => $design?->id,
                 'poin' => 4,
                 'created_by' => $admin->id
@@ -279,8 +263,7 @@ class BankSoalSeeder extends Seeder
                     'Design dengan warna cerah'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Design yang menyesuaikan dengan ukuran layar',
-                'kategori_id' => $webDev?->id,
+                'kategori_id' => $programming?->id,
                 'poin' => 2,
                 'created_by' => $admin->id
             ],
@@ -294,7 +277,6 @@ class BankSoalSeeder extends Seeder
                     'Application Process Integration'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Application Programming Interface',
                 'kategori_id' => $programming?->id,
                 'poin' => 1,
                 'created_by' => $admin->id
@@ -311,7 +293,6 @@ class BankSoalSeeder extends Seeder
                     'Undefined'
                 ],
                 'jawaban_benar' => [0, 2, 4, 5],
-                'kunci_jawaban' => 'String, Number, Boolean, Undefined',
                 'kategori_id' => $programming?->id,
                 'poin' => 4,
                 'created_by' => $admin->id
@@ -326,7 +307,6 @@ class BankSoalSeeder extends Seeder
                     'Mengupdate data'
                 ],
                 'jawaban_benar' => [1],
-                'kunci_jawaban' => 'Menggabungkan data dari dua atau lebih tabel',
                 'kategori_id' => $programming?->id,
                 'poin' => 3,
                 'created_by' => $admin->id
@@ -343,7 +323,6 @@ class BankSoalSeeder extends Seeder
                     'FastAPI'
                 ],
                 'jawaban_benar' => [0, 2, 4],
-                'kunci_jawaban' => 'Matplotlib, Seaborn, Plotly',
                 'kategori_id' => $dataScience?->id,
                 'poin' => 4,
                 'created_by' => $admin->id

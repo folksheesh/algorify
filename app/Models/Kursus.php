@@ -82,4 +82,10 @@ class Kursus extends Model
             ->withPivot('kode', 'tanggal_daftar', 'status', 'progress', 'nilai_akhir')
             ->withTimestamps();
     }
+    
+    // Accessor untuk nama (alias dari judul)
+    public function getNamaAttribute()
+    {
+        return $this->judul;
+    }
 }

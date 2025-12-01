@@ -52,6 +52,22 @@ class BankSoalController extends Controller
             $query->where('kategori_id', $request->kategori);
         }
 
+        // Filter by kategori name (for modal bank soal in ujian)
+        // This filters bank soal where the linked kursus has a matching kategori field
+        if ($request->has('kategori_nama') && $request->kategori_nama != '') {
+            $kategoriNama = $request->kategori_nama;
+            $query->where(function($q) use ($kategoriNama) {
+                // Filter by kategori_id (which links to kursus with matching kategori)
+                $q->whereHas('kategori', function($subQ) use ($kategoriNama) {
+                    $subQ->where('kategori', $kategoriNama);
+                })
+                // Or filter by kursus_id (which links to kursus with matching kategori)
+                ->orWhereHas('kursus', function($subQ) use ($kategoriNama) {
+                    $subQ->where('kategori', $kategoriNama);
+                });
+            });
+        }
+
         // Filter by kursus
         if ($request->has('kursus') && $request->kursus != '') {
             $query->where('kursus_id', $request->kursus);
@@ -71,7 +87,9 @@ class BankSoalController extends Controller
                     'no' => $index + 1,
                     'pertanyaan' => $item->pertanyaan,
                     'tipe_soal' => $item->tipe_soal,
-                    'kategori' => $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'),
+                    'opsi_jawaban' => $item->opsi_jawaban,
+                    'jawaban_benar' => $item->jawaban_benar,
+                    'kategori' => $item->kategori ? $item->kategori->judul : ($item->kursus ? $item->kursus->judul : '-'),
                     'poin' => $item->poin ?? 1,
                     'created_by' => $item->creator ? $item->creator->name : '-',
                     'created_at' => $item->created_at->format('d/m/Y')

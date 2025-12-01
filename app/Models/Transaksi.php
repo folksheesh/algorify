@@ -12,10 +12,13 @@ class Transaksi extends Model
     protected $table = 'transaksi';
 
     protected $fillable = [
+        'kode_transaksi',
         'enrollment_id',
         'user_id',
+        'kursus_id',
         'tanggal_transaksi',
         'nominal_pembayaran',
+        'jumlah',
         'status',
         'bukti_pembayaran',
         'metode_pembayaran',
@@ -26,6 +29,7 @@ class Transaksi extends Model
         'tanggal_transaksi' => 'datetime',
         'tanggal_verifikasi' => 'datetime',
         'nominal_pembayaran' => 'decimal:2',
+        'jumlah' => 'decimal:2',
     ];
 
     // Relationships
@@ -37,5 +41,10 @@ class Transaksi extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function kursus()
+    {
+        return $this->belongsTo(Kursus::class);
     }
 }

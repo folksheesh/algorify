@@ -3,6 +3,7 @@
 namespace App\Providers; // Namespace untuk service provider
 
 use Illuminate\Support\ServiceProvider; // Import kelas dasar ServiceProvider
+use App\Repositories\ProgressRepository;
 
 // Kelas ini menangani pendaftaran dan inisialisasi layanan-layanan
 // yang dibutuhkan aplikasi saat pertama kali dijalankan
@@ -15,7 +16,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register ProgressRepository as singleton
+        $this->app->singleton(ProgressRepository::class, function ($app) {
+            return new ProgressRepository();
+        });
     }
 
     /**

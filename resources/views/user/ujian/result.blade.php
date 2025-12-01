@@ -364,8 +364,8 @@
             </div>
 
             <!-- Action Button -->
-            <a href="{{ route('user.pelatihan-saya.index') }}" class="action-button">
-                Kembali ke Halaman Utama
+            <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="action-button">
+                Kembali ke Pelatihan
             </a>
         </div>
     </div>

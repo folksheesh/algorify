@@ -5,6 +5,7 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/pelatihan-show.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +14,6 @@
     <!-- Quill Editor -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
-    @vite(['resources/css/admin/pelatihan-show.css'])
 @endpush
 
 @section('content')
@@ -63,8 +63,10 @@
                                     <div class="week-title-section">
                                         @hasanyrole('admin|pengajar')
                                         <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan">
-                                            <svg class="drag-handle" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px; color: #667eea; margin-right: 0.5rem;">
-                                                <path d="M7 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H7zM13 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM13 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/>
+                                            <svg class="drag-handle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; color: #667eea; margin-right: 0.5rem;">
+                                                <line x1="4" y1="6" x2="20" y2="6"/>
+                                                <line x1="4" y1="12" x2="20" y2="12"/>
+                                                <line x1="4" y1="18" x2="20" y2="18"/>
                                             </svg>
                                         </div>
                                         @endhasanyrole
@@ -132,13 +134,17 @@
                                     @php
                                         $allItems = collect();
                                         foreach($modul->video as $video) {
-                                            $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan]);
+                                            $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === 'video' && $item['id'] == $video->id);
+                                            $allItems->push(['type' => 'video', 'data' => $video, 'urutan' => $video->urutan ?? 0, 'completed' => $isCompleted]);
                                         }
                                         foreach($modul->materi as $pdf) {
-                                            $allItems->push(['type' => 'pdf', 'data' => $pdf, 'urutan' => $pdf->urutan]);
+                                            $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === 'materi' && $item['id'] == $pdf->id);
+                                            $allItems->push(['type' => 'pdf', 'data' => $pdf, 'urutan' => ($pdf->urutan ?? 0) + 100, 'completed' => $isCompleted]);
                                         }
                                         foreach($modul->ujian as $ujian) {
-                                            $allItems->push(['type' => $ujian->tipe === 'practice' ? 'quiz' : 'ujian', 'data' => $ujian, 'urutan' => 999]);
+                                            $type = $ujian->tipe === 'practice' ? 'quiz' : 'ujian';
+                                            $isCompleted = collect($completedItems ?? [])->contains(fn($item) => $item['type'] === $type && $item['id'] == $ujian->id);
+                                            $allItems->push(['type' => $type, 'data' => $ujian, 'urutan' => 200 + ($ujian->id ?? 0), 'completed' => $isCompleted]);
                                         }
                                         $allItems = $allItems->sortBy('urutan');
                                     @endphp
@@ -151,15 +157,15 @@
                                                     $routeName = $item['type'] === 'video' ? 'admin.video.show' : ($item['type'] === 'pdf' ? 'admin.materi.show' : 'admin.ujian.show');
                                                 @endphp
                                                 <div class="materi-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;" data-id="{{ $data->id }}" data-type="{{ $item['type'] }}">
-                                                    @hasanyrole('admin|pengajar')
-                                                    <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan" style="display: flex; align-items: center; margin-right: 0.75rem; flex-shrink: 0;">
-                                                        <svg class="drag-handle" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px; color: #667eea;">
-                                                            <path d="M7 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H7zM13 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM13 10a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/>
-                                                        </svg>
-                                                    </div>
-                                                    @endhasanyrole
                                                     <a href="{{ route($routeName, $data->id) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
-                                                        @if($item['type'] === 'video')
+                                                        @if($item['completed'] ?? false)
+                                                            {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
+                                                            <div style="width: 40px; height: 40px; background: #D1FAE5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="#10B981">
+                                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                                </svg>
+                                                            </div>
+                                                        @elseif($item['type'] === 'video')
                                                             <div style="width: 40px; height: 40px; background: #EEF2FF; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                                                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="#667eea">
                                                                     <path d="M6 4l10 6-10 6V4z"/>
@@ -187,8 +193,15 @@
                                                         @endif
                                                         <div>
                                                             <div style="font-weight: 600; color: #1A1A1A; font-size: 0.875rem;">{{ $data->judul }}</div>
-                                                            <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.25rem;">
-                                                                @if($item['type'] === 'video')
+                                                            <div style="font-size: 0.75rem; color: {{ ($item['completed'] ?? false) ? '#10B981' : '#64748B' }}; margin-top: 0.25rem;">
+                                                                @if($item['completed'] ?? false)
+                                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                                        <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                                        </svg>
+                                                                        Selesai
+                                                                    </span>
+                                                                @elseif($item['type'] === 'video')
                                                                     Video
                                                                 @elseif($item['type'] === 'pdf')
                                                                     Bacaan (PDF)
@@ -271,6 +284,46 @@
             <span style="font-weight: 600; color: #1A1A1A; font-size: 0.875rem;">Urutan berhasil diperbarui</span>
         </div>
     </div>
+
+    {{-- TOAST NOTIFICATION - Notifikasi di pojok kanan atas --}}
+    <div id="toastNotification" class="toast-notification">
+        <div class="toast-icon-wrapper" id="toastIconWrapper">
+            <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Notifikasi</div>
+            <div class="toast-msg" id="toastMessage">Pesan notifikasi</div>
+        </div>
+        <button class="toast-close-btn" onclick="closeToastNotif()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <style>
+    .toast-notification { position: fixed; top: 20px; right: 20px; padding: 1rem 1.25rem; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); z-index: 10001; display: none; align-items: center; gap: 0.75rem; min-width: 320px; max-width: 450px; animation: toastSlideIn 0.3s ease; border-left: 4px solid #10B981; }
+    .toast-notification.active { display: flex; }
+    .toast-notification.success { border-left-color: #10B981; }
+    .toast-notification.error { border-left-color: #EF4444; }
+    .toast-notification.warning { border-left-color: #F59E0B; }
+    .toast-notification.info { border-left-color: #3B82F6; }
+    .toast-icon-wrapper { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .toast-notification.success .toast-icon-wrapper { background: #D1FAE5; color: #10B981; }
+    .toast-notification.error .toast-icon-wrapper { background: #FEE2E2; color: #EF4444; }
+    .toast-notification.warning .toast-icon-wrapper { background: #FEF3C7; color: #F59E0B; }
+    .toast-notification.info .toast-icon-wrapper { background: #DBEAFE; color: #3B82F6; }
+    .toast-icon { width: 20px; height: 20px; }
+    .toast-content { flex: 1; }
+    .toast-title { font-weight: 600; font-size: 0.875rem; color: #1E293B; margin-bottom: 0.125rem; }
+    .toast-msg { font-size: 0.8125rem; color: #64748B; line-height: 1.4; }
+    .toast-close-btn { background: transparent; border: none; cursor: pointer; padding: 0.25rem; color: #94A3B8; border-radius: 4px; transition: all 0.2s; }
+    .toast-close-btn:hover { background: #F1F5F9; color: #64748B; }
+    @keyframes toastSlideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
+    </style>
 
     <!-- Modal Tambah/Edit Minggu -->
     <div class="modal-overlay" id="modalWeek">
@@ -510,13 +563,67 @@
     </div>
 
     <script>
+        // Check if there's a modul to open from URL parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const openModulId = urlParams.get('open_modul');
+            
+            if (openModulId) {
+                const weekItem = document.getElementById('week-' + openModulId);
+                if (weekItem) {
+                    weekItem.classList.add('expanded');
+                    // Scroll to the modul
+                    setTimeout(() => {
+                        weekItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        });
+
+        // Toast Notification Function
+        let toastNotifTimeout = null;
+        
+        function showToastNotif(title, message, type = 'success') {
+            const toast = document.getElementById('toastNotification');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            if (toastNotifTimeout) clearTimeout(toastNotifTimeout);
+            
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.className = 'toast-notification ' + type + ' active';
+            
+            const iconSvg = document.getElementById('toastIcon');
+            if (type === 'success') {
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+            } else if (type === 'error') {
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+            } else if (type === 'warning') {
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>';
+            } else {
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+            }
+            
+            toastNotifTimeout = setTimeout(() => closeToastNotif(), 4000);
+        }
+        
+        function closeToastNotif() {
+            const toast = document.getElementById('toastNotification');
+            toast.style.animation = 'toastSlideOut 0.3s ease forwards';
+            setTimeout(() => {
+                toast.classList.remove('active');
+                toast.style.animation = '';
+            }, 300);
+        }
+
         function toggleWeek(id) {
             const weekItem = document.getElementById('week-' + id);
             weekItem.classList.toggle('expanded');
         }
         
         function addSection(modulId) {
-            alert('Fitur tambah section akan segera hadir');
+            showToastNotif('Info', 'Fitur tambah section akan segera hadir', 'info');
             // TODO: Implement add section functionality
         }
         
@@ -578,7 +685,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Gagal memuat data modul');
+                    showToastNotif('Gagal', 'Gagal memuat data modul', 'error');
                 });
         }
         
@@ -751,12 +858,12 @@
                             closePdfModal();
                             location.reload();
                         } else {
-                            alert('Gagal menyimpan materi: ' + (data.message || 'Unknown error'));
+                            showToastNotif('Gagal', 'Gagal menyimpan materi: ' + (data.message || 'Unknown error'), 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menyimpan materi');
+                        showToastNotif('Error', 'Terjadi kesalahan saat menyimpan materi', 'error');
                     });
                 });
             }
@@ -790,12 +897,12 @@
                             closeQuizModal();
                             location.reload();
                         } else {
-                            alert('Gagal menyimpan kuis: ' + (data.message || 'Unknown error'));
+                            showToastNotif('Gagal', 'Gagal menyimpan kuis: ' + (data.message || 'Unknown error'), 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menyimpan kuis');
+                        showToastNotif('Error', 'Terjadi kesalahan saat menyimpan kuis', 'error');
                     });
                 });
             }
@@ -829,12 +936,12 @@
                             closeExamModal();
                             location.reload();
                         } else {
-                            alert('Gagal menyimpan ujian: ' + (data.message || 'Unknown error'));
+                            showToastNotif('Gagal', 'Gagal menyimpan ujian: ' + (data.message || 'Unknown error'), 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menyimpan ujian');
+                        showToastNotif('Error', 'Terjadi kesalahan saat menyimpan ujian', 'error');
                     });
                 });
             }
@@ -963,7 +1070,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengambil data video');
+                    showToastNotif('Error', 'Terjadi kesalahan saat mengambil data video', 'error');
                 });
         }
         
@@ -992,7 +1099,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengambil data materi');
+                    showToastNotif('Error', 'Terjadi kesalahan saat mengambil data materi', 'error');
                 });
         }
         
@@ -1039,7 +1146,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengambil data kuis/ujian');
+                    showToastNotif('Error', 'Terjadi kesalahan saat mengambil data kuis/ujian', 'error');
                 });
         }
         
@@ -1075,12 +1182,12 @@
                     closeDeleteModal();
                     location.reload();
                 } else {
-                    alert('Gagal menghapus item');
+                    showToastNotif('Gagal', 'Gagal menghapus item', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat menghapus');
+                showToastNotif('Error', 'Terjadi kesalahan saat menghapus', 'error');
             });
         });
         
@@ -1173,13 +1280,13 @@
                     console.log('✅ Urutan modul berhasil diperbarui');
                     showToast();
                 } else {
-                    alert('Gagal memperbarui urutan modul');
-                    location.reload(); // Reload to revert changes
+                    showToastNotif('Gagal', 'Gagal memperbarui urutan modul', 'error');
+                    location.reload();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat memperbarui urutan');
+                showToastNotif('Error', 'Terjadi kesalahan saat memperbarui urutan', 'error');
                 location.reload();
             });
         }
@@ -1306,10 +1413,10 @@
                                 const range = quillEditor.getSelection();
                                 quillEditor.insertEmbed(range.index, 'image', data.url);
                             } else {
-                                alert('Gagal upload gambar: ' + (data.message || 'Unknown error'));
+                                showToastNotif('Gagal', 'Gagal upload gambar: ' + (data.message || 'Unknown error'), 'error');
                             }
                         } catch (error) {
-                            alert('Error upload gambar: ' + error);
+                            showToastNotif('Error', 'Error upload gambar: ' + error, 'error');
                         }
                     }
                 };
@@ -1317,5 +1424,20 @@
         }
 
 
+    </script>
+    <script>
+        // Prevent back navigation to video/materi/ujian pages - force back to pelatihan saya
+        (function() {
+            var pelatihanSayaUrl = '{{ auth()->user()->hasRole("peserta") ? route("user.pelatihan-saya.index") : route("admin.pelatihan.index") }}';
+            
+            // Push state to create barrier
+            history.pushState(null, '', location.href);
+            
+            // Intercept back button
+            window.onpopstate = function() {
+                history.pushState(null, '', location.href);
+                window.location.replace(pelatihanSayaUrl);
+            };
+        })();
     </script>
 @endsection

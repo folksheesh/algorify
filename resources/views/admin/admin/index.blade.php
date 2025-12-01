@@ -1,4 +1,4 @@
-{{--
+﻿{{--
 ========================================
 HALAMAN DATA ADMIN - ADMIN PANEL
 ========================================
@@ -972,6 +972,67 @@ Features: CRUD, Search, Filter, Export
                 /* End di posisi normal */
             }
         }
+        /* ========================================
+           PAGINATION STYLES
+           ======================================== */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: #64748B;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 0.75rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            background: white;
+            color: #334155;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(.disabled):not(.active) {
+            border-color: #5D3FFF;
+            color: #5D3FFF;
+            background: rgba(93, 63, 255, 0.05);
+        }
+
+        .pagination-btn.active {
+            background: #5D3FFF;
+            border-color: #5D3FFF;
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            padding: 0 0.5rem;
+            color: #94A3B8;
+        }
     </style>
 @endpush
 
@@ -1030,7 +1091,7 @@ Features: CRUD, Search, Filter, Export
                             {{-- Header Tabel --}}
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>No</th>
                                     <th>Nama Admin</th>
                                     <th>Email</th>
                                     <th>No Telepon</th>
@@ -1043,6 +1104,15 @@ Features: CRUD, Search, Filter, Export
                                 <!-- Data akan dimuat via JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <div class="pagination-info">
+                            Menampilkan <span id="showingStart">0</span> - <span id="showingEnd">0</span> dari <span id="totalData">0</span> data
+                        </div>
+                        <div class="pagination-buttons" id="paginationButtons">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1332,7 +1402,10 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         let adminData = [];  // Array untuk menyimpan semua data admin
+        let filteredData = [];  // Array untuk data yang sudah difilter
         let deleteId = null;    // ID admin yang akan dihapus
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -1453,7 +1526,10 @@ Features: CRUD, Search, Filter, Export
                 .then(data => {
                     // Urutkan data berdasarkan ID dari kecil ke besar
                     adminData = data.sort((a, b) => a.id - b.id);
-                    renderTable(adminData);
+                    filteredData = adminData;
+                    currentPage = 1;
+                    renderTable();
+                    renderPagination();
                 })
                 .catch(error => {
                     showToast('Gagal Memuat Data', 'Tidak dapat memuat data admin. Silakan refresh halaman.', 'error');
@@ -1461,14 +1537,16 @@ Features: CRUD, Search, Filter, Export
         }
 
         /**
-         * Render tabel dengan data admin
-         * @param {Array} data - Array data admin yang akan ditampilkan
+         * Render tabel dengan data admin (dengan pagination)
          */
-        function renderTable(data) {
+        function renderTable() {
             const tbody = document.getElementById('adminTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, endIndex);
 
             // Jika tidak ada data
-            if (data.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = `
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 2rem; color: #94A3B8;">
@@ -1476,18 +1554,19 @@ Features: CRUD, Search, Filter, Export
                     </td>
                 </tr>
             `;
+                updatePaginationInfo(0, 0, 0);
                 return;
             }
 
             // Render setiap baris data
-            tbody.innerHTML = data.map((item, index) => {
+            tbody.innerHTML = paginatedData.map((item, index) => {
                 const status = item.status || 'active';
                 const statusDisplay = status === 'active' ? 'Aktif' : 'Nonaktif';
                 const phone = item.phone || '-';
 
                 return `
             <tr onclick="showDetail(${item.id})">
-                <td>${String(item.id).padStart(3, '0')}</td>
+                <td>${startIndex + index + 1}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
                 <td>${phone}</td>
@@ -1511,6 +1590,65 @@ Features: CRUD, Search, Filter, Export
             </tr>
         `;
             }).join('');
+            
+            updatePaginationInfo(startIndex + 1, Math.min(endIndex, filteredData.length), filteredData.length);
+        }
+
+        // Update info pagination
+        function updatePaginationInfo(start, end, total) {
+            document.getElementById('showingStart').textContent = total > 0 ? start : 0;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalData').textContent = total;
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const container = document.getElementById('paginationButtons');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                    onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                            onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>`;
+            
+            container.innerHTML = html;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+            renderPagination();
         }
 
         /**
@@ -1561,9 +1699,13 @@ Features: CRUD, Search, Filter, Export
             });
 
             // Urutkan hasil filter berdasarkan ID dari kecil ke besar
-            const sortedFiltered = filtered.sort((a, b) => a.id - b.id);
+            filteredData = filtered.sort((a, b) => a.id - b.id);
+            
+            // Reset ke halaman 1 saat filter
+            currentPage = 1;
 
-            renderTable(sortedFiltered);
+            renderTable();
+            renderPagination();
         }
 
         // ========================================

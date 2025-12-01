@@ -16,7 +16,6 @@ class BankSoal extends Model
         'tipe_soal',
         'opsi_jawaban',
         'jawaban_benar',
-        'kunci_jawaban',
         'kategori_id',
         'kursus_id',
         'poin',
@@ -30,11 +29,11 @@ class BankSoal extends Model
     ];
 
     /**
-     * Get the kategori that owns the soal
+     * Get the kategori (kursus) that owns the soal
      */
     public function kategori()
     {
-        return $this->belongsTo(KategoriPelatihan::class, 'kategori_id');
+        return $this->belongsTo(Kursus::class, 'kategori_id');
     }
 
     /**
@@ -51,5 +50,21 @@ class BankSoal extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the pilihan for the bank soal
+     */
+    public function pilihan()
+    {
+        return $this->hasMany(BankSoalPilihan::class, 'bank_soal_id');
+    }
+
+    /**
+     * Get the kategori pelatihan that owns the soal
+     */
+    public function kategoriPelatihan()
+    {
+        return $this->belongsTo(KategoriPelatihan::class, 'kategori_id');
     }
 }

@@ -60,21 +60,38 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => ['required', 'string', 'max:20'],
+            'profesi' => ['required', 'string', 'max:255'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'jenis_kelamin' => ['required', 'in:L,P'],
+            'address' => ['required', 'string', 'max:500'],
         ], [
-            'name.required' => 'Silakan masukkan nama lengkap Anda.',
+            'name.required' => 'Nama lengkap wajib diisi.',
             'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-            'email.required' => 'Silakan masukkan alamat email Anda.',
+            'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
-            'password.required' => 'Silakan masukkan kata sandi.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'profesi.required' => 'Profesi/pekerjaan wajib diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+            'jenis_kelamin.in' => 'Jenis kelamin tidak valid.',
+            'address.required' => 'Kabupaten/Kota wajib dipilih.',
         ]);
 
         // Buat user baru dengan password yang sudah di-hash
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash agar tidak tersimpan teks asli
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'profesi' => $request->profesi,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'address' => $request->address,
         ]);
 
         // Jika model User mendukung assignRole (biasanya karena Spatie terpasang),

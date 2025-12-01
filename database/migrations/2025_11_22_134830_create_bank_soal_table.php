@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('bank_soal', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kategori_id')->constrained('kategori_soal')->onDelete('cascade');
             $table->text('pertanyaan');
-            $table->string('tingkat_kesulitan')->default('sedang'); // mudah, sedang, sulit
-            $table->string('kunci_jawaban');
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->enum('tipe_soal', ['pilihan_ganda', 'multi_jawaban', 'essay']);
+            $table->json('opsi_jawaban')->nullable();
+            $table->json('jawaban_benar')->nullable();
+            $table->foreignId('kategori_id')->nullable()->constrained('kursus')->onDelete('set null');
+            $table->foreignId('kursus_id')->nullable()->constrained('kursus')->onDelete('set null');
+            $table->string('lampiran')->nullable();
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
