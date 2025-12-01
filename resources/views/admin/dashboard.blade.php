@@ -1,6 +1,6 @@
 @extends('layouts.template')
 
-@section('title', 'Algorify - Admin Dashboard')
+@section('title', 'Algorify - Admin Dashboards')
 
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
