@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use spatie\Permission\Models\hasRole;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -18,9 +19,9 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/dashboard', function () {
     $user = Auth::user();
     
-    // Check if user has admin or super admin role
-    if ($user->hasAnyRole(['admin', 'super admin'])) {
-        // Admin Dashboard - Get stats
+    // Check if user has admin, super admin, or pengajar role
+    if ($user->hasRole(['admin', 'super admin', 'pengajar'])) {
+        // Admin/Pengajar Dashboard - Get stats
         $totalPeserta = \App\Models\User::role('peserta')->count();
         $totalPengajar = \App\Models\User::role('pengajar')->count();
         $totalKursus = \App\Models\Kursus::count();

@@ -1428,7 +1428,7 @@
     <script>
         // Prevent back navigation to video/materi/ujian pages - force back to pelatihan saya
         (function() {
-            var pelatihanSayaUrl = '{{ auth()->user()->hasRole("peserta") ? route("user.pelatihan-saya.index") : route("admin.pelatihan.index") }}';
+            var pelatihanSayaUrl = '{{ auth()->user()->hasAnyRole(["admin", "super admin", "pengajar"]) ? route("admin.pelatihan.index") : route("user.pelatihan-saya.index") }}';
             
             // Push state to create barrier
             history.pushState(null, '', location.href);

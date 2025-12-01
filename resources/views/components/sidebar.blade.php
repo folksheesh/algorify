@@ -131,6 +131,54 @@
                         <span class="nav-text">Sertifikat</span>
                     </a>
                 </li>
+            @elseif(Auth::user()->hasRole('pengajar'))
+                <!-- Pengajar Menu Items -->
+                <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="nav-link">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" />
+                            <path d="M3 8H17" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                        <span class="nav-text">Halaman Utama</span>
+                    </a>
+                </li>
+                <li class="nav-item has-submenu {{ request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.bank-soal.*') ? 'open' : '' }}">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); this.parentElement.classList.toggle('open');">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span class="nav-text">Data Pelatihan</span>
+                    </a>
+                    <ul class="submenu">
+                        <li class="nav-item {{ request()->routeIs('admin.pelatihan.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.pelatihan.index') }}" class="nav-link">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="nav-text">Data Kursus</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('admin.bank-soal.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.bank-soal.index') }}" class="nav-link">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <span class="nav-text">Bank Soal</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                    <a href="{{ route('profile.edit') }}" class="nav-link">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        </svg>
+                        <span class="nav-text">Pengaturan</span>
+                    </a>
+                </li>
             @else
                 <!-- Regular User Menu Items -->
                 <li class="nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
