@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use spatie\Permission\Models\hasRole;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -19,14 +18,80 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/dashboard', function () {
     $user = Auth::user();
     
-    // Check if user has admin, super admin, or pengajar role
-    if ($user->hasRole(['admin', 'super admin', 'pengajar'])) {
-        // Admin/Pengajar Dashboard - Get stats
+    // Check if user has admin or super admin role
+    if ($user->hasAnyRole(['admin', 'super admin'])) {
+        // Admin Dashboard - Get stats
         $totalPeserta = \App\Models\User::role('peserta')->count();
         $totalPengajar = \App\Models\User::role('pengajar')->count();
         $totalKursus = \App\Models\Kursus::count();
         
         return view('admin.dashboard', compact('totalPeserta', 'totalPengajar', 'totalKursus'));
+    }
+    
+    // Pengajar Dashboard
+    if ($user->hasRole('pengajar')) {
+        $totalKursus = \App\Models\Kursus::count();
+        $totalSiswa = \App\Models\User::role('peserta')->count();
+        
+        // Get kategori stats based on enum field in kursus table
+        $kategoriEnum = ['programming', 'design', 'business', 'marketing'];
+        $kategoriNames = [
+            'programming' => 'Programming',
+            'design' => 'Design', 
+            'business' => 'Business',
+            'marketing' => 'Marketing',
+        ];
+        
+        $kategoriCounts = [];
+        foreach ($kategoriEnum as $kat) {
+            $kategoriCounts[$kat] = \App\Models\Kursus::where('kategori', $kat)->count();
+        }
+        $maxKursus = max($kategoriCounts) ?: 1;
+        
+        $kategoriStats = collect($kategoriEnum)->map(function($slug) use ($kategoriCounts, $kategoriNames, $maxKursus) {
+            return [
+                'nama' => $kategoriNames[$slug],
+                'slug' => $slug,
+                'total' => $kategoriCounts[$slug],
+                'percentage' => $maxKursus > 0 ? round(($kategoriCounts[$slug] / $maxKursus) * 100) : 0,
+            ];
+        });
+        
+        // Get popular courses
+        $kursusPopuler = \App\Models\Kursus::withCount('enrollments')
+            ->orderBy('enrollments_count', 'desc')
+            ->take(4)
+            ->get();
+        
+        // Get monthly performance (last 6 months)
+        $performaBulanan = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $bulanNama = $date->locale('id')->translatedFormat('M');
+            
+            $siswaCount = \App\Models\User::role('peserta')
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+            
+            $kursusCount = \App\Models\Kursus::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+            
+            $performaBulanan->push([
+                'nama' => $bulanNama,
+                'siswa' => $siswaCount,
+                'kursus' => $kursusCount,
+            ]);
+        }
+        
+        return view('pengajar.dashboard', compact(
+            'totalKursus', 
+            'totalSiswa', 
+            'kategoriStats', 
+            'kursusPopuler',
+            'performaBulanan'
+        ));
     }
     
     // Student Dashboard - Get user's enrollments
