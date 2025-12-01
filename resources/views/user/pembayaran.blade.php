@@ -147,19 +147,13 @@
                 </button>
                 @endif
 
-                @if(in_array($transaksi->status, ['failed', 'expired', 'pending']))
+                @if(in_array($transaksi->status, ['failed', 'expired']))
                 <form action="{{ route('user.kursus.pembayaran', $kursus->id) }}" method="GET" style="margin-top: 15px;">
                     <input type="hidden" name="new" value="1">
                     <button type="submit" class="btn-primary" style="background: #10b981;">
                         🔄 Buat Transaksi Baru
                     </button>
                 </form>
-                @endif
-                
-                @if($transaksi->status === 'pending')
-                <button type="button" onclick="checkPaymentStatus(event)" class="btn-primary" style="background: #3b82f6; font-size: 14px; padding: 12px; margin-top: 15px;">
-                    🔍 Cek Status Pembayaran
-                </button>
                 @endif
 
                 <div class="instructions" style="margin-top: 20px;">
