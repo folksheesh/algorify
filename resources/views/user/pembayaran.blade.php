@@ -147,6 +147,15 @@
                 </button>
                 @endif
 
+                @if(in_array($transaksi->status, ['failed', 'expired']))
+                <form action="{{ route('user.kursus.pembayaran', $kursus->id) }}" method="GET" style="margin-top: 15px;">
+                    <input type="hidden" name="new" value="1">
+                    <button type="submit" class="btn-primary" style="background: #10b981;">
+                        🔄 Buat Transaksi Baru
+                    </button>
+                </form>
+                @endif
+
                 <div class="instructions" style="margin-top: 20px;">
                     <h6>Instruksi Pembayaran:</h6>
                     <ul>
@@ -233,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentUrl = payButton.getAttribute('data-url');
     if (!paymentUrl) return;
     
-    // Open modal
+    // Open modal with iframe
     payButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -273,9 +282,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     @endif
     
-    // Auto check payment status every 3 seconds with live UI update
+    // Manual check payment status function
+    function checkPaymentStatus(event) {
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Mengecek...';
+        
+        fetch('{{ route("user.transaksi.status", $transaksi->kode_transaksi) }}')
+            .then(response => response.json())
+            .then(data => {
+                updateStatusDisplay(data.status);
+                
+                if (data.status === 'success') {
+                    alert('Pembayaran berhasil! Anda akan diarahkan ke halaman Pelatihan Saya.');
+                    window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
+                } else if (data.status === 'failed' || data.status === 'expired') {
+                    alert('Status: ' + data.status);
+                    location.reload();
+                } else {
+                    alert('Status pembayaran masih pending. Silakan selesaikan pembayaran terlebih dahulu.');
+                }
+                
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            })
+            .catch(error => {
+                console.error('Error checking status:', error);
+                alert('Gagal mengecek status pembayaran. Silakan coba lagi.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+    }
+    
+    // Auto check payment status every 2 seconds with live UI update
     let checkCount = 0;
-    const maxChecks = 200; // 10 minutes max (200 * 3 seconds)
+    const maxChecks = 300; // 10 minutes max (300 * 2 seconds)
     const statusElement = document.getElementById('payment-status');
     
     function updateStatusDisplay(status) {
@@ -306,31 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (data.status === 'success') {
                 clearInterval(checkInterval);
-                
-                // Close modal if open
-                const modal = document.getElementById('doku-modal');
-                if (modal && modal.style.display === 'flex') {
-                    modal.style.display = 'none';
-                }
-                
-                // Show success message and redirect
-                setTimeout(() => {
-                    alert('Pembayaran berhasil! Anda akan diarahkan ke halaman Pelatihan Saya.');
-                    window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
-                }, 500);
+                // Redirect immediately
+                window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
             } else if (data.status === 'failed' || data.status === 'expired') {
                 clearInterval(checkInterval);
-                
-                // Close modal if open
-                const modal = document.getElementById('doku-modal');
-                if (modal && modal.style.display === 'flex') {
-                    modal.style.display = 'none';
-                }
-                
-                setTimeout(() => {
-                    alert('Pembayaran gagal atau kadaluarsa. Silakan coba lagi.');
-                    location.reload();
-                }, 500);
+                location.reload();
             }
             
             // Stop checking after max attempts
@@ -341,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error checking status:', error);
         }
-    }, 3000); // Check every 3 seconds
+    }, 2000); // Check every 2 seconds
 });
 </script>
 @endsection

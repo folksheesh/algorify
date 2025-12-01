@@ -184,7 +184,8 @@
                 <li class="nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                     <a href="{{ route('profile.edit') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 3L3 8V17H7V12H13V17H17V8L10 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
+                            <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M16.5 10C16.5 10.34 16.48 10.67 16.43 11L18.14 12.33C18.29 12.45 18.33 12.67 18.22 12.84L16.62 15.61C16.51 15.78 16.3 15.85 16.11 15.78L14.11 14.95C13.67 15.28 13.19 15.55 12.67 15.76L12.37 17.87C12.34 18.06 12.18 18.2 11.99 18.2H8.79C8.6 18.2 8.44 18.06 8.41 17.87L8.11 15.76C7.59 15.55 7.11 15.28 6.67 14.95L4.67 15.78C4.48 15.85 4.27 15.78 4.16 15.61L2.56 12.84C2.45 12.67 2.49 12.45 2.64 12.33L4.35 11C4.3 10.67 4.28 10.34 4.28 10C4.28 9.66 4.3 9.33 4.35 9L2.64 7.67C2.49 7.55 2.45 7.33 2.56 7.16L4.16 4.39C4.27 4.22 4.48 4.15 4.67 4.22L6.67 5.05C7.11 4.72 7.59 4.45 8.11 4.24L8.41 2.13C8.44 1.94 8.6 1.8 8.79 1.8H11.99C12.18 1.8 12.34 1.94 12.37 2.13L12.67 4.24C13.19 4.45 13.67 4.72 14.11 5.05L16.11 4.22C16.3 4.15 16.51 4.22 16.62 4.39L18.22 7.16C18.33 7.33 18.29 7.55 18.14 7.67L16.43 9C16.48 9.33 16.5 9.66 16.5 10Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                         </svg>
                         <span class="nav-text">Pengaturan Akun</span>
                     </a>
@@ -192,8 +193,7 @@
                 <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <a href="{{ route('dashboard') }}" class="nav-link">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" />
-                            <path d="M3 8H17" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M10 3L3 8V17H7V12H13V17H17V8L10 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
                         </svg>
                         <span class="nav-text">Halaman Utama</span>
                     </a>
