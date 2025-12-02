@@ -48,6 +48,42 @@
             border-radius: 1rem;
             font-weight: 600;
         }
+        
+        /* Responsive adjustments untuk inline styles */
+        @media (max-width: 768px) {
+            .course-card:hover {
+                transform: translateY(-4px);
+            }
+            
+            .course-description-text {
+                font-size: 0.8rem !important;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .course-price-footer {
+                flex-direction: column !important;
+                gap: 8px !important;
+                align-items: flex-start !important;
+            }
+            
+            .course-price-footer span:last-child {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .course-card:hover {
+                transform: translateY(-2px);
+            }
+            
+            .author-avatar {
+                width: 28px !important;
+                height: 28px !important;
+            }
+        }
     </style>
 @endpush
 
@@ -138,7 +174,7 @@
                         <div class="course-content">
                             <span class="course-badge">{{ strtoupper($kursus->kategori ?? 'PELATIHAN') }}</span>
                             <h3 class="course-title">{{ Str::limit($kursus->judul, 50) }}</h3>
-                            <p style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
+                            <p class="course-description-text" style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
                                 {{ Str::limit($kursus->deskripsi_singkat ?? $kursus->deskripsi, 80) }}
                             </p>
                             @if($kursus->pengajar)
@@ -156,7 +192,7 @@
                                 </div>
                             </div>
                             @endif
-                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center;">
+                            <div class="course-price-footer" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-size: 0.875rem; color: #64748B;">
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 0.25rem;">
                                         <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
@@ -181,6 +217,9 @@
             </section>
         </main>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')

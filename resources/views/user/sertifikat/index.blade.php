@@ -16,6 +16,13 @@
             padding: 1.75rem;
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Pastikan card terakhir punya margin bottom extra */
+        .cert-card:last-child {
+            margin-bottom: 3rem;
         }
         .cert-icon-wrapper {
             background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
@@ -78,18 +85,23 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            width: 100%;
+            width: auto;
+            max-width: 280px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
             transition: all 0.2s;
             text-decoration: none;
+            margin-top: auto;
+            flex-shrink: 0;
         }
         .btn-download:hover {
             background: #4a2fcc;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
+            color: white;
         }
         .info-box {
             background: #EFF6FF;
@@ -179,10 +191,56 @@
             }
         }
         
+        /* Back Button Styling */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0;
+        }
+        
+        .back-button:hover {
+            color: #5D3FFF;
+        }
+        
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .hide-mobile { display: inline; }
+        .hide-desktop { display: none; }
+        
         @media (max-width: 768px) {
             .main-content {
-                padding: 80px 16px 24px 16px;
+                padding: 80px 16px 60px 16px;
             }
+            
+            .cert-card:last-child {
+                margin-bottom: 2rem;
+            }
+            
+            .back-button {
+                position: fixed;
+                top: 16px;
+                left: 70px;
+                z-index: 90;
+                background: white;
+                padding: 0.625rem 1rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin: 0;
+            }
+            
+            .hide-mobile { display: none !important; }
+            .hide-desktop { display: inline !important; }
             
             .cert-container {
                 max-width: 100%;
@@ -207,30 +265,78 @@
         
         @media (max-width: 480px) {
             .main-content {
-                padding: 70px 12px 20px 12px;
+                padding: 70px 12px 80px 12px;
+            }
+            
+            .cert-card:last-child {
+                margin-bottom: 1.5rem;
+            }
+            
+            .back-button {
+                top: 14px;
+                left: 65px;
+                padding: 0.5rem 0.875rem;
+                font-size: 0.8rem;
+            }
+            
+            .back-button svg {
+                width: 16px;
+                height: 16px;
             }
             
             .cert-card {
                 padding: 1.25rem;
                 border-radius: 12px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .cert-icon-wrapper {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .cert-icon-svg {
+                width: 24px;
+                height: 24px;
             }
             
             .cert-title {
                 font-size: 1rem;
             }
             
+            .cert-subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
             .cert-details {
                 padding: 1rem;
+                margin-bottom: 1rem;
             }
             
             .cert-detail-row {
                 flex-direction: column;
                 gap: 0.25rem;
+                padding: 0.5rem 0;
+            }
+            
+            .cert-detail-label {
+                font-size: 0.8rem;
+            }
+            
+            .cert-detail-value {
+                font-size: 0.85rem;
             }
             
             .btn-download {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.9rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+            
+            .btn-download svg {
+                width: 16px;
+                height: 16px;
             }
             
             .info-box {
@@ -248,6 +354,15 @@
     <div class="dashboard-container">
         @include('components.sidebar')
         <main class="main-content">
+            <!-- Tombol Kembali -->
+            <a href="{{ route('user.pelatihan-saya.index') }}" class="back-button">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="hide-mobile">Kembali ke Pelatihan Saya</span>
+                <span class="hide-desktop">Kembali</span>
+            </a>
+
             <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #1E293B;">Sertifikat Saya</h1>
             <p style="color: #64748B; margin-bottom: 2rem;">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
 
@@ -376,9 +491,11 @@
                     </div>
                 @endif
             </div>
-
         </main>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')
