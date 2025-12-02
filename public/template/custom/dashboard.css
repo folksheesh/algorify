@@ -765,58 +765,384 @@
 }
 
 /* ============================================
-   13. RESPONSIVE DESIGN
+   13. MOBILE MENU TOGGLE
    ============================================ */
 
-/* Tablet - 2 kolom grid kursus */
-@media (max-width: 1200px) {
-    .courses-grid {
-        grid-template-columns: repeat(2, 1fr);
+/* Tombol hamburger menu untuk mobile */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1001;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background: #5D3FFF;
+    color: #FFF;
+    border-radius: 12px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: #4a2fcc;
+    transform: scale(1.05);
+}
+
+.mobile-menu-toggle svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Overlay untuk menutup sidebar di mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ============================================
+   14. RESPONSIVE DESIGN
+   ============================================ */
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+    .main-content {
+        padding: 28px 32px;
+    }
+    
+    .hero-banner {
+        padding: 32px 36px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
     }
 }
 
-/* Mobile - layout vertikal */
+/* Tablet Landscape - 2 kolom grid kursus */
+@media (max-width: 1200px) {
+    .courses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .main-content {
+        padding: 24px;
+    }
+    
+    .hero-title {
+        font-size: 26px;
+    }
+    
+    .hero-description {
+        font-size: 14px;
+    }
+    
+    .illustration-graphic {
+        width: 160px;
+        height: 120px;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 992px) {
+    /* Tampilkan tombol hamburger */
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    /* Overlay siap digunakan di mobile (tetap hidden sampai active) */
+    .sidebar-overlay {
+        display: block;
+    }
+    
+    /* Sidebar hidden by default di mobile */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    /* Sidebar active saat menu dibuka */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Main content full width */
+    .main-content {
+        margin-left: 0;
+        padding: 80px 24px 24px 24px;
+    }
+    
+    /* Stats grid 2 kolom */
+    .stats-section {
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        flex: 1 1 calc(50% - 10px);
+        min-width: calc(50% - 10px);
+    }
+    
+    /* Hero banner adjustments */
+    .hero-banner {
+        padding: 28px;
+    }
+    
+    .hero-title {
+        font-size: 24px;
+    }
+    
+    .illustration-graphic {
+        width: 140px;
+        height: 100px;
+    }
+}
+
+/* Mobile Landscape */
 @media (max-width: 768px) {
     /* Dashboard container menjadi vertikal */
     .dashboard-container {
         flex-direction: column;
     }
 
-    /* Sidebar menjadi full width dan tidak fixed */
+    /* Sidebar styling untuk mobile */
     .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #E2E8F0;
-        position: relative;
-        height: auto;
-        overflow: visible;
-        padding: 24px 16px;
+        width: 280px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 100;
+        border-right: 1px solid #E2E8F0;
+        overflow-y: auto;
     }
 
     /* Main content tanpa margin kiri */
     .main-content {
-        padding: 24px 16px;
+        padding: 80px 16px 24px 16px;
         margin-left: 0;
     }
 
     /* Grid kursus menjadi 1 kolom */
     .courses-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     /* Stats section menjadi vertikal */
     .stats-section {
         flex-direction: column;
+        gap: 12px;
+    }
+    
+    .stat-card {
+        flex: 1 1 100%;
+        min-width: 100%;
     }
 
     /* Hero banner menjadi vertikal dengan text center */
     .hero-banner {
         flex-direction: column;
         text-align: center;
+        padding: 24px 20px;
+    }
+    
+    .hero-title {
+        font-size: 22px;
+        line-height: 1.4;
+    }
+    
+    .hero-title br {
+        display: none;
+    }
+    
+    .hero-description {
+        font-size: 14px;
+    }
+    
+    .hero-description br {
+        display: none;
     }
 
     /* Ilustrasi hero dengan margin top */
     .hero-illustration {
-        margin-top: 24px;
+        margin-top: 20px;
+    }
+    
+    .illustration-graphic {
+        width: 120px;
+        height: 90px;
+    }
+    
+    /* Search input */
+    .search-input {
+        padding: 12px 44px 12px 16px;
+        font-size: 14px;
+    }
+    
+    /* Section header */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+    }
+    
+    /* Course card adjustments */
+    .course-content {
+        padding: 16px;
+    }
+    
+    .course-title {
+        font-size: 15px;
+    }
+    
+    /* Payment grid untuk pembayaran */
+    .payment-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
     }
 }
+
+/* Mobile Portrait (Small phones) */
+@media (max-width: 480px) {
+    .mobile-menu-toggle {
+        top: 12px;
+        left: 12px;
+        width: 44px;
+        height: 44px;
+    }
+    
+    .main-content {
+        padding: 70px 12px 20px 12px;
+    }
+    
+    .hero-banner {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+    
+    .hero-title {
+        font-size: 20px;
+    }
+    
+    .hero-description {
+        font-size: 13px;
+    }
+    
+    .section-title {
+        font-size: 16px;
+    }
+    
+    .course-card {
+        border-radius: 12px;
+    }
+    
+    .course-thumbnail {
+        padding-top: 55%;
+    }
+    
+    .course-content {
+        padding: 14px;
+    }
+    
+    .course-badge {
+        font-size: 10px;
+        padding: 3px 10px;
+    }
+    
+    .course-title {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+    
+    /* Stat cards */
+    .stat-card {
+        padding: 14px;
+    }
+    
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+    }
+    
+    /* User profile di sidebar */
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .greeting-title {
+        font-size: 16px;
+    }
+    
+    .greeting-subtitle {
+        font-size: 12px;
+    }
+    
+    /* Navigation */
+    .nav-link {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+    
+    /* Footer/Logout */
+    .logout-button {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+}
+
+/* ============================================
+   15. UTILITY CLASSES
+   ============================================ */
+
+/* Hide on mobile */
+.hide-mobile {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Hide on desktop */
+.hide-desktop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hide-desktop {
+        display: block !important;
+    }
+}
+

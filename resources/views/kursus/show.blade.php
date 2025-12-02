@@ -163,6 +163,14 @@
             color: #6b7280;
         }
 
+        /* Responsive untuk tablet */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+
         @media (max-width: 768px) {
             .detail-content {
                 padding: 1rem;
@@ -170,6 +178,57 @@
             
             .course-title-detail {
                 font-size: 1.5rem;
+            }
+            
+            .course-header {
+                padding: 1.5rem;
+            }
+            
+            .course-body {
+                padding: 1.5rem;
+            }
+            
+            .course-meta-detail {
+                gap: 1rem;
+            }
+            
+            .course-price-detail {
+                font-size: 1.5rem;
+            }
+            
+            .instructor-card {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .detail-content {
+                padding: 0.75rem;
+            }
+            
+            .course-header {
+                padding: 1.25rem;
+            }
+            
+            .course-title-detail {
+                font-size: 1.25rem;
+            }
+            
+            .course-body {
+                padding: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .enroll-button {
+                padding: 0.875rem 2rem;
+            }
+            
+            .instructor-avatar-large {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>

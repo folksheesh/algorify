@@ -239,3 +239,78 @@
         </form>
     </div>
 </aside>
+
+<!-- Mobile Menu Toggle Button (hanya untuk peserta/pengajar) -->
+@if(!Auth::user()->hasAnyRole(['admin', 'super admin']))
+<button class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="close-icon" style="display: none;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const menuIcon = document.querySelector('.mobile-menu-toggle .menu-icon');
+    const closeIcon = document.querySelector('.mobile-menu-toggle .close-icon');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    
+    if (sidebar.classList.contains('active')) {
+        menuIcon.style.display = 'none';
+        closeIcon.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    } else {
+        menuIcon.style.display = 'block';
+        closeIcon.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// Close sidebar when clicking a nav link on mobile
+document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+        if (window.innerWidth <= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const menuIcon = document.querySelector('.mobile-menu-toggle .menu-icon');
+            const closeIcon = document.querySelector('.mobile-menu-toggle .close-icon');
+            
+            if (sidebar && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                menuIcon.style.display = 'block';
+                closeIcon.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+    });
+});
+
+// Close sidebar on window resize if larger than tablet
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 992) {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const menuIcon = document.querySelector('.mobile-menu-toggle .menu-icon');
+        const closeIcon = document.querySelector('.mobile-menu-toggle .close-icon');
+        
+        if (sidebar) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            if (menuIcon) menuIcon.style.display = 'block';
+            if (closeIcon) closeIcon.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+});
+</script>
+@endif

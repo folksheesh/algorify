@@ -374,6 +374,14 @@
             }
         }
         
+        /* Tambahan responsive untuk mobile dengan hamburger menu */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+        
         @media (max-width: 640px) {
             .dashboard-content-wrapper {
                 padding: 0 0.75rem 0.75rem;
