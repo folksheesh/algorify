@@ -93,6 +93,7 @@
                         <div class="filter-group" style="flex: 1.2;">
                             <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi, tanggal, nama, atau kursus...">
                         </div>
+                        <div style="width: 1.5rem;"></div>
                         <div class="filter-group" style="flex: 0.8;">
                             <select id="filterStatus" class="filter-select">
                                 <option value="">Semua Status</option>
@@ -104,11 +105,12 @@
                         <div class="filter-group" style="flex: 0.8;">
                             <select id="filterMetode" class="filter-select">
                                 <option value="">Semua Metode</option>
-                                <option value="bank_transfer">Transfer Bank</option>
-                                <option value="e_wallet">E-Wallet</option>
-                                <option value="credit_card">Kartu Kredit</option>
+                                <option value="transfer bank">Transfer Bank</option>
+                                <option value="e-wallet">E-Wallet</option>
+                                <option value="kartu kredit">Kartu Kredit</option>
                                 <option value="qris">Qris</option>
-                                <option value="virtual_account">Virtual Account</option>
+                                <option value="mini market">Mini Market</option>
+                                <option value="kartu debit">Kartu Debit</option>
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
@@ -146,7 +148,7 @@
                                 @foreach($transaksi as $item)
                                 <tr class="table-row-hover">
                                     <td class="transaction-code">{{ $item->kode_transaksi }}</td>
-                                    <td>{{ $item->created_at->format('d M Y, H:i') }}</td>
+                                    <td>{{ $item->tanggal_transaksi ? $item->tanggal_transaksi->format('d M Y, H:i') : '-' }}</td>
                                     <td>
                                         <div class="user-info">
                                             <span class="user-name">{{ $item->user->name ?? 'N/A' }}</span>
@@ -156,7 +158,18 @@
                                     <td>{{ $item->kursus->judul ?? 'N/A' }}</td>
                                     <td class="amount">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                                     <td>
-                                        <span class="method-badge {{ $item->metode_pembayaran == 'qris' ? 'method-qris' : ($item->metode_pembayaran == 'virtual_account' ? 'method-va' : '') }}">
+                                        @php
+                                            $metodeClass = match($item->metode_pembayaran) {
+                                                'qris' => 'method-qris',
+                                                'mini_market' => 'method-mini',
+                                                'kartu_debit' => 'method-debit',
+                                                'e_wallet' => 'method-ewallet',
+                                                'credit_card' => 'method-cc',
+                                                'bank_transfer' => 'method-bank',
+                                                default => ''
+                                            };
+                                        @endphp
+                                        <span class="method-badge {{ $metodeClass }}">
                                             @if($item->metode_pembayaran == 'bank_transfer')
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
@@ -182,12 +195,17 @@
                                                     <path d="M16 16a1 1 0 102 0v-3a1 1 0 10-2 0v3zM13 13a1 1 0 102 0 1 1 0 00-2 0zM13 16a1 1 0 102 0 1 1 0 00-2 0z"/>
                                                 </svg>
                                                 Qris
-                                            @elseif($item->metode_pembayaran == 'virtual_account')
+                                            @elseif($item->metode_pembayaran == 'mini_market')
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm3 5a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm0 3a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Mini Market
+                                            @elseif($item->metode_pembayaran == 'kartu_debit')
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
                                                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                                                 </svg>
-                                                Virtual Account
+                                                Kartu Debit
                                             @else
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
@@ -233,43 +251,41 @@
                             </tbody>
                         </table>
 
-                        <!-- Pagination with custom styling like peserta page -->
+                        <!-- Pagination seperti halaman pengajar -->
                         <div style="padding: 1.5rem; border-top: 1px solid #E2E8F0; display: flex; justify-content: center; gap: 0.5rem;">
                             @if ($transaksi->onFirstPage())
-                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; color: #94A3B8; cursor: not-allowed; font-size: 0.875rem;">
-                                    ← Previous
+                                <button disabled class="pagination-btn">
+                                    Sebelumnya
                                 </button>
                             @else
-                                <a href="{{ $transaksi->previousPageUrl() }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s;" 
-                                   onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
-                                   onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
-                                    ← Previous
+                                <a href="{{ $transaksi->previousPageUrl() }}" class="pagination-btn">
+                                    Sebelumnya
                                 </a>
                             @endif
 
-                            @foreach ($transaksi->getUrlRange(1, $transaksi->lastPage()) as $page => $url)
-                                @if ($page == $transaksi->currentPage())
-                                    <button style="padding: 0.5rem 1rem; border: 1px solid #667eea; border-radius: 6px; background: #667eea; color: white; font-weight: 600; font-size: 0.875rem; min-width: 40px;">
-                                        {{ $page }}
-                                    </button>
-                                @else
-                                    <a href="{{ $url }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s; min-width: 40px; text-align: center;"
-                                       onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
-                                       onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
-                                        {{ $page }}
-                                    </a>
+                            @php
+                                $currentPage = $transaksi->currentPage();
+                                $lastPage = $transaksi->lastPage();
+                            @endphp
+                            @for ($i = 1; $i <= $lastPage; $i++)
+                                @if ($i == 1 || $i == $lastPage || ($i >= $currentPage - 2 && $i <= $currentPage + 2))
+                                    @if ($i == $currentPage)
+                                        <button class="pagination-btn active">{{ $i }}</button>
+                                    @else
+                                        <a href="{{ $transaksi->url($i) }}" class="pagination-btn">{{ $i }}</a>
+                                    @endif
+                                @elseif ($i == $currentPage - 3 || $i == $currentPage + 3)
+                                    <span class="pagination-ellipsis">...</span>
                                 @endif
-                            @endforeach
+                            @endfor
 
                             @if ($transaksi->hasMorePages())
-                                <a href="{{ $transaksi->nextPageUrl() }}" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: white; color: #475569; text-decoration: none; font-size: 0.875rem; transition: all 0.2s;"
-                                   onmouseover="this.style.background='#F1F5F9'; this.style.borderColor='#CBD5E1';" 
-                                   onmouseout="this.style.background='white'; this.style.borderColor='#E2E8F0';">
-                                    Next →
+                                <a href="{{ $transaksi->nextPageUrl() }}" class="pagination-btn">
+                                    Selanjutnya
                                 </a>
                             @else
-                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; color: #94A3B8; cursor: not-allowed; font-size: 0.875rem;">
-                                    Next →
+                                <button disabled class="pagination-btn">
+                                    Selanjutnya
                                 </button>
                             @endif
                         </div>
@@ -293,81 +309,46 @@
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
         
-        // Search and filter functionality
+        // Search and filter functionality - Server-side
         const searchInput = document.getElementById('searchTable');
         const statusFilter = document.getElementById('filterStatus');
         const metodeFilter = document.getElementById('filterMetode');
         const periodeFilter = document.getElementById('filterPeriode');
+        let searchTimeout = null;
         
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusValue = statusFilter.value.toLowerCase();
-            const metodeValue = metodeFilter.value.toLowerCase();
-            const periodeValue = periodeFilter.value;
-            const rows = document.querySelectorAll('.data-table tbody tr');
+        // Set initial values from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('search')) searchInput.value = urlParams.get('search');
+        if (urlParams.get('status')) statusFilter.value = urlParams.get('status');
+        if (urlParams.get('metode')) metodeFilter.value = urlParams.get('metode');
+        if (urlParams.get('periode')) periodeFilter.value = urlParams.get('periode');
+        
+        // Function to apply filters via server-side request
+        function applyFilters() {
+            const params = new URLSearchParams();
             
-            rows.forEach(row => {
-                const kodeTransaksi = row.cells[0].textContent.toLowerCase();
-                const tanggal = row.cells[1].textContent.toLowerCase();
-                const peserta = row.cells[2].textContent.toLowerCase();
-                const kursus = row.cells[3].textContent.toLowerCase();
-                const metode = row.cells[5].textContent.toLowerCase();
-                const status = row.cells[6].textContent.toLowerCase().trim();
-                
-                // Search filter - dapat mencari kode transaksi, tanggal, nama, atau kursus
-                const matchSearch = searchTerm === '' || 
-                                   kodeTransaksi.includes(searchTerm) || 
-                                   tanggal.includes(searchTerm) ||
-                                   peserta.includes(searchTerm) || 
-                                   kursus.includes(searchTerm);
-                
-                // Status filter
-                const matchStatus = statusValue === '' || status.includes(statusValue);
-                
-                // Metode pembayaran filter
-                const matchMetode = metodeValue === '' || metode.includes(metodeValue.replace('_', ' '));
-                
-                // Periode filter (untuk client-side filtering tambahan)
-                let matchPeriode = true;
-                if (periodeValue !== '') {
-                    const now = new Date();
-                    const rowDate = new Date(row.cells[1].getAttribute('data-date') || row.cells[1].textContent);
-                    
-                    switch(periodeValue) {
-                        case 'hari_ini':
-                            matchPeriode = rowDate.toDateString() === now.toDateString();
-                            break;
-                        case '7_hari':
-                            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                            matchPeriode = rowDate >= sevenDaysAgo;
-                            break;
-                        case 'bulan_ini':
-                            matchPeriode = rowDate.getMonth() === now.getMonth() && 
-                                          rowDate.getFullYear() === now.getFullYear();
-                            break;
-                        case 'bulan_lalu':
-                            const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
-                            matchPeriode = rowDate.getMonth() === lastMonth.getMonth() && 
-                                          rowDate.getFullYear() === lastMonth.getFullYear();
-                            break;
-                        case 'tahun_ini':
-                            matchPeriode = rowDate.getFullYear() === now.getFullYear();
-                            break;
-                    }
-                }
-                
-                if (matchSearch && matchStatus && matchMetode && matchPeriode) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+            if (searchInput.value) params.append('search', searchInput.value);
+            if (statusFilter.value) params.append('status', statusFilter.value);
+            if (metodeFilter.value) params.append('metode', metodeFilter.value);
+            if (periodeFilter.value) params.append('periode', periodeFilter.value);
+            
+            // Redirect to same page with query params (page will reset to 1)
+            const queryString = params.toString();
+            window.location.href = '{{ route("admin.transaksi.index") }}' + (queryString ? '?' + queryString : '');
         }
         
-        searchInput.addEventListener('input', filterTable);
-        statusFilter.addEventListener('change', filterTable);
-        metodeFilter.addEventListener('change', filterTable);
-        periodeFilter.addEventListener('change', filterTable);
+        // Search dengan debounce 500ms
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFilters();
+            }, 500);
+        });
+        
+        // Filter langsung apply saat berubah
+        statusFilter.addEventListener('change', applyFilters);
+        metodeFilter.addEventListener('change', applyFilters);
+        periodeFilter.addEventListener('change', applyFilters);
     </script>
     
     <style>

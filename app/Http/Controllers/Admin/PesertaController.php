@@ -20,6 +20,29 @@ class PesertaController extends Controller
             ->withCount('enrollments as kursus_count')
             ->with(['enrollments.kursus']);
 
+        // Server-side search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Server-side status filter
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if ($status === 'Aktif') {
+                $query->where(function($q) {
+                    $q->where('status', 'active')
+                      ->orWhereNull('status');
+                });
+            } elseif ($status === 'Nonaktif') {
+                $query->where('status', 'inactive');
+            }
+        }
+
         $peserta = $query->orderBy('id', 'asc')->paginate(10);
         
         // Transform untuk menambahkan nama kursus yang diikuti

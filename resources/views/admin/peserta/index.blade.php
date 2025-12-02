@@ -209,16 +209,26 @@
         let pesertaData = [];
         let currentPage = 1;
         let totalPages = 1;
+        let searchTimeout = null;
+        let currentSearch = '';
+        let currentStatusFilter = '';
 
         // Load data saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             loadPesertaData();
         });
 
-        // Fungsi untuk load data peserta
+        // Fungsi untuk load data peserta dengan server-side search
         function loadPesertaData(page = 1) {
             console.log('Loading peserta data...');
-            fetch(`{{ route("admin.peserta.data") }}?page=${page}`)
+            
+            // Build query string dengan search dan filter
+            const params = new URLSearchParams();
+            params.append('page', page);
+            if (currentSearch) params.append('search', currentSearch);
+            if (currentStatusFilter) params.append('status', currentStatusFilter);
+            
+            fetch(`{{ route("admin.peserta.data") }}?${params.toString()}`)
                 .then(response => {
                     console.log('Response status:', response.status);
                     if (!response.ok) {
@@ -317,32 +327,21 @@
             return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
-        // Search functionality
+        // Search functionality - dengan debounce dan server-side search
         document.getElementById('searchInput').addEventListener('input', function(e) {
-            filterData();
+            // Debounce: tunggu 300ms setelah user berhenti mengetik
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value;
+                loadPesertaData(1); // Reset ke halaman 1 saat search
+            }, 300);
         });
 
-        // Filter by status akun
+        // Filter by status akun - server-side
         document.getElementById('statusAkunFilter').addEventListener('change', function(e) {
-            filterData();
+            currentStatusFilter = e.target.value;
+            loadPesertaData(1); // Reset ke halaman 1 saat filter
         });
-
-        // Fungsi filter data
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusAkunFilter = document.getElementById('statusAkunFilter').value;
-
-            let filtered = pesertaData.filter(item => {
-                const phoneNumber = item.phone || item.no_hp || '';
-                const matchSearch = item.name.toLowerCase().includes(searchTerm) || 
-                                   item.email.toLowerCase().includes(searchTerm) ||
-                                   phoneNumber.toLowerCase().includes(searchTerm);
-                const matchStatusAkun = !statusAkunFilter || (item.status || 'Aktif') === statusAkunFilter;
-                return matchSearch && matchStatusAkun;
-            });
-
-            renderTable(filtered);
-        }
 
         // Show detail modal
         function showDetail(id) {

@@ -501,20 +501,22 @@
                     'e_wallet': 'E-Wallet',
                     'credit_card': 'Kartu Kredit',
                     'qris': 'Qris',
-                    'virtual_account': 'Virtual Account'
+                    'mini_market': 'Mini Market',
+                    'kartu_debit': 'Kartu Debit'
                 };
                 
                 const properLabels = data.labels.map(label => methodNames[label] || label);
                 const total = data.values.reduce((sum, val) => sum + val, 0);
                 const percentages = data.values.map(val => ((val / total) * 100).toFixed(1));
                 
-                // Warna: biru, pink, cyan, hijau (Qris), orange (Virtual Account)
+                // Warna untuk setiap metode pembayaran
                 const colorMap = {
                     'Transfer Bank': '#667eea',
                     'E-Wallet': '#f093fb',
                     'Kartu Kredit': '#4facfe',
                     'Qris': '#10B981',
-                    'Virtual Account': '#F59E0B'
+                    'Mini Market': '#F59E0B',
+                    'Kartu Debit': '#7C3AED'
                 };
                 const colors = properLabels.map(label => colorMap[label] || '#94A3B8');
                 

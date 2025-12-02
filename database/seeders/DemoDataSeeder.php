@@ -29,6 +29,13 @@ class DemoDataSeeder extends Seeder
             return;
         }
 
+        // Hapus enrollment dan transaksi lama peserta demo jika ada
+        $oldEnrollments = Enrollment::where('user_id', $pesertaDemo->id)->get();
+        foreach ($oldEnrollments as $enrollment) {
+            Transaksi::where('enrollment_id', $enrollment->id)->delete();
+        }
+        Enrollment::where('user_id', $pesertaDemo->id)->delete();
+
         // Buat 3 kursus untuk pengajar demo
         $kursusPengajarDemo = [
             [
@@ -59,24 +66,33 @@ class DemoDataSeeder extends Seeder
 
         $createdKursus = [];
         foreach ($kursusPengajarDemo as $kursusData) {
-            $kursus = Kursus::create([
-                'judul' => $kursusData['judul'],
-                'deskripsi' => $kursusData['deskripsi'],
-                'deskripsi_singkat' => $kursusData['deskripsi_singkat'],
-                'harga' => $kursusData['harga'],
-                'durasi' => $kursusData['durasi'],
-                'tipe_kursus' => $kursusData['tipe_kursus'],
-                'user_id' => $pengajarDemo->id,
-                'status' => 'published',
-                'kategori' => 'programming',
-            ]);
-            $createdKursus[] = $kursus;
+            // Cek apakah kursus sudah ada
+            $existingKursus = Kursus::where('judul', $kursusData['judul'])->first();
+            if ($existingKursus) {
+                $createdKursus[] = $existingKursus;
+            } else {
+                $kursus = Kursus::create([
+                    'judul' => $kursusData['judul'],
+                    'deskripsi' => $kursusData['deskripsi'],
+                    'deskripsi_singkat' => $kursusData['deskripsi_singkat'],
+                    'harga' => $kursusData['harga'],
+                    'durasi' => $kursusData['durasi'],
+                    'tipe_kursus' => $kursusData['tipe_kursus'],
+                    'user_id' => $pengajarDemo->id,
+                    'status' => 'published',
+                    'kategori' => 'programming',
+                ]);
+                $createdKursus[] = $kursus;
+            }
         }
 
-        echo "✓ 3 Kursus untuk Pengajar Demo berhasil dibuat\n";
+        echo "✓ 3 Kursus untuk Pengajar Demo berhasil dibuat/ditemukan\n";
 
-        // Enroll peserta demo ke 2 kursus
-        // Kursus 1: Selesai (progress 100%, status completed)
+        // =====================================================
+        // PESERTA DEMO: HANYA ENROLL DI 2 KURSUS
+        // =====================================================
+
+        // Kursus 1: Selesai (progress 100%, status completed, nilai akhir ada)
         $enrollment1 = Enrollment::create([
             'kode' => 'ENR-DEMO0001',
             'user_id' => $pesertaDemo->id,
@@ -84,20 +100,21 @@ class DemoDataSeeder extends Seeder
             'tanggal_daftar' => Carbon::now()->subMonths(2),
             'status' => 'completed',
             'progress' => 100,
+            'nilai_akhir' => 92,
         ]);
 
-        // Buat transaksi untuk enrollment 1 (lunas)
+        // Buat transaksi untuk enrollment 1 (lunas) - 2 bulan lalu
         Transaksi::create([
             'kode_transaksi' => 'TRX-DEMO00001',
             'enrollment_id' => $enrollment1->id,
             'user_id' => $pesertaDemo->id,
             'kursus_id' => $createdKursus[0]->id,
-            'tanggal_transaksi' => Carbon::now()->subMonths(2),
+            'tanggal_transaksi' => Carbon::now()->subMonths(2)->day(15),
             'nominal_pembayaran' => $createdKursus[0]->harga,
             'jumlah' => $createdKursus[0]->harga,
             'status' => 'success',
             'metode_pembayaran' => 'bank_transfer',
-            'tanggal_verifikasi' => Carbon::now()->subMonths(2)->addHours(2),
+            'tanggal_verifikasi' => Carbon::now()->subMonths(2)->day(15)->addHours(2),
         ]);
 
         // Kursus 2: Belum mulai (progress 0%, status active)
@@ -108,24 +125,25 @@ class DemoDataSeeder extends Seeder
             'tanggal_daftar' => Carbon::now()->subDays(3),
             'status' => 'active',
             'progress' => 0,
+            'nilai_akhir' => null,
         ]);
 
-        // Buat transaksi untuk enrollment 2 (lunas)
+        // Buat transaksi untuk enrollment 2 (lunas) - 3 hari lalu
         Transaksi::create([
             'kode_transaksi' => 'TRX-DEMO00002',
             'enrollment_id' => $enrollment2->id,
             'user_id' => $pesertaDemo->id,
             'kursus_id' => $createdKursus[1]->id,
-            'tanggal_transaksi' => Carbon::now()->subDays(3),
+            'tanggal_transaksi' => Carbon::now()->subDays(3)->setTime(14, 30),
             'nominal_pembayaran' => $createdKursus[1]->harga,
             'jumlah' => $createdKursus[1]->harga,
             'status' => 'success',
             'metode_pembayaran' => 'qris',
-            'tanggal_verifikasi' => Carbon::now()->subDays(3)->addMinutes(30),
+            'tanggal_verifikasi' => Carbon::now()->subDays(3)->setTime(14, 45),
         ]);
 
-        echo "✓ Peserta Demo sudah enroll 2 kursus (1 selesai, 1 progress 0%)\n";
-        echo "  - {$createdKursus[0]->judul}: 100% (Selesai)\n";
+        echo "✓ Peserta Demo ({$pesertaDemo->email}) HANYA enroll 2 kursus:\n";
+        echo "  - {$createdKursus[0]->judul}: 100% (Selesai, Nilai: 92)\n";
         echo "  - {$createdKursus[1]->judul}: 0% (Belum mulai)\n";
     }
 }

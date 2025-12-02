@@ -27,6 +27,15 @@ class KursusSeeder extends Seeder
             $pengajarUsers = collect([$pengajar]);
         }
 
+        // Cari pengajar demo (pengajar@example.com) dan letakkan di awal
+        $pengajarDemo = $pengajarUsers->firstWhere('email', 'pengajar@example.com');
+        if ($pengajarDemo) {
+            // Hapus dari koleksi dan taruh di awal
+            $pengajarUsers = $pengajarUsers->reject(function($user) use ($pengajarDemo) {
+                return $user->id === $pengajarDemo->id;
+            })->prepend($pengajarDemo);
+        }
+
         $kursusData = [
             [
                 'judul' => 'Analisis Data',

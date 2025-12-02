@@ -54,6 +54,23 @@ class PengajarController extends Controller
                       ->withCount('enrollments as total_siswa');
             }]);
 
+        // Server-side search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhereHas('kursus', function($kq) use ($search) {
+                      $kq->where('judul', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Server-side status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
         // Ambil data dan urutkan berdasarkan ID (terlama/terkecil dulu)
         $pengajar = $query->orderBy('id', 'asc')->paginate(10);
 

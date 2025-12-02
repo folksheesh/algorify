@@ -523,6 +523,9 @@ Features: CRUD, Search, Filter, Export
         let deleteId = null;    // ID pengajar yang akan dihapus
         let currentPage = 1;  // Halaman saat ini
         let totalPages = 1;   // Total halaman pagination
+        let searchTimeout = null; // Timeout untuk debounce search
+        let currentSearch = '';   // Kata kunci search saat ini
+        let currentStatusFilter = ''; // Filter status saat ini
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -633,11 +636,18 @@ Features: CRUD, Search, Filter, Export
         });
 
         /**
-         * Fetch data pengajar dari API
+         * Fetch data pengajar dari API dengan server-side search
          */
         function loadPengajarData(page = 1) {
             currentPage = page;
-            fetch(`${apiRoutes.getData}?page=${page}`)
+            
+            // Build query string dengan search dan filter
+            const params = new URLSearchParams();
+            params.append('page', page);
+            if (currentSearch) params.append('search', currentSearch);
+            if (currentStatusFilter) params.append('status', currentStatusFilter);
+            
+            fetch(`${apiRoutes.getData}?${params.toString()}`)
                 .then(response => {
                     return response.json();
                 })
@@ -771,44 +781,24 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Event listener untuk search input
+         * Event listener untuk search input - dengan debounce dan server-side search
          */
         document.getElementById('searchInput').addEventListener('input', function (e) {
-            filterData();
+            // Debounce: tunggu 300ms setelah user berhenti mengetik
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value;
+                loadPengajarData(1); // Reset ke halaman 1 saat search
+            }, 300);
         });
 
         /**
-         * Event listener untuk status filter dropdown
+         * Event listener untuk status filter dropdown - server-side
          */
         document.getElementById('statusFilter').addEventListener('change', function (e) {
-            filterData();
+            currentStatusFilter = e.target.value;
+            loadPengajarData(1); // Reset ke halaman 1 saat filter
         });
-
-        /**
-         * Filter data berdasarkan search term dan status
-         */
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            const filtered = pengajarData.filter(item => {
-                // Search di nama, email, dan nama kursus
-                const nameMatch = item.name.toLowerCase().includes(searchTerm);
-                const emailMatch = item.email.toLowerCase().includes(searchTerm);
-
-                // Search di nama kursus
-                let kursusMatch = false;
-                if (item.kursus && item.kursus.length > 0) {
-                    kursusMatch = item.kursus.some(k => k.judul.toLowerCase().includes(searchTerm));
-                }
-
-                const matchSearch = nameMatch || emailMatch || kursusMatch;
-                const matchStatus = !statusFilter || (item.status || 'active') === statusFilter;
-                return matchSearch && matchStatus;
-            });
-
-            renderTable(filtered);
-        }
 
         // ========================================
         // MODAL FUNCTIONS - DETAIL

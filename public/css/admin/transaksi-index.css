@@ -298,14 +298,73 @@
     color: #059669;
 }
 
-.method-badge.method-va {
+.method-badge.method-mini {
     background: #FEF3C7;
     color: #D97706;
+}
+
+.method-badge.method-debit {
+    background: #F3E8FF;
+    color: #7C3AED;
+}
+
+.method-badge.method-ewallet {
+    background: #DBEAFE;
+    color: #2563EB;
+}
+
+.method-badge.method-cc {
+    background: #FCE7F3;
+    color: #DB2777;
+}
+
+.method-badge.method-bank {
+    background: #E0E7FF;
+    color: #4338CA;
 }
 
 .method-badge svg {
     width: 14px;
     height: 14px;
+}
+
+/* Pagination Styles (sama seperti pengajar) */
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    background: white;
+    color: #475569;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    min-width: 40px;
+    text-align: center;
+    display: inline-block;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+.pagination-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+    font-weight: 600;
+}
+
+.pagination-btn:disabled {
+    background: #F8FAFC;
+    color: #94A3B8;
+    cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+    padding: 0.5rem 0.75rem;
+    color: #64748B;
 }
 
 .empty-state {
