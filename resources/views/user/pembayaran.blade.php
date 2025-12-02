@@ -11,9 +11,9 @@
     .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
     .card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     .card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
     .summary-label { color: #666; }
-    .summary-value { font-weight: 600; }
+    .summary-value { font-weight: 600; word-break: break-word; }
     .divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
     .total-label { font-weight: bold; }
     .total-value { color: #5D3FFF; font-weight: bold; }
@@ -45,10 +45,32 @@
     .instructions ul { list-style: none; padding-left: 15px; }
     .instructions li { color: #666; font-size: 14px; margin-bottom: 8px; }
     
+    /* Responsive untuk tablet */
+    @media (max-width: 992px) {
+        .main-content { margin-left: 0; padding: 80px 24px 24px 24px; }
+        .payment-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+    
+    /* Responsive untuk mobile */
     @media (max-width: 768px) {
         .dashboard-container { flex-direction: column; }
-        .main-content { margin-left: 0; }
-        .payment-grid { grid-template-columns: 1fr; }
+        .main-content { margin-left: 0; padding: 80px 16px 24px 16px; }
+        .payment-grid { grid-template-columns: 1fr; gap: 16px; }
+        .page-title { font-size: 20px; margin-bottom: 20px; }
+        .card { padding: 20px; border-radius: 10px; }
+        .card-title { font-size: 16px; }
+        .summary-row { flex-direction: column; gap: 4px; }
+        .btn-primary { padding: 14px; font-size: 15px; }
+    }
+    
+    @media (max-width: 480px) {
+        .main-content { padding: 70px 12px 20px 12px; }
+        .page-title { font-size: 18px; }
+        .card { padding: 16px; }
+        .card-title { font-size: 15px; }
+        .section-title { font-size: 14px; }
+        .subtitle { font-size: 13px; }
+        .btn-primary { padding: 12px; font-size: 14px; }
     }
 </style>
 

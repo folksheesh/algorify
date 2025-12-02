@@ -170,6 +170,77 @@
             background: #4a2fcc;
             transform: translateY(-2px);
         }
+        
+        /* Responsive untuk tablet */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 80px 16px 24px 16px;
+            }
+            
+            .cert-container {
+                max-width: 100%;
+            }
+            
+            .cert-card {
+                padding: 1.5rem;
+            }
+            
+            .info-box {
+                padding: 1.25rem;
+            }
+            
+            .empty-state {
+                padding: 3rem 1.5rem;
+            }
+            
+            .empty-title {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 70px 12px 20px 12px;
+            }
+            
+            .cert-card {
+                padding: 1.25rem;
+                border-radius: 12px;
+            }
+            
+            .cert-title {
+                font-size: 1rem;
+            }
+            
+            .cert-details {
+                padding: 1rem;
+            }
+            
+            .cert-detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .btn-download {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .info-box {
+                padding: 1rem;
+            }
+            
+            .info-box-list li {
+                font-size: 0.85rem;
+            }
+        }
     </style>
 @endpush
 
