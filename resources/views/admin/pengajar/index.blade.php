@@ -482,7 +482,7 @@ Features: CRUD, Search, Filter, Export
             // Initialize Select2
             alamatSelect.select2({
                 placeholder: 'Pilih kabupaten/kota',
-                allowClear: true,
+                allowClear: false,
                 dropdownParent: $('#formModal'),
                 matcher: function(params, data) {
                     if ($.trim(params.term) === '') {

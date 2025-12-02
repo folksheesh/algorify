@@ -18,7 +18,38 @@ class TransaksiController extends Controller
             // Server-side search
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                
+                // Map nama bulan Indonesia & Inggris ke nomor bulan (partial match)
+                $bulanList = [
+                    1 => ['januari', 'jan', 'january'],
+                    2 => ['februari', 'feb', 'february'],
+                    3 => ['maret', 'mar', 'march'],
+                    4 => ['april', 'apr'],
+                    5 => ['mei', 'may'],
+                    6 => ['juni', 'jun', 'june'],
+                    7 => ['juli', 'jul', 'july'],
+                    8 => ['agustus', 'agu', 'ags', 'august', 'aug'],
+                    9 => ['september', 'sep', 'sept'],
+                    10 => ['oktober', 'okt', 'october', 'oct'],
+                    11 => ['november', 'nov'],
+                    12 => ['desember', 'des', 'december', 'dec'],
+                ];
+                
+                $searchLower = strtolower(trim($search));
+                $searchMonth = null;
+                
+                // Cari partial match untuk nama bulan
+                foreach ($bulanList as $monthNum => $names) {
+                    foreach ($names as $name) {
+                        // Cek jika search term ada di dalam nama bulan (partial match)
+                        if (str_contains($name, $searchLower) || str_contains($searchLower, $name)) {
+                            $searchMonth = $monthNum;
+                            break 2;
+                        }
+                    }
+                }
+                
+                $query->where(function($q) use ($search, $searchMonth) {
                     $q->where('kode_transaksi', 'like', "%{$search}%")
                       ->orWhereHas('user', function($uq) use ($search) {
                           $uq->where('name', 'like', "%{$search}%")
@@ -27,6 +58,11 @@ class TransaksiController extends Controller
                       ->orWhereHas('kursus', function($kq) use ($search) {
                           $kq->where('judul', 'like', "%{$search}%");
                       });
+                    
+                    // Jika search term cocok dengan nama bulan, cari berdasarkan bulan
+                    if ($searchMonth) {
+                        $q->orWhereMonth('tanggal_transaksi', $searchMonth);
+                    }
                 });
             }
 
