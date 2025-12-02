@@ -18,9 +18,18 @@ class PesertaController extends Controller
     {
         $query = User::role('peserta')
             ->withCount('enrollments as kursus_count')
-            ->with('enrollments');
+            ->with(['enrollments.kursus']);
 
-        $peserta = $query->orderBy('created_at', 'desc')->get();
+        $peserta = $query->orderBy('id', 'asc')->paginate(10);
+        
+        // Transform untuk menambahkan nama kursus yang diikuti
+        $peserta->getCollection()->transform(function($item) {
+            $kursusNames = $item->enrollments->map(function($e) {
+                return $e->kursus->judul ?? '';
+            })->filter()->implode(', ');
+            $item->kursus_names = $kursusNames ?: 'Belum mengikuti kursus';
+            return $item;
+        });
 
         return response()->json($peserta);
     }
@@ -35,6 +44,22 @@ class PesertaController extends Controller
         return response()->json([
             'success' => true,
             'data' => $user
+        ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        $user = User::role('peserta')->findOrFail($id);
+        $user->status = $request->status;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status peserta berhasil diperbarui'
         ]);
     }
 }

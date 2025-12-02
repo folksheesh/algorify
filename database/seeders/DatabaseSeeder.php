@@ -61,5 +61,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             EnrollmentSeeder::class,
         ]);
+
+        // Seed transaksi
+        $this->call([
+            TransaksiSeeder::class,
+        ]);
+
+        // Seed demo data (Pengajar Demo dengan 3 kursus, Peserta Demo dengan 2 enrollment)
+        $this->call([
+            DemoDataSeeder::class,
+        ]);
     }
 }

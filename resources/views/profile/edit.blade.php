@@ -316,7 +316,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="profesi">Pekerjaan</label>
+                                    <label for="profesi">Profesi</label>
                                     <input type="text" id="profesi" name="profesi" value="{{ old('profesi', $user->profesi) }}" placeholder="Software Developer">
                                 </div>
 

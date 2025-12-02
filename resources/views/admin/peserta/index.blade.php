@@ -57,8 +57,18 @@
                         </table>
                     </div>
                     
+                    <!-- Hint klik row -->
+                    <div class="table-hint" style="margin-top: 0.75rem; text-align: center;">
+                        <span style="font-size: 0.75rem; color: #94A3B8;">
+                            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Klik baris untuk melihat detail peserta
+                        </span>
+                    </div>
+                    
                     <!-- Pagination -->
-                    <div id="paginationContainer" style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.5rem;">
+                    <div id="paginationContainer" style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.5rem;">
                         <!-- Pagination buttons will be rendered here -->
                     </div>
                 </div>
@@ -136,6 +146,58 @@
                     <button type="button" class="btn btn-cancel" onclick="closeModal()">Tutup</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Edit Status Peserta -->
+    <div id="editStatusModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeEditStatusModal()" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Edit Status Peserta</h2>
+                <p>Ubah status akun peserta</p>
+            </div>
+
+            <form id="editStatusForm">
+                <input type="hidden" id="editPesertaId">
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Peserta</label>
+                    <input type="text" class="form-input" id="editPesertaName" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status Akun *</label>
+                    <select class="form-input" id="editPesertaStatus" required>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Nonaktif</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeEditStatusModal()">Batal</button>
+                    <button type="submit" class="btn btn-submit">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Success -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div style="width: 64px; height: 64px; margin: 0 auto 1rem; background: linear-gradient(135deg, #10B981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;" id="successTitle">Berhasil!</h3>
+            <p style="font-size: 0.875rem; color: #64748B; margin-bottom: 1.5rem;" id="successMessage">Status peserta berhasil diperbarui</p>
+            <button class="btn btn-submit" onclick="closeSuccessModal()" style="width: 100%;">OK</button>
         </div>
     </div>
 @endsection
@@ -217,7 +279,7 @@
                 }
                 
                 return `
-                <tr onclick="showDetail(${item.id})" style="cursor: pointer;">
+                <tr onclick="showDetail('${item.id}')" style="cursor: pointer;" title="Klik untuk lihat detail">
                     <td>${item.id}</td>
                     <td>${item.name || '-'}</td>
                     <td>${item.email || '-'}</td>
@@ -230,8 +292,13 @@
                     <td>${kursusCount}</td>
                     <td onclick="event.stopPropagation()">
                         <div class="action-buttons">
-                            <button class="btn-action btn-delete" onclick="confirmDelete(${item.id})" title="Hapus">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <button class="btn-action btn-edit" onclick="openEditStatusModal('${item.id}')" title="Edit Status">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                </svg>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="confirmDelete('${item.id}')" title="Hapus">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
                             </button>
@@ -279,7 +346,7 @@
 
         // Show detail modal
         function showDetail(id) {
-            const peserta = pesertaData.find(p => p.id === id);
+            const peserta = pesertaData.find(p => String(p.id) === String(id));
             if (!peserta) return;
 
             document.getElementById('modalName').value = peserta.name;
@@ -352,5 +419,73 @@
             
             container.innerHTML = html;
         }
+
+        // Open edit status modal
+        function openEditStatusModal(id) {
+            const peserta = pesertaData.find(p => String(p.id) === String(id));
+            if (!peserta) return;
+
+            document.getElementById('editPesertaId').value = peserta.id;
+            document.getElementById('editPesertaName').value = peserta.name;
+            
+            // Set current status
+            let currentStatus = peserta.status || 'active';
+            if (currentStatus.toLowerCase() === 'aktif') currentStatus = 'active';
+            if (currentStatus.toLowerCase() === 'nonaktif') currentStatus = 'inactive';
+            document.getElementById('editPesertaStatus').value = currentStatus;
+
+            document.getElementById('editStatusModal').classList.add('active');
+        }
+
+        // Close edit status modal
+        function closeEditStatusModal() {
+            document.getElementById('editStatusModal').classList.remove('active');
+        }
+
+        // Close success modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // Handle edit status form submit
+        document.getElementById('editStatusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editPesertaId').value;
+            const status = document.getElementById('editPesertaStatus').value;
+
+            fetch(`/admin/peserta/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeEditStatusModal();
+                    document.getElementById('successTitle').textContent = 'Berhasil!';
+                    document.getElementById('successMessage').textContent = data.message || 'Status peserta berhasil diperbarui';
+                    document.getElementById('successModal').classList.add('active');
+                    loadPesertaData(currentPage);
+                } else {
+                    alert(data.message || 'Gagal mengubah status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengubah status');
+            });
+        });
+
+        // Close modals when clicking outside
+        document.getElementById('editStatusModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditStatusModal();
+        });
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) closeSuccessModal();
+        });
     </script>
 @endpush

@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Kursus;
 use App\Models\Enrollment;
+use Carbon\Carbon;
 
 class EnrollmentSeeder extends Seeder
 {
@@ -15,57 +16,53 @@ class EnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get user with email zein@student.com
-        $zein = User::where('email', 'zein@student.com')->first();
+        // Get peserta users
+        $pesertaUsers = User::role('peserta')->get();
         
-        // Get Blockchain Development course
-        $blockchainCourse = Kursus::where('judul', 'Blockchain Development')->first();
-        $analisisDataCourse = Kursus::where('judul', 'Analisis Data')->first();
-        $fullstackLaravelDevelopmentCourse = Kursus::where('judul', 'Fullstack Laravel Development')->first();
-
-
-         Enrollment::create([
-                    'user_id' => $zein->id,
-                    'kursus_id' => $analisisDataCourse->id,
-                    'status' => 'active',
-                    'progress' => 0,
-                    'tanggal_daftar' => now(),
-                ]);
-
-                 Enrollment::create([
-                    'user_id' => $zein->id,
-                    'kursus_id' => $fullstackLaravelDevelopmentCourse->id,
-                    'status' => 'active',
-                    'progress' => 0,
-                    'tanggal_daftar' => now(),
-                ]);
+        // Get all kursus
+        $kursusList = Kursus::all();
         
-        if ($zein && $blockchainCourse) {
-            // Check if enrollment already exists
-            $existingEnrollment = Enrollment::where('user_id', $zein->id)
-                ->where('kursus_id', $blockchainCourse->id)
-                ->first();
+        if ($pesertaUsers->isEmpty() || $kursusList->isEmpty()) {
+            $this->command->error('⚠ EnrollmentSeeder membutuhkan data User (peserta) dan Kursus.');
+            return;
+        }
+
+        $enrollmentCount = 0;
+        $statusOptions = ['active', 'active', 'active', 'completed', 'dropped']; // weighted towards active
+
+        // Each peserta enrolls in 1-3 random kursus
+        foreach ($pesertaUsers as $user) {
+            // Random number of enrollments per user (1-3)
+            $numEnrollments = rand(1, 3);
             
-            if (!$existingEnrollment) {
-                Enrollment::create([
-                    'user_id' => $zein->id,
-                    'kursus_id' => $blockchainCourse->id,
-                    'status' => 'active',
-                    'progress' => 0,
-                    'tanggal_daftar' => now(),
-                ]);
+            // Get random kursus for this user
+            $randomKursus = $kursusList->random(min($numEnrollments, $kursusList->count()));
+            
+            foreach ($randomKursus as $kursus) {
+                // Check if enrollment already exists
+                $existingEnrollment = Enrollment::where('user_id', $user->id)
+                    ->where('kursus_id', $kursus->id)
+                    ->first();
                 
-                $this->command->info("✅ Enrollment created: {$zein->name} enrolled in {$blockchainCourse->judul}");
-            } else {
-                $this->command->info("ℹ️ Enrollment already exists for {$zein->name} in {$blockchainCourse->judul}");
-            }
-        } else {
-            if (!$zein) {
-                $this->command->error('❌ User with email zein@student.com not found!');
-            }
-            if (!$blockchainCourse) {
-                $this->command->error('❌ Blockchain Development course not found!');
+                if (!$existingEnrollment) {
+                    $status = $statusOptions[array_rand($statusOptions)];
+                    $progress = $status === 'completed' ? 100 : rand(0, 95);
+                    
+                    Enrollment::create([
+                        'kode' => 'ENR-' . strtoupper(substr(md5(uniqid()), 0, 8)),
+                        'user_id' => $user->id,
+                        'kursus_id' => $kursus->id,
+                        'status' => $status,
+                        'progress' => $progress,
+                        'tanggal_daftar' => Carbon::now()->subDays(rand(1, 90)),
+                        'nilai_akhir' => $status === 'completed' ? rand(70, 100) : null,
+                    ]);
+                    
+                    $enrollmentCount++;
+                }
             }
         }
+
+        $this->command->info("✓ EnrollmentSeeder berhasil! Total: {$enrollmentCount} enrollment");
     }
 }

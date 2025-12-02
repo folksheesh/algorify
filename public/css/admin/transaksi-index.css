@@ -293,6 +293,16 @@
     color: #475569;
 }
 
+.method-badge.method-qris {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.method-badge.method-va {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
 .method-badge svg {
     width: 14px;
     height: 14px;

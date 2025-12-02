@@ -412,7 +412,6 @@
                             <h3 class="chart-title">Metode Transaksi</h3>
                             <select class="chart-dropdown" id="transaksiFilter">
                                 <option value="all">Semua Waktu</option>
-                                <option value="current_month">Hari Ini</option>
                                 <option value="7_hari">7 Hari Terakhir</option>
                                 <option value="bulan_ini">Bulan Ini</option>
                                 <option value="bulan_lalu">Bulan Lalu</option>
@@ -500,14 +499,24 @@
                 const methodNames = {
                     'bank_transfer': 'Transfer Bank',
                     'e_wallet': 'E-Wallet',
-                    'credit_card': 'Kartu Kredit'
+                    'credit_card': 'Kartu Kredit',
+                    'qris': 'Qris',
+                    'virtual_account': 'Virtual Account'
                 };
                 
                 const properLabels = data.labels.map(label => methodNames[label] || label);
                 const total = data.values.reduce((sum, val) => sum + val, 0);
                 const percentages = data.values.map(val => ((val / total) * 100).toFixed(1));
                 
-                const colors = ['#667eea', '#f093fb', '#4facfe'];
+                // Warna: biru, pink, cyan, hijau (Qris), orange (Virtual Account)
+                const colorMap = {
+                    'Transfer Bank': '#667eea',
+                    'E-Wallet': '#f093fb',
+                    'Kartu Kredit': '#4facfe',
+                    'Qris': '#10B981',
+                    'Virtual Account': '#F59E0B'
+                };
+                const colors = properLabels.map(label => colorMap[label] || '#94A3B8');
                 
                 // Destroy existing chart
                 if (transaksiChart) transaksiChart.destroy();

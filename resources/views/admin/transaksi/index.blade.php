@@ -107,6 +107,8 @@
                                 <option value="bank_transfer">Transfer Bank</option>
                                 <option value="e_wallet">E-Wallet</option>
                                 <option value="credit_card">Kartu Kredit</option>
+                                <option value="qris">Qris</option>
+                                <option value="virtual_account">Virtual Account</option>
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
@@ -154,7 +156,7 @@
                                     <td>{{ $item->kursus->judul ?? 'N/A' }}</td>
                                     <td class="amount">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                                     <td>
-                                        <span class="method-badge">
+                                        <span class="method-badge {{ $item->metode_pembayaran == 'qris' ? 'method-qris' : ($item->metode_pembayaran == 'virtual_account' ? 'method-va' : '') }}">
                                             @if($item->metode_pembayaran == 'bank_transfer')
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
@@ -173,6 +175,19 @@
                                                     <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
                                                 </svg>
                                                 Kartu Kredit
+                                            @elseif($item->metode_pembayaran == 'qris')
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1z" clip-rule="evenodd"/>
+                                                    <path d="M11 4a1 1 0 10-2 0v1a1 1 0 002 0V4zM10 7a1 1 0 011 1v1h2a1 1 0 110 2h-3a1 1 0 01-1-1V8a1 1 0 011-1zM16 9a1 1 0 100 2 1 1 0 000-2zM9 13a1 1 0 011-1h1a1 1 0 110 2v2a1 1 0 11-2 0v-3zM16 13a1 1 0 100 2h1a1 1 0 100-2h-1z"/>
+                                                    <path d="M16 16a1 1 0 102 0v-3a1 1 0 10-2 0v3zM13 13a1 1 0 102 0 1 1 0 00-2 0zM13 16a1 1 0 102 0 1 1 0 00-2 0z"/>
+                                                </svg>
+                                                Qris
+                                            @elseif($item->metode_pembayaran == 'virtual_account')
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                                </svg>
+                                                Virtual Account
                                             @else
                                                 <svg viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
