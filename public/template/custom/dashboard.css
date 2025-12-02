@@ -1146,3 +1146,91 @@
     }
 }
 
+/* ============================================
+   16. BACK BUTTON (Tombol Kembali)
+   ============================================ */
+
+/* Tombol kembali default styling */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.back-button:hover {
+    color: #5D3FFF;
+}
+
+.back-button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Back button untuk mobile - posisi fixed di bawah hamburger menu */
+@media (max-width: 992px) {
+    .back-button {
+        position: relative;
+        z-index: 50;
+        background: white;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .back-button {
+        position: fixed;
+        top: 16px;
+        left: 70px;
+        z-index: 90;
+        background: white;
+        padding: 0.625rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    .back-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Tambah padding top pada detail-content untuk memberi ruang back button fixed */
+    .detail-content {
+        padding-top: 70px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-button {
+        top: 14px;
+        left: 65px;
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8rem;
+        max-width: calc(100% - 80px);
+    }
+    
+    .back-button span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .back-button svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+

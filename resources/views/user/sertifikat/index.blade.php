@@ -179,10 +179,52 @@
             }
         }
         
+        /* Back Button Styling */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0;
+        }
+        
+        .back-button:hover {
+            color: #5D3FFF;
+        }
+        
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .hide-mobile { display: inline; }
+        .hide-desktop { display: none; }
+        
         @media (max-width: 768px) {
             .main-content {
                 padding: 80px 16px 24px 16px;
             }
+            
+            .back-button {
+                position: fixed;
+                top: 16px;
+                left: 70px;
+                z-index: 90;
+                background: white;
+                padding: 0.625rem 1rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin: 0;
+            }
+            
+            .hide-mobile { display: none !important; }
+            .hide-desktop { display: inline !important; }
             
             .cert-container {
                 max-width: 100%;
@@ -208,6 +250,18 @@
         @media (max-width: 480px) {
             .main-content {
                 padding: 70px 12px 20px 12px;
+            }
+            
+            .back-button {
+                top: 14px;
+                left: 65px;
+                padding: 0.5rem 0.875rem;
+                font-size: 0.8rem;
+            }
+            
+            .back-button svg {
+                width: 16px;
+                height: 16px;
             }
             
             .cert-card {
@@ -248,6 +302,15 @@
     <div class="dashboard-container">
         @include('components.sidebar')
         <main class="main-content">
+            <!-- Tombol Kembali -->
+            <a href="{{ route('user.pelatihan.saya') }}" class="back-button">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="hide-mobile">Kembali ke Pelatihan Saya</span>
+                <span class="hide-desktop">Kembali</span>
+            </a>
+
             <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #1E293B;">Sertifikat Saya</h1>
             <p style="color: #64748B; margin-bottom: 2rem;">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
 

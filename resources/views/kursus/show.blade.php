@@ -30,6 +30,21 @@
         .back-button:hover {
             color: #5D3FFF;
         }
+        
+        /* Override untuk mobile - posisi tetap agar tidak tertutup hamburger */
+        @media (max-width: 768px) {
+            .back-button {
+                position: fixed !important;
+                top: 16px !important;
+                left: 70px !important;
+                z-index: 90 !important;
+                background: white !important;
+                padding: 0.625rem 1rem !important;
+                border-radius: 10px !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+                margin: 0 !important;
+            }
+        }
 
         .course-detail-card {
             background: white;
@@ -245,7 +260,8 @@
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Kembali ke Daftar Pelatihan
+                        <span class="hide-mobile">Kembali ke Daftar Pelatihan</span>
+                        <span class="hide-desktop">Kembali</span>
                     </a>
 
                     <div class="course-detail-card">
