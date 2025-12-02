@@ -558,4 +558,7 @@
             </div>
         </main>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection

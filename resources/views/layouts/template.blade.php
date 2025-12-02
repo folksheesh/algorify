@@ -28,11 +28,6 @@
             @yield('content')
         </main>
 
-        <!-- Footer -->
-        <footer>
-            @yield('footer')
-        </footer>
-
     <!-- Page/Template JS -->
     @stack('scripts')
     </body>

@@ -369,6 +369,9 @@
             </main>
         </div>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 {{-- Script khusus halaman:

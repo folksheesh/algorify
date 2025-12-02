@@ -21,8 +21,8 @@
     .subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
     .info-note { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-top: 20px; }
     .info-note p { color: #0369a1; font-size: 14px; margin: 0; }
-    .btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
-    .btn-primary:hover { background: #4a2fcc; }
+    .btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px 30px; width: auto; max-width: 300px; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
+    .btn-primary:hover { background: #4a2fcc; color: #fff; }
     .btn-disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
     
     /* Error notification */
@@ -54,23 +54,23 @@
     /* Responsive untuk mobile */
     @media (max-width: 768px) {
         .dashboard-container { flex-direction: column; }
-        .main-content { margin-left: 0; padding: 80px 16px 24px 16px; }
+        .main-content { margin-left: 0; padding: 80px 16px 40px 16px; }
         .payment-grid { grid-template-columns: 1fr; gap: 16px; }
         .page-title { font-size: 20px; margin-bottom: 20px; }
         .card { padding: 20px; border-radius: 10px; }
         .card-title { font-size: 16px; }
         .summary-row { flex-direction: column; gap: 4px; }
-        .btn-primary { padding: 14px; font-size: 15px; }
+        .btn-primary { padding: 12px 24px; font-size: 15px; max-width: 260px; }
     }
     
     @media (max-width: 480px) {
-        .main-content { padding: 70px 12px 20px 12px; }
+        .main-content { padding: 70px 12px 40px 12px; }
         .page-title { font-size: 18px; }
         .card { padding: 16px; }
         .card-title { font-size: 15px; }
         .section-title { font-size: 14px; }
         .subtitle { font-size: 13px; }
-        .btn-primary { padding: 12px; font-size: 14px; }
+        .btn-primary { padding: 10px 20px; font-size: 14px; max-width: 240px; }
     }
     
     /* Back Button Styling */
@@ -259,6 +259,9 @@
         </div>
     </main>
 </div>
+
+{{-- Footer --}}
+@include('components.footer')
 
 <!-- DOKU Payment Popup Modal -->
 <div id="doku-modal" class="doku-modal-container">

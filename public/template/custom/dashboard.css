@@ -324,6 +324,14 @@
     padding: 32px 48px;
     overflow-y: auto;
     margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Wrapper untuk konten utama agar footer sticky di bawah */
+.content-wrapper {
+    flex: 1;
 }
 
 /* Header konten utama */
@@ -942,6 +950,28 @@
         padding: 80px 16px 24px 16px;
         margin-left: 0;
     }
+    
+    /* Main header / Search */
+    .main-header {
+        margin-bottom: 16px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 14px 48px 14px 16px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+    
+    .search-button {
+        right: 8px;
+        width: 36px;
+        height: 36px;
+    }
 
     /* Grid kursus menjadi 1 kolom */
     .courses-grid {
@@ -958,6 +988,37 @@
     .stat-card {
         flex: 1 1 100%;
         min-width: 100%;
+        padding: 1rem;
+    }
+    
+    /* Stats grid untuk Lanjutkan Belajar */
+    .stats-grid {
+        gap: 12px !important;
+    }
+    
+    .stats-grid .stat-card {
+        padding: 1rem !important;
+        border-radius: 10px !important;
+    }
+    
+    .stats-grid .stat-icon {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
+        margin-right: 0.75rem !important;
+    }
+    
+    .stats-grid .stat-icon svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    .stats-grid .stat-content .stat-value {
+        font-size: 0.7rem !important;
+    }
+    
+    .stats-grid .stat-content .stat-label {
+        font-size: 0.9rem !important;
     }
 
     /* Hero banner menjadi vertikal dengan text center */
@@ -965,11 +1026,18 @@
         flex-direction: column;
         text-align: center;
         padding: 24px 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .hero-content {
+        order: 1;
     }
     
     .hero-title {
-        font-size: 22px;
+        font-size: 1.35rem;
         line-height: 1.4;
+        margin-bottom: 8px;
     }
     
     .hero-title br {
@@ -977,7 +1045,8 @@
     }
     
     .hero-description {
-        font-size: 14px;
+        font-size: 0.875rem;
+        line-height: 1.5;
     }
     
     .hero-description br {
@@ -986,48 +1055,93 @@
 
     /* Ilustrasi hero dengan margin top */
     .hero-illustration {
+        order: 2;
         margin-top: 20px;
     }
     
     .illustration-graphic {
-        width: 120px;
-        height: 90px;
-    }
-    
-    /* Search input */
-    .search-input {
-        padding: 12px 44px 12px 16px;
-        font-size: 14px;
+        width: 140px;
+        height: auto;
+        max-height: 100px;
     }
     
     /* Section header */
     .section-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .section-header a {
+        font-size: 0.8rem !important;
+        white-space: nowrap;
     }
     
     .section-title {
-        font-size: 18px;
+        font-size: 1.1rem;
+    }
+    
+    /* Courses section */
+    .courses-section {
+        margin-bottom: 1.5rem !important;
     }
     
     /* Course card adjustments */
+    .course-card {
+        border-radius: 14px;
+    }
+    
+    .course-thumbnail {
+        padding-top: 52%;
+    }
+    
     .course-content {
-        padding: 16px;
+        padding: 14px 16px;
+    }
+    
+    .course-badge {
+        font-size: 0.65rem;
+        padding: 4px 10px;
     }
     
     .course-title {
-        font-size: 15px;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
     }
     
+    .course-author {
+        margin-top: 10px;
+    }
+    
+    .author-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .author-name {
+        font-size: 0.8rem;
+    }
+    
+    .author-role {
+        font-size: 0.7rem;
+    }
+    
+    /* Bookmark button */
+    .bookmark-button {
+        width: 36px;
+        height: 36px;
+        top: 10px;
+        right: 10px;
+    }
+
     /* Payment grid untuk pembayaran */
     .payment-grid {
         grid-template-columns: 1fr !important;
         gap: 20px !important;
     }
-}
-
-/* Mobile Portrait (Small phones) */
+}/* Mobile Portrait (Small phones) */
 @media (max-width: 480px) {
     .mobile-menu-toggle {
         top: 12px;
@@ -1040,48 +1154,151 @@
         padding: 70px 12px 20px 12px;
     }
     
+    /* Search */
+    .search-input {
+        padding: 12px 44px 12px 14px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .search-button {
+        right: 6px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* Hero Banner */
     .hero-banner {
-        padding: 20px 16px;
-        border-radius: 16px;
+        padding: 18px 14px;
+        border-radius: 14px;
+        margin-bottom: 16px;
     }
     
     .hero-title {
-        font-size: 20px;
+        font-size: 1.15rem;
+        line-height: 1.35;
     }
     
     .hero-description {
-        font-size: 13px;
+        font-size: 0.8rem;
+        margin-top: 6px;
     }
     
+    .illustration-graphic {
+        width: 100px;
+        height: auto;
+        max-height: 80px;
+    }
+    
+    .hero-illustration {
+        margin-top: 16px;
+    }
+    
+    /* Section */
     .section-title {
-        font-size: 16px;
+        font-size: 1rem;
     }
     
+    .section-header a {
+        font-size: 0.75rem !important;
+    }
+    
+    .courses-section {
+        margin-bottom: 1.25rem !important;
+    }
+    
+    /* Stats grid - Lanjutkan Belajar */
+    .stats-grid {
+        gap: 10px !important;
+    }
+    
+    .stats-grid .stat-card {
+        padding: 0.875rem !important;
+        border-radius: 10px !important;
+    }
+    
+    .stats-grid .stat-icon {
+        width: 36px !important;
+        height: 36px !important;
+        margin-right: 0.625rem !important;
+    }
+    
+    .stats-grid .stat-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    .stats-grid .stat-content .stat-value {
+        font-size: 0.65rem !important;
+    }
+    
+    .stats-grid .stat-content .stat-label {
+        font-size: 0.85rem !important;
+    }
+    
+    .stats-grid .stat-menu svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Course card */
     .course-card {
         border-radius: 12px;
     }
     
     .course-thumbnail {
-        padding-top: 55%;
+        padding-top: 50%;
     }
     
     .course-content {
-        padding: 14px;
+        padding: 12px 14px;
     }
     
     .course-badge {
-        font-size: 10px;
-        padding: 3px 10px;
+        font-size: 0.6rem;
+        padding: 3px 8px;
+        margin-bottom: 6px;
     }
     
     .course-title {
-        font-size: 14px;
-        margin-bottom: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    
+    .course-author {
+        margin-top: 8px;
+    }
+    
+    .author-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .author-name {
+        font-size: 0.75rem;
+    }
+    
+    .author-role {
+        font-size: 0.65rem;
+    }
+    
+    /* Bookmark button */
+    .bookmark-button {
+        width: 32px;
+        height: 32px;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .bookmark-button svg {
+        width: 16px;
+        height: 16px;
     }
     
     /* Stat cards */
     .stat-card {
-        padding: 14px;
+        padding: 12px;
     }
     
     .stat-icon {
