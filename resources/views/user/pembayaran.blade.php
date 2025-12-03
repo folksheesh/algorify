@@ -11,9 +11,9 @@
     .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
     .card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     .card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
     .summary-label { color: #666; }
-    .summary-value { font-weight: 600; }
+    .summary-value { font-weight: 600; word-break: break-word; }
     .divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
     .total-label { font-weight: bold; }
     .total-value { color: #5D3FFF; font-weight: bold; }
@@ -21,8 +21,8 @@
     .subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
     .info-note { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-top: 20px; }
     .info-note p { color: #0369a1; font-size: 14px; margin: 0; }
-    .btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
-    .btn-primary:hover { background: #4a2fcc; }
+    .btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px 30px; width: auto; max-width: 300px; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
+    .btn-primary:hover { background: #4a2fcc; color: #fff; }
     .btn-disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
     
     /* Error notification */
@@ -45,10 +45,90 @@
     .instructions ul { list-style: none; padding-left: 15px; }
     .instructions li { color: #666; font-size: 14px; margin-bottom: 8px; }
     
+    /* Responsive untuk tablet */
+    @media (max-width: 992px) {
+        .main-content { margin-left: 0; padding: 80px 24px 24px 24px; }
+        .payment-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+    
+    /* Responsive untuk mobile */
     @media (max-width: 768px) {
         .dashboard-container { flex-direction: column; }
-        .main-content { margin-left: 0; }
-        .payment-grid { grid-template-columns: 1fr; }
+        .main-content { margin-left: 0; padding: 80px 16px 40px 16px; }
+        .payment-grid { grid-template-columns: 1fr; gap: 16px; }
+        .page-title { font-size: 20px; margin-bottom: 20px; }
+        .card { padding: 20px; border-radius: 10px; }
+        .card-title { font-size: 16px; }
+        .summary-row { flex-direction: column; gap: 4px; }
+        .btn-primary { padding: 12px 24px; font-size: 15px; max-width: 260px; }
+    }
+    
+    @media (max-width: 480px) {
+        .main-content { padding: 70px 12px 40px 12px; }
+        .page-title { font-size: 18px; }
+        .card { padding: 16px; }
+        .card-title { font-size: 15px; }
+        .section-title { font-size: 14px; }
+        .subtitle { font-size: 13px; }
+        .btn-primary { padding: 10px 20px; font-size: 14px; max-width: 240px; }
+    }
+    
+    /* Back Button Styling */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        transition: color 0.2s;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.5rem 0;
+    }
+    
+    .back-button:hover {
+        color: #5D3FFF;
+    }
+    
+    .back-button svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+    
+    .hide-mobile { display: inline; }
+    .hide-desktop { display: none; }
+    
+    @media (max-width: 768px) {
+        .back-button {
+            position: fixed;
+            top: 16px;
+            left: 70px;
+            z-index: 90;
+            background: white;
+            padding: 0.625rem 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 0;
+        }
+        
+        .hide-mobile { display: none !important; }
+        .hide-desktop { display: inline !important; }
+    }
+    
+    @media (max-width: 480px) {
+        .back-button {
+            top: 14px;
+            left: 65px;
+            padding: 0.5rem 0.875rem;
+            font-size: 0.8rem;
+        }
+        
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+        }
     }
 </style>
 
@@ -57,6 +137,15 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Tombol Kembali -->
+        <a href="{{ route('kursus.show', $kursus->id) }}" class="back-button">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="hide-mobile">Kembali ke Detail Kursus</span>
+            <span class="hide-desktop">Kembali</span>
+        </a>
+
         <h1 class="page-title">Pembayaran</h1>
 
         @if(isset($transactionMessage) && $transactionMessage)
@@ -171,24 +260,27 @@
     </main>
 </div>
 
+{{-- Footer --}}
+@include('components.footer')
+
 <!-- DOKU Payment Popup Modal -->
-<div id="doku-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(93, 63, 255, 0.15), rgba(16, 185, 129, 0.15)); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); width: 92%; max-width: 1100px; height: 88vh; max-height: 850px; position: relative; margin: auto; overflow: hidden; border: 2px solid rgba(93, 63, 255, 0.1);">
+<div id="doku-modal" class="doku-modal-container">
+    <div class="doku-modal-content">
         <!-- Header Bar -->
-        <div style="background: linear-gradient(135deg, #5D3FFF, #7C3AED); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="doku-modal-header">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 32px; height: 32px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <div class="doku-header-icon">
                     <svg style="width: 18px; height: 18px; color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                         <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 style="margin: 0; color: white; font-size: 16px; font-weight: 600;">DOKU Payment Gateway</h3>
-                    <p style="margin: 0; color: rgba(255, 255, 255, 0.8); font-size: 12px;">Secure Payment · SSL Encrypted</p>
+                    <h3 class="doku-header-title">DOKU Payment Gateway</h3>
+                    <p class="doku-header-subtitle">Secure Payment · SSL Encrypted</p>
                 </div>
             </div>
-            <button id="close-modal" style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.25)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.15)'">
+            <button id="close-modal" class="doku-close-btn">
                 <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -196,35 +288,253 @@
         </div>
         
         <!-- Loading State -->
-        <div id="loading-state" style="display: flex; align-items: center; justify-content: center; height: calc(100% - 66px); background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+        <div id="loading-state" class="doku-loading-state">
             <div style="text-align: center;">
-                <div style="position: relative; width: 80px; height: 80px; margin: 0 auto 24px;">
-                    <div style="position: absolute; width: 100%; height: 100%; border: 4px solid #e5e7eb; border-radius: 50%;"></div>
-                    <div style="position: absolute; width: 100%; height: 100%; border: 4px solid transparent; border-top-color: #5D3FFF; border-right-color: #5D3FFF; border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;"></div>
+                <div class="doku-spinner">
+                    <div class="spinner-track"></div>
+                    <div class="spinner-fill"></div>
                 </div>
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 18px; font-weight: 600;">Memuat Halaman Pembayaran</h4>
-                <p style="margin: 0; color: #6b7280; font-size: 14px;">Mohon tunggu sebentar...</p>
-                <div style="display: flex; gap: 6px; justify-content: center; margin-top: 16px;">
-                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out infinite;"></div>
-                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out 0.2s infinite;"></div>
-                    <div style="width: 8px; height: 8px; background: #5D3FFF; border-radius: 50%; animation: pulse 1.5s ease-in-out 0.4s infinite;"></div>
+                <h4 class="loading-title">Memuat Halaman Pembayaran</h4>
+                <p class="loading-subtitle">Mohon tunggu sebentar...</p>
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
                 </div>
             </div>
         </div>
         
         <!-- Iframe -->
-        <iframe id="doku-iframe" style="width: 100%; height: calc(100% - 66px); border: none; display: none; background: white;"></iframe>
+        <iframe id="doku-iframe" class="doku-iframe"></iframe>
     </div>
 </div>
 
 <style>
+/* DOKU Modal Styles */
+.doku-modal-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(93, 63, 255, 0.15), rgba(16, 185, 129, 0.15));
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.doku-modal-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    width: 92%;
+    max-width: 1100px;
+    height: 88vh;
+    max-height: 850px;
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+    border: 2px solid rgba(93, 63, 255, 0.1);
+}
+
+.doku-modal-header {
+    background: linear-gradient(135deg, #5D3FFF, #7C3AED);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.doku-header-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.doku-header-title {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.doku-header-subtitle {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+.doku-close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.doku-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.doku-loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 66px);
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.doku-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+}
+
+.spinner-track {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid #e5e7eb;
+    border-radius: 50%;
+}
+
+.spinner-fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid transparent;
+    border-top-color: #5D3FFF;
+    border-right-color: #5D3FFF;
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+.loading-title {
+    margin: 0 0 8px 0;
+    color: #1f2937;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.loading-subtitle {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.loading-dots .dot {
+    width: 8px;
+    height: 8px;
+    background: #5D3FFF;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+
+.doku-iframe {
+    width: 100%;
+    height: calc(100% - 66px);
+    border: none;
+    display: none;
+    background: white;
+}
+
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
 @keyframes pulse {
     0%, 100% { opacity: 0.3; transform: scale(0.8); }
     50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Mobile Fullscreen */
+@media (max-width: 768px) {
+    .doku-modal-container {
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: none;
+    }
+    
+    .doku-modal-content {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .doku-modal-header {
+        padding: 12px 16px;
+    }
+    
+    .doku-header-title {
+        font-size: 14px;
+    }
+    
+    .doku-header-subtitle {
+        font-size: 11px;
+    }
+    
+    .doku-header-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .doku-header-icon svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .doku-close-btn {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .doku-loading-state {
+        height: calc(100% - 54px);
+    }
+    
+    .doku-iframe {
+        height: calc(100% - 54px);
+    }
+    
+    .doku-spinner {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+    }
+    
+    .loading-title {
+        font-size: 16px;
+    }
+    
+    .loading-subtitle {
+        font-size: 13px;
+    }
 }
 </style>
 

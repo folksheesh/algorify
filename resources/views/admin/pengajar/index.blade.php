@@ -96,6 +96,16 @@ Features: CRUD, Search, Filter, Export
                     
                     {{-- Pagination --}}
                     <div id="paginationContainer" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;"></div>
+                    
+                    <!-- Hint klik row -->
+                    <div class="table-hint" style="margin-top: 0.75rem; text-align: center;">
+                        <span style="font-size: 0.75rem; color: #94A3B8;">
+                            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Klik baris untuk melihat detail pengajar
+                        </span>
+                    </div>
                 </div>
             </div>
         </main>
@@ -472,7 +482,7 @@ Features: CRUD, Search, Filter, Export
             // Initialize Select2
             alamatSelect.select2({
                 placeholder: 'Pilih kabupaten/kota',
-                allowClear: true,
+                allowClear: false,
                 dropdownParent: $('#formModal'),
                 matcher: function(params, data) {
                     if ($.trim(params.term) === '') {
@@ -513,6 +523,9 @@ Features: CRUD, Search, Filter, Export
         let deleteId = null;    // ID pengajar yang akan dihapus
         let currentPage = 1;  // Halaman saat ini
         let totalPages = 1;   // Total halaman pagination
+        let searchTimeout = null; // Timeout untuk debounce search
+        let currentSearch = '';   // Kata kunci search saat ini
+        let currentStatusFilter = ''; // Filter status saat ini
 
         // ========================================
         // NOTIFICATION FUNCTIONS
@@ -623,11 +636,18 @@ Features: CRUD, Search, Filter, Export
         });
 
         /**
-         * Fetch data pengajar dari API
+         * Fetch data pengajar dari API dengan server-side search
          */
         function loadPengajarData(page = 1) {
             currentPage = page;
-            fetch(`${apiRoutes.getData}?page=${page}`)
+            
+            // Build query string dengan search dan filter
+            const params = new URLSearchParams();
+            params.append('page', page);
+            if (currentSearch) params.append('search', currentSearch);
+            if (currentStatusFilter) params.append('status', currentStatusFilter);
+            
+            fetch(`${apiRoutes.getData}?${params.toString()}`)
                 .then(response => {
                     return response.json();
                 })
@@ -676,7 +696,7 @@ Features: CRUD, Search, Filter, Export
                 const statusClass = status === 'active' ? 'aktif' : 'nonaktif';
 
                 return `
-            <tr onclick="showDetail(${item.id})">
+            <tr onclick="showDetail('${item.id}')">
                 <td>${item.id}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
@@ -688,12 +708,12 @@ Features: CRUD, Search, Filter, Export
                 <td>${totalSiswa}</td>
                 <td onclick="event.stopPropagation()">
                     <div class="action-buttons">
-                        <button class="btn-action btn-edit" onclick="openEditModal(${item.id})" title="Edit">
+                        <button class="btn-action btn-edit" onclick="openEditModal('${item.id}')" title="Edit">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
                         </button>
-                        <button class="btn-action btn-delete" onclick="openDeleteModal(${item.id})" title="Hapus">
+                        <button class="btn-action btn-delete" onclick="openDeleteModal('${item.id}')" title="Hapus">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
@@ -761,44 +781,24 @@ Features: CRUD, Search, Filter, Export
         // ========================================
 
         /**
-         * Event listener untuk search input
+         * Event listener untuk search input - dengan debounce dan server-side search
          */
         document.getElementById('searchInput').addEventListener('input', function (e) {
-            filterData();
+            // Debounce: tunggu 300ms setelah user berhenti mengetik
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value;
+                loadPengajarData(1); // Reset ke halaman 1 saat search
+            }, 300);
         });
 
         /**
-         * Event listener untuk status filter dropdown
+         * Event listener untuk status filter dropdown - server-side
          */
         document.getElementById('statusFilter').addEventListener('change', function (e) {
-            filterData();
+            currentStatusFilter = e.target.value;
+            loadPengajarData(1); // Reset ke halaman 1 saat filter
         });
-
-        /**
-         * Filter data berdasarkan search term dan status
-         */
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            const filtered = pengajarData.filter(item => {
-                // Search di nama, email, dan nama kursus
-                const nameMatch = item.name.toLowerCase().includes(searchTerm);
-                const emailMatch = item.email.toLowerCase().includes(searchTerm);
-
-                // Search di nama kursus
-                let kursusMatch = false;
-                if (item.kursus && item.kursus.length > 0) {
-                    kursusMatch = item.kursus.some(k => k.judul.toLowerCase().includes(searchTerm));
-                }
-
-                const matchSearch = nameMatch || emailMatch || kursusMatch;
-                const matchStatus = !statusFilter || (item.status || 'active') === statusFilter;
-                return matchSearch && matchStatus;
-            });
-
-            renderTable(filtered);
-        }
 
         // ========================================
         // MODAL FUNCTIONS - DETAIL
@@ -806,10 +806,10 @@ Features: CRUD, Search, Filter, Export
 
         /**
          * Menampilkan modal detail pengajar (readonly)
-         * @param {number} id - ID pengajar yang akan ditampilkan
+         * @param {string} id - ID pengajar yang akan ditampilkan
          */
         function showDetail(id) {
-            const pengajar = pengajarData.find(p => p.id === id);
+            const pengajar = pengajarData.find(p => String(p.id) === String(id));
             if (!pengajar) return;
 
             const kursusNames = pengajar.kursus && pengajar.kursus.length > 0
@@ -895,10 +895,10 @@ Features: CRUD, Search, Filter, Export
 
         /**
          * Membuka modal untuk edit data pengajar
-         * @param {number} id - ID pengajar yang akan diedit
+         * @param {string} id - ID pengajar yang akan diedit
          */
         function openEditModal(id) {
-            const pengajar = pengajarData.find(p => p.id === id);
+            const pengajar = pengajarData.find(p => String(p.id) === String(id));
             if (!pengajar) return;
 
             // Set judul modal

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('nominal_pembayaran', 10, 2);
             $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
             $table->string('bukti_pembayaran')->nullable(); // Path file bukti pembayaran
-            $table->enum('metode_pembayaran', ['bank_transfer', 'e_wallet', 'credit_card', 'cash'])->nullable();
+            $table->enum('metode_pembayaran', ['bank_transfer', 'e_wallet', 'credit_card', 'qris', 'virtual_account'])->nullable();
             $table->timestamp('tanggal_verifikasi')->nullable();
             $table->timestamps();
         });

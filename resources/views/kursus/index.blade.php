@@ -349,6 +349,14 @@
             margin-top: 1rem;
         }
 
+        /* Responsive untuk tablet */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+
         @media (max-width: 768px) {
             .courses-grid {
                 grid-template-columns: 1fr;
@@ -365,6 +373,41 @@
             .filter-badge {
                 padding: 0.4rem 1rem;
                 font-size: 0.8125rem;
+            }
+            
+            .pelatihan-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .search-filter-section {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .pelatihan-content {
+                padding: 0.75rem;
+            }
+            
+            .pelatihan-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .search-filter-section {
+                padding: 0.875rem;
+                border-radius: 10px;
+            }
+            
+            .search-box input {
+                padding: 0.75rem 1rem 0.75rem 2.5rem;
+            }
+            
+            .course-content {
+                padding: 0.875rem;
+            }
+            
+            .course-title {
+                font-size: 0.875rem;
             }
         }
     </style>
@@ -461,6 +504,9 @@
             </main>
         </div>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')

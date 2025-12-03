@@ -44,7 +44,7 @@
         <div class="content-card">
             <div class="card-header">
                 <h2 class="card-title">Modul Kursus</h2>
-                @hasanyrole('admin|pengajar')
+                @hasanyrole('admin|super admin|pengajar')
                 <div style="display: flex; gap: 0.75rem;">
                     <a href="{{ route('admin.pelatihan.peserta', $kursus->id) }}" class="add-btn" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); text-decoration: none;">
                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
@@ -72,7 +72,7 @@
                             <div class="week-item" id="week-{{ $modul->id }}" data-id="{{ $modul->id }}">
                                 <div class="week-header" onclick="toggleWeek({{ $modul->id }})">
                                     <div class="week-title-section">
-                                        @hasanyrole('admin|pengajar')
+                                        @hasanyrole('admin|super admin|pengajar')
                                         <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan">
                                             <svg class="drag-handle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; color: #667eea; margin-right: 0.5rem;">
                                                 <line x1="4" y1="6" x2="20" y2="6"/>
@@ -89,7 +89,7 @@
                                             <div class="week-subtitle">Materi pembelajaran dan konten kursus</div>
                                         </div>
                                     </div>
-                                    @hasanyrole('admin|pengajar')
+                                    @hasanyrole('admin|super admin|pengajar')
                                     <div class="week-actions" onclick="event.stopPropagation()">
                                         <button class="action-btn edit-btn" onclick="event.stopPropagation(); editWeek({{ $modul->id }})" title="Edit">
                                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
@@ -111,7 +111,7 @@
                                     
                                     <div class="sections-header">
                                         <h3 class="sections-title">Section Pembelajaran</h3>
-                                        @hasanyrole('admin|pengajar')
+                                        @hasanyrole('admin|super admin|pengajar')
                                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                             <button class="add-section-btn" onclick="openVideoModal({{ $modul->id }})" style="background: #EEF2FF; color: #667eea; padding: 0.5rem 1rem; font-size: 0.75rem;">
                                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;">
@@ -224,7 +224,7 @@
                                                             </div>
                                                         </div>
                                                     </a>
-                                                    @hasanyrole('admin|pengajar')
+                                                    @hasanyrole('admin|super admin|pengajar')
                                                     <div style="display: flex; gap: 0.5rem;">
                                                         <button onclick="event.stopPropagation(); 
                                                             @if($item['type'] === 'video')
@@ -1235,7 +1235,7 @@
         // ===================================
         // DRAG AND DROP FUNCTIONALITY
         // ===================================
-        @hasanyrole('admin|pengajar')
+        @hasanyrole('admin|super admin|pengajar')
         // Initialize Sortable for module list
         const weeksList = document.querySelector('.weeks-list');
         if (weeksList) {

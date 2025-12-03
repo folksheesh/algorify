@@ -153,6 +153,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta', [\App\Http\Controllers\Admin\PesertaController::class, 'index'])->name('peserta.index');
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
         Route::get('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'show'])->name('peserta.show');
+        Route::put('/peserta/{id}/status', [\App\Http\Controllers\Admin\PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
         
         // Data Pengajar
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');
@@ -242,6 +243,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/kategori/{id}', [\App\Http\Controllers\Admin\KategoriController::class, 'destroy'])->name('kategori.destroy');
         
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
+        Route::get('/transaksi/data', [\App\Http\Controllers\Admin\TransaksiController::class, 'getData'])->name('transaksi.data');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
         Route::get('/sertifikat', [\App\Http\Controllers\Admin\SertifikatController::class, 'index'])->name('sertifikat.index');
         Route::post('/sertifikat/upload-signature', [\App\Http\Controllers\Admin\SertifikatController::class, 'uploadSignature'])->name('sertifikat.upload-signature');
@@ -252,6 +254,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/pelatihan-saya', [\App\Http\Controllers\User\PelatihanSayaController::class, 'index'])->name('pelatihan-saya.index');
         Route::get('/sertifikat', [\App\Http\Controllers\User\SertifikatSayaController::class, 'index'])->name('sertifikat.index');
+        Route::get('/sertifikat/{id}/download', [\App\Http\Controllers\User\SertifikatSayaController::class, 'download'])->name('sertifikat.download');
+        Route::get('/sertifikat/{id}/preview', [\App\Http\Controllers\User\SertifikatSayaController::class, 'preview'])->name('sertifikat.preview');
+        Route::post('/sertifikat/{enrollmentId}/generate', [\App\Http\Controllers\User\SertifikatSayaController::class, 'generate'])->name('sertifikat.generate');
         
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');

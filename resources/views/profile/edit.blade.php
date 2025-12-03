@@ -230,6 +230,14 @@
             border: 1px solid #fca5a5;
         }
 
+        /* Responsive untuk tablet */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -237,6 +245,63 @@
             
             .profile-content {
                 padding: 1rem;
+            }
+            
+            .profile-header {
+                padding: 1.5rem;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-form-container {
+                padding: 1.5rem;
+            }
+            
+            .profile-photo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-content {
+                padding: 0.75rem;
+            }
+            
+            .profile-header {
+                padding: 1.25rem;
+                border-radius: 10px 10px 0 0;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .profile-form-container {
+                padding: 1rem;
+                border-radius: 0 0 10px 10px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 0.625rem;
             }
         }
     </style>
@@ -316,7 +381,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="profesi">Pekerjaan</label>
+                                    <label for="profesi">Profesi</label>
                                     <input type="text" id="profesi" name="profesi" value="{{ old('profesi', $user->profesi) }}" placeholder="Software Developer">
                                 </div>
 
@@ -356,6 +421,9 @@
             </main>
         </div>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')

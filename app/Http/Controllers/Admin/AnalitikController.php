@@ -150,23 +150,37 @@ class AnalitikController extends Controller
             // Data Nilai Peserta dengan pagination dan search
             $studentsQuery = \App\Models\Enrollment::with(['user', 'kursus']);
             
-            // Apply search filter
+            // Apply search filter - case insensitive, partial match
             if ($search) {
-                $studentsQuery->where(function($query) use ($search) {
-                    $query->whereHas('user', function($q) use ($search) {
-                        $q->where('name', 'ILIKE', '%' . $search . '%')
-                          ->orWhere('email', 'ILIKE', '%' . $search . '%');
+                $searchLower = strtolower(trim($search));
+                $studentsQuery->where(function($query) use ($searchLower) {
+                    $query->whereHas('user', function($q) use ($searchLower) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . $searchLower . '%'])
+                          ->orWhereRaw('LOWER(email) LIKE ?', ['%' . $searchLower . '%'])
+                          ->orWhereRaw('LOWER(id) LIKE ?', ['%' . $searchLower . '%']);
                     })
-                    ->orWhereHas('kursus', function($q) use ($search) {
-                        $q->where('judul', 'ILIKE', '%' . $search . '%'); // Field nama kursus adalah 'judul'
+                    ->orWhereHas('kursus', function($q) use ($searchLower) {
+                        $q->whereRaw('LOWER(judul) LIKE ?', ['%' . $searchLower . '%']);
                     })
-                    ->orWhere('tanggal_daftar', 'LIKE', '%' . $search . '%');
+                    ->orWhereRaw('LOWER(CAST(tanggal_daftar AS CHAR)) LIKE ?', ['%' . $searchLower . '%']);
                 });
             }
             
-            // Apply status filter
+            // Apply status filter - handle both Indonesian and English status
             if ($statusFilter) {
-                $studentsQuery->where('status', $statusFilter);
+                // Map Indonesian to English status if needed
+                $statusMap = [
+                    'selesai' => ['selesai', 'completed'],
+                    'berlangsung' => ['berlangsung', 'active'],
+                    'dropped' => ['dropped'],
+                    'expired' => ['expired']
+                ];
+                
+                if (isset($statusMap[$statusFilter])) {
+                    $studentsQuery->whereIn('status', $statusMap[$statusFilter]);
+                } else {
+                    $studentsQuery->where('status', $statusFilter);
+                }
             }
             
             // Pagination dengan 10 items per page
