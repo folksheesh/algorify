@@ -36,6 +36,7 @@
         position: relative;
         width: 100%;
         box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
     .footer-bottom {

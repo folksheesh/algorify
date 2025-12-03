@@ -271,6 +271,10 @@ Route::middleware('auth')->group(function () {
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
+        
+        // Progress routes
+        Route::post('/progress/reading', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');
+        Route::post('/progress/video', [\App\Http\Controllers\User\ProgressController::class, 'updateVideoProgress'])->name('progress.video');
     });
 });
 

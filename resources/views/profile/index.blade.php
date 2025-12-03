@@ -2,7 +2,7 @@
 @extends('layouts.template')
 
 {{-- Judul halaman --}}
-@section('title', 'Algorify - Edit Profil Peserta')
+@section('title', 'Algorify - Edit Profil ' . (str_starts_with(auth()->user()->id, 'PJR') ? 'Pengajar' : 'Peserta'))
 
 {{-- Tambahkan stylesheet dan style khusus halaman --}}
 @push('styles')
@@ -15,9 +15,9 @@
         }
 
         .profile-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
         }
 
         .profile-header {
@@ -233,13 +233,96 @@
             border: 1px solid #fca5a5;
         }
 
+        /* Responsive untuk tablet dan desktop kecil */
+        @media (max-width: 1200px) {
+            .profile-content {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+                padding-top: 80px !important;
+            }
+            
+            .profile-content {
+                max-width: 100%;
+            }
+        }
+
         @media (max-width: 768px) {
+            .main-content {
+                padding: 12px !important;
+                padding-top: 70px !important;
+            }
+            
             .form-grid {
                 grid-template-columns: 1fr;
             }
             
-            .profile-content {
+            .profile-header {
+                padding: 1.5rem;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-form-container {
+                padding: 1.5rem;
+            }
+            
+            .profile-photo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 10px !important;
+                padding-top: 65px !important;
+            }
+            
+            .profile-header {
+                padding: 1.25rem;
+                border-radius: 10px 10px 0 0;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .profile-form-container {
                 padding: 1rem;
+                border-radius: 0 0 10px 10px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 0.625rem;
+                font-size: 0.9rem;
+            }
+            
+            .form-group label {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -256,7 +339,7 @@
                 <div class="profile-content">
                     {{-- Header halaman --}}
                     <div class="profile-header">
-                        <h1>Edit Profil Peserta</h1>
+                        <h1>Edit Profil {{ str_starts_with(auth()->user()->id, 'PJR') ? 'Pengajar' : 'Peserta' }}</h1>
                         <p>Perbarui informasi profil Anda</p>
                     </div>
                     
