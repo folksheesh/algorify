@@ -72,10 +72,10 @@
                     </div>
                 </div>
 
-                <!-- Grafik Pendapatan -->
+                <!-- Tren Transaksi -->
                 <div class="chart-container" id="revenue-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3>Grafik Pendapatan</h3>
+                        <h3>Tren Transaksi</h3>
                         <form method="GET" action="{{ route('admin.analitik.index') }}#revenue-section" style="display: inline-block;">
                             <input type="hidden" name="sort" value="{{ $sortBy }}">
                             <input type="hidden" name="search" value="{{ $search }}">
