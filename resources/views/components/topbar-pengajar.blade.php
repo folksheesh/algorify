@@ -45,12 +45,6 @@
                     </svg>
                     <span>Profil Saya</span>
                 </a>
-                <a href="{{ route('dashboard') }}" class="dropdown-item">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 8L8 3L13 8V13C13 13.5523 12.5523 14 12 14H4C3.44772 14 3 13.5523 3 13V8Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    </svg>
-                    <span>Halaman Peserta</span>
-                </a>
                 <div class="dropdown-divider"></div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -144,7 +138,7 @@
     /* Center Section - Search (centered) */
     .topbar-pengajar .topbar-center {
         flex: 1;
-        max-width: 520px;
+        max-width: 600px;
         margin: 0 auto;
         display: flex;
         justify-content: center;
@@ -154,18 +148,20 @@
         position: relative;
         display: flex;
         align-items: center;
+        width: 100%;
     }
     
     .topbar-pengajar .topbar-search .search-icon {
         position: absolute;
-        left: 16px;
+        left: 18px;
         color: #94A3B8;
         pointer-events: none;
     }
     
     .topbar-pengajar .topbar-search-input {
         width: 100%;
-        padding: 12px 18px 12px 46px;
+        min-width: 400px;
+        padding: 14px 20px 14px 50px;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         font-size: 0.9375rem;

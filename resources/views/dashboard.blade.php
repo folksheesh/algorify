@@ -120,48 +120,78 @@
             </section>
             
             <section class="courses-section" style="margin-bottom: 2rem;">
-                <header class="section-header">
-                    <h2 class="section-title">Lanjutkan Belajar</h2>
-                    <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem;">
-                        Lihat Semua →
-                    </a>
+                <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h2 class="section-title" style="margin: 0;">Lanjutkan Belajar</h2>
+                        <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                            Lihat Semua 
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
                 </header>
-                <div class="stats-grid" style="display: flex; flex-direction: column; gap: 1rem;">
-                    @forelse($enrollments as $enrollment)
-                    <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="stat-card" style="text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; padding: 1rem 1.5rem; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
-                        <div class="stat-icon" style="background: #EEF2FF; color: #6366F1; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
-                                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
-                            </svg>
+                <div class="courses-grid">
+                    @forelse($enrollments->take(3) as $enrollment)
+                    <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="continue-card" style="text-decoration: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; padding: 1.5rem; background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                            <div style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: #fff; width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
+                                    <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
+                                </svg>
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <h3 style="font-size: 1rem; color: #1E293B; margin: 0; font-weight: 600; line-height: 1.4;">{{ Str::limit($enrollment->kursus->judul ?? 'Kursus', 40) }}</h3>
+                                <p style="font-size: 0.8125rem; color: #64748B; margin: 0.25rem 0 0 0;">{{ $enrollment->kursus->kategori ?? 'Pelatihan' }}</p>
+                            </div>
                         </div>
-                        <div class="stat-content" style="flex: 1;">
-                            <p class="stat-value" style="font-size: 0.75rem; color: #6366F1; margin: 0; font-weight: 600;">{{ $enrollment->progress ?? 0 }}% Selesai</p>
-                            <h3 class="stat-label" style="font-size: 1rem; color: #1E293B; margin: 0.25rem 0 0 0; font-weight: 600;">{{ Str::limit($enrollment->kursus->judul ?? 'Kursus', 50) }}</h3>
-                        </div>
-                        <div class="stat-menu" style="color: #94A3B8;">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
+                        <div style="margin-top: auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.8125rem; color: #64748B;">Progress</span>
+                                <span style="font-size: 0.875rem; color: #6366F1; font-weight: 600;">{{ $enrollment->progress ?? 0 }}%</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                                <div style="width: {{ $enrollment->progress ?? 0 }}%; height: 100%; background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%); border-radius: 4px; transition: width 0.5s ease;"></div>
+                            </div>
                         </div>
                     </a>
                     @empty
-                    <div style="background: #fff; border-radius: 12px; padding: 2rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
-                        <p style="font-size: 0.875rem; color: #64748B; margin: 0 0 0.5rem 0;">Belum ada pelatihan yang diikuti</p>
-                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600;">
+                    <div style="grid-column: 1 / -1; background: #fff; border-radius: 16px; padding: 3rem; text-align: center; border: 1px solid #E2E8F0;">
+                        <div style="width: 64px; height: 64px; background: #EEF2FF; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <p style="font-size: 0.9375rem; color: #64748B; margin: 0 0 0.75rem 0;">Belum ada pelatihan yang diikuti</p>
+                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem;">
                             Jelajahi Pelatihan →
                         </a>
                     </div>
                     @endforelse
                 </div>
             </section>
+            
+            <style>
+                .continue-card:hover { 
+                    transform: translateY(-4px); 
+                    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15); 
+                    border-color: #6366F1;
+                }
+            </style>
 
             <section class="courses-section">
-                <header class="section-header">
-                    <h2 class="section-title">Rekomendasi Pelatihan</h2>
-                    <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem;">
-                        Lihat Semua →
-                    </a>
+                <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h2 class="section-title" style="margin: 0;">Rekomendasi Pelatihan</h2>
+                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                            Lihat Semua 
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
                 </header>
                 <div class="courses-grid">
                     @forelse($recommendedCourses as $kursus)
