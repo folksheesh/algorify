@@ -1,4 +1,4 @@
-{{-- Topbar untuk Pengajar --}}
+{{-- Topbar untuk Pengajar - Mirip dengan Peserta --}}
 <nav class="topbar-pengajar">
     <div class="topbar-left">
         <button class="hamburger-btn" onclick="toggleSidebar()">
@@ -9,7 +9,6 @@
         <a href="{{ route('dashboard') }}" class="topbar-brand">
             <img src="{{ asset('template/img/icon-logo.png') }}" alt="Algorify Logo" class="topbar-logo">
             <span class="topbar-logo-text">Algorify</span>
-            <span class="topbar-badge">Pengajar</span>
         </a>
     </div>
     
@@ -33,20 +32,12 @@
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
                 @endif
-                <div class="topbar-user-info">
-                    <span class="topbar-username">{{ Auth::user()->name }}</span>
-                    <span class="topbar-role">Pengajar</span>
-                </div>
+                <span class="topbar-username">{{ Auth::user()->name }}</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             <div class="topbar-dropdown" id="userDropdown">
-                <div class="dropdown-header">
-                    <span class="dropdown-header-name">{{ Auth::user()->name }}</span>
-                    <span class="dropdown-header-email">{{ Auth::user()->email }}</span>
-                </div>
-                <div class="dropdown-divider"></div>
                 <a href="{{ route('profile.edit') }}" class="dropdown-item">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -77,47 +68,56 @@
 
 <style>
     /* ============================================
-       TOPBAR PENGAJAR - Navbar untuk Pengajar
+       TOPBAR PENGAJAR - Navbar untuk Pengajar (Mirip Peserta)
        ============================================ */
     .topbar-pengajar {
         position: fixed;
         top: 0;
-        left: 0;
+        left: 280px; /* Start after sidebar */
         right: 0;
-        height: 64px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 72px;
+        background: #FFFFFF;
+        border-bottom: 1px solid #E2E8F0;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 0 1.5rem;
+        justify-content: center;
+        padding: 0 1rem 0 1rem;
         z-index: 1000;
-        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    /* Left Section */
+    /* Adjust topbar when sidebar is collapsed */
+    .sidebar.collapsed ~ .topbar-pengajar,
+    body:has(.sidebar.collapsed) .topbar-pengajar {
+        left: 72px;
+    }
+    
+    /* Left Section - Hidden since logo is in sidebar */
     .topbar-pengajar .topbar-left {
-        display: flex;
+        display: none;
         align-items: center;
         gap: 1rem;
     }
     
     .topbar-pengajar .hamburger-btn {
         display: none;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border: none;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
+        background: transparent;
+        color: #64748B;
         cursor: pointer;
         border-radius: 8px;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .topbar-pengajar .hamburger-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: #F1F5F9;
+        color: #1E293B;
     }
     
     .topbar-pengajar .topbar-brand {
@@ -128,38 +128,26 @@
     }
     
     .topbar-pengajar .topbar-logo {
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
         object-fit: contain;
-        filter: brightness(0) invert(1);
     }
     
     .topbar-pengajar .topbar-logo-text {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: white;
+        color: #5D3FFF;
         letter-spacing: -0.5px;
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
-    .topbar-pengajar .topbar-badge {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    /* Right Section */
-    
-    /* Center Section - Search */
+    /* Center Section - Search (centered) */
     .topbar-pengajar .topbar-center {
         flex: 1;
-        max-width: 400px;
-        margin: 0 2rem;
+        max-width: 520px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
     }
     
     .topbar-pengajar .topbar-search {
@@ -170,72 +158,42 @@
     
     .topbar-pengajar .topbar-search .search-icon {
         position: absolute;
-        left: 14px;
-        color: rgba(255, 255, 255, 0.6);
+        left: 16px;
+        color: #94A3B8;
         pointer-events: none;
     }
     
     .topbar-pengajar .topbar-search-input {
         width: 100%;
-        padding: 10px 16px 10px 42px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        font-size: 0.875rem;
+        padding: 12px 18px 12px 46px;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        font-size: 0.9375rem;
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: white;
-        background: rgba(255, 255, 255, 0.1);
-        transition: all 0.2s;
+        color: #1E293B;
+        background: #F8FAFC;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .topbar-pengajar .topbar-search-input::placeholder {
-        color: rgba(255, 255, 255, 0.6);
+        color: #94A3B8;
     }
     
     .topbar-pengajar .topbar-search-input:focus {
         outline: none;
-        border-color: rgba(255, 255, 255, 0.4);
-        background: rgba(255, 255, 255, 0.15);
+        border-color: #5D3FFF;
+        background: #FFFFFF;
+        box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
+        transform: scale(1.02);
     }
     
-    /* Right Section Content */
+    /* Right Section Content - Profile aligned with hero banner edge */
     .topbar-pengajar .topbar-right {
         display: flex;
         align-items: center;
         gap: 1.5rem;
-    }
-    
-    /* Navigation Links */
-    .topbar-pengajar .topbar-nav {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
-    .topbar-pengajar .topbar-nav-link {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.875rem;
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.2s;
-    }
-    
-    .topbar-pengajar .topbar-nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-    
-    .topbar-pengajar .topbar-nav-link.active {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-    }
-    
-    .topbar-pengajar .topbar-nav-link svg {
-        flex-shrink: 0;
+        position: absolute;
+        right: 48px; /* Same as main-content padding-right */
     }
     
     /* User Menu */
@@ -248,62 +206,66 @@
         align-items: center;
         gap: 0.625rem;
         padding: 0.375rem 0.75rem 0.375rem 0.375rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid #E2E8F0;
         border-radius: 50px;
-        background: rgba(255, 255, 255, 0.1);
+        background: #FFFFFF;
         cursor: pointer;
-        transition: all 0.2s;
-        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #64748B;
     }
     
     .topbar-pengajar .topbar-user-btn:hover {
-        border-color: rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.15);
+        border-color: #CBD5E1;
+        background: #F8FAFC;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     
     .topbar-pengajar .topbar-avatar {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid #E2E8F0;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .topbar-pengajar .topbar-user-btn:hover .topbar-avatar {
+        transform: scale(1.05);
     }
     
     .topbar-pengajar .topbar-avatar-placeholder {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.875rem;
+        font-size: 0.9375rem;
         font-weight: 600;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 2px solid #E2E8F0;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .topbar-pengajar .topbar-user-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+    .topbar-pengajar .topbar-user-btn:hover .topbar-avatar-placeholder {
+        transform: scale(1.05);
     }
     
     .topbar-pengajar .topbar-username {
-        font-size: 0.8125rem;
+        font-size: 0.875rem;
         font-weight: 600;
-        color: white;
+        color: #1E293B;
         max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        line-height: 1.2;
+        transition: transform 0.2s ease;
     }
     
-    .topbar-pengajar .topbar-role {
-        font-size: 0.6875rem;
-        color: rgba(255, 255, 255, 0.7);
-        line-height: 1.2;
+    .topbar-pengajar .topbar-user-btn:hover .topbar-username {
+        transform: translateX(2px);
     }
     
     /* Dropdown */
@@ -311,41 +273,22 @@
         position: absolute;
         top: calc(100% + 8px);
         right: 0;
-        min-width: 220px;
+        min-width: 200px;
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.2s;
+        transform: translateY(-10px) scale(0.95);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1001;
     }
     
     .topbar-pengajar .topbar-dropdown.show {
         opacity: 1;
         visibility: visible;
-        transform: translateY(0);
-    }
-    
-    .topbar-pengajar .dropdown-header {
-        padding: 1rem;
-        border-bottom: 1px solid #E2E8F0;
-    }
-    
-    .topbar-pengajar .dropdown-header-name {
-        display: block;
-        font-size: 0.9375rem;
-        font-weight: 600;
-        color: #1E293B;
-        margin-bottom: 0.125rem;
-    }
-    
-    .topbar-pengajar .dropdown-header-email {
-        display: block;
-        font-size: 0.8125rem;
-        color: #64748B;
+        transform: translateY(0) scale(1);
     }
     
     .topbar-pengajar .dropdown-item {
@@ -357,21 +300,39 @@
         font-size: 0.875rem;
         font-weight: 500;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
         background: none;
         width: 100%;
         cursor: pointer;
     }
     
+    .topbar-pengajar .dropdown-item:first-child {
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .topbar-pengajar .dropdown-item:last-child {
+        border-radius: 0 0 12px 12px;
+    }
+    
     .topbar-pengajar .dropdown-item:hover {
         background: #F8FAFC;
         color: #1E293B;
+        padding-left: 1.25rem;
+    }
+    
+    .topbar-pengajar .dropdown-item:hover svg {
+        transform: scale(1.1);
+    }
+    
+    .topbar-pengajar .dropdown-item svg {
+        transition: transform 0.2s ease;
     }
     
     .topbar-pengajar .dropdown-item.logout-btn:hover {
         background: #FEF2F2;
         color: #DC2626;
+        padding-left: 1.25rem;
     }
     
     .topbar-pengajar .dropdown-divider {
@@ -381,39 +342,47 @@
     }
     
     /* Responsive */
-    @media (max-width: 1024px) {
-        .topbar-pengajar .topbar-nav-link span {
-            display: none;
+    @media (max-width: 992px) {
+        .topbar-pengajar {
+            left: 0;
+            padding: 0 1.5rem;
+            justify-content: space-between;
         }
         
-        .topbar-pengajar .topbar-nav-link {
-            padding: 0.5rem;
+        .topbar-pengajar .topbar-left {
+            display: flex;
         }
         
-        .topbar-pengajar .topbar-user-info {
+        .topbar-pengajar .hamburger-btn {
+            display: flex;
+        }
+        
+        .topbar-pengajar .topbar-center {
+            margin: 0 1rem;
+        }
+        
+        .topbar-pengajar .topbar-right {
+            position: relative;
+            right: auto;
+        }
+        
+        .topbar-pengajar .topbar-username {
             display: none;
         }
     }
     
     @media (max-width: 768px) {
-        .topbar-pengajar .hamburger-btn {
-            display: flex;
-        }
-        
-        .topbar-pengajar .topbar-brand {
-            display: none;
+        .topbar-pengajar {
+            height: 64px;
+            padding: 0 1rem;
         }
         
         .topbar-pengajar .topbar-center {
             display: none;
         }
         
-        .topbar-pengajar .topbar-nav {
+        .topbar-pengajar .topbar-brand .topbar-logo-text {
             display: none;
-        }
-        
-        .topbar-pengajar {
-            padding: 0 1rem;
         }
     }
 </style>

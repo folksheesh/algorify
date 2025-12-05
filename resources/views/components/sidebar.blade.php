@@ -438,7 +438,7 @@ body:has(.sidebar.collapsed) .main-content {
     position: absolute;
     left: 100%;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateX(-5px);
     background: #1E293B;
     color: white;
     padding: 6px 12px;
@@ -448,7 +448,7 @@ body:has(.sidebar.collapsed) .main-content {
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 12px;
     z-index: 1000;
     pointer-events: none;
@@ -458,6 +458,7 @@ body:has(.sidebar.collapsed) .main-content {
 .sidebar.collapsed .logout-button:hover::after {
     opacity: 1;
     visibility: visible;
+    transform: translateY(-50%) translateX(0);
 }
 
 /* Logo icon only in collapsed */

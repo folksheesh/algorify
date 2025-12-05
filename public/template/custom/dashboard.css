@@ -254,7 +254,19 @@ body {
 .nav-item {
     margin: 0;
     list-style: none;
+    animation: slideInLeft 0.3s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk nav items */
+.nav-item:nth-child(1) { animation-delay: 0.05s; }
+.nav-item:nth-child(2) { animation-delay: 0.1s; }
+.nav-item:nth-child(3) { animation-delay: 0.15s; }
+.nav-item:nth-child(4) { animation-delay: 0.2s; }
+.nav-item:nth-child(5) { animation-delay: 0.25s; }
+.nav-item:nth-child(6) { animation-delay: 0.3s; }
+.nav-item:nth-child(7) { animation-delay: 0.35s; }
+.nav-item:nth-child(8) { animation-delay: 0.4s; }
 
 /* Menghilangkan marker list */
 .nav-item::marker {
@@ -272,7 +284,7 @@ body {
     color: #64748B;
     font-size: 15px;
     font-weight: 500;
-    transition: all .2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
 }
 
@@ -280,6 +292,11 @@ body {
 .nav-link:hover {
     background-color: #F8FAFC;
     color: #1E293B;
+    transform: translateX(4px);
+}
+
+.nav-link:hover .nav-icon {
+    transform: scale(1.15);
 }
 
 /* Link navigasi yang sedang aktif */
@@ -293,6 +310,7 @@ body {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Text navigasi */
@@ -378,13 +396,14 @@ body {
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
 }
 
 /* Hover state tombol logout */
 .logout-button:hover {
     background-color: #FEF2F2;
+    transform: translateX(4px);
 }
 
 /* Icon logout */
@@ -450,7 +469,7 @@ body {
     font-family: inherit;
     color: #1E293B;
     background-color: #FFF;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Placeholder search input */
@@ -463,6 +482,7 @@ body {
     outline: none;
     border-color: #5D3FFF;
     box-shadow: 0 0 0 3px rgba(93, 63, 255, .1);
+    transform: scale(1.01);
 }
 
 /* Tombol search */
@@ -481,13 +501,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol search */
 .search-button:hover {
     background-color: #F1F5F9;
     color: #1E293B;
+    transform: translateY(-50%) scale(1.1);
 }
 
 /* Icon search */
@@ -511,12 +532,15 @@ body {
     align-items: center;
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.6s ease forwards;
 }
 
 /* Konten hero banner */
 .hero-content {
     flex: 1;
     z-index: 1;
+    animation: slideInLeft 0.7s ease 0.2s forwards;
+    opacity: 0;
 }
 
 /* Judul hero banner */
@@ -541,6 +565,8 @@ body {
 .hero-illustration {
     flex-shrink: 0;
     z-index: 1;
+    animation: slideInRight 0.7s ease 0.3s forwards;
+    opacity: 0;
 }
 
 /* Grafik ilustrasi - support untuk SVG dan PNG */
@@ -550,6 +576,11 @@ body {
     object-fit: contain;
     max-width: 100%;
     opacity: 0.7;
+    transition: transform 0.3s ease;
+}
+
+.hero-banner:hover .illustration-graphic {
+    transform: scale(1.05) rotate(2deg);
 }
 
 /* ============================================
@@ -573,14 +604,22 @@ body {
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 72px;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk stat cards */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
 
 /* Hover state card statistik */
 .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(93, 63, 255, 0.15);
+    transform: translateY(-4px);
 }
 
 /* Icon statistik */
@@ -639,13 +678,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol menu */
 .menu-button:hover {
     background-color: #F1F5F9;
     color: #1E293B;
+    transform: scale(1.1);
 }
 
 /* ============================================
@@ -691,7 +731,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol kontrol */
@@ -699,6 +739,7 @@ body {
     background-color: #F8FAFC;
     border-color: #CBD5E1;
     color: #1E293B;
+    transform: scale(1.1);
 }
 
 /* ============================================
@@ -718,13 +759,26 @@ body {
     border: 1px solid #E2E8F0;
     border-radius: 16px;
     overflow: hidden;
-    transition: all .3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk course cards */
+.course-card:nth-child(1) { animation-delay: 0.1s; }
+.course-card:nth-child(2) { animation-delay: 0.15s; }
+.course-card:nth-child(3) { animation-delay: 0.2s; }
+.course-card:nth-child(4) { animation-delay: 0.25s; }
+.course-card:nth-child(5) { animation-delay: 0.3s; }
+.course-card:nth-child(6) { animation-delay: 0.35s; }
+.course-card:nth-child(7) { animation-delay: 0.4s; }
+.course-card:nth-child(8) { animation-delay: 0.45s; }
+.course-card:nth-child(9) { animation-delay: 0.5s; }
 
 /* Hover state card kursus */
 .course-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
-    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(93, 63, 255, 0.15);
+    transform: translateY(-8px);
 }
 
 /* Thumbnail/gambar preview kursus */
@@ -744,6 +798,11 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-card:hover .course-image {
+    transform: scale(1.08);
 }
 
 /* Tombol bookmark */
@@ -761,7 +820,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(4px);
 }
 
@@ -769,7 +828,8 @@ body {
 .bookmark-button:hover {
     background-color: #FFF;
     color: #5D3FFF;
-    transform: scale(1.05);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(93, 63, 255, 0.2);
 }
 
 /* Konten card kursus */
@@ -820,7 +880,7 @@ body {
     height: 100%;
     background: linear-gradient(90deg, #5D3FFF 0%, #7C3FFF 100%);
     border-radius: 3px;
-    transition: width .3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================

@@ -73,13 +73,22 @@
         align-items: center;
         justify-content: center;
         color: rgba(255, 255, 255, 0.9);
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .social-link:hover {
         background: rgba(255, 255, 255, 0.3);
         color: #fff;
-        transform: translateY(-2px);
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .social-link svg {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .social-link:hover svg {
+        transform: scale(1.1);
     }
     
     /* Responsive - ketika sidebar hidden */

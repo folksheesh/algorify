@@ -12,6 +12,7 @@
         </a>
     </div>
     
+    @if(!request()->routeIs('user.pelatihan-saya.*') && !request()->routeIs('kursus.*'))
     <div class="topbar-center">
         <form action="{{ route('kursus.index') }}" method="GET" class="topbar-search">
             <svg class="search-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,6 +22,7 @@
             <input type="search" name="search" class="topbar-search-input" placeholder="Cari kursus..." value="{{ request('search') }}">
         </form>
     </div>
+    @endif
     
     <div class="topbar-right">
         <div class="topbar-user-menu">
@@ -140,7 +142,7 @@
     /* Center Section - Search (centered) */
     .topbar-center {
         flex: 1;
-        max-width: 520px;
+        max-width: 600px;
         margin: 0 auto;
         display: flex;
         justify-content: center;
@@ -150,25 +152,27 @@
         position: relative;
         display: flex;
         align-items: center;
+        width: 100%;
     }
     
     .topbar-search .search-icon {
         position: absolute;
-        left: 16px;
+        left: 18px;
         color: #94A3B8;
         pointer-events: none;
     }
     
     .topbar-search-input {
         width: 100%;
-        padding: 12px 18px 12px 46px;
+        min-width: 400px;
+        padding: 14px 20px 14px 50px;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         font-size: 0.9375rem;
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color: #1E293B;
         background: #F8FAFC;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .topbar-search-input::placeholder {
@@ -180,6 +184,7 @@
         border-color: #5D3FFF;
         background: #FFFFFF;
         box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
+        transform: scale(1.02);
     }
     
     /* Right Section Content - Profile aligned with hero banner edge */
@@ -208,12 +213,13 @@
         font-weight: 500;
         text-decoration: none;
         border-radius: 8px;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .topbar-nav-link:hover {
         background: #F8FAFC;
         color: #1E293B;
+        transform: translateY(-2px);
     }
     
     .topbar-nav-link.active {
@@ -239,12 +245,14 @@
         border-radius: 50px;
         background: #FFFFFF;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .topbar-user-btn:hover {
-        border-color: #CBD5E1;
+        border-color: #5D3FFF;
         background: #F8FAFC;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(93, 63, 255, 0.15);
     }
     
     .topbar-avatar {
@@ -252,6 +260,11 @@
         height: 38px;
         border-radius: 50%;
         object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .topbar-user-btn:hover .topbar-avatar {
+        transform: scale(1.05);
     }
     
     .topbar-avatar-placeholder {
@@ -265,6 +278,11 @@
         justify-content: center;
         font-size: 0.875rem;
         font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+    
+    .topbar-user-btn:hover .topbar-avatar-placeholder {
+        transform: scale(1.05);
     }
     
     .topbar-username {
@@ -289,15 +307,15 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.2s;
+        transform: translateY(-10px) scale(0.95);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1001;
     }
     
     .topbar-dropdown.show {
         opacity: 1;
         visibility: visible;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
     
     .dropdown-item {
@@ -309,7 +327,7 @@
         font-size: 0.875rem;
         font-weight: 500;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
         background: none;
         width: 100%;
@@ -327,11 +345,21 @@
     .dropdown-item:hover {
         background: #F8FAFC;
         color: #1E293B;
+        padding-left: 1.25rem;
+    }
+    
+    .dropdown-item:hover svg {
+        transform: scale(1.1);
+    }
+    
+    .dropdown-item svg {
+        transition: transform 0.2s ease;
     }
     
     .dropdown-item.logout-btn:hover {
         background: #FEF2F2;
         color: #DC2626;
+        padding-left: 1.25rem;
     }
     
     .dropdown-divider {
