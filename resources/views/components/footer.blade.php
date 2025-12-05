@@ -32,11 +32,17 @@
     .app-footer {
         background: linear-gradient(135deg, #5D3FFF 0%, #4831CC 100%);
         color: #fff;
-        padding: 1rem 2rem 1rem calc(280px + 2rem);
-        position: relative;
-        width: 100%;
+        padding: 1rem 48px;
+        margin-left: 280px;
         box-sizing: border-box;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Adjust footer when sidebar is collapsed */
+    .sidebar.collapsed ~ .app-footer,
+    body:has(.sidebar.collapsed) .app-footer {
+        margin-left: 72px;
     }
     
     .footer-bottom {
@@ -80,12 +86,14 @@
     @media (max-width: 992px) {
         .app-footer {
             padding: 1rem 1.5rem;
+            margin-left: 0;
         }
     }
     
     @media (max-width: 768px) {
         .app-footer {
             padding: 1rem;
+            margin-left: 0;
         }
         
         .footer-bottom {
@@ -101,6 +109,7 @@
     @media (max-width: 480px) {
         .app-footer {
             padding: 0.875rem 0.75rem;
+            margin-left: 0;
         }
         
         .footer-copyright {

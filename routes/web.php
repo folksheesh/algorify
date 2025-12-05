@@ -229,6 +229,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/bank-soal/data', [\App\Http\Controllers\Admin\BankSoalController::class, 'getData'])->name('bank-soal.data');
         Route::get('/bank-soal/kursus-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getKursusList'])->name('bank-soal.kursus-list');
         Route::get('/bank-soal/creators-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getCreatorsList'])->name('bank-soal.creators-list');
+        Route::get('/bank-soal/download-template', [\App\Http\Controllers\Admin\BankSoalController::class, 'downloadTemplate'])->name('bank-soal.download-template');
+        Route::get('/bank-soal/export-csv', [\App\Http\Controllers\Admin\BankSoalController::class, 'exportCsv'])->name('bank-soal.export-csv');
+        Route::post('/bank-soal/import-csv', [\App\Http\Controllers\Admin\BankSoalController::class, 'importCsv'])->name('bank-soal.import-csv');
         Route::post('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'store'])->name('bank-soal.store');
         Route::get('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'show'])->name('bank-soal.show');
         Route::put('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'update'])->name('bank-soal.update');
@@ -244,6 +247,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
         Route::get('/transaksi/data', [\App\Http\Controllers\Admin\TransaksiController::class, 'getData'])->name('transaksi.data');
+        Route::get('/transaksi/export-csv', [\App\Http\Controllers\Admin\TransaksiController::class, 'exportCsv'])->name('transaksi.export-csv');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
         Route::get('/sertifikat', [\App\Http\Controllers\Admin\SertifikatController::class, 'index'])->name('sertifikat.index');
         Route::post('/sertifikat/upload-signature', [\App\Http\Controllers\Admin\SertifikatController::class, 'uploadSignature'])->name('sertifikat.upload-signature');

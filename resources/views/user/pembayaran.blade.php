@@ -1,315 +1,147 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
 <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f8f9fa; }
-    .dashboard-container { display: flex; min-height: 100vh; }
-    .main-content { flex: 1; padding: 30px; margin-left: 280px; }
-    .page-title { font-size: 24px; margin-bottom: 30px; }
-    .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
-    .card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
-    .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
-    .summary-label { color: #666; }
-    .summary-value { font-weight: 600; word-break: break-word; }
-    .divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
-    .total-label { font-weight: bold; }
-    .total-value { color: #5D3FFF; font-weight: bold; }
-    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-    .subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
-    .info-note { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-top: 20px; }
-    .info-note p { color: #0369a1; font-size: 14px; margin: 0; }
-    .btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px 30px; width: auto; max-width: 300px; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
-    .btn-primary:hover { background: #4a2fcc; color: #fff; }
-    .btn-disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
-    
-    /* Error notification */
-    .error-box { background: #fee2e2; border: 1px solid #ef4444; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    .error-box p { color: #991b1b; font-size: 14px; margin: 0; }
-    .error-box strong { font-weight: 700; }
-    
-    /* Warning notification */
-    .warning-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    .warning-box p { color: #92400e; font-size: 14px; margin: 0; }
-    .warning-box strong { font-weight: 700; }
-    
-    /* Info notification */
-    .info-box { background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    .info-box p { color: #1e40af; font-size: 14px; margin: 0; }
-    .info-box strong { font-weight: 700; }
-    
-    .instructions { margin-bottom: 20px; }
-    .instructions h6 { font-weight: 600; margin-bottom: 10px; }
-    .instructions ul { list-style: none; padding-left: 15px; }
-    .instructions li { color: #666; font-size: 14px; margin-bottom: 8px; }
-    
-    /* Responsive untuk tablet */
-    @media (max-width: 992px) {
-        .main-content { margin-left: 0; padding: 80px 24px 24px 24px; }
-        .payment-grid { grid-template-columns: 1fr; gap: 20px; }
-    }
-    
-    /* Responsive untuk mobile */
-    @media (max-width: 768px) {
-        .dashboard-container { flex-direction: column; }
-        .main-content { margin-left: 0; padding: 80px 16px 40px 16px; }
-        .payment-grid { grid-template-columns: 1fr; gap: 16px; }
-        .page-title { font-size: 20px; margin-bottom: 20px; }
-        .card { padding: 20px; border-radius: 10px; }
-        .card-title { font-size: 16px; }
-        .summary-row { flex-direction: column; gap: 4px; }
-        .btn-primary { padding: 12px 24px; font-size: 15px; max-width: 260px; }
-    }
-    
-    @media (max-width: 480px) {
-        .main-content { padding: 70px 12px 40px 12px; }
-        .page-title { font-size: 18px; }
-        .card { padding: 16px; }
-        .card-title { font-size: 15px; }
-        .section-title { font-size: 14px; }
-        .subtitle { font-size: 13px; }
-        .btn-primary { padding: 10px 20px; font-size: 14px; max-width: 240px; }
-    }
-    
-    /* Back Button Styling */
+/* Pembayaran Page Styles */
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f8f9fa; }
+.dashboard-container { display: flex; min-height: 100vh; }
+.main-content { flex: 1; padding: 30px; margin-left: 280px; }
+.page-title { font-size: 24px; margin-bottom: 30px; }
+.payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; }
+.card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+.summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+.summary-label { color: #666; }
+.summary-value { font-weight: 600; word-break: break-word; }
+.divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+.total-label { font-weight: bold; }
+.total-value { color: #5D3FFF; font-weight: bold; }
+.section-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
+.info-note { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-top: 20px; }
+.info-note p { color: #0369a1; font-size: 14px; margin: 0; }
+.btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px 30px; width: 100%; max-width: 100%; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
+.btn-primary:hover { background: #4a2fcc; color: #fff; }
+.btn-disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
+
+/* Error notification */
+.error-box { background: #fee2e2; border: 1px solid #ef4444; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.error-box p { color: #991b1b; font-size: 14px; margin: 0; }
+.error-box strong { font-weight: 700; }
+
+/* Warning notification */
+.warning-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.warning-box p { color: #92400e; font-size: 14px; margin: 0; }
+.warning-box strong { font-weight: 700; }
+
+/* Info notification */
+.info-box { background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.info-box p { color: #1e40af; font-size: 14px; margin: 0; }
+.info-box strong { font-weight: 700; }
+
+.instructions { margin-bottom: 20px; }
+.instructions h6 { font-weight: 600; margin-bottom: 10px; }
+.instructions ul { list-style: none; padding-left: 15px; }
+.instructions li { color: #666; font-size: 14px; margin-bottom: 8px; }
+
+/* Topbar Layout Adjustment */
+.dashboard-container.with-topbar {
+    padding-top: 72px;
+}
+
+.dashboard-container.with-topbar .main-content {
+    padding-top: 1.5rem;
+}
+
+/* Responsive untuk tablet */
+@media (max-width: 992px) {
+    .main-content { margin-left: 0; padding: 80px 24px 24px 24px; }
+    .payment-grid { grid-template-columns: 1fr; gap: 20px; }
+    .dashboard-container.with-topbar .main-content { margin-left: 0; }
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 768px) {
+    .dashboard-container { flex-direction: column; }
+    .main-content { margin-left: 0; padding: 80px 16px 40px 16px; }
+    .payment-grid { grid-template-columns: 1fr; gap: 16px; }
+    .page-title { font-size: 20px; margin-bottom: 20px; }
+    .card { padding: 20px; border-radius: 10px; }
+    .card-title { font-size: 16px; }
+    .summary-row { flex-direction: column; gap: 4px; }
+    .btn-primary { padding: 12px 24px; font-size: 15px; max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .main-content { padding: 70px 12px 40px 12px; }
+    .page-title { font-size: 18px; }
+    .card { padding: 16px; }
+    .card-title { font-size: 15px; }
+    .section-title { font-size: 14px; }
+    .subtitle { font-size: 13px; }
+    .btn-primary { padding: 10px 20px; font-size: 14px; max-width: 100%; }
+}
+
+/* Back Button Styling */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.back-button:hover {
+    color: #5D3FFF;
+}
+
+.back-button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.hide-mobile { display: inline; }
+.hide-desktop { display: none; }
+
+@media (max-width: 768px) {
     .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #6b7280;
-        text-decoration: none;
-        margin-bottom: 1rem;
-        transition: color 0.2s;
-        font-size: 0.9rem;
-        font-weight: 500;
-        padding: 0.5rem 0;
+        position: fixed;
+        top: 16px;
+        left: 70px;
+        z-index: 90;
+        background: white;
+        padding: 0.625rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0;
     }
     
-    .back-button:hover {
-        color: #5D3FFF;
+    .hide-mobile { display: none !important; }
+    .hide-desktop { display: inline !important; }
+}
+
+@media (max-width: 480px) {
+    .back-button {
+        top: 14px;
+        left: 65px;
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8rem;
     }
     
     .back-button svg {
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
     }
-    
-    .hide-mobile { display: inline; }
-    .hide-desktop { display: none; }
-    
-    @media (max-width: 768px) {
-        .back-button {
-            position: fixed;
-            top: 16px;
-            left: 70px;
-            z-index: 90;
-            background: white;
-            padding: 0.625rem 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin: 0;
-        }
-        
-        .hide-mobile { display: none !important; }
-        .hide-desktop { display: inline !important; }
-    }
-    
-    @media (max-width: 480px) {
-        .back-button {
-            top: 14px;
-            left: 65px;
-            padding: 0.5rem 0.875rem;
-            font-size: 0.8rem;
-        }
-        
-        .back-button svg {
-            width: 16px;
-            height: 16px;
-        }
-    }
-</style>
+}
 
-<div class="dashboard-container">
-    @include('components.sidebar')
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Tombol Kembali -->
-        <a href="{{ route('kursus.show', $kursus->id) }}" class="back-button">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="hide-mobile">Kembali ke Detail Kursus</span>
-            <span class="hide-desktop">Kembali</span>
-        </a>
-
-        <h1 class="page-title">Pembayaran</h1>
-
-        @if(isset($transactionMessage) && $transactionMessage)
-            @if($transactionMessage['type'] === 'warning')
-            <div class="warning-box">
-                <p><strong>⚠️ Perhatian!</strong> {{ $transactionMessage['message'] }}</p>
-            </div>
-            @elseif($transactionMessage['type'] === 'error')
-            <div class="error-box">
-                <p><strong>❌ Transaksi Gagal!</strong> {{ $transactionMessage['message'] }}</p>
-            </div>
-            @endif
-        @endif
-
-        @if(isset($snapError) && $snapError)
-        <div class="error-box">
-            <p><strong>Gagal mendapatkan link pembayaran DOKU.</strong> Detail: {{ $snapError }}</p>
-        </div>
-        @endif
-
-        <div class="payment-grid">
-            <!-- Left Column: Ringkasan Pembelian -->
-            <div class="card">
-                <h2 class="card-title">Ringkasan Pembelian</h2>
-
-                <div class="summary-row">
-                    <span class="summary-label">Nama Kursus:</span>
-                    <span class="summary-value">{{ $kursus->judul }}</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Pengajar:</span>
-                    <span class="summary-value">{{ $kursus->pengajar->name ?? 'N/A' }}</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">Harga Kursus:</span>
-                    <span class="summary-value">Rp {{ number_format($kursus->harga, 0, ',', '.') }}</span>
-                </div>
-
-                <hr class="divider">
-
-                <div class="summary-row">
-                    <span class="total-label">Total Bayar:</span>
-                    <span class="total-value">Rp {{ number_format($kursus->harga, 0, ',', '.') }}</span>
-                </div>
-
-                <div class="info-note">
-                    <p><strong>Catatan:</strong> Setelah pembayaran berhasil, Anda akan otomatis terdaftar di kursus ini dan dapat langsung mengakses semua materi pembelajaran.</p>
-                </div>
-            </div>
-
-            <!-- Right Column: Metode Pembayaran -->
-            <div class="card">
-                <h2 class="card-title">Detail Transaksi</h2>
-
-                <div class="instructions">
-                    <div class="summary-row">
-                        <span class="summary-label">Kode Transaksi:</span>
-                        <span class="summary-value">{{ $transaksi->kode_transaksi }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Status:</span>
-                        <span class="summary-value" id="payment-status">
-                            @if($transaksi->status === 'pending')
-                                <span style="color: #f59e0b;">Menunggu Pembayaran</span>
-                            @elseif($transaksi->status === 'success')
-                                <span style="color: #10b981;">✓ Berhasil</span>
-                            @elseif($transaksi->status === 'failed')
-                                <span style="color: #ef4444;">✗ Gagal</span>
-                            @elseif($transaksi->status === 'expired')
-                                <span style="color: #6b7280;">⌛ Kadaluarsa</span>
-                            @endif
-                        </span>
-                    </div>
-                </div>
-
-                <hr class="divider">
-
-                <h3 class="section-title">Metode Pembayaran</h3>
-                <p class="subtitle">Pilih metode pembayaran melalui DOKU Payment Gateway</p>
-
-                @if(isset($paymentUrl) && $paymentUrl)
-                <button id="pay-button" data-url="{{ $paymentUrl }}" class="btn-primary">
-                    Bayar dengan DOKU
-                </button>
-                @else
-                <button disabled class="btn-primary btn-disabled">
-                    Link Pembayaran Tidak Tersedia
-                </button>
-                @endif
-
-                @if(in_array($transaksi->status, ['failed', 'expired']))
-                <form action="{{ route('user.kursus.pembayaran', $kursus->id) }}" method="GET" style="margin-top: 15px;">
-                    <input type="hidden" name="new" value="1">
-                    <button type="submit" class="btn-primary" style="background: #10b981;">
-                        🔄 Buat Transaksi Baru
-                    </button>
-                </form>
-                @endif
-
-                <div class="instructions" style="margin-top: 20px;">
-                    <h6>Instruksi Pembayaran:</h6>
-                    <ul>
-                        <li>1. Klik tombol "Bayar dengan DOKU"</li>
-                        <li>2. Anda akan diarahkan ke halaman pembayaran DOKU</li>
-                        <li>3. Pilih metode pembayaran (Virtual Account, E-Wallet, Credit Card, dll)</li>
-                        <li>4. Selesaikan pembayaran sesuai instruksi</li>
-                        <li>5. Setelah berhasil, Anda akan otomatis terdaftar di kursus</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
-
-{{-- Footer --}}
-@include('components.footer')
-
-<!-- DOKU Payment Popup Modal -->
-<div id="doku-modal" class="doku-modal-container">
-    <div class="doku-modal-content">
-        <!-- Header Bar -->
-        <div class="doku-modal-header">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="doku-header-icon">
-                    <svg style="width: 18px; height: 18px; color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="doku-header-title">DOKU Payment Gateway</h3>
-                    <p class="doku-header-subtitle">Secure Payment · SSL Encrypted</p>
-                </div>
-            </div>
-            <button id="close-modal" class="doku-close-btn">
-                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <!-- Loading State -->
-        <div id="loading-state" class="doku-loading-state">
-            <div style="text-align: center;">
-                <div class="doku-spinner">
-                    <div class="spinner-track"></div>
-                    <div class="spinner-fill"></div>
-                </div>
-                <h4 class="loading-title">Memuat Halaman Pembayaran</h4>
-                <p class="loading-subtitle">Mohon tunggu sebentar...</p>
-                <div class="loading-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Iframe -->
-        <iframe id="doku-iframe" class="doku-iframe"></iframe>
-    </div>
-</div>
-
-<style>
 /* DOKU Modal Styles */
 .doku-modal-container {
     display: none;
@@ -538,21 +370,204 @@
 }
 </style>
 
+{{-- Topbar User --}}
+@include('components.topbar-user')
+
+<div class="dashboard-container with-topbar">
+    @include('components.sidebar')
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Tombol Kembali -->
+        <a href="{{ route('kursus.show', $kursus->id) }}" class="back-button">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="hide-mobile">Kembali ke Detail Kursus</span>
+            <span class="hide-desktop">Kembali</span>
+        </a>
+
+        <h1 class="page-title">Pembayaran</h1>
+
+        @if(isset($transactionMessage) && $transactionMessage)
+            @if($transactionMessage['type'] === 'warning')
+            <div class="warning-box">
+                <p><strong>⚠️ Perhatian!</strong> {{ $transactionMessage['message'] }}</p>
+            </div>
+            @elseif($transactionMessage['type'] === 'error')
+            <div class="error-box">
+                <p><strong>❌ Transaksi Gagal!</strong> {{ $transactionMessage['message'] }}</p>
+            </div>
+            @endif
+        @endif
+
+        @if(isset($snapError) && $snapError)
+        <div class="error-box">
+            <p><strong>Gagal mendapatkan link pembayaran DOKU.</strong> Detail: {{ $snapError }}</p>
+        </div>
+        @endif
+
+        <div class="payment-grid">
+            <!-- Left Column: Ringkasan Pembelian -->
+            <div class="card">
+                <h2 class="card-title">Ringkasan Pembelian</h2>
+
+                <div class="summary-row">
+                    <span class="summary-label">Nama Kursus:</span>
+                    <span class="summary-value">{{ $kursus->judul }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Pengajar:</span>
+                    <span class="summary-value">{{ $kursus->pengajar->name ?? 'N/A' }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Harga Kursus:</span>
+                    <span class="summary-value">Rp {{ number_format($kursus->harga, 0, ',', '.') }}</span>
+                </div>
+
+                <hr class="divider">
+
+                <div class="summary-row">
+                    <span class="total-label">Total Bayar:</span>
+                    <span class="total-value">Rp {{ number_format($kursus->harga, 0, ',', '.') }}</span>
+                </div>
+
+                <div class="info-note">
+                    <p><strong>Catatan:</strong> Setelah pembayaran berhasil, Anda akan otomatis terdaftar di kursus ini dan dapat langsung mengakses semua materi pembelajaran.</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Metode Pembayaran -->
+            <div class="card">
+                <h2 class="card-title">Detail Transaksi</h2>
+
+                <div class="instructions">
+                    <div class="summary-row">
+                        <span class="summary-label">Kode Transaksi:</span>
+                        <span class="summary-value">{{ $transaksi->kode_transaksi }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Status:</span>
+                        <span class="summary-value" id="payment-status">
+                            @if($transaksi->status === 'pending')
+                                <span style="color: #f59e0b;">Menunggu Pembayaran</span>
+                            @elseif($transaksi->status === 'success')
+                                <span style="color: #10b981;">✓ Berhasil</span>
+                            @elseif($transaksi->status === 'failed')
+                                <span style="color: #ef4444;">✗ Gagal</span>
+                            @elseif($transaksi->status === 'expired')
+                                <span style="color: #6b7280;">⌛ Kadaluarsa</span>
+                            @endif
+                        </span>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <h3 class="section-title">Metode Pembayaran</h3>
+                <p class="subtitle">Pilih metode pembayaran melalui DOKU Payment Gateway</p>
+
+                @if(isset($paymentUrl) && $paymentUrl)
+                <button id="pay-button" data-url="{{ $paymentUrl }}" class="btn-primary">
+                    Bayar dengan DOKU
+                </button>
+                @else
+                <button disabled class="btn-primary btn-disabled">
+                    Link Pembayaran Tidak Tersedia
+                </button>
+                @endif
+
+                @if(in_array($transaksi->status, ['failed', 'expired']))
+                <form action="{{ route('user.kursus.pembayaran', $kursus->id) }}" method="GET" style="margin-top: 15px;">
+                    <input type="hidden" name="new" value="1">
+                    <button type="submit" class="btn-primary" style="background: #10b981;">
+                        🔄 Buat Transaksi Baru
+                    </button>
+                </form>
+                @endif
+
+                <div class="instructions" style="margin-top: 20px;">
+                    <h6>Instruksi Pembayaran:</h6>
+                    <ul>
+                        <li>1. Klik tombol "Bayar dengan DOKU"</li>
+                        <li>2. Anda akan diarahkan ke halaman pembayaran DOKU</li>
+                        <li>3. Pilih metode pembayaran (Virtual Account, E-Wallet, Credit Card, dll)</li>
+                        <li>4. Selesaikan pembayaran sesuai instruksi</li>
+                        <li>5. Setelah berhasil, Anda akan otomatis terdaftar di kursus</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{{-- Footer --}}
+@include('components.footer')
+
+<!-- DOKU Payment Popup Modal -->
+<div id="doku-modal" class="doku-modal-container">
+    <div class="doku-modal-content">
+        <!-- Header Bar -->
+        <div class="doku-modal-header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="doku-header-icon">
+                    <svg style="width: 18px; height: 18px; color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="doku-header-title">DOKU Payment Gateway</h3>
+                    <p class="doku-header-subtitle">Secure Payment · SSL Encrypted</p>
+                </div>
+            </div>
+            <button id="close-modal" class="doku-close-btn">
+                <svg style="width: 20px; height: 20px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="doku-loading-state">
+            <div style="text-align: center;">
+                <div class="doku-spinner">
+                    <div class="spinner-track"></div>
+                    <div class="spinner-fill"></div>
+                </div>
+                <h4 class="loading-title">Memuat Halaman Pembayaran</h4>
+                <p class="loading-subtitle">Mohon tunggu sebentar...</p>
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Iframe -->
+        <iframe id="doku-iframe" class="doku-iframe"></iframe>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    @if(isset($paymentUrl) && $paymentUrl)
+    initDokuPayment();
+    initPaymentStatusCheck();
+});
+
+function initDokuPayment() {
     const payButton = document.getElementById('pay-button');
     const modal = document.getElementById('doku-modal');
     const iframe = document.getElementById('doku-iframe');
     const loadingState = document.getElementById('loading-state');
     const closeButton = document.getElementById('close-modal');
     
-    if (!payButton) return;
+    if (!payButton || !modal) return;
     
     const paymentUrl = payButton.getAttribute('data-url');
     if (!paymentUrl) return;
     
-    // Open modal with iframe
     payButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -563,109 +578,60 @@ document.addEventListener('DOMContentLoaded', function() {
         iframe.src = paymentUrl;
     });
     
-    // Iframe loaded
     iframe.addEventListener('load', function() {
         loadingState.style.display = 'none';
         iframe.style.display = 'block';
     });
     
-    // Close modal
     closeButton.addEventListener('click', function() {
-        modal.style.display = 'none';
-        iframe.src = '';
+        closeModal();
     });
     
-    // Close on background click
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
-            modal.style.display = 'none';
-            iframe.src = '';
+            closeModal();
         }
     });
     
-    // Close on ESC key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.style.display === 'flex') {
-            modal.style.display = 'none';
-            iframe.src = '';
+            closeModal();
         }
     });
-    @endif
     
-    // Manual check payment status function
-    function checkPaymentStatus(event) {
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Mengecek...';
-        
-        fetch('{{ route("user.transaksi.status", $transaksi->kode_transaksi) }}')
-            .then(response => response.json())
-            .then(data => {
-                updateStatusDisplay(data.status);
-                
-                if (data.status === 'success') {
-                    alert('Pembayaran berhasil! Anda akan diarahkan ke halaman Pelatihan Saya.');
-                    window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
-                } else if (data.status === 'failed' || data.status === 'expired') {
-                    alert('Status: ' + data.status);
-                    location.reload();
-                } else {
-                    alert('Status pembayaran masih pending. Silakan selesaikan pembayaran terlebih dahulu.');
-                }
-                
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            })
-            .catch(error => {
-                console.error('Error checking status:', error);
-                alert('Gagal mengecek status pembayaran. Silakan coba lagi.');
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            });
+    function closeModal() {
+        modal.style.display = 'none';
+        iframe.src = '';
     }
-    
-    // Auto check payment status every 2 seconds with live UI update
-    let checkCount = 0;
-    const maxChecks = 300; // 10 minutes max (300 * 2 seconds)
+}
+
+function initPaymentStatusCheck() {
     const statusElement = document.getElementById('payment-status');
+    const statusUrl = "{{ route('user.transaksi.status', $transaksi->kode_transaksi) }}";
+    const successUrl = "{{ route('user.pelatihan-saya.index') }}";
     
-    function updateStatusDisplay(status) {
-        const statusMap = {
-            'pending': '<span style="color: #f59e0b;">Menunggu Pembayaran</span>',
-            'success': '<span style="color: #10b981;">✓ Berhasil</span>',
-            'failed': '<span style="color: #ef4444;">✗ Gagal</span>',
-            'expired': '<span style="color: #6b7280;">⌛ Kadaluarsa</span>'
-        };
-        
-        if (statusElement && statusMap[status]) {
-            statusElement.innerHTML = statusMap[status];
-            console.log('Status updated to:', status);
-        }
-    }
+    let checkCount = 0;
+    const maxChecks = 300;
     
     const checkInterval = setInterval(async () => {
         checkCount++;
         
         try {
-            const response = await fetch('{{ route("user.transaksi.status", $transaksi->kode_transaksi) }}');
+            const response = await fetch(statusUrl);
             const data = await response.json();
             
             console.log('Payment check #' + checkCount + ':', data.status);
             
-            // Update status display in real-time
-            updateStatusDisplay(data.status);
+            updateStatusDisplay(data.status, statusElement);
             
             if (data.status === 'success') {
                 clearInterval(checkInterval);
-                // Redirect immediately
-                window.location.href = '{{ route("user.pelatihan-saya.index") }}?payment=success';
+                window.location.href = successUrl + '?payment=success';
             } else if (data.status === 'failed' || data.status === 'expired') {
                 clearInterval(checkInterval);
                 location.reload();
             }
             
-            // Stop checking after max attempts
             if (checkCount >= maxChecks) {
                 clearInterval(checkInterval);
                 console.log('Max check attempts reached');
@@ -673,7 +639,21 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error checking status:', error);
         }
-    }, 2000); // Check every 2 seconds
-});
+    }, 2000);
+}
+
+function updateStatusDisplay(status, element) {
+    const statusMap = {
+        'pending': '<span style="color: #f59e0b;">Menunggu Pembayaran</span>',
+        'success': '<span style="color: #10b981;">✓ Berhasil</span>',
+        'failed': '<span style="color: #ef4444;">✗ Gagal</span>',
+        'expired': '<span style="color: #6b7280;">⌛ Kadaluarsa</span>'
+    };
+    
+    if (element && statusMap[status]) {
+        element.innerHTML = statusMap[status];
+        console.log('Status updated to:', status);
+    }
+}
 </script>
 @endsection

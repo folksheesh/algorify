@@ -2,6 +2,91 @@
    DASHBOARD CSS - Algorify Platform
    ============================================ */
 
+/* Reset untuk memastikan fixed positioning berfungsi */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+/* ============================================
+   GLOBAL ANIMATIONS
+   ============================================ */
+
+/* Keyframes untuk berbagai animasi */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes fadeInDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes slideInLeft {
+    from { 
+        opacity: 0; 
+        transform: translateX(-30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slideInRight {
+    from { 
+        opacity: 0; 
+        transform: translateX(30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0; 
+        transform: scale(0.9); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
 /* ============================================
    1. LAYOUT UTAMA
    ============================================ */
@@ -66,12 +151,13 @@
 }
 
 /* ============================================
-   3. USER PROFILE (Bagian Profil User)
+   3. USER PROFILE (Bagian Profil User) - DEPRECATED
+   Tidak digunakan lagi, sidebar sekarang tanpa greeting
    ============================================ */
 
 /* Container profil user di sidebar */
 .user-profile {
-    display: flex;
+    display: none; /* Hidden - tidak digunakan lagi */
     flex-direction: column;
     align-items: center;
     padding: 0 16px 16px 16px;
@@ -157,7 +243,7 @@
 /* List navigasi */
 .nav-list {
     list-style: none;
-    padding: 0;
+    padding: 12px 0;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -322,11 +408,16 @@
 .main-content {
     flex: 1;
     padding: 32px 48px;
-    overflow-y: auto;
     margin-left: 280px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main content when sidebar is collapsed */
+.sidebar.collapsed ~ .main-content {
+    margin-left: 72px;
 }
 
 /* Wrapper untuk konten utama agar footer sticky di bawah */

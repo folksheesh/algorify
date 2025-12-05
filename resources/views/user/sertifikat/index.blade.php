@@ -368,11 +368,24 @@
             height: 20px;
         }
         
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
         /* Responsive */
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding-top: 70px;
+            }
+            
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
             }
         }
         
@@ -419,7 +432,10 @@
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
+    <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
             <!-- Tombol Kembali -->
@@ -591,7 +607,7 @@
         function openDownloadModal(certId, courseName, certNumber) {
             document.getElementById('modalCourseName').textContent = courseName;
             document.getElementById('modalCertNumber').textContent = 'No. Sertifikat: ' + certNumber;
-            document.getElementById('modalDownloadLink').href = '/user/sertifikat/download/' + certId;
+            document.getElementById('modalDownloadLink').href = '/user/sertifikat/' + certId + '/download';
             document.getElementById('downloadModal').classList.add('active');
         }
         

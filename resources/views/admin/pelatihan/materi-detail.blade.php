@@ -449,6 +449,17 @@
         font-size: 13px;
         color: #6B7280;
     }
+    
+    /* Topbar Layout Adjustment for Pengajar */
+    .page-container.with-topbar {
+        padding-top: calc(64px + 2rem);
+    }
+    
+    @media (max-width: 992px) {
+        .page-container.with-topbar {
+            padding-top: calc(64px + 1rem);
+        }
+    }
 </style>
 @endpush
 
@@ -498,7 +509,12 @@
 @endpush
 
 @section('content')
-<div class="page-container">
+{{-- Topbar Pengajar --}}
+@role('pengajar')
+@include('components.topbar-pengajar')
+@endrole
+
+<div class="page-container @role('pengajar') with-topbar @endrole">
     
     <!-- Back Button -->
     <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}?open_modul={{ $materi->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
