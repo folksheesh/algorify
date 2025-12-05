@@ -16,11 +16,16 @@ class PelatihanSayaController extends Controller
             // Get current authenticated user
             $user = Auth::user();
             
+            Log::info('PelatihanSaya: User ID = ' . ($user->id ?? 'NULL'));
+            
             // Get all enrollments for this user with kursus relationship
             $enrollments = Enrollment::with(['kursus', 'kursus.modul'])
                 ->where('user_id', $user->id)
+                ->where('status', 'active') // Only show active enrollments
                 ->orderBy('created_at', 'desc')
                 ->get();
+            
+            Log::info('PelatihanSaya: Found ' . $enrollments->count() . ' enrollments');
             
             return view('user.pelatihan-saya.index', compact('enrollments'));
         } catch (\Exception $e) {

@@ -32,6 +32,37 @@ class CertificateVerificationController extends Controller
                     ->where('kursus_id', $result->kursus_id)
                     ->first();
             }
+
+            // Local-only development fallback: when running on local and the
+            // CERT_DEMO_ENABLED flag is true, return a non-persistent demo
+            // certificate so the verification page can be tried without DB data.
+            if (! $result && app()->environment('local') && env('CERT_DEMO_ENABLED', false)) {
+                // Create an in-memory demo result (stdClass) — do NOT persist
+                $result = new \stdClass();
+                $result->nomor_sertifikat = $query ?: 'CERT-ALG-2025-001234';
+                $result->judul = 'Sertifikat Desain UI/UX (Demo)';
+                $result->deskripsi = 'Demo sertifikat untuk verifikasi lokal';
+                $result->tanggal_terbit = now();
+                $result->status_sertifikat = 'active';
+                $result->file_path = null;
+
+                // attach a demo user and kursus objects (stdClass) so the view can render them
+                $user = new \stdClass();
+                $user->id = 0;
+                $user->name = 'Prashant Kumar Singh';
+
+                $kursus = new \stdClass();
+                $kursus->id = 0;
+                $kursus->judul = 'Desain UI/UX';
+                $kursus->tanggal_selesai = now();
+
+                $result->user = $user;
+                $result->kursus = $kursus;
+
+                // Demo enrollment info
+                $enrollment = new \stdClass();
+                $enrollment->nilai_akhir = 85;
+            }
         }
 
         return view('verify.sertifikat.index', compact('result', 'query', 'enrollment'));
@@ -73,6 +104,32 @@ class CertificateVerificationController extends Controller
                 $enrollment = \App\Models\Enrollment::where('user_id', $result->user_id)
                     ->where('kursus_id', $result->kursus_id)
                     ->first();
+            }
+
+            // Local-only fallback for scan (non-persistent demo) — mirrors index() behaviour
+            if (! $result && app()->environment('local') && env('CERT_DEMO_ENABLED', false)) {
+                $result = new \stdClass();
+                $result->nomor_sertifikat = $query ?: 'CERT-ALG-2025-001234';
+                $result->judul = 'Sertifikat Desain UI/UX (Demo)';
+                $result->deskripsi = 'Demo sertifikat untuk verifikasi lokal';
+                $result->tanggal_terbit = now();
+                $result->status_sertifikat = 'active';
+                $result->file_path = null;
+
+                $user = new \stdClass();
+                $user->id = 0;
+                $user->name = 'Prashant Kumar Singh';
+
+                $kursus = new \stdClass();
+                $kursus->id = 0;
+                $kursus->judul = 'Desain UI/UX';
+                $kursus->tanggal_selesai = now();
+
+                $result->user = $user;
+                $result->kursus = $kursus;
+
+                $enrollment = new \stdClass();
+                $enrollment->nilai_akhir = 85;
             }
         }
 

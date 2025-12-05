@@ -110,9 +110,19 @@ class EnrollmentController extends Controller
 
         // Prepare request body
         $user = Auth::user();
+        // Normalize and validate amount for DOKU
+        [$amountInt, $amountError] = \App\Services\DokuSignatureService::normalizeAmount($transaksi->jumlah ?? $transaksi->nominal_pembayaran ?? 0);
+
+        if ($amountError) {
+            $msg = 'DOKU Payment Error: invalid amount for transaction ' . ($transaksi->kode_transaksi ?? '') . ' — ' . $amountError;
+            \Log::error($msg, ['raw_amount' => $transaksi->jumlah, 'nominal_pembayaran' => $transaksi->nominal_pembayaran]);
+            return [null, $msg];
+        }
+
         $body = [
             'order' => [
-                'amount' => (int) $transaksi->jumlah,
+                // DOKU expects integer amount (IDR) without fractional parts
+                'amount' => $amountInt,
                 'invoice_number' => $transaksi->kode_transaksi,
                 'currency' => 'IDR',
             ],
@@ -176,7 +186,30 @@ class EnrollmentController extends Controller
                 return [$paymentUrl, null];
             }
 
-            $msg = 'HTTP ' . $response->status() . ' Response: ' . $response->body();
+            // Check if invoice already used - generate new kode_transaksi and retry
+            $responseBody = $response->body();
+            if ($response->status() === 400 && str_contains($responseBody, 'INVOICE ALREADY USED')) {
+                \Log::warning('DOKU Invoice already used, generating new kode_transaksi', [
+                    'old_kode' => $transaksi->kode_transaksi
+                ]);
+                
+                // Generate new unique kode_transaksi
+                $newKode = 'TRX-' . strtoupper(Str::random(10)) . '-' . time();
+                $transaksi->update(['kode_transaksi' => $newKode]);
+                
+                \Log::info('Retrying DOKU payment with new kode_transaksi', [
+                    'new_kode' => $newKode
+                ]);
+                
+                // Retry with new invoice number (recursive call, max 1 retry)
+                static $retryCount = 0;
+                if ($retryCount < 1) {
+                    $retryCount++;
+                    return $this->getSnapToken($transaksi, $kursus);
+                }
+            }
+            
+            $msg = 'HTTP ' . $response->status() . ' Response: ' . $responseBody;
             \Log::error('DOKU Payment Error: ' . $msg);
             return [null, $msg];
         } catch (\Exception $e) {
@@ -331,6 +364,29 @@ class EnrollmentController extends Controller
                 $transaksi->refresh();
             } catch (\Exception $e) {
                 \Log::error('Error checking DOKU status: ' . $e->getMessage());
+            }
+        }
+
+        // If payment successful, activate/create enrollment
+        if ($transaksi->status === 'success') {
+            $enrollment = Enrollment::where('user_id', $transaksi->user_id)
+                ->where('kursus_id', $transaksi->kursus_id)
+                ->first();
+
+            if ($enrollment) {
+                if ($enrollment->status !== 'active') {
+                    $enrollment->status = 'active';
+                    $enrollment->save();
+                }
+            } else {
+                // Create enrollment if not exists
+                Enrollment::create([
+                    'user_id' => $transaksi->user_id,
+                    'kursus_id' => $transaksi->kursus_id,
+                    'tanggal_daftar' => now(),
+                    'status' => 'active',
+                    'progress' => 0,
+                ]);
             }
         }
 

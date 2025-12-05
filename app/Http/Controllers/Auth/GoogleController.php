@@ -71,8 +71,10 @@ class GoogleController extends Controller
 
         try {
             // Get user data from Google OAuth
-            // Get user data from Google OAuth
+            // Gunakan stateless() untuk menghindari masalah InvalidStateException
+            // yang terjadi karena session state tidak tersimpan dengan baik
             $googleUser = Socialite::driver('google')
+                ->stateless()
                 ->user();
             // Cari user di database berdasarkan email (umumnya unik)
             $user = User::where('email', $googleUser->getEmail())->first();

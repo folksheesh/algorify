@@ -29,7 +29,16 @@ Route::get('/dashboard', function () {
     }
     
     // Student Dashboard
-    return view('dashboard');
+    // Load current user's enrollments so the dashboard view can render progress cards
+    $enrollments = \App\Models\Enrollment::with('kursus')
+        ->where('user_id', $user->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    // Provide a small set of recommended courses for the dashboard if not supplied elsewhere
+    $recommendedCourses = \App\Models\Kursus::orderBy('created_at', 'desc')->limit(6)->get();
+
+    return view('dashboard', compact('enrollments', 'recommendedCourses'));
 })->middleware(['auth'])->name('dashboard');
 
 // Public certificate verification page (standalone)
@@ -184,6 +193,9 @@ Route::middleware('auth')->group(function () {
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
+
+        // Transaksi status for frontend polling (payment page)
+        Route::get('/transaksi/status/{kode}', [\App\Http\Controllers\User\TransaksiController::class, 'status'])->name('transaksi.status');
     });
 });
 
