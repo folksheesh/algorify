@@ -285,6 +285,97 @@
             width: 14px;
             height: 14px;
         }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content > div {
+                padding: 0 1rem 1.5rem !important;
+            }
+            .page-header {
+                padding: 1.5rem;
+                border-radius: 16px;
+                margin-bottom: 1.5rem;
+            }
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            .page-header p {
+                font-size: 0.875rem;
+            }
+            .search-filter-bar {
+                margin-bottom: 1.5rem;
+            }
+            .search-box {
+                min-width: 100%;
+            }
+            .courses-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .course-thumbnail-wrapper {
+                height: 160px;
+            }
+            .course-content {
+                padding: 1.25rem;
+            }
+            .course-title {
+                font-size: 1rem;
+            }
+            .empty-state {
+                padding: 2.5rem 1.5rem;
+            }
+            .empty-state-icon {
+                width: 100px;
+                height: 100px;
+            }
+            .empty-state-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+            .empty-state h3 {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content > div {
+                padding: 0 0.75rem 1rem !important;
+            }
+            .page-header {
+                padding: 1.25rem;
+                border-radius: 12px;
+            }
+            .page-header h1 {
+                font-size: 1.25rem;
+            }
+            .course-thumbnail-wrapper {
+                height: 140px;
+            }
+            .course-content {
+                padding: 1rem;
+            }
+            .course-title {
+                font-size: 0.9375rem;
+            }
+            .course-description {
+                font-size: 0.8125rem;
+            }
+            .course-meta {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .btn-continue, .btn-certificate {
+                padding: 0.625rem 1rem;
+                font-size: 0.8125rem;
+            }
+        }
     </style>
 @endpush
 
@@ -314,7 +405,7 @@
                     <!-- Courses Grid -->
                     <div class="courses-grid" id="coursesGrid">
                         @foreach($enrollments as $enrollment)
-                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}'">
+                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('kursus.show', $enrollment->kursus->id) }}'">
                             <div class="course-thumbnail-wrapper">
                                 <img src="{{ asset($enrollment->kursus->thumbnail ?? 'template/assets/static/images/samples/origami.jpg') }}" 
                                      alt="{{ $enrollment->kursus->judul }}" 
@@ -363,7 +454,7 @@
                                             Cek Sertifikat
                                         </a>
                                     @else
-                                        <a href="{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}" class="btn-continue">
+                                        <a href="{{ route('kursus.show', $enrollment->kursus->id) }}" class="btn-continue">
                                             Lanjutkan Belajar
                                         </a>
                                     @endif
@@ -393,6 +484,9 @@
             </div>
         </main>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')

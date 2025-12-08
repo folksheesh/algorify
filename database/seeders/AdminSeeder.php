@@ -21,6 +21,7 @@ class AdminSeeder extends Seeder
 
         // Create main admin
         $admin = User::create([
+            'id' => User::generateId('admin'),
             'name' => 'Anton Alam',
             'email' => 'admin@algorify.com',
             'password' => Hash::make('admin123'),
@@ -29,12 +30,12 @@ class AdminSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S2 Teknologi Informasi',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
         $admin->assignRole('admin');
 
         // Create super admin
         $superAdmin = User::create([
+            'id' => User::generateId('admin'),
             'name' => 'Super Admin',
             'email' => 'superadmin@algorify.com',
             'password' => Hash::make('admin123'),
@@ -43,7 +44,6 @@ class AdminSeeder extends Seeder
             'address' => 'Jakarta, Indonesia',
             'pendidikan' => 'S2 Computer Science',
             'email_verified_at' => now(),
-            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
         $superAdmin->assignRole('super admin');
     }

@@ -24,4 +24,12 @@ class KategoriPelatihan extends Model
     {
         return $this->hasMany(BankSoal::class, 'kategori_id');
     }
+
+    /**
+     * Get the kursus for the kategori
+     */
+    public function kursus()
+    {
+        return $this->hasMany(Kursus::class, 'kategori_id');
+    }
 }

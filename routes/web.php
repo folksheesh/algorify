@@ -12,10 +12,14 @@ Route::get('/', function () {
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
+// DOKU Payment Callback (no auth required)
+Route::get('/payment/callback', [\App\Http\Controllers\User\EnrollmentController::class, 'paymentCallback'])->name('payment.callback');
+Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentController::class, 'notification'])->name('doku.notification');
 
 // Breeze auth routes (login, register, password reset, etc.)
 
 Route::get('/dashboard', function () {
+    /** @var \App\Models\User $user */
     $user = Auth::user();
     
     // Check if user has admin or super admin role
@@ -28,24 +32,87 @@ Route::get('/dashboard', function () {
         return view('admin.dashboard', compact('totalPeserta', 'totalPengajar', 'totalKursus'));
     }
     
-    // Student Dashboard
-    // Load current user's enrollments so the dashboard view can render progress cards
-    $enrollments = \App\Models\Enrollment::with('kursus')
-        ->where('user_id', $user->id)
-        ->orderBy('created_at', 'desc')
+    // Pengajar Dashboard
+    if ($user->hasRole('pengajar')) {
+        $totalKursus = \App\Models\Kursus::count();
+        $totalSiswa = \App\Models\User::role('peserta')->count();
+        
+        // Get kategori stats based on enum field in kursus table
+        $kategoriEnum = ['programming', 'design', 'business', 'marketing'];
+        $kategoriNames = [
+            'programming' => 'Programming',
+            'design' => 'Design', 
+            'business' => 'Business',
+            'marketing' => 'Marketing',
+        ];
+        
+        $kategoriCounts = [];
+        foreach ($kategoriEnum as $kat) {
+            $kategoriCounts[$kat] = \App\Models\Kursus::where('kategori', $kat)->count();
+        }
+        $maxKursus = max($kategoriCounts) ?: 1;
+        
+        $kategoriStats = collect($kategoriEnum)->map(function($slug) use ($kategoriCounts, $kategoriNames, $maxKursus) {
+            return [
+                'nama' => $kategoriNames[$slug],
+                'slug' => $slug,
+                'total' => $kategoriCounts[$slug],
+                'percentage' => $maxKursus > 0 ? round(($kategoriCounts[$slug] / $maxKursus) * 100) : 0,
+            ];
+        });
+        
+        // Get popular courses
+        $kursusPopuler = \App\Models\Kursus::withCount('enrollments')
+            ->orderBy('enrollments_count', 'desc')
+            ->take(4)
+            ->get();
+        
+        // Get monthly performance (last 6 months)
+        $performaBulanan = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $bulanNama = $date->locale('id')->translatedFormat('M');
+            
+            $siswaCount = \App\Models\User::role('peserta')
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+            
+            $kursusCount = \App\Models\Kursus::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+            
+            $performaBulanan->push([
+                'nama' => $bulanNama,
+                'siswa' => $siswaCount,
+                'kursus' => $kursusCount,
+            ]);
+        }
+        
+        return view('pengajar.dashboard', compact(
+            'totalKursus', 
+            'totalSiswa', 
+            'kategoriStats', 
+            'kursusPopuler',
+            'performaBulanan'
+        ));
+    }
+    
+    // Student Dashboard - Get user's enrollments
+    $enrollments = \App\Models\Enrollment::where('user_id', $user->id)
+        ->with(['kursus'])
+        ->latest()
         ->get();
-
-    // Provide a small set of recommended courses for the dashboard if not supplied elsewhere
-    $recommendedCourses = \App\Models\Kursus::orderBy('created_at', 'desc')->limit(6)->get();
-
+    
+    // Get recommended courses (latest courses that user hasn't enrolled in)
+    $enrolledKursusIds = $enrollments->pluck('kursus_id')->toArray();
+    $recommendedCourses = \App\Models\Kursus::whereNotIn('id', $enrolledKursusIds)
+        ->latest()
+        ->limit(6)
+        ->get();
+    
     return view('dashboard', compact('enrollments', 'recommendedCourses'));
 })->middleware(['auth'])->name('dashboard');
-
-// Public certificate verification page (standalone)
-Route::get('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'index'])->name('verify.sertifikat.index');
-Route::post('/verifikasi-sertifikat', [\App\Http\Controllers\CertificateVerificationController::class, 'verify'])->name('verify.sertifikat.verify');
-// Allow direct QR scan links like /verifikasi-sertifikat/scan/CERT-...
-Route::get('/verifikasi-sertifikat/scan/{token}', [\App\Http\Controllers\CertificateVerificationController::class, 'scan'])->name('verify.sertifikat.scan');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -86,6 +153,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta', [\App\Http\Controllers\Admin\PesertaController::class, 'index'])->name('peserta.index');
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
         Route::get('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'show'])->name('peserta.show');
+        Route::put('/peserta/{id}/status', [\App\Http\Controllers\Admin\PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
         
         // Data Pengajar
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');
@@ -96,6 +164,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'destroy'])->name('pengajar.destroy');
         
         // Pelatihan/Kursus CUD routes (Create, Update, Delete)
+        Route::get('/pelatihan/{id}/peserta', [\App\Http\Controllers\Admin\PelatihanController::class, 'peserta'])->name('pelatihan.peserta');
         Route::post('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'store'])->name('pelatihan.store');
         Route::get('/pelatihan/{id}/edit', [\App\Http\Controllers\Admin\PelatihanController::class, 'edit'])->name('pelatihan.edit');
         Route::put('/pelatihan/{id}', [\App\Http\Controllers\Admin\PelatihanController::class, 'update'])->name('pelatihan.update');
@@ -160,6 +229,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/bank-soal/data', [\App\Http\Controllers\Admin\BankSoalController::class, 'getData'])->name('bank-soal.data');
         Route::get('/bank-soal/kursus-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getKursusList'])->name('bank-soal.kursus-list');
         Route::get('/bank-soal/creators-list', [\App\Http\Controllers\Admin\BankSoalController::class, 'getCreatorsList'])->name('bank-soal.creators-list');
+        Route::get('/bank-soal/download-template', [\App\Http\Controllers\Admin\BankSoalController::class, 'downloadTemplate'])->name('bank-soal.download-template');
+        Route::get('/bank-soal/export-csv', [\App\Http\Controllers\Admin\BankSoalController::class, 'exportCsv'])->name('bank-soal.export-csv');
+        Route::post('/bank-soal/import-csv', [\App\Http\Controllers\Admin\BankSoalController::class, 'importCsv'])->name('bank-soal.import-csv');
         Route::post('/bank-soal', [\App\Http\Controllers\Admin\BankSoalController::class, 'store'])->name('bank-soal.store');
         Route::get('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'show'])->name('bank-soal.show');
         Route::put('/bank-soal/{id}', [\App\Http\Controllers\Admin\BankSoalController::class, 'update'])->name('bank-soal.update');
@@ -174,6 +246,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/kategori/{id}', [\App\Http\Controllers\Admin\KategoriController::class, 'destroy'])->name('kategori.destroy');
         
         Route::get('/transaksi', [\App\Http\Controllers\Admin\TransaksiController::class, 'index'])->name('transaksi.index');
+        Route::get('/transaksi/data', [\App\Http\Controllers\Admin\TransaksiController::class, 'getData'])->name('transaksi.data');
+        Route::get('/transaksi/export-csv', [\App\Http\Controllers\Admin\TransaksiController::class, 'exportCsv'])->name('transaksi.export-csv');
         Route::get('/analitik', [\App\Http\Controllers\Admin\AnalitikController::class, 'index'])->name('analitik.index');
         Route::get('/sertifikat', [\App\Http\Controllers\Admin\SertifikatController::class, 'index'])->name('sertifikat.index');
         Route::post('/sertifikat/upload-signature', [\App\Http\Controllers\Admin\SertifikatController::class, 'uploadSignature'])->name('sertifikat.upload-signature');
@@ -184,18 +258,27 @@ Route::middleware('auth')->group(function () {
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/pelatihan-saya', [\App\Http\Controllers\User\PelatihanSayaController::class, 'index'])->name('pelatihan-saya.index');
         Route::get('/sertifikat', [\App\Http\Controllers\User\SertifikatSayaController::class, 'index'])->name('sertifikat.index');
-        Route::get('/sertifikat/{id}', [\App\Http\Controllers\User\SertifikatSayaController::class, 'show'])->name('sertifikat.show');
+        Route::get('/sertifikat/{id}/download', [\App\Http\Controllers\User\SertifikatSayaController::class, 'download'])->name('sertifikat.download');
+        Route::get('/sertifikat/{id}/preview', [\App\Http\Controllers\User\SertifikatSayaController::class, 'preview'])->name('sertifikat.preview');
+        Route::post('/sertifikat/{enrollmentId}/generate', [\App\Http\Controllers\User\SertifikatSayaController::class, 'generate'])->name('sertifikat.generate');
         
         // Enrollment and Payment routes
         Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
         Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
         
+        // Payment status and completion routes
+        Route::post('/pembayaran/{kode_transaksi}/complete', [\App\Http\Controllers\User\EnrollmentController::class, 'completePayment'])->name('pembayaran.complete');
+        Route::get('/pembayaran/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkPaymentStatus'])->name('pembayaran.status');
+        
+        Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
+        
         // Ujian routes
         Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
         Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
-
-        // Transaksi status for frontend polling (payment page)
-        Route::get('/transaksi/status/{kode}', [\App\Http\Controllers\User\TransaksiController::class, 'status'])->name('transaksi.status');
+        
+        // Progress routes
+        Route::post('/progress/reading', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');
+        Route::post('/progress/video', [\App\Http\Controllers\User\ProgressController::class, 'updateVideoProgress'])->name('progress.video');
     });
 });
 

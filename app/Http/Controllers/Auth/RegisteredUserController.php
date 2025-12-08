@@ -84,6 +84,7 @@ class RegisteredUserController extends Controller
 
         // Buat user baru dengan password yang sudah di-hash
         $user = User::create([
+            'id' => User::generateId('peserta'),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),

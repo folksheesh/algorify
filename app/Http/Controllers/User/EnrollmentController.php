@@ -16,7 +16,7 @@ class EnrollmentController extends Controller
     /**
      * Show the payment page for a course
      */
-    public function showPayment($id)
+    public function showPayment($id, Request $request)
     {
         // Ensure user is authenticated
         if (!Auth::check()) {
@@ -38,53 +38,79 @@ class EnrollmentController extends Controller
                 ->with('info', 'Anda sudah terdaftar di pelatihan ini.');
         }
 
-        // Create or get existing pending transaction
-        $transaksi = Transaksi::where('user_id', $user->id)
-            ->where('kursus_id', $id)
-            ->whereIn('status', ['pending', 'success'])
-            ->first();
-
         // Store message for expired/failed transactions
         $transactionMessage = null;
+        $forceNew = $request->get('new', false);
         
-        // Check if there's an old expired/failed transaction
-        $oldTransaction = Transaksi::where('user_id', $user->id)
+        // Check for any existing transaction
+        $transaksi = Transaksi::where('user_id', $user->id)
             ->where('kursus_id', $id)
-            ->whereIn('status', ['failed', 'expired'])
             ->latest()
             ->first();
-        
-        if ($oldTransaction) {
-            if ($oldTransaction->status === 'expired') {
-                $transactionMessage = [
-                    'type' => 'warning',
-                    'message' => 'Transaksi sebelumnya telah kadaluarsa. Silakan lakukan pembayaran ulang.'
-                ];
-            } elseif ($oldTransaction->status === 'failed') {
-                $transactionMessage = [
-                    'type' => 'error',
-                    'message' => 'Transaksi sebelumnya gagal. Silakan coba lagi dengan metode pembayaran lain.'
-                ];
-            }
-        }
 
-        // If no transaction or transaction expired/failed, create new one
-        if (!$transaksi || in_array($transaksi->status, ['failed', 'expired'])) {
+        // If force new is requested, always create new transaction
+        if ($forceNew && $transaksi) {
+            $transactionMessage = [
+                'type' => 'warning',
+                'message' => 'Membuat transaksi baru dengan invoice number baru.'
+            ];
+            
+            // Create new transaction with unique code
             $transaksi = Transaksi::create([
                 'user_id' => $user->id,
                 'kursus_id' => $id,
-                'kode_transaksi' => 'TRX-' . strtoupper(Str::random(10)),
+                'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
                 'jumlah' => $kursus->harga,
                 'nominal_pembayaran' => $kursus->harga,
                 'status' => 'pending',
                 'metode_pembayaran' => 'e_wallet',
             ]);
-        }
-
-        // If transaction is already success, redirect to courses
-        if ($transaksi->status === 'success') {
-            return redirect()->route('user.pelatihan-saya.index')
-                ->with('success', 'Pembayaran sudah berhasil!');
+        } 
+        // Handle existing transactions
+        elseif ($transaksi) {
+            if ($transaksi->status === 'success') {
+                // Already paid, redirect
+                return redirect()->route('user.pelatihan-saya.index')
+                    ->with('success', 'Pembayaran sudah berhasil!');
+            }
+            
+            // Auto create new transaction if old transaction is failed/expired
+            if (in_array($transaksi->status, ['failed', 'expired'])) {
+                if ($transaksi->status === 'expired') {
+                    $transactionMessage = [
+                        'type' => 'warning',
+                        'message' => 'Transaksi sebelumnya telah kadaluarsa. Membuat transaksi baru.'
+                    ];
+                } elseif ($transaksi->status === 'failed') {
+                    $transactionMessage = [
+                        'type' => 'error',
+                        'message' => 'Transaksi sebelumnya gagal. Membuat transaksi baru.'
+                    ];
+                }
+                
+                // Create new transaction with unique code
+                $transaksi = Transaksi::create([
+                    'user_id' => $user->id,
+                    'kursus_id' => $id,
+                    'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
+                    'jumlah' => $kursus->harga,
+                    'nominal_pembayaran' => $kursus->harga,
+                    'status' => 'pending',
+                    'metode_pembayaran' => 'e_wallet',
+                ]);
+            }
+            // If pending and not forcing new, keep using existing transaction
+        } else {
+            // No transaction exists, create new one
+            $transaksi = Transaksi::create([
+                'user_id' => $user->id,
+                'kursus_id' => $id,
+                'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
+                'jumlah' => $kursus->harga,
+                'nominal_pembayaran' => $kursus->harga,
+                'status' => 'pending',
+                'metode_pembayaran' => 'e_wallet',
+            ]);
         }
 
         // Generate DOKU Payment URL only for pending transactions
@@ -110,28 +136,46 @@ class EnrollmentController extends Controller
 
         // Prepare request body
         $user = Auth::user();
-        // Normalize and validate amount for DOKU
-        [$amountInt, $amountError] = \App\Services\DokuSignatureService::normalizeAmount($transaksi->jumlah ?? $transaksi->nominal_pembayaran ?? 0);
-
-        if ($amountError) {
-            $msg = 'DOKU Payment Error: invalid amount for transaction ' . ($transaksi->kode_transaksi ?? '') . ' — ' . $amountError;
-            \Log::error($msg, ['raw_amount' => $transaksi->jumlah, 'nominal_pembayaran' => $transaksi->nominal_pembayaran]);
-            return [null, $msg];
-        }
-
+        $callbackUrl = url('/payment/callback') . '?invoice=' . $transaksi->kode_transaksi;
+        
         $body = [
             'order' => [
                 // DOKU expects integer amount (IDR) without fractional parts
-                'amount' => $amountInt,
+                'amount' => (int) $transaksi->jumlah,
                 'invoice_number' => $transaksi->kode_transaksi,
                 'currency' => 'IDR',
+                'session_id' => session()->getId(),
+                'callback_url' => $callbackUrl,
             ],
             'payment' => [
                 'payment_due_date' => 60, // minutes
+                'payment_method_types' => [
+                    'VIRTUAL_ACCOUNT_BCA',
+                    'VIRTUAL_ACCOUNT_BANK_MANDIRI', 
+                    'VIRTUAL_ACCOUNT_BANK_SYARIAH_MANDIRI',
+                    'VIRTUAL_ACCOUNT_DOKU',
+                    'VIRTUAL_ACCOUNT_BRI',
+                    'VIRTUAL_ACCOUNT_BNI',
+                    'VIRTUAL_ACCOUNT_BANK_PERMATA',
+                    'VIRTUAL_ACCOUNT_BANK_CIMB',
+                    'VIRTUAL_ACCOUNT_BANK_DANAMON',
+                    'ONLINE_TO_OFFLINE_ALFA',
+                    'CREDIT_CARD',
+                    'DIRECT_DEBIT_BRI',
+                    'EMONEY_SHOPEE_PAY',
+                    'EMONEY_OVO',
+                    'QRIS',
+                ],
             ],
             'customer' => [
+                'id' => (string) $user->id,
                 'name' => $user->name ?? 'Guest',
                 'email' => $user->email ?? 'guest@example.com',
+            ],
+            'additional_info' => [
+                'allow_redirect' => true,
+                'success_payment_url' => $callbackUrl,
+                'failed_payment_url' => url('/payment/callback') . '?invoice=' . $transaksi->kode_transaksi . '&status=failed',
             ],
         ];
 
@@ -262,6 +306,120 @@ class EnrollmentController extends Controller
     }
 
     /**
+     * Handle DOKU payment callback (redirect after payment)
+     */
+    public function paymentCallback(Request $request)
+    {
+        $invoice = $request->get('invoice');
+        
+        if (!$invoice) {
+            return redirect()->route('dashboard')->with('error', 'Invoice tidak ditemukan.');
+        }
+        
+        $transaksi = Transaksi::where('kode_transaksi', $invoice)->first();
+        
+        if (!$transaksi) {
+            return redirect()->route('dashboard')->with('error', 'Transaksi tidak ditemukan.');
+        }
+        
+        // Check payment status from DOKU API
+        $status = $this->verifyPaymentStatus($invoice);
+        
+        if ($status === 'SUCCESS') {
+            // Update transaction status
+            $transaksi->status = 'success';
+            $transaksi->save();
+            
+            // Activate enrollment
+            $enrollment = Enrollment::where('user_id', $transaksi->user_id)
+                ->where('kursus_id', $transaksi->kursus_id)
+                ->first();
+
+            if ($enrollment) {
+                $enrollment->status = 'active';
+                $enrollment->save();
+            } else {
+                Enrollment::create([
+                    'user_id' => $transaksi->user_id,
+                    'kursus_id' => $transaksi->kursus_id,
+                    'tanggal_daftar' => now(),
+                    'status' => 'active',
+                    'progress' => 0,
+                ]);
+            }
+            
+            return redirect()->route('user.pelatihan-saya.index')
+                ->with('success', 'Pembayaran berhasil! Selamat belajar.');
+        } elseif (in_array($status, ['FAILED', 'CANCELLED', 'EXPIRED'])) {
+            $transaksi->status = strtolower($status);
+            $transaksi->save();
+            
+            return redirect()->route('user.kursus.pembayaran', $transaksi->kursus_id)
+                ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
+        }
+        
+        // Still pending, redirect to payment page to wait
+        return redirect()->route('user.kursus.pembayaran', $transaksi->kursus_id)
+            ->with('info', 'Menunggu konfirmasi pembayaran...');
+    }
+    
+    /**
+     * Verify payment status from DOKU API using GET endpoint
+     */
+    private function verifyPaymentStatus($invoiceNumber)
+    {
+        $baseUrl = config('doku.base_url');
+        $path = "/orders/v1/status/{$invoiceNumber}";
+        $endpoint = $baseUrl . $path;
+        
+        $clientId = config('doku.client_id');
+        $secretKey = config('doku.secret_key');
+        $requestId = (string) Str::uuid();
+        $requestTimestamp = now('UTC')->format('Y-m-d\TH:i:s\Z');
+        
+        // For GET request, no body - just sign the path
+        $stringToSign = "Client-Id:{$clientId}\n"
+            . "Request-Id:{$requestId}\n"
+            . "Request-Timestamp:{$requestTimestamp}\n"
+            . "Request-Target:{$path}";
+        
+        $hmac = base64_encode(hash_hmac('sha256', $stringToSign, $secretKey, true));
+        $signature = "HMACSHA256={$hmac}";
+        
+        try {
+            $response = \Http::timeout(10)
+                ->withHeaders([
+                    'Client-Id' => $clientId,
+                    'Request-Id' => $requestId,
+                    'Request-Timestamp' => $requestTimestamp,
+                    'Signature' => $signature,
+                ])
+                ->withOptions(['verify' => config('doku.disable_ssl_verify', false) ? false : true])
+                ->get($endpoint);
+            
+            \Log::info('DOKU Verify Status Response:', [
+                'invoice' => $invoiceNumber,
+                'status_code' => $response->status(),
+                'body' => $response->json()
+            ]);
+            
+            if ($response->successful()) {
+                $data = $response->json();
+                // DOKU returns status in transaction.status
+                return $data['transaction']['status'] 
+                    ?? $data['order']['status'] 
+                    ?? $data['status']
+                    ?? 'PENDING';
+            }
+            
+            return 'PENDING';
+        } catch (\Exception $e) {
+            \Log::error('DOKU Verify Status Error: ' . $e->getMessage());
+            return 'PENDING';
+        }
+    }
+
+    /**
      * Handle DOKU notification/webhook
      */
     public function notification(Request $request)
@@ -356,14 +514,46 @@ class EnrollmentController extends Controller
             ->with('kursus')
             ->firstOrFail();
 
-        // If still pending, try to check DOKU status
+        // If still pending, check DOKU status
         if ($transaksi->status === 'pending') {
-            try {
-                \Artisan::call('doku:check-status', ['--kode' => $kode_transaksi]);
-                // Refresh transaction from database
-                $transaksi->refresh();
-            } catch (\Exception $e) {
-                \Log::error('Error checking DOKU status: ' . $e->getMessage());
+            $cacheKey = "doku_check_{$kode_transaksi}";
+            $lastCheck = \Cache::get($cacheKey);
+            
+            // Only check DOKU API every 3 seconds to avoid rate limiting
+            if (!$lastCheck || now()->diffInSeconds($lastCheck) >= 3) {
+                try {
+                    // Use direct API call for faster response
+                    $status = $this->verifyPaymentStatus($kode_transaksi);
+                    \Cache::put($cacheKey, now(), 3);
+                    
+                    if ($status === 'SUCCESS') {
+                        $transaksi->status = 'success';
+                        $transaksi->save();
+                        
+                        // Activate enrollment
+                        $enrollment = Enrollment::where('user_id', $transaksi->user_id)
+                            ->where('kursus_id', $transaksi->kursus_id)
+                            ->first();
+
+                        if ($enrollment) {
+                            $enrollment->status = 'active';
+                            $enrollment->save();
+                        } else {
+                            Enrollment::create([
+                                'user_id' => $transaksi->user_id,
+                                'kursus_id' => $transaksi->kursus_id,
+                                'tanggal_daftar' => now(),
+                                'status' => 'active',
+                                'progress' => 0,
+                            ]);
+                        }
+                    } elseif (in_array($status, ['FAILED', 'CANCELLED', 'EXPIRED'])) {
+                        $transaksi->status = strtolower($status);
+                        $transaksi->save();
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error checking DOKU status: ' . $e->getMessage());
+                }
             }
         }
 

@@ -44,10 +44,10 @@ class AuthController extends Controller
         ]);
 
         $user = User::create([
+            'id' => User::generateId('peserta'),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'kode_unik' => User::generateKodeUnik('peserta'),
         ]);
 
         // Assign role peserta untuk API register

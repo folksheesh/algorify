@@ -30,6 +30,21 @@
         .back-button:hover {
             color: #5D3FFF;
         }
+        
+        /* Override untuk mobile - posisi tetap agar tidak tertutup hamburger */
+        @media (max-width: 768px) {
+            .back-button {
+                position: fixed !important;
+                top: 16px !important;
+                left: 70px !important;
+                z-index: 90 !important;
+                background: white !important;
+                padding: 0.625rem 1rem !important;
+                border-radius: 10px !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+                margin: 0 !important;
+            }
+        }
 
         .course-detail-card {
             background: white;
@@ -115,14 +130,17 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            width: 100%;
-            max-width: 400px;
+            width: auto;
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
         }
 
         .enroll-button:hover {
             background: #4c32cc;
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(93, 63, 255, 0.3);
+            color: white;
         }
 
         .instructor-card {
@@ -163,13 +181,163 @@
             color: #6b7280;
         }
 
+        /* Responsive untuk tablet */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+        }
+
         @media (max-width: 768px) {
             .detail-content {
+                padding: 1rem;
+                padding-top: 70px;
+            }
+            
+            .course-title-detail {
+                font-size: 1.35rem;
+                line-height: 1.3;
+            }
+            
+            .course-header {
+                padding: 1.25rem;
+            }
+            
+            .course-category {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .course-body {
+                padding: 1.25rem;
+            }
+            
+            .course-meta-detail {
+                gap: 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .meta-item {
+                font-size: 0.8rem;
+            }
+            
+            .meta-item svg {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .course-description-full {
+                font-size: 0.9rem;
+                line-height: 1.7;
+            }
+            
+            .course-price-detail {
+                font-size: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .enroll-button {
+                width: 100%;
+                max-width: 280px;
+                display: block;
+                margin: 0 auto;
+                padding: 0.875rem 1.5rem;
+                font-size: 0.95rem;
+            }
+            
+            .instructor-card {
+                padding: 1rem;
+                gap: 0.75rem;
+            }
+            
+            .instructor-avatar-large {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+            
+            .instructor-name-detail {
+                font-size: 1rem;
+            }
+            
+            .instructor-role {
+                font-size: 0.8rem;
+            }
+            
+            .course-section {
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .detail-content {
+                padding: 0.75rem;
+                padding-top: 65px;
+                padding-bottom: 2rem;
+            }
+            
+            .course-header {
                 padding: 1rem;
             }
             
             .course-title-detail {
-                font-size: 1.5rem;
+                font-size: 1.15rem;
+            }
+            
+            .course-category {
+                font-size: 0.65rem;
+                padding: 0.25rem 0.6rem;
+            }
+            
+            .course-body {
+                padding: 1rem;
+            }
+            
+            .course-meta-detail {
+                gap: 0.75rem;
+            }
+            
+            .meta-item {
+                font-size: 0.75rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+            }
+            
+            .course-description-full {
+                font-size: 0.85rem;
+            }
+            
+            .course-price-detail {
+                font-size: 1.35rem;
+            }
+            
+            .enroll-button {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+                max-width: 250px;
+            }
+            
+            .instructor-avatar-large {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+            
+            .instructor-name-detail {
+                font-size: 0.95rem;
+            }
+            
+            .instructor-role {
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -186,7 +354,8 @@
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Kembali ke Daftar Pelatihan
+                        <span class="hide-mobile">Kembali ke Daftar Pelatihan</span>
+                        <span class="hide-desktop">Kembali</span>
                     </a>
 
                     <div class="course-detail-card">
@@ -248,6 +417,9 @@
             </main>
         </div>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 @push('scripts')

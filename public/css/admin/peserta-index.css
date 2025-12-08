@@ -160,8 +160,20 @@
     color: #667eea;
 }
 
+.btn-edit {
+    color: #5D3FFF;
+}
+
+.btn-edit:hover {
+    background: rgba(93, 63, 255, 0.1);
+}
+
 .btn-delete {
     color: #EF4444;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
 }
 
 .page-header {
@@ -337,12 +349,14 @@
 }
 
 .btn-submit {
-    background: #0F172A;
+    background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
     color: white;
+    box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2);
 }
 
 .btn-submit:hover {
-    background: #1E293B;
+    background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%);
+    box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
 }
 
 /* Responsive Design */

@@ -64,7 +64,7 @@
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <h1 class="quiz-title">{{ $ujian->judul }}</h1>
-                        @hasanyrole('admin|pengajar')
+                        @hasanyrole('admin|super admin|pengajar')
                         <div style="display: flex; gap: 0.375rem; margin-left: auto;">
                             <button onclick="downloadTemplate()" class="btn btn-secondary" style="background: #10B981; color: white; border: none; padding: 0.5rem 0.875rem; font-size: 0.75rem;">
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
@@ -180,7 +180,7 @@
                         <div class="question-card">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                 <div class="question-number">Pertanyaan {{ $index + 1 }} dari {{ $ujian->soal->count() }}</div>
-                                @hasanyrole('admin|pengajar')
+                                @hasanyrole('admin|super admin|pengajar')
                                 <div style="display: flex; gap: 0.5rem;">
                                     <button type="button" onclick="editSoal({{ $soal->id }})" class="btn-edit-soal" title="Edit Soal">
                                         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
@@ -463,7 +463,7 @@
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <h1 class="quiz-title">{{ $ujian->judul }}</h1>
-                        @hasanyrole('admin|pengajar')
+                        @hasanyrole('admin|super admin|pengajar')
                         <div style="display: flex; gap: 0.375rem; margin-left: auto;">
                             <button onclick="downloadTemplate()" class="btn btn-secondary" style="background: #10B981; color: white; border: none; padding: 0.5rem 0.875rem; font-size: 0.75rem;" title="Download Template Excel">
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
@@ -559,7 +559,7 @@
                         <div class="question-card" id="question-{{ $index + 1 }}" style="{{ $index === 0 ? '' : 'display: none;' }}">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                 <div class="question-number">Pertanyaan {{ $index + 1 }} dari {{ $ujian->soal->count() }}</div>
-                                @hasanyrole('admin|pengajar')
+                                @hasanyrole('admin|super admin|pengajar')
                                 <div style="display: flex; gap: 0.5rem;">
                                     <button type="button" onclick="editSoal({{ $soal->id }})" class="btn-edit-soal" title="Edit Soal">
                                         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">

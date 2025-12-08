@@ -37,12 +37,14 @@
                     </div>
                 </div>
 
+                @hasanyrole('admin|super admin')
                 <!-- Floating Add Button -->
                 <button class="btn-add-floating" title="Tambah Kursus" onclick="openModal()">
                     <svg viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                     </svg>
                 </button>
+                @endhasanyrole
 
                 <!-- Modal Add/Edit Kursus -->
                 <div class="modal-overlay" id="modalKursus">
@@ -241,6 +243,8 @@
                                     </svg>
                                 </button>
                                 @endhasrole
+
+                                @hasanyrole('admin|super admin')
                                 <!-- Overlay with action buttons -->
                                 <div class="card-overlay">
                                     <button class="overlay-btn edit" title="Edit" onclick="event.stopPropagation(); editKursus({{ $course->id }})">
@@ -254,6 +258,7 @@
                                         </svg>
                                     </button>
                                 </div>
+                                @endhasanyrole
                             </div>
                             <div class="course-content">
                                 <h3 class="course-title">{{ $course->judul }}</h3>
