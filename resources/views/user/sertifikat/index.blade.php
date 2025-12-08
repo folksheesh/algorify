@@ -190,122 +190,13 @@
                 <div style="background: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
                     {{ session('error') }}
                 </div>
-            @endif
-
-            <div class="cert-container">
-                @if($completedEnrollments->count() > 0)
-                    @foreach($completedEnrollments as $enrollment)
-                        <!-- Certificate Card -->
-                        <div class="cert-card">
-                            <div class="cert-icon-wrapper">
-                                <svg class="cert-icon-svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
-                                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
-                                </svg>
-                            </div>
-
-                            <h2 class="cert-title">{{ $enrollment->kursus->judul }}</h2>
-                            <p class="cert-subtitle">Oleh {{ $enrollment->kursus->pengajar->name ?? 'Instruktur' }}</p>
-
-                            <div class="cert-details">
-                                <div class="cert-detail-row">
-                                    <span class="cert-detail-label">Progress:</span>
-                                    <span class="cert-detail-value">{{ number_format($enrollment->progress, 0) }}%</span>
-                                </div>
-                                <div class="cert-detail-row">
-                                    <span class="cert-detail-label">Nilai Akhir:</span>
-                                    <span class="cert-detail-value">{{ $enrollment->nilai_akhir ?? 0 }}/100</span>
-                                </div>
-                                <div class="cert-detail-row">
-                                    <span class="cert-detail-label">Status:</span>
-                                    <span class="cert-detail-value">
-                                        @if($enrollment->has_certificate)
-                                            <span style="color: #10B981;">✓ Tersedia</span>
-                                        @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)
-                                            <span style="color: #F59E0B;">⚠ Belum Dibuat</span>
-                                        @else
-                                            <span style="color: #EF4444;">✗ Belum Selesai</span>
-                                        @endif
-                                    </span>
-                                </div>
-                            </div>
-
-                            @if($enrollment->has_certificate)
-                                <a href="{{ route('user.sertifikat.download', $enrollment->certificate->id) }}" 
-                                   class="btn-download" 
-                                   onclick="event.preventDefault(); showDownloadModal('{{ $enrollment->kursus->judul }}', '{{ $enrollment->certificate->nomor_sertifikat }}', '{{ route('user.sertifikat.download', $enrollment->certificate->id) }}');">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Download Sertifikat (PDF)
-                                </a>
-                            @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)
-                                <a href="{{ route('user.sertifikat.generate', $enrollment->id) }}" class="btn-download">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
-                                    </svg>
-                                    Dapatkan Sertifikat
-                                </a>
-                            @else
-                                <button disabled class="btn-download" style="background: #94A3B8; cursor: not-allowed;" 
-                                        onclick="showIncompleteModal('{{ $enrollment->kursus->judul }}', {{ number_format($enrollment->progress, 0) }}, {{ $enrollment->nilai_akhir ?? 0 }});">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Belum Dapat Sertifikat
-                                </button>
-                            @endif
-                        </div>
-                    @endforeach
-                @else
-                    <!-- Empty State -->
-                    <div class="empty-state">
-                        <div class="empty-icon">📜</div>
-                        <h2 class="empty-title">Belum Ada Pelatihan yang Diselesaikan</h2>
-                        <p class="empty-text">Selesaikan pelatihan dengan progress 100% atau nilai minimal 70 untuk mendapatkan sertifikat</p>
-                        <a href="{{ route('user.pelatihan-saya.index') }}" class="btn-explore">
-                            Lihat Pelatihan Saya
-                        </a>
-                    </div>
-                    
-                    <!-- Info Box -->
-                    <div class="info-box">
-                        <div class="info-box-title">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                            </svg>
-                            Cara Mendapatkan Sertifikat
-                        </div>
-                        <ul class="info-box-list">
-                            <li>
-                                <div class="check-icon">
-                                    <svg width="12" height="12" fill="white" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                                <span>Selesaikan semua modul dalam pelatihan (100%)</span>
-                            </li>
-                            <li>
-                                <div class="check-icon">
-                                    <svg width="12" height="12" fill="white" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                                <span>Lulus quiz final dengan nilai minimal 70</span>
-                            </li>
-                            <li>
-                                <div class="check-icon">
-                                    <svg width="12" height="12" fill="white" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                                <span>Sertifikat dapat didownload dalam format PDF</span>
-                            </li>
-                        </ul>
-                    </div>
-                @endif
-            </div>
-
+            </section>
+            <section class="stats-section">
+                <div style="padding: 2rem; background: white; border-radius: 12px; margin-top: 2rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #1E293B;">Halaman dalam pengembangan</h2>
+                    <p style="color: #64748B;">Konten untuk halaman Sertifikat Saya akan segera ditambahkan.</p>
+                </div>
+            </section>
         </main>
     </div>
 @endsection
