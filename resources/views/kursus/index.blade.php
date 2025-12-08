@@ -357,6 +357,21 @@
             }
         }
 
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
+            }
+        }
+        
         @media (max-width: 768px) {
             .courses-grid {
                 grid-template-columns: 1fr;
@@ -414,8 +429,11 @@
 @endpush
 
 @section('content')
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
     <div class="pelatihan-container">
-        <div class="dashboard-container">
+        <div class="dashboard-container with-topbar">
             @include('components.sidebar')
             
             <main class="main-content" style="background: #f8f9fa;">
@@ -461,8 +479,11 @@
                             @foreach($kursus as $course)
                             <div class="course-card">
                                 <div class="course-thumbnail">
-                                    @if($course->thumbnail)
-                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->judul }}" />
+                                    @php
+                                        $courseThumbnailUrl = $course->thumbnail ? resolve_thumbnail_url($course->thumbnail) : null;
+                                    @endphp
+                                    @if($courseThumbnailUrl)
+                                        <img src="{{ $courseThumbnailUrl }}" alt="{{ $course->judul }}" />
                                     @endif
                                     <span class="course-badge">{{ strtoupper(str_replace('_', ' ', $course->kategori)) }}</span>
                                     <button type="button" class="bookmark-btn" onclick="event.stopPropagation();">

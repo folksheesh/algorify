@@ -9,10 +9,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Topbar Layout Adjustment for Pengajar */
+        .dashboard-container.with-topbar {
+            padding-top: 64px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar Pengajar --}}
+    @role('pengajar')
+    @include('components.topbar-pengajar')
+    @endrole
+    
+    <div class="dashboard-container @role('pengajar') with-topbar @endrole">
         @include('components.sidebar')
         <main class="main-content">
             <div class="page-container">
@@ -227,8 +248,11 @@
                         @foreach($kursus as $course)
                         <div class="course-card" onclick="window.location='{{ route('admin.pelatihan.show', $course->id) }}'" style="cursor: pointer;">
                             <div class="course-thumbnail-container">
+                                @php
+                                    $courseThumbnailUrl = $course->thumbnail ? resolve_thumbnail_url($course->thumbnail) : null;
+                                @endphp
                                 @if($course->thumbnail)
-                                    <img src="{{ asset('storage/' . $course->thumbnail) }}" 
+                                    <img src="{{ $courseThumbnailUrl }}" 
                                          alt="{{ $course->judul }}" 
                                          class="course-thumbnail"
                                          onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)';">

@@ -189,4 +189,163 @@ class TransaksiController extends Controller
             ]);
         }
     }
+
+    /**
+     * Export transaksi to CSV
+     */
+    public function exportCsv(Request $request)
+    {
+        try {
+            $query = Transaksi::with(['user', 'kursus'])
+                ->orderBy('tanggal_transaksi', 'desc');
+
+            // Apply filters same as index
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('kode_transaksi', 'like', "%{$search}%")
+                      ->orWhereHas('user', function($uq) use ($search) {
+                          $uq->where('name', 'like', "%{$search}%")
+                             ->orWhere('email', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('kursus', function($kq) use ($search) {
+                          $kq->where('judul', 'like', "%{$search}%");
+                      });
+                });
+            }
+
+            if ($request->filled('status')) {
+                $status = $request->status;
+                if ($status === 'lunas') {
+                    $query->where('status', 'success');
+                } elseif ($status === 'pending') {
+                    $query->where('status', 'pending');
+                } elseif ($status === 'gagal') {
+                    $query->whereIn('status', ['expired', 'failed']);
+                }
+            }
+
+            if ($request->filled('metode')) {
+                $metodeMap = [
+                    'transfer bank' => 'bank_transfer',
+                    'e-wallet' => 'e_wallet',
+                    'kartu kredit' => 'credit_card',
+                    'qris' => 'qris',
+                    'mini market' => 'mini_market',
+                    'kartu debit' => 'kartu_debit',
+                ];
+                $metode = $metodeMap[strtolower($request->metode)] ?? $request->metode;
+                $query->where('metode_pembayaran', $metode);
+            }
+
+            if ($request->filled('periode')) {
+                $now = now();
+                switch ($request->periode) {
+                    case 'hari_ini':
+                        $query->whereDate('tanggal_transaksi', $now->toDateString());
+                        break;
+                    case '7_hari':
+                        $query->where('tanggal_transaksi', '>=', $now->copy()->subDays(7));
+                        break;
+                    case 'bulan_ini':
+                        $query->whereMonth('tanggal_transaksi', $now->month)
+                              ->whereYear('tanggal_transaksi', $now->year);
+                        break;
+                    case 'bulan_lalu':
+                        $lastMonth = $now->copy()->subMonth();
+                        $query->whereMonth('tanggal_transaksi', $lastMonth->month)
+                              ->whereYear('tanggal_transaksi', $lastMonth->year);
+                        break;
+                    case 'tahun_ini':
+                        $query->whereYear('tanggal_transaksi', $now->year);
+                        break;
+                }
+            }
+
+            $transaksi = $query->get();
+            
+            // Calculate totals for header
+            $totalJumlah = $transaksi->sum('jumlah');
+            $totalLunas = $transaksi->where('status', 'success')->count();
+            $totalPending = $transaksi->where('status', 'pending')->count();
+
+            $headers = [
+                'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="transaksi_' . date('Y-m-d_His') . '.csv"',
+            ];
+
+            $callback = function() use ($transaksi, $totalJumlah, $totalLunas, $totalPending) {
+                $file = fopen('php://output', 'w');
+                // Add BOM for UTF-8 Excel compatibility
+                fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Report Header
+                fputcsv($file, ['LAPORAN DATA TRANSAKSI - ALGORIFY'], ';');
+                fputcsv($file, ['Tanggal Export: ' . date('d/m/Y H:i:s')], ';');
+                fputcsv($file, [''], ';');
+                fputcsv($file, ['RINGKASAN'], ';');
+                fputcsv($file, ['Total Transaksi', count($transaksi)], ';');
+                fputcsv($file, ['Total Pendapatan', 'Rp ' . number_format($totalJumlah, 0, ',', '.')], ';');
+                fputcsv($file, ['Transaksi Lunas', $totalLunas], ';');
+                fputcsv($file, ['Transaksi Pending', $totalPending], ';');
+                fputcsv($file, [''], ';');
+                fputcsv($file, ['DETAIL TRANSAKSI'], ';');
+                
+                // Column headers
+                fputcsv($file, [
+                    'No',
+                    'Kode Transaksi',
+                    'Tanggal',
+                    'Nama Peserta',
+                    'Email',
+                    'Kursus',
+                    'Jumlah (Rp)',
+                    'Metode Pembayaran',
+                    'Status'
+                ], ';');
+                
+                foreach ($transaksi as $index => $item) {
+                    // Format metode pembayaran
+                    $metodeMap = [
+                        'bank_transfer' => 'Transfer Bank',
+                        'e_wallet' => 'E-Wallet',
+                        'credit_card' => 'Kartu Kredit',
+                        'qris' => 'QRIS',
+                        'mini_market' => 'Mini Market',
+                        'kartu_debit' => 'Kartu Debit',
+                    ];
+                    $metode = $metodeMap[$item->metode_pembayaran] ?? ucfirst(str_replace('_', ' ', $item->metode_pembayaran ?? '-'));
+                    
+                    // Format status
+                    $statusMap = [
+                        'success' => 'Lunas',
+                        'pending' => 'Pending',
+                        'expired' => 'Kadaluarsa',
+                        'failed' => 'Gagal',
+                    ];
+                    $status = $statusMap[$item->status] ?? ucfirst($item->status ?? '-');
+                    
+                    fputcsv($file, [
+                        $index + 1,
+                        $item->kode_transaksi,
+                        $item->tanggal_transaksi ? $item->tanggal_transaksi->format('d/m/Y H:i') : '-',
+                        $item->user->name ?? 'N/A',
+                        $item->user->email ?? 'N/A',
+                        $item->kursus->judul ?? 'N/A',
+                        number_format($item->jumlah, 0, ',', '.'),
+                        $metode,
+                        $status
+                    ], ';');
+                }
+                
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+            
+        } catch (\Exception $e) {
+            Log::error('Error exporting transactions: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengexport data transaksi');
+        }
+    }
 }

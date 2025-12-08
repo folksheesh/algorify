@@ -39,7 +39,7 @@
                         </svg>
                         <span>Data real-time - Terakhir diperbarui: {{ now()->format('d M Y, H:i') }}</span>
                     </div>
-                    <button class="btn-export" onclick="window.print()">
+                    <button class="btn-export" onclick="exportTransaksiCsv()">
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"/>
                         </svg>
@@ -349,6 +349,20 @@
         statusFilter.addEventListener('change', applyFilters);
         metodeFilter.addEventListener('change', applyFilters);
         periodeFilter.addEventListener('change', applyFilters);
+        
+        // Export CSV function
+        function exportTransaksiCsv() {
+            const params = new URLSearchParams();
+            
+            if (searchInput.value) params.append('search', searchInput.value);
+            if (statusFilter.value) params.append('status', statusFilter.value);
+            if (metodeFilter.value) params.append('metode', metodeFilter.value);
+            if (periodeFilter.value) params.append('periode', periodeFilter.value);
+            
+            // Open export URL with filters
+            const queryString = params.toString();
+            window.location.href = '{{ route("admin.transaksi.export-csv") }}' + (queryString ? '?' + queryString : '');
+        }
     </script>
     
     <style>

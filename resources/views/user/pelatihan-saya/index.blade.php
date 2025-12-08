@@ -287,10 +287,23 @@
         }
         
         /* Responsive Styles */
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding-top: 70px;
+            }
+            
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
             }
         }
         
@@ -380,7 +393,10 @@
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
+    <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
             <div style="padding: 0 2rem 2rem;">
@@ -407,7 +423,13 @@
                         @foreach($enrollments as $enrollment)
                         <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('kursus.show', $enrollment->kursus->id) }}'">
                             <div class="course-thumbnail-wrapper">
-                                <img src="{{ asset($enrollment->kursus->thumbnail ?? 'template/assets/static/images/samples/origami.jpg') }}" 
+                                @php
+                                    $enrollmentThumbnail = resolve_thumbnail_url(
+                                        $enrollment->kursus->thumbnail,
+                                        asset('template/assets/static/images/samples/origami.jpg')
+                                    );
+                                @endphp
+                                <img src="{{ $enrollmentThumbnail }}" 
                                      alt="{{ $enrollment->kursus->judul }}" 
                                      class="course-thumbnail"
                                      onerror="this.src='{{ asset('template/assets/static/images/samples/origami.jpg') }}'">
