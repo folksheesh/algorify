@@ -181,11 +181,24 @@
             color: #6b7280;
         }
 
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
         /* Responsive untuk tablet */
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding-top: 70px;
+            }
+            
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
             }
         }
 
@@ -344,8 +357,11 @@
 @endpush
 
 @section('content')
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
     <div class="detail-container">
-        <div class="dashboard-container">
+        <div class="dashboard-container with-topbar">
             @include('components.sidebar')
             
             <main class="main-content" style="background: #f8f9fa;">

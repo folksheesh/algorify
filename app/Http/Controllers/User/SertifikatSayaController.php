@@ -98,29 +98,23 @@ class SertifikatSayaController extends Controller
             ->with(['kursus.pengajar', 'user'])
             ->firstOrFail();
         
-        // Get signature
-        $signaturePath = null;
-        foreach (['png', 'jpg', 'jpeg'] as $ext) {
-            $path = "signatures/director_signature.{$ext}";
-            if (Storage::disk('public')->exists($path)) {
-                $signaturePath = storage_path('app/public/' . $path);
-                break;
-            }
-        }
+        // Get enrollment to get nilai_akhir
+        $enrollment = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('kursus_id', $certificate->kursus_id)
+            ->first();
         
         // Prepare data for PDF
         $data = [
-            'certificate' => $certificate,
-            'user' => $user,
-            'kursus' => $certificate->kursus,
-            'pengajar' => $certificate->kursus->pengajar,
-            'signature' => $signaturePath,
-            'tanggal_terbit' => $certificate->tanggal_terbit->format('d F Y'),
+            'nama' => $user->name,
+            'kursus' => $certificate->kursus->judul,
+            'tanggal' => $certificate->tanggal_terbit->format('d F Y'),
+            'nilai' => ($enrollment->nilai_akhir ?? 100) . '/100',
+            'kode' => $certificate->nomor_sertifikat,
         ];
         
-        // Generate PDF
+        // Generate PDF - custom size to fit content
         $pdf = Pdf::loadView('user.sertifikat.template', $data);
-        $pdf->setPaper('a4', 'landscape');
+        $pdf->setPaper([0, 0, 680, 520]); // width x height in points (landscape-ish)
         
         return $pdf->download('Sertifikat-' . $certificate->nomor_sertifikat . '.pdf');
     }

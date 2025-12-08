@@ -24,10 +24,20 @@
         .status-dropdown { width: 100%; padding: 0 2.5rem 0 1rem; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.875rem; font-weight: 500; color: #334155; background: white; cursor: pointer; height: 42px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.875rem center; background-size: 18px; appearance: none; }
         .status-dropdown:focus { outline: none; border-color: #5D3FFF; box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1); }
         .actions-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; gap: 1rem; }
-        .import-export-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-        .btn-secondary { padding: 0.625rem 1.25rem; background: white; color: #64748B; border: 1px solid #CBD5E1; border-radius: 10px; font-size: 0.875rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; height: 42px; transition: all 0.2s; }
+        .import-export-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn-secondary { padding: 0.5rem 1rem; background: white; color: #64748B; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.8125rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; height: 36px; transition: all 0.2s; text-decoration: none; }
         .btn-secondary:hover { background: #F8FAFC; border-color: #94A3B8; color: #475569; }
-        .btn-add { padding: 0 1.5rem; background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%); color: white; border: none; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; height: 42px; box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2); transition: all 0.2s; }
+        
+        /* File Management Buttons - Same size */
+        .btn-file { padding: 0 0.875rem; border-radius: 8px; font-size: 0.8125rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; height: 36px; transition: all 0.2s; text-decoration: none; border: 1px solid; white-space: nowrap; }
+        .btn-template { background: #F0FDF4; color: #15803D; border-color: #86EFAC; }
+        .btn-template:hover { background: #DCFCE7; border-color: #4ADE80; color: #166534; }
+        .btn-import { background: #EFF6FF; color: #1D4ED8; border-color: #93C5FD; }
+        .btn-import:hover { background: #DBEAFE; border-color: #60A5FA; color: #1E40AF; }
+        .btn-export { background: #FEF3C7; color: #B45309; border-color: #FCD34D; }
+        .btn-export:hover { background: #FDE68A; border-color: #FBBF24; color: #92400E; }
+        
+        .btn-add { padding: 0 1.25rem; background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%); color: white; border: none; border-radius: 8px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; height: 36px; box-shadow: 0 2px 8px rgba(93, 63, 255, 0.2); transition: all 0.2s; }
         .btn-add:hover { background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3); }
         @media (max-width: 768px) {
             .filter-grid { grid-template-columns: repeat(2, 1fr); }
@@ -130,6 +140,11 @@
 @endpush
 
 @section('content')
+    @role('pengajar')
+    <div style="padding-top: 64px;">
+        @include('components.topbar-pengajar')
+    @endrole
+    
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
     
@@ -178,23 +193,30 @@
                     <div class="section-label">Manajemen File</div>
                     <div class="actions-row">
                         <div class="import-export-group">
-                            <button class="btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <a href="{{ route('admin.bank-soal.download-template') }}" class="btn-file btn-template">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="12" y1="18" x2="12" y2="12"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
                                 </svg>
                                 Unduh Template
-                            </button>
-                            <button class="btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </a>
+                            <button class="btn-file btn-import" onclick="openImportModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
                                 </svg>
                                 Import CSV
                             </button>
-                            <button class="btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <button class="btn-file btn-export" onclick="exportCsv()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
-                                Export ke CSV
+                                Export CSV
                             </button>
                         </div>
                         <button class="btn-add" onclick="openAddModal()">
@@ -340,6 +362,49 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal Import CSV --}}
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            <div class="modal-header">
+                <h2>Import Soal dari CSV</h2>
+                <p>Upload file CSV untuk mengimport soal secara massal</p>
+            </div>
+            <form id="importForm" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group">
+                    <label class="form-label">File CSV *</label>
+                    <div class="file-upload-wrapper">
+                        <label for="importFile" class="file-upload-label" id="importFileLabel">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span id="importFileText">Pilih file CSV atau drag & drop</span>
+                        </label>
+                        <input type="file" id="importFile" name="file" accept=".csv" onchange="updateImportFileLabel()" style="position: absolute; width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; z-index: -1;">
+                    </div>
+                </div>
+                <div style="background: #F0F9FF; border: 1px solid #0EA5E9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <p style="color: #0369A1; font-size: 0.8125rem; margin: 0;">
+                        <strong>Format CSV:</strong><br>
+                        Kolom: pertanyaan, tipe_soal, opsi_jawaban, jawaban_benar, poin<br>
+                        - tipe_soal: pilihan_ganda atau multi_jawaban<br>
+                        - opsi_jawaban: dipisahkan dengan | (contoh: Opsi A|Opsi B|Opsi C)<br>
+                        - jawaban_benar: index jawaban (0,1,2,... atau 0,2 untuk multi)
+                    </p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeImportModal()">Batal</button>
+                    <button type="submit" class="btn btn-submit" id="btnImport">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    @role('pengajar')
+    </div>
+    @endrole
 @endsection
 
 @push('scripts')
@@ -1024,6 +1089,104 @@
 
     function closeViewModal() {
         document.getElementById('viewModal').classList.remove('active');
+    }
+
+    // ============================================
+    // IMPORT & EXPORT FUNCTIONS
+    // ============================================
+    function openImportModal() {
+        document.getElementById('importModal').classList.add('active');
+    }
+
+    function closeImportModal() {
+        document.getElementById('importModal').classList.remove('active');
+        document.getElementById('importForm').reset();
+        document.getElementById('importFileText').textContent = 'Pilih file CSV atau drag & drop';
+        document.getElementById('importFileLabel').classList.remove('has-file');
+    }
+
+    function updateImportFileLabel() {
+        const input = document.getElementById('importFile');
+        const label = document.getElementById('importFileLabel');
+        const text = document.getElementById('importFileText');
+        
+        if (input.files && input.files[0]) {
+            text.textContent = input.files[0].name;
+            label.classList.add('has-file');
+        } else {
+            text.textContent = 'Pilih file CSV atau drag & drop';
+            label.classList.remove('has-file');
+        }
+    }
+
+    document.getElementById('importForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('importFile');
+        if (!fileInput.files || !fileInput.files[0]) {
+            showToast('Pilih file CSV terlebih dahulu', 'warning');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        const btnImport = document.getElementById('btnImport');
+        const originalText = btnImport.textContent;
+        btnImport.disabled = true;
+        btnImport.textContent = 'Mengimport...';
+        
+        try {
+            const response = await fetch('{{ route("admin.bank-soal.import-csv") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast(result.message, 'success');
+                closeImportModal();
+                loadData();
+                
+                // Show errors if any
+                if (result.errors && result.errors.length > 0) {
+                    setTimeout(() => {
+                        alert('Beberapa baris gagal diimport:\n\n' + result.errors.join('\n'));
+                    }, 500);
+                }
+            } else {
+                showToast(result.message || 'Gagal mengimport file', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Terjadi kesalahan saat mengimport file', 'error');
+        } finally {
+            btnImport.disabled = false;
+            btnImport.textContent = originalText;
+        }
+    });
+
+    function exportCsv() {
+        // Get current filters
+        const search = document.getElementById('searchInput').value;
+        const tipe = document.getElementById('tipeFilter').value;
+        const kursus = document.getElementById('kursusFilter').value;
+        const kategori = document.getElementById('kategoriFilter').value;
+        
+        // Build query string
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (tipe) params.append('tipe_soal', tipe);
+        if (kursus) params.append('kursus', kursus);
+        if (kategori) params.append('kategori', kategori);
+        
+        // Open export URL with filters
+        const url = '{{ route("admin.bank-soal.export-csv") }}' + (params.toString() ? '?' + params.toString() : '');
+        window.location.href = url;
     }
 
     document.addEventListener('DOMContentLoaded', () => {

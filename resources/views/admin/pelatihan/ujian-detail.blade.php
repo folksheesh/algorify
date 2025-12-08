@@ -29,6 +29,11 @@
     }
 @endphp
 
+@role('pengajar')
+<div style="padding-top: 64px;">
+    @include('components.topbar-pengajar')
+@endrole
+
 <div class="page-container">
     
     <!-- Back Button -->
@@ -3009,5 +3014,8 @@ body.exam-active-mode #examSidebar {
 }
 </style>
 
-@endsection
+@role('pengajar')
+</div>
+@endrole
 
+@endsection

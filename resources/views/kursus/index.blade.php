@@ -357,6 +357,21 @@
             }
         }
 
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
+            }
+        }
+        
         @media (max-width: 768px) {
             .courses-grid {
                 grid-template-columns: 1fr;
@@ -414,8 +429,11 @@
 @endpush
 
 @section('content')
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
     <div class="pelatihan-container">
-        <div class="dashboard-container">
+        <div class="dashboard-container with-topbar">
             @include('components.sidebar')
             
             <main class="main-content" style="background: #f8f9fa;">

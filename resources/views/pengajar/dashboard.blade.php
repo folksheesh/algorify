@@ -395,16 +395,31 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 64px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar Pengajar --}}
+    @include('components.topbar-pengajar')
+    
+    <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-            <header class="main-header">
-            </header>
-            
             <!-- Page Header -->
             <div class="page-header dashboard-page-header">
                 <h1>Dashboard</h1>

@@ -246,10 +246,26 @@
     .check-icon {
         flex-shrink: 0;
     }
+    
+    /* Topbar Layout Adjustment for Pengajar */
+    .page-container.with-topbar {
+        padding-top: calc(64px + 2rem);
+    }
+    
+    @media (max-width: 992px) {
+        .page-container.with-topbar {
+            padding-top: calc(64px + 1rem);
+        }
+    }
 </style>
 @endpush
 
 @section('content')
+{{-- Topbar Pengajar --}}
+@role('pengajar')
+@include('components.topbar-pengajar')
+@endrole
+
 @php
     $fileVideo = $video->file_video;
     $isYoutube = str_contains($fileVideo, 'youtube.com') || str_contains($fileVideo, 'youtu.be');
@@ -261,7 +277,7 @@
         $youtubeId = $matches[1] ?? '';
     }
 @endphp
-<div class="page-container">
+<div class="page-container @role('pengajar') with-topbar @endrole"
     
     <!-- Back Button -->
     <a href="{{ route('admin.pelatihan.show', $video->modul->kursus_id) }}?open_modul={{ $video->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
