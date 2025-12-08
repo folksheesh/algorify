@@ -461,8 +461,11 @@
                             @foreach($kursus as $course)
                             <div class="course-card">
                                 <div class="course-thumbnail">
-                                    @if($course->thumbnail)
-                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->judul }}" />
+                                    @php
+                                        $courseThumbnailUrl = $course->thumbnail ? resolve_thumbnail_url($course->thumbnail) : null;
+                                    @endphp
+                                    @if($courseThumbnailUrl)
+                                        <img src="{{ $courseThumbnailUrl }}" alt="{{ $course->judul }}" />
                                     @endif
                                     <span class="course-badge">{{ strtoupper(str_replace('_', ' ', $course->kategori)) }}</span>
                                     <button type="button" class="bookmark-btn" onclick="event.stopPropagation();">

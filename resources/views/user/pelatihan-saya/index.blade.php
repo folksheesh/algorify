@@ -407,7 +407,13 @@
                         @foreach($enrollments as $enrollment)
                         <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}'">
                             <div class="course-thumbnail-wrapper">
-                                <img src="{{ asset($enrollment->kursus->thumbnail ?? 'template/assets/static/images/samples/origami.jpg') }}" 
+                                @php
+                                    $enrollmentThumbnail = resolve_thumbnail_url(
+                                        $enrollment->kursus->thumbnail,
+                                        asset('template/assets/static/images/samples/origami.jpg')
+                                    );
+                                @endphp
+                                <img src="{{ $enrollmentThumbnail }}" 
                                      alt="{{ $enrollment->kursus->judul }}" 
                                      class="course-thumbnail"
                                      onerror="this.src='{{ asset('template/assets/static/images/samples/origami.jpg') }}'">
