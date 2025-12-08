@@ -3,11 +3,11 @@
 @section('title', 'Dashboard Pengajar - Algorify')
 
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <style>
         .admin-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
             border-radius: 20px;
             padding: 2.5rem 2rem;
             color: white;
@@ -147,7 +147,7 @@
         }
         .kategori-label.programming {
             background: #EEF2FF;
-            color: #6366F1;
+            color: #3A6DFF;
         }
         .kategori-label.design {
             background: #DBEAFE;
@@ -174,7 +174,7 @@
             transition: width 0.5s ease;
         }
         .kategori-bar-fill.programming {
-            background: linear-gradient(90deg, #6366F1, #8B5CF6);
+            background: linear-gradient(90deg, #3A6DFF, #3A6DFF);
         }
         .kategori-bar-fill.design {
             background: linear-gradient(90deg, #2563EB, #3B82F6);
@@ -223,10 +223,10 @@
             color: white;
         }
         .kursus-rank.rank-1 {
-            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            background: linear-gradient(135deg, #3A6DFF, #3A6DFF);
         }
         .kursus-rank.rank-2 {
-            background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+            background: linear-gradient(135deg, #3A6DFF, #3A6DFF);
         }
         .kursus-rank.rank-3 {
             background: linear-gradient(135deg, #10B981, #34D399);
@@ -451,10 +451,10 @@
                 <div class="stat-cards-grid">
                     <a href="{{ route('admin.pelatihan.index') }}" style="text-decoration: none;">
                         <div class="stat-card-modern">
-                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" fill="white"/>
-                                    <path d="M8 10H16M8 14H12" stroke="#764ba2" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M8 10H16M8 14H12" stroke="#3A6DFF" stroke-width="1.5" stroke-linecap="round"/>
                                 </svg>
                             </div>
                             <div class="stat-info">

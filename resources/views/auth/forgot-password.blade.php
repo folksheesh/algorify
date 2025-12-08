@@ -3,7 +3,7 @@
 @section('title', 'Lupa Kata Sandi - Algorify')
 
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/compiled/css/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('template/assets/extensions/bootstrap-icons/font/bootstrap-icons.min.css') }}">

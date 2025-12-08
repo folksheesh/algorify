@@ -3,7 +3,7 @@
 @section('title', 'Analitik - Algorify')
 
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/analitik-index.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -398,8 +398,8 @@
         
         // Chart Colors
         const chartColors = [
-            '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', 
-            '#EF4444', '#6366F1', '#14B8A6', '#F97316', '#06B6D4'
+            '#3B82F6', '#764ba2', '#EC4899', '#F59E0B', '#10B981', 
+            '#EF4444', '#667eea', '#14B8A6', '#F97316', '#06B6D4'
         ];
         
         // Revenue Bar Chart

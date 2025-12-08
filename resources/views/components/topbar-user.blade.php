@@ -76,8 +76,8 @@
         border-bottom: 1px solid #E2E8F0;
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 0 1rem 0 1rem;
+        justify-content: space-between;
+        padding: 0 1rem;
         z-index: 1000;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -142,10 +142,11 @@
     /* Center Section - Search (centered) */
     .topbar-center {
         flex: 1;
-        max-width: 600px;
+        max-width: 450px;
         margin: 0 auto;
         display: flex;
         justify-content: center;
+        min-width: 300px;
     }
     
     .topbar-search {
@@ -164,7 +165,6 @@
     
     .topbar-search-input {
         width: 100%;
-        min-width: 400px;
         padding: 14px 20px 14px 50px;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
@@ -193,7 +193,8 @@
         align-items: center;
         gap: 1.5rem;
         position: absolute;
-        right: 48px; /* Same as main-content padding-right */
+        right: 60px; /* Sufficient space from right edge */
+        z-index: 2;
     }
     
     /* Navigation Links */
@@ -271,7 +272,7 @@
         width: 38px;
         height: 38px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
+        background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
         color: white;
         display: flex;
         align-items: center;

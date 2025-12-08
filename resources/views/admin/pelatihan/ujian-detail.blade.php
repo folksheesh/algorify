@@ -515,7 +515,7 @@
                     <!-- Start Screen untuk Ujian (Exam) -->
                     @hasanyrole('peserta')
                     <div id="examStartScreen" class="start-screen" style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); border-radius: 12px; margin-bottom: 1.5rem;">
-                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
                                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                             </svg>
@@ -525,7 +525,7 @@
                         
                         <div class="start-info" style="display: inline-flex; gap: 2rem; background: white; padding: 1rem 2rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div style="text-align: center;">
-                                <div style="font-size: 1.5rem; font-weight: 700; color: #6366F1;">{{ $ujian->soal->count() }}</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">{{ $ujian->soal->count() }}</div>
                                 <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">Jumlah Soal</div>
                             </div>
                             <div style="width: 1px; background: #E5E7EB;"></div>

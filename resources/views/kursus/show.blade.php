@@ -3,7 +3,7 @@
 @section('title', 'Algorify - ' . $kursus->judul)
 
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <style>
         .detail-container {
