@@ -124,8 +124,8 @@
                         <span class="nav-text">Halaman Utama</span>
                     </a>
                 </li>
-                <li class="nav-item has-submenu {{ request()->routeIs('admin.pelatihan.*') || request()->routeIs('admin.bank-soal.*') ? 'open' : '' }}">
-                    <a href="#" class="nav-link" data-title="Data Pelatihan" onclick="event.preventDefault(); this.parentElement.classList.toggle('open');">
+                <li class="nav-item has-submenu {{ request()->routeIs('pengajar.kursus.*') || request()->routeIs('admin.bank-soal.*') ? 'open' : '' }}">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); this.parentElement.classList.toggle('open');">
                         <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                             <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -133,8 +133,8 @@
                         <span class="nav-text">Data Pelatihan</span>
                     </a>
                     <ul class="submenu">
-                        <li class="nav-item {{ request()->routeIs('admin.pelatihan.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.pelatihan.index') }}" class="nav-link" data-title="Data Kursus">
+                        <li class="nav-item {{ request()->routeIs('pengajar.kursus.*') ? 'active' : '' }}">
+                            <a href="{{ route('pengajar.kursus.index') }}" class="nav-link">
                                 <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                                     <path d="M8 10H16M8 14H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>

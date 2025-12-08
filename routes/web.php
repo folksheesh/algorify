@@ -34,68 +34,15 @@ Route::get('/dashboard', function () {
     
     // Pengajar Dashboard
     if ($user->hasRole('pengajar')) {
-        $totalKursus = \App\Models\Kursus::count();
-        $totalSiswa = \App\Models\User::role('peserta')->count();
-        
-        // Get kategori stats based on enum field in kursus table
-        $kategoriEnum = ['programming', 'design', 'business', 'marketing'];
-        $kategoriNames = [
-            'programming' => 'Programming',
-            'design' => 'Design', 
-            'business' => 'Business',
-            'marketing' => 'Marketing',
-        ];
-        
-        $kategoriCounts = [];
-        foreach ($kategoriEnum as $kat) {
-            $kategoriCounts[$kat] = \App\Models\Kursus::where('kategori', $kat)->count();
-        }
-        $maxKursus = max($kategoriCounts) ?: 1;
-        
-        $kategoriStats = collect($kategoriEnum)->map(function($slug) use ($kategoriCounts, $kategoriNames, $maxKursus) {
-            return [
-                'nama' => $kategoriNames[$slug],
-                'slug' => $slug,
-                'total' => $kategoriCounts[$slug],
-                'percentage' => $maxKursus > 0 ? round(($kategoriCounts[$slug] / $maxKursus) * 100) : 0,
-            ];
-        });
-        
-        // Get popular courses
-        $kursusPopuler = \App\Models\Kursus::withCount('enrollments')
-            ->orderBy('enrollments_count', 'desc')
-            ->take(4)
-            ->get();
-        
-        // Get monthly performance (last 6 months)
-        $performaBulanan = collect();
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $bulanNama = $date->locale('id')->translatedFormat('M');
-            
-            $siswaCount = \App\Models\User::role('peserta')
-                ->whereMonth('created_at', $date->month)
-                ->whereYear('created_at', $date->year)
-                ->count();
-            
-            $kursusCount = \App\Models\Kursus::whereMonth('created_at', $date->month)
-                ->whereYear('created_at', $date->year)
-                ->count();
-            
-            $performaBulanan->push([
-                'nama' => $bulanNama,
-                'siswa' => $siswaCount,
-                'kursus' => $kursusCount,
-            ]);
-        }
-        
-        return view('pengajar.dashboard', compact(
-            'totalKursus', 
-            'totalSiswa', 
-            'kategoriStats', 
-            'kursusPopuler',
-            'performaBulanan'
-        ));
+        // Jumlah kursus yang diajar oleh pengajar
+        $totalKursus = \App\Models\Kursus::where('user_id', $user->id)->count();
+
+        // Ambil semua id kursus yang diajar pengajar
+        $kursusIds = \App\Models\Kursus::where('user_id', $user->id)->pluck('id');
+        // Jumlah peserta yang mengikuti kursus milik pengajar
+        $totalSiswa = \App\Models\Enrollment::whereIn('kursus_id', $kursusIds)->distinct('user_id')->count('user_id');
+
+        return view('pengajar.dashboard', compact('totalKursus', 'totalSiswa'));
     }
     
     // Student Dashboard - Get user's enrollments
@@ -280,6 +227,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/progress/reading', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');
         Route::post('/progress/video', [\App\Http\Controllers\User\ProgressController::class, 'updateVideoProgress'])->name('progress.video');
     });
+});
+
+// Pengajar: Data Kursus hanya milik sendiri
+Route::middleware(['auth', 'role:pengajar'])->prefix('pengajar')->name('pengajar.')->group(function () {
+    Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
 });
 
 require __DIR__.'/auth.php';

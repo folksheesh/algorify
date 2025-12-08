@@ -54,7 +54,7 @@
 
     @if($ujian->tipe === 'practice')
         <!-- Quiz Layout (dengan Sidebar Navigasi Materi) -->
-        <div class="quiz-container" style="display: grid; grid-template-columns: 1fr 350px; gap: 1.5rem;">
+        <div class="quiz-container" style="display: grid; @hasanyrole('admin|super admin|pengajar') grid-template-columns: 1fr 350px; @else grid-template-columns: 1fr; max-width: 900px; margin: 0 auto; @endhasanyrole gap: 1.5rem;">
             <div class="main-content">
                 <!-- Quiz Header -->
                 <div class="quiz-header">
@@ -338,7 +338,8 @@
                 </div>
             </div>
 
-            <!-- Sidebar Navigasi Materi untuk Quiz -->
+            <!-- Sidebar Navigasi Materi untuk Quiz - Hidden for peserta -->
+            @hasanyrole('admin|super admin|pengajar')
             <div class="quiz-sidebar">
                 <!-- Module Info -->
                 <div class="sidebar-card" style="background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 1.5rem;">
@@ -450,13 +451,47 @@
                     </div>
                 </div>
             </div>
+            @endhasanyrole
         </div>
     @else
+        {{-- ======================================== --}}
+        {{-- EXAM LAYOUT BARU (Seperti Gambar Referensi) --}}
+        {{-- ======================================== --}}
+        
+        {{-- Exam Navbar (Header dengan Progress & Timer) - Hidden saat belum mulai --}}
+        <div id="examNavbar" class="exam-navbar" style="display: none;">
+            <div class="exam-navbar-inner">
+                <div class="exam-navbar-left">
+                    <span class="exam-label">Ujian</span>
+                </div>
+                <div class="exam-navbar-center">
+                    <div class="exam-header-card">
+                        <div class="exam-header-top">
+                            <h2 class="exam-header-title">{{ $ujian->judul }}</h2>
+                            <div class="exam-header-timer" id="examTimerDisplay">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: #EF4444;">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                <span id="timerNavbar">60:00</span>
+                            </div>
+                        </div>
+                        <div class="exam-progress-info">
+                            <span id="questionProgress">Pertanyaan 1 dari {{ $ujian->soal->count() }}</span>
+                        </div>
+                        <div class="exam-progress-bar">
+                            <div class="exam-progress-fill" id="progressBar" style="width: {{ 100 / max($ujian->soal->count(), 1) }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Exam Layout (Dengan Navigasi & Timer) -->
-        <div class="exam-container">
+        <div class="exam-container @hasanyrole('admin|super admin|pengajar')exam-active @endhasanyrole" id="examContainer">
             <!-- Main Content -->
-            <div class="main-content">
-                <!-- Exam Header -->
+            <div class="main-content" id="examMainContent">
+                <!-- Exam Header (untuk Admin/Pengajar) -->
+                @hasanyrole('admin|super admin|pengajar')
                 <div class="quiz-header">
                     <div class="quiz-meta">
                         <div class="quiz-icon">
@@ -468,7 +503,6 @@
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <h1 class="quiz-title">{{ $ujian->judul }}</h1>
-                        @hasanyrole('admin|super admin|pengajar')
                         <div style="display: flex; gap: 0.375rem; margin-left: auto;">
                             <button onclick="downloadTemplate()" class="btn btn-secondary" style="background: #10B981; color: white; border: none; padding: 0.5rem 0.875rem; font-size: 0.75rem;" title="Download Template Excel">
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
@@ -502,18 +536,20 @@
                                 Tambah Soal
                             </button>
                         </div>
-                        @endhasanyrole
                     </div>
                 </div>
+                @endhasanyrole
 
                 <!-- Exam Body -->
                 <div class="quiz-body">
                     @if($ujian->deskripsi)
+                    @hasanyrole('admin|super admin|pengajar')
                     <p class="description-text">{{ $ujian->deskripsi }}</p>
+                    @endhasanyrole
                     @endif
 
-                    <!-- Start Screen untuk Ujian (Exam) -->
-                    @hasanyrole('peserta')
+                    <!-- Start Screen untuk Ujian (Exam) - Hanya Peserta -->
+                    @hasrole('peserta')
                     <div id="examStartScreen" class="start-screen" style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); border-radius: 12px; margin-bottom: 1.5rem;">
                         <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
@@ -556,9 +592,9 @@
                             Mulai Ujian
                         </button>
                     </div>
-                    @endhasanyrole
+                    @endrole
 
-                    <div id="examFormContainer" style="@hasanyrole('peserta')display: none;@endhasanyrole">
+                    <div id="examFormContainer" @hasrole('peserta') style="display: none;" @endhasrole>
                     <form id="examForm">
                         @foreach($ujian->soal as $index => $soal)
                         <div class="question-card" id="question-{{ $index + 1 }}" style="{{ $index === 0 ? '' : 'display: none;' }}">
@@ -615,21 +651,23 @@
                         </div>
                         @endforeach
 
-                        <div class="action-buttons" id="navigation-buttons">
-                            <button type="button" class="btn btn-secondary" id="prevBtn" onclick="navigateQuestion(-1)" style="display: none;">
-                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                        {{-- Navigation Buttons (seperti gambar referensi) --}}
+                        <div class="exam-navigation" id="navigation-buttons">
+                            <button type="button" class="exam-nav-btn secondary" id="prevBtn" onclick="navigateQuestion(-1)" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 Sebelumnya
                             </button>
-                            <button type="button" class="btn btn-primary" id="nextBtn" onclick="navigateQuestion(1)">
+                            <div style="flex: 1;"></div>
+                            <button type="button" class="exam-nav-btn primary" id="nextBtn" onclick="navigateQuestion(1)">
                                 Selanjutnya
-                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                                 </svg>
                             </button>
-                            <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
-                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                            <button type="submit" class="exam-nav-btn primary" id="submitBtn" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                 </svg>
                                 Selesai Ujian
@@ -640,17 +678,17 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div id="examSidebar" style="@hasanyrole('peserta')display: none;@endhasanyrole">
-                <!-- Timer -->
-                <div class="timer-card">
-                    <div class="timer-label">Sisa Waktu</div>
-                    <div class="timer-display" id="timer">60:00</div>
+            <!-- Sidebar Navigation (seperti gambar referensi) -->
+            <div id="examSidebar" class="exam-sidebar" @hasrole('peserta') style="display: none;" @endhasrole>
+                <!-- Timer Card -->
+                <div class="exam-sidebar-card">
+                    <div class="timer-label" style="font-size: 0.875rem; color: #64748B; margin-bottom: 0.5rem; text-align: center;">Sisa Waktu</div>
+                    <div class="timer-display" id="timer" style="font-size: 2rem; font-weight: 700; color: #6366f1; text-align: center;">60:00</div>
                 </div>
 
-                <!-- Navigation -->
-                <div class="navigation-card">
-                    <h3 class="nav-title">Navigasi Soal</h3>
+                <!-- Navigation Card -->
+                <div class="exam-sidebar-card exam-sidebar-nav">
+                    <h3 class="nav-title" style="font-size: 1rem; font-weight: 600; color: #1E293B; margin-bottom: 1rem; text-align: center;">Navigasi Soal</h3>
                     
                     <div class="question-grid">
                         @for($i = 1; $i <= $ujian->soal->count(); $i++)
@@ -701,6 +739,374 @@
 </div>
 
 <style>
+/* ======================================== */
+/* EXAM NAVBAR STYLES (Seperti Gambar Referensi) */
+/* ======================================== */
+.exam-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+.exam-navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    max-width: 100%;
+}
+
+.exam-navbar-left {
+    flex-shrink: 0;
+}
+
+.exam-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.exam-navbar-center {
+    flex: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.exam-header-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.exam-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.exam-header-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+}
+
+.exam-header-timer {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: #FEE2E2;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 700;
+    color: #DC2626;
+    font-size: 0.875rem;
+}
+
+.exam-progress-info {
+    font-size: 0.8125rem;
+    color: #64748B;
+    margin-bottom: 0.5rem;
+}
+
+.exam-progress-bar {
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.exam-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4338ca 0%, #6366f1 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Exam Layout Active Mode */
+body.exam-active-mode {
+    padding-top: 110px;
+}
+
+body.exam-active-mode .page-container {
+    padding-top: 0;
+}
+
+body.exam-active-mode .back-btn {
+    display: none;
+}
+
+body.exam-active-mode .exam-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+body.exam-active-mode .main-content {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.exam-active-mode #examSidebar {
+    display: block !important;
+    position: sticky;
+    top: 130px;
+    height: fit-content;
+}
+
+/* Question Card dalam Exam Mode */
+.exam-question-wrapper {
+    padding: 2rem;
+}
+
+.exam-question-badge {
+    display: inline-block;
+    background: #EEF2FF;
+    color: #4338ca;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.exam-question-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1E293B;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.exam-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.exam-option-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #F8FAFC;
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exam-option-item:hover {
+    border-color: #6366f1;
+    background: #EEF2FF;
+}
+
+.exam-option-item.selected {
+    border-color: #6366f1;
+    background: #EEF2FF;
+}
+
+/* Navigation Buttons */
+.exam-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #E2E8F0;
+    background: #F8FAFC;
+}
+
+.exam-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.exam-nav-btn.secondary {
+    background: white;
+    color: #64748B;
+    border: 2px solid #E2E8F0;
+}
+
+.exam-nav-btn.secondary:hover {
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+.exam-nav-btn.primary {
+    background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+    color: white;
+}
+
+.exam-nav-btn.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.exam-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Sidebar Navigation in Exam */
+.exam-sidebar-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.exam-sidebar-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 1rem;
+}
+
+.exam-question-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.exam-nav-number {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F1F5F9;
+    border: 2px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exam-nav-number:hover {
+    border-color: #6366f1;
+}
+
+.exam-nav-number.current {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: white;
+}
+
+.exam-nav-number.answered {
+    background: #10B981;
+    border-color: #10B981;
+    color: white;
+}
+
+.exam-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E2E8F0;
+}
+
+.exam-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #64748B;
+}
+
+.exam-legend-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+}
+
+.exam-legend-box.current {
+    background: #6366f1;
+}
+
+.exam-legend-box.answered {
+    background: #10B981;
+}
+
+.exam-legend-box.unanswered {
+    background: #F1F5F9;
+    border: 2px solid #E2E8F0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    body.exam-active-mode .exam-container {
+        grid-template-columns: 1fr;
+    }
+    
+    body.exam-active-mode #examSidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        z-index: 999;
+        display: flex;
+        gap: 0;
+        padding: 1rem;
+        background: white;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 20px 20px 0 0;
+    }
+    
+    .exam-sidebar-card {
+        margin-bottom: 0;
+    }
+    
+    .timer-card {
+        display: none;
+    }
+    
+    body.exam-active-mode {
+        padding-bottom: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .exam-navbar-inner {
+        padding: 0.5rem 1rem;
+    }
+    
+    .exam-header-card {
+        padding: 0.75rem 1rem;
+    }
+    
+    .exam-header-title {
+        font-size: 0.95rem;
+    }
+    
+    .exam-question-wrapper {
+        padding: 1.25rem;
+    }
+}
+
 /* Toast Notification Styles */
 .toast-notification {
     position: fixed;
@@ -904,6 +1310,11 @@
                 // Add selected class to clicked option
                 this.classList.add('selected');
                 radio.checked = true;
+                
+                // Mark as answered for navigation (fix for single choice)
+                if (questionNum && typeof markAsAnswered === 'function') {
+                    markAsAnswered(parseInt(questionNum));
+                }
             } else if (checkbox) {
                 // Checkbox logic (multiple choice)
                 checkbox.checked = !checkbox.checked;
@@ -911,6 +1322,11 @@
                     this.classList.add('selected');
                 } else {
                     this.classList.remove('selected');
+                }
+                
+                // Mark as answered for navigation (fix for multiple choice)
+                if (questionNum && typeof markAsAnswered === 'function') {
+                    markAsAnswered(parseInt(questionNum));
                 }
             }
         });
@@ -1119,6 +1535,7 @@
     // Timer
     function startTimer() {
         const timerDisplay = document.getElementById('timer');
+        const timerNavbar = document.getElementById('timerNavbar');
         
         setInterval(() => {
             if (timeLeft <= 0) {
@@ -1129,14 +1546,20 @@
             timeLeft--;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update both timer displays
+            if (timerDisplay) timerDisplay.textContent = timeString;
+            if (timerNavbar) timerNavbar.textContent = timeString;
             
             // Change color based on time left
             if (timeLeft <= 300) { // 5 minutes
-                timerDisplay.classList.add('danger');
-                timerDisplay.classList.remove('warning');
+                if (timerDisplay) {
+                    timerDisplay.classList.add('danger');
+                    timerDisplay.classList.remove('warning');
+                }
             } else if (timeLeft <= 600) { // 10 minutes
-                timerDisplay.classList.add('warning');
+                if (timerDisplay) timerDisplay.classList.add('warning');
             }
         }, 1000);
     }
@@ -1164,6 +1587,11 @@
         
         // Update navigation buttons
         updateNavigationButtons();
+        
+        // Update progress bar
+        if (typeof updateProgressBar === 'function') {
+            updateProgressBar(num);
+        }
     }
 
     function navigateQuestion(direction) {
@@ -1185,9 +1613,12 @@
 
     function markAsAnswered(questionNum) {
         const navBtn = document.getElementById(`nav-${questionNum}`);
+        if (!navBtn) return;
         
         // Check if question is answered by checking both radio and checkbox inputs
         const questionCard = document.getElementById(`question-${questionNum}`);
+        if (!questionCard) return;
+        
         const radioInputs = questionCard.querySelectorAll('input[type="radio"]');
         const checkboxInputs = questionCard.querySelectorAll('input[type="checkbox"]');
         
@@ -1225,15 +1656,15 @@
 
     // Start timer when exam is started (only for students/peserta role)
     @hasanyrole('admin|super admin|pengajar')
-        // Admin, super admin, and pengajar don't have countdown timer and start exam directly
-        console.log('Timer disabled for admin/pengajar role');
-        startTimer();
+        // Admin, super admin, and pengajar - timer is static, does not run
+        console.log('Timer disabled for admin/pengajar role - showing static time');
+        // Don't call startTimer() - keep timer static at 60:00
     @else
         // Timer will be started when startExam() is called
         console.log('Timer will start when exam begins');
     @endhasanyrole
     
-    // Function to start exam (for peserta only)
+    // Function to start exam (for peserta only) - UPDATED untuk layout baru
     function startExam() {
         // Hide start screen
         const startScreen = document.getElementById('examStartScreen');
@@ -1247,32 +1678,56 @@
             formContainer.style.display = 'block';
         }
         
+        // Show exam navbar (header dengan progress & timer)
+        const examNavbar = document.getElementById('examNavbar');
+        if (examNavbar) {
+            examNavbar.style.display = 'block';
+        }
+        
         // Show sidebar (timer and navigation)
         const sidebar = document.getElementById('examSidebar');
         if (sidebar) {
             sidebar.style.display = 'block';
         }
         
-        // Hide back button during exam
-        const backBtn = document.querySelector('.back-btn');
-        if (backBtn) {
-            backBtn.style.display = 'none';
-        }
+        // Add exam-active-mode class to body for layout changes
+        document.body.classList.add('exam-active-mode');
         
-        // Add exam-active class for full width layout
-        const examContainer = document.querySelector('.exam-container');
+        // Add exam-active class for grid layout
+        const examContainer = document.getElementById('examContainer');
         if (examContainer) {
             examContainer.classList.add('exam-active');
         }
         
-        // Add exam-mode class to page container for reduced padding
-        const pageContainer = document.querySelector('.page-container');
-        if (pageContainer) {
-            pageContainer.classList.add('exam-mode');
-        }
-        
         // Start the timer
         startTimer();
+        
+        // Update progress bar
+        updateProgressBar(1);
+    }
+    
+    // Update progress bar and question info
+    function updateProgressBar(currentQuestion) {
+        const totalQuestions = {{ $ujian->soal->count() }};
+        const percentage = (currentQuestion / totalQuestions) * 100;
+        
+        const progressBar = document.getElementById('progressBar');
+        const questionProgress = document.getElementById('questionProgress');
+        
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+        }
+        if (questionProgress) {
+            questionProgress.textContent = `Pertanyaan ${currentQuestion} dari ${totalQuestions}`;
+        }
+    }
+    
+    // Sync navbar timer with sidebar timer
+    function syncTimerDisplay(timeString) {
+        const timerNavbar = document.getElementById('timerNavbar');
+        if (timerNavbar) {
+            timerNavbar.textContent = timeString;
+        }
     }
     
     // Initialize navigation state

@@ -44,7 +44,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'data_science',
                 'status' => 'published',
                 'harga' => 500000,
-                'thumbnail' => 'thumbnails/analisis-data.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Analisis Keamanan Siber',
@@ -53,7 +53,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 750000,
-                'thumbnail' => 'thumbnails/keamanan-siber.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1508385082359-fc9a1db96a31?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Desainer UI/UX',
@@ -62,7 +62,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'design',
                 'status' => 'published',
                 'harga' => 600000,
-                'thumbnail' => 'thumbnails/uiux.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'IT Support',
@@ -71,7 +71,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'other',
                 'status' => 'published',
                 'harga' => 400000,
-                'thumbnail' => 'thumbnails/it-support.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Web Development',
@@ -80,7 +80,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 800000,
-                'thumbnail' => 'thumbnails/web-dev.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Mobile Development',
@@ -89,7 +89,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 850000,
-                'thumbnail' => 'thumbnails/mobile-dev.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Digital Marketing',
@@ -98,7 +98,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'marketing',
                 'status' => 'published',
                 'harga' => 450000,
-                'thumbnail' => 'thumbnails/digital-marketing.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'AI & Machine Learning',
@@ -107,7 +107,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'data_science',
                 'status' => 'published',
                 'harga' => 1000000,
-                'thumbnail' => 'thumbnails/ai-ml.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Cloud Computing',
@@ -116,7 +116,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 700000,
-                'thumbnail' => 'thumbnails/cloud.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1509395062183-67c5ad6faff9?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Blockchain Development',
@@ -125,7 +125,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 900000,
-                'thumbnail' => 'thumbnails/blockchain.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=900&q=80',
             ],
             // 10 kursus tambahan untuk mencapai 20
             [
@@ -135,7 +135,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 850000,
-                'thumbnail' => 'thumbnails/devops.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Data Visualization',
@@ -144,7 +144,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'data_science',
                 'status' => 'published',
                 'harga' => 550000,
-                'thumbnail' => 'thumbnails/data-viz.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Python Programming',
@@ -153,7 +153,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 650000,
-                'thumbnail' => 'thumbnails/python.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'JavaScript Mastery',
@@ -162,7 +162,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 750000,
-                'thumbnail' => 'thumbnails/javascript.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Database Management',
@@ -171,7 +171,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 600000,
-                'thumbnail' => 'thumbnails/database.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Game Development',
@@ -180,7 +180,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'design',
                 'status' => 'published',
                 'harga' => 950000,
-                'thumbnail' => 'thumbnails/game-dev.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Project Management',
@@ -189,7 +189,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'other',
                 'status' => 'published',
                 'harga' => 500000,
-                'thumbnail' => 'thumbnails/pm.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Graphic Design',
@@ -198,7 +198,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'design',
                 'status' => 'published',
                 'harga' => 550000,
-                'thumbnail' => 'thumbnails/graphic-design.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'API Development',
@@ -207,7 +207,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 700000,
-                'thumbnail' => 'thumbnails/api-dev.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1508385082359-fc9a1db96a31?auto=format&fit=crop&w=900&q=80',
             ],
             [
                 'judul' => 'Internet of Things (IoT)',
@@ -216,7 +216,7 @@ class KursusSeeder extends Seeder
                 'kategori' => 'programming',
                 'status' => 'published',
                 'harga' => 800000,
-                'thumbnail' => 'thumbnails/iot.jpg',
+                'thumbnail' => 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=900&q=80',
             ],
         ];
 

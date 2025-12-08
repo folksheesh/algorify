@@ -359,22 +359,7 @@
             .section-card {
                 padding: 1.25rem;
             }
-            .stat-card-modern {
-                padding: 1.25rem;
-            }
-            .admin-header {
-                padding: 1.5rem 1rem;
-                margin-top: 1rem;
-            }
-            .admin-header h1 {
-                font-size: 1.5rem;
-            }
-            .admin-header p {
-                font-size: 0.875rem;
-            }
-        }
-        
-        /* Tambahan responsive untuk mobile dengan hamburger menu */
+            .        /* Tambahan responsive untuk mobile dengan hamburger menu */
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
@@ -447,7 +432,7 @@
                     <p>Berikut ringkasan aktivitas Anda. Kelola kursus dan pantau perkembangan siswa dengan mudah.</p>
                 </div>
 
-                <!-- Stat Cards -->
+                <!-- Stat Cards (Kursus & Siswa) -->
                 <div class="stat-cards-grid">
                     <a href="{{ route('admin.pelatihan.index') }}" style="text-decoration: none;">
                         <div class="stat-card-modern">
@@ -463,7 +448,6 @@
                             </div>
                         </div>
                     </a>
-
                     <div class="stat-card-modern">
                         <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -478,98 +462,7 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Kategori Kursus -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div>
-                            <h2 class="section-title">Kategori Kursus</h2>
-                            <p class="section-subtitle">Distribusi kursus berdasarkan kategori</p>
-                        </div>
-                    </div>
-                    
-                    <div class="kategori-grid">
-                        @foreach($kategoriStats as $kategori)
-                        <div class="kategori-card">
-                            <span class="kategori-label {{ $kategori['slug'] }}">{{ $kategori['nama'] }}</span>
-                            <div class="kategori-bar">
-                                <div class="kategori-bar-fill {{ $kategori['slug'] }}" style="width: {{ $kategori['percentage'] }}%"></div>
-                            </div>
-                            <div class="kategori-count">{{ $kategori['total'] }} Kursus</div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                
-                <!-- Kursus Populer -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div>
-                            <h2 class="section-title">Kursus Populer</h2>
-                            <p class="section-subtitle">Kursus dengan siswa terbanyak</p>
-                        </div>
-                    </div>
-                    
-                    <div class="kursus-list">
-                        @forelse($kursusPopuler as $index => $kursus)
-                        <div class="kursus-item">
-                            <div class="kursus-rank rank-{{ $index + 1 }}">#{{ $index + 1 }}</div>
-                            <div class="kursus-info">
-                                <h4 class="kursus-name">{{ $kursus->judul }}</h4>
-                                <div class="kursus-meta">
-                                    <span class="siswa">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="9" cy="7" r="4"></circle>
-                                        </svg>
-                                        {{ $kursus->enrollments_count }} siswa
-                                    </span>
-                                    <span class="rating">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                        </svg>
-                                        {{ number_format($kursus->rating ?? 4.5 + (rand(-5, 5) / 10), 1) }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="kursus-completion">
-                                <div class="completion-value">{{ rand(65, 95) }}%</div>
-                                <div class="completion-label">Completion</div>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="kursus-item" style="justify-content: center; color: #94A3B8;">
-                            <p>Belum ada kursus</p>
-                        </div>
-                        @endforelse
-                    </div>
-                </div>
-                
-                <!-- Performa Bulanan -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div>
-                            <h2 class="section-title">Performa Bulanan</h2>
-                            <p class="section-subtitle">Data 6 bulan terakhir</p>
-                        </div>
-                    </div>
-                    
-                    <div class="performa-grid">
-                        @foreach($performaBulanan as $bulan)
-                        <div class="performa-card">
-                            <div class="performa-month">{{ $bulan['nama'] }}</div>
-                            <div class="performa-item">
-                                <div class="performa-label">Siswa</div>
-                                <div class="performa-value">{{ $bulan['siswa'] }}</div>
-                            </div>
-                            <div class="performa-item">
-                                <div class="performa-label">Kursus</div>
-                                <div class="performa-value">{{ $bulan['kursus'] }}</div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+                <!-- END Stat Cards -->
             </div>
         </main>
     </div>
