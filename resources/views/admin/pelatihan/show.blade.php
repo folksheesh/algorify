@@ -14,22 +14,6 @@
     <!-- Quill Editor -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
-    <style>
-        /* Topbar Layout Adjustment for Pengajar */
-        .dashboard-container.with-topbar {
-            padding-top: 64px;
-        }
-        
-        .dashboard-container.with-topbar .main-content {
-            padding-top: 1.5rem;
-        }
-        
-        @media (max-width: 992px) {
-            .dashboard-container.with-topbar .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
 @endpush
 
 @section('content')

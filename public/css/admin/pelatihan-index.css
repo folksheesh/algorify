@@ -107,11 +107,13 @@
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
 }
+
 @media (max-width: 1024px) {
     .courses-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 }
+
 @media (max-width: 640px) {
     .courses-grid {
         grid-template-columns: 1fr;
@@ -330,6 +332,7 @@
         transform: translateY(-50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -613,6 +616,7 @@
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -624,6 +628,7 @@
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(400px);
         opacity: 0;
@@ -817,4 +822,19 @@
     font-size: 0.9375rem;
     color: #64748B;
     margin-bottom: 1.5rem;
+}
+
+/* Topbar Layout Adjustment for Pengajar */
+.dashboard-container.with-topbar {
+    padding-top: 64px;
+}
+
+.dashboard-container.with-topbar .main-content {
+    padding-top: 1.5rem;
+}
+
+@media (max-width: 992px) {
+    .dashboard-container.with-topbar .main-content {
+        margin-left: 0;
+    }
 }

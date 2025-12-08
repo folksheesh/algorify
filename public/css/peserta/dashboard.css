@@ -1,0 +1,95 @@
+
+        /* Topbar Layout Adjustment */
+        .dashboard-container.with-topbar {
+            padding-top: 72px;
+        }
+        
+        .dashboard-container.with-topbar .main-content {
+            padding-top: 1.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container.with-topbar .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .course-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .course-image {
+            transition: transform 0.3s ease;
+        }
+        .course-card:hover .course-image {
+            transform: scale(1.05);
+        }
+        .bookmark-button {
+            transition: all 0.3s ease;
+        }
+        .bookmark-button:hover {
+            background: #6366F1;
+            color: white;
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .course-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: #EEF2FF;
+            color: #6366F1;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+        
+        /* Responsive adjustments untuk inline styles */
+        @media (max-width: 768px) {
+            .course-card:hover {
+                transform: translateY(-4px);
+            }
+            
+            .course-description-text {
+                font-size: 0.8rem !important;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .course-price-footer {
+                flex-direction: column !important;
+                gap: 8px !important;
+                align-items: flex-start !important;
+            }
+            
+            .course-price-footer span:last-child {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .course-card:hover {
+                transform: translateY(-2px);
+            }
+            
+            .author-avatar {
+                width: 28px !important;
+                height: 28px !important;
+            }
+        }
+    

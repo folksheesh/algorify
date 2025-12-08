@@ -9,22 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Topbar Layout Adjustment for Pengajar */
-        .dashboard-container.with-topbar {
-            padding-top: 64px;
-        }
-        
-        .dashboard-container.with-topbar .main-content {
-            padding-top: 1.5rem;
-        }
-        
-        @media (max-width: 992px) {
-            .dashboard-container.with-topbar .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
+    
 @endpush
 
 @section('content')
