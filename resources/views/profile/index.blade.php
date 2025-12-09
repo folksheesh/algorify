@@ -110,7 +110,7 @@
         .upload-button {
             background: transparent;
             border: none;
-            color: #3A6DFF;
+            color: #5D3FFF;
             font-weight: 500;
             cursor: pointer;
             padding: 0.5rem 1rem;
@@ -164,7 +164,7 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #3A6DFF;
+            border-color: #5D3FFF;
             background: white;
             box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
         }

@@ -148,7 +148,7 @@
     .topbar-pengajar .topbar-logo-text {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #3A6DFF;
+        color: #5D3FFF;
         letter-spacing: -0.5px;
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -195,7 +195,7 @@
 
     .topbar-pengajar .topbar-search-input:focus {
         outline: none;
-        border-color: #3A6DFF;
+        border-color: #5D3FFF;
         background: #FFFFFF;
         box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
         transform: scale(1.02);
@@ -253,7 +253,7 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+        background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
         color: white;
         display: flex;
         align-items: center;

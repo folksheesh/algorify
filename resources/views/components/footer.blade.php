@@ -30,7 +30,7 @@
 
 <style>
     .app-footer {
-        background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+        background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
         color: #fff;
         padding: 1rem 48px;
         margin-left: 280px;
