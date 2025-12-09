@@ -521,25 +521,73 @@ body {
    8. HERO BANNER
    ============================================ */
 
-/* Banner hero - banner utama dengan gradient ungu */
+/* Animasi khusus hero banner */
+@keyframes heroGlow {
+    0%, 100% { 
+        box-shadow: 
+            0 4px 20px rgba(93, 63, 255, 0.25),
+            0 0 0 0 rgba(93, 63, 255, 0.1),
+            inset 0 0 30px rgba(93, 63, 255, 0.05);
+    }
+    50% { 
+        box-shadow: 
+            0 8px 40px rgba(93, 63, 255, 0.4),
+            0 0 60px rgba(99, 102, 241, 0.2),
+            inset 0 0 40px rgba(93, 63, 255, 0.08);
+    }
+}
+
+@keyframes floatAnimation {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes textGlow {
+    0%, 100% { text-shadow: 0 2px 10px rgba(93, 63, 255, 0.3), 0 0 20px rgba(99, 102, 241, 0.2); }
+    50% { text-shadow: 0 2px 15px rgba(93, 63, 255, 0.4), 0 0 30px rgba(99, 102, 241, 0.3); }
+}
+
+@keyframes btnPulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(93, 63, 255, 0.3); }
+    50% { box-shadow: 0 4px 25px rgba(93, 63, 255, 0.5); }
+}
+
+/* Banner hero - dengan background image */
 .hero-banner {
-    background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
     border-radius: 20px;
     padding: 40px 48px;
     margin-bottom: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     position: relative;
     overflow: hidden;
-    animation: fadeInUp 0.6s ease forwards;
+    animation: fadeInUp 0.6s ease forwards, heroGlow 3s ease-in-out infinite;
+    min-height: 220px;
+    background-color: #7B8CDE; /* fallback color */
+    background-size: 120%; /* zoom out - gambar lebih kecil */
+    background-position: center center;
+}
+
+/* Overlay biru untuk nuansa yang sama dengan page */
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    background: linear-gradient(90deg, rgba(93, 63, 255, 0.45) 0%, rgba(99, 102, 241, 0.25) 50%, rgba(139, 92, 246, 0.1) 100%);
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* Konten hero banner */
 .hero-content {
-    flex: 1;
+    flex: 0 1 50%;
     z-index: 1;
-    animation: slideInLeft 0.7s ease 0.2s forwards;
+    animation: slideInLeft 0.7s ease 0.2s forwards, floatAnimation 4s ease-in-out 1s infinite;
     opacity: 0;
 }
 
@@ -547,21 +595,73 @@ body {
 .hero-title {
     font-size: 32px;
     font-weight: 700;
-    color: #FFF;
+    color: #FFFFFF;
     margin-bottom: 12px;
     line-height: 1.3;
     letter-spacing: -0.5px;
+    text-shadow: 
+        0 2px 4px rgba(93, 63, 255, 0.4),
+        0 4px 8px rgba(99, 102, 241, 0.3),
+        0 0 20px rgba(139, 92, 246, 0.2);
+    animation: textGlow 3s ease-in-out infinite;
 }
 
 /* Deskripsi hero banner */
 .hero-description {
     font-size: 16px;
-    font-weight: 400;
-    color: rgba(255, 255, 255, .9);
+    font-weight: 500;
+    color: #FFFFFF;
     line-height: 1.6;
+    margin-bottom: 20px;
+    text-shadow: 
+        0 1px 3px rgba(93, 63, 255, 0.5),
+        0 2px 6px rgba(99, 102, 241, 0.3);
 }
 
-/* Ilustrasi hero banner */
+/* Tombol CTA Hero Banner */
+.hero-cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
+    color: #FFF;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(93, 63, 255, 0.3);
+    animation: btnPulse 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-cta-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.hero-cta-btn:hover::before {
+    left: 100%;
+}
+
+.hero-cta-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(93, 63, 255, 0.5);
+    color: #FFF;
+    background: linear-gradient(135deg, #4D2FEF 0%, #6C2FEF 100%);
+}
+
+.hero-cta-btn:active {
+    transform: translateY(0) scale(1);
+}
+
+/* Ilustrasi hero banner - tidak digunakan lagi jika pakai background image */
 .hero-illustration {
     flex-shrink: 0;
     z-index: 1;
@@ -1064,10 +1164,20 @@ body {
     /* Hero banner adjustments */
     .hero-banner {
         padding: 28px;
+        min-height: 200px;
+    }
+    
+    .hero-content {
+        flex: 0 1 60%;
     }
     
     .hero-title {
         font-size: 24px;
+    }
+    
+    .hero-cta-btn {
+        padding: 12px 24px;
+        font-size: 14px;
     }
     
     .illustration-graphic {
@@ -1178,16 +1288,26 @@ body {
         padding: 24px 20px;
         border-radius: 16px;
         margin-bottom: 20px;
+        min-height: auto;
+        background-position: center center;
+        background-size: 130%;
+    }
+    
+    .hero-banner::before {
+        background: linear-gradient(180deg, rgba(93, 63, 255, 0.5) 0%, rgba(99, 102, 241, 0.3) 100%);
     }
     
     .hero-content {
         order: 1;
+        flex: 1;
+        animation: slideInLeft 0.7s ease 0.2s forwards;
     }
     
     .hero-title {
         font-size: 1.35rem;
         line-height: 1.4;
         margin-bottom: 8px;
+        color: #FFFFFF;
     }
     
     .hero-title br {
@@ -1197,10 +1317,18 @@ body {
     .hero-description {
         font-size: 0.875rem;
         line-height: 1.5;
+        margin-bottom: 16px;
+        color: #FFFFFF;
     }
     
     .hero-description br {
         display: none;
+    }
+    
+    .hero-cta-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 10px;
     }
 
     /* Ilustrasi hero dengan margin top */
@@ -1322,16 +1450,27 @@ body {
         padding: 18px 14px;
         border-radius: 14px;
         margin-bottom: 16px;
+        background-position: center center;
+        background-size: 10%;
     }
     
     .hero-title {
         font-size: 1.15rem;
         line-height: 1.35;
+        color: #FFFFFF;
     }
     
     .hero-description {
         font-size: 0.8rem;
         margin-top: 6px;
+        margin-bottom: 14px;
+        color: #FFFFFF;
+    }
+    
+    .hero-cta-btn {
+        padding: 10px 18px;
+        font-size: 13px;
+        border-radius: 8px;
     }
     
     .illustration-graphic {
