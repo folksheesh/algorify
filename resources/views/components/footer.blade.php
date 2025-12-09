@@ -37,7 +37,8 @@
             background: linear-gradient(135deg, #5D3FFF 0%, #4831CC 100%);
             color: #fff;
             padding: 1rem 48px;
-            margin-left: 280px;
+            margin-left: 270px;
+            padding-right: 10px
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);

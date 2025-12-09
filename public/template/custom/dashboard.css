@@ -5,7 +5,7 @@
 /* Reset untuk memastikan fixed positioning berfungsi */
 html, body {
     height: 100%;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 
 body {
@@ -785,7 +785,6 @@ body {
 .course-thumbnail {
     position: relative;
     width: 100%;
-    padding-top: 60%;
     overflow: hidden;
     background-color: #F1F5F9;
 }
