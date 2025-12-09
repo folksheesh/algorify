@@ -15,13 +15,11 @@
     <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-            <section class="hero-banner">
+            <section class="hero-banner" style="background-image: url('{{ asset('template/img/hero-banner-bg.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                 <div class="hero-content">
-                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bareng Pelatihan Profesional</h1>
-                    <p class="hero-description">Berlangganan pelatihan lainnya untuk pengetahuan yang<br />lebih luas.</p>
-                </div>
-                <div class="hero-illustration">
-                    <img src="{{ asset('template/img/hero-illustration.png') }}" alt="Hero Illustration" class="illustration-graphic">
+                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bersama Pelatihan Profesional</h1>
+                    <p class="hero-description">Jelajahi pelatihan terbaik untuk mengembangkan kemampuanmu.</p>
+                    <a href="{{ route('kursus.index') }}" class="hero-cta-btn">Mulai Belajar Sekarang</a>
                 </div>
             </section>
             
