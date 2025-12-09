@@ -4,7 +4,264 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hasil Ujian - {{ $ujian->judul }}</title>
-    <link rel="stylesheet" href="{{ asset('css/peserta/ujian-result.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .header-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: #10b981;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .score-section {
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle circle {
+            fill: none;
+            stroke-width: 12;
+        }
+
+        .score-circle .bg-circle {
+            stroke: #e5e7eb;
+        }
+
+        .score-circle .progress-circle {
+            stroke: {{ $nilai->nilai >= 70 ? '#10b981' : '#ef4444' }};
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 30px;
+            background: #f9fafb;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .stat-item:nth-child(2) .stat-value {
+            color: #10b981;
+        }
+
+        .stat-item:nth-child(3) .stat-value {
+            color: #ef4444;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .feedback-section {
+            padding: 30px;
+            background: linear-gradient(to bottom, #ecfdf5, #d1fae5);
+            border-top: 3px solid #10b981;
+        }
+
+        .feedback-icon {
+            width: 40px;
+            height: 40px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .feedback-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #047857;
+            margin-bottom: 10px;
+        }
+
+        .feedback-text {
+            font-size: 14px;
+            color: #065f46;
+            line-height: 1.6;
+        }
+
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .score-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .score-value {
+                font-size: 36px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">

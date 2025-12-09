@@ -15,13 +15,11 @@
     <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-            <section class="hero-banner">
+            <section class="hero-banner" style="background-image: url('{{ asset('template/img/hero-banner-bg.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                 <div class="hero-content">
-                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bareng Pelatihan Profesional</h1>
-                    <p class="hero-description">Berlangganan pelatihan lainnya untuk pengetahuan yang<br />lebih luas.</p>
-                </div>
-                <div class="hero-illustration">
-                    <img src="{{ asset('template/img/hero-illustration.png') }}" alt="Hero Illustration" class="illustration-graphic">
+                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bersama Pelatihan Profesional</h1>
+                    <p class="hero-description">Jelajahi pelatihan terbaik untuk mengembangkan kemampuanmu.</p>
+                    <a href="{{ route('kursus.index') }}" class="hero-cta-btn">Mulai Belajar Sekarang</a>
                 </div>
             </section>
             
@@ -205,17 +203,19 @@
                             <p class="course-description-text" style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
                                 {{ Str::limit($kursus->deskripsi_singkat ?? $kursus->deskripsi, 80) }}
                             </p>
-                            @if($kursus->pengajar)
+                            @if($kursus->pengajar && is_object($kursus->pengajar))
                             <div class="course-author">
-                                @if($kursus->pengajar && is_object($kursus->pengajar) && $kursus->pengajar->profile_photo)
+                                @if(isset($kursus->pengajar->profile_photo) && $kursus->pengajar->profile_photo)
                                     <img src="{{ asset('storage/' . $kursus->pengajar->profile_photo) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
+                                @elseif(isset($kursus->pengajar->foto_profil) && $kursus->pengajar->foto_profil)
+                                    <img src="{{ asset('storage/' . $kursus->pengajar->foto_profil) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
                                 @else
                                     <div class="author-avatar" style="background: #6366F1; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                        {{ $kursus->pengajar && is_object($kursus->pengajar) ? substr($kursus->pengajar->name, 0, 1) : '?' }}
+                                        {{ substr($kursus->pengajar->name ?? 'P', 0, 1) }}
                                     </div>
                                 @endif
                                 <div class="author-info">
-                                    <p class="author-name">{{ $kursus->pengajar && is_object($kursus->pengajar) ? $kursus->pengajar->name : 'Pengajar' }}</p>
+                                    <p class="author-name">{{ $kursus->pengajar->name ?? 'Pengajar' }}</p>
                                     <p class="author-role">Pengajar</p>
                                 </div>
                             </div>
