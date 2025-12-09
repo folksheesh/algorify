@@ -12,7 +12,7 @@
             padding: 2.5rem 2rem;
             color: white;
             margin-bottom: 2rem;
-            margin-top: 1.5rem;
+            margin-top: 0;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
         .admin-header h1 {
@@ -402,7 +402,7 @@
         }
         
         .dashboard-container.with-topbar .main-content {
-            padding-top: 1.5rem;
+            padding-top: 2rem;
         }
         
         @media (max-width: 992px) {
