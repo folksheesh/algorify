@@ -99,7 +99,6 @@
         padding: 0 1rem 0 1rem;
         z-index: 1000;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -153,7 +152,6 @@
         font-weight: 700;
         color: #5D3FFF;
         letter-spacing: -0.5px;
-        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     /* Right Section */
@@ -188,7 +186,6 @@
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         font-size: 0.9375rem;
-        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         color: #1E293B;
         background: #F8FAFC;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -306,13 +303,18 @@
     }
 
     .topbar-username {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #1E293B;
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        color: #1E293B !important;
         max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    }
+
+    .topbar-user-btn:hover .topbar-username {
+        transform: translateX(2px);
     }
 
     /* Dropdown */
