@@ -505,6 +505,11 @@
                         <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi" id="quizDeskripsi" class="form-input" rows="3" placeholder="Deskripsi singkat tentang kuis ini"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Pengerjaan (menit) *</label>
+                        <input type="number" name="waktu_pengerjaan" id="quizWaktu" class="form-input" placeholder="Contoh: 15" min="1" value="15" required>
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Masukkan waktu dalam menit (contoh: 15 untuk kuis singkat)</small>
+                    </div>
                     <p style="font-size: 0.875rem; color: #6B7280; margin-top: 1rem; padding: 0.75rem; background: #F3F4F6; border-radius: 6px;">
                         💡 Soal dapat ditambahkan setelah kuis dibuat
                     </p>
@@ -1148,6 +1153,7 @@
                         document.getElementById('quizJudul').value = data.judul;
                         document.getElementById('quizDeskripsi').value = data.deskripsi || '';
                         document.getElementById('quizModulId').value = data.modul_id;
+                        document.getElementById('quizWaktu').value = data.waktu_pengerjaan || 15;
                         document.getElementById('quizModalTitle').textContent = 'Edit Kuis';
                     } else {
                         document.getElementById('examMethod').value = 'PUT';

@@ -34,7 +34,8 @@ class BankSoalController extends Controller
                 $q->whereRaw('LOWER(pertanyaan) like ?', ["%{$search}%"])
                   ->orWhereRaw('LOWER(tipe_soal) like ?', ["%{$search}%"])
                   ->orWhereHas('kategori', function($q) use ($search) {
-                      $q->whereRaw('LOWER(nama_kategori) like ?', ["%{$search}%"]);
+                      // kategori adalah relasi ke Kursus, jadi pakai 'judul'
+                      $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
                   })
                   ->orWhereHas('kursus', function($q) use ($search) {
                       $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);

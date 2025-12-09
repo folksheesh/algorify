@@ -21,17 +21,37 @@ class PelatihanController extends Controller
         $this->progressRepository = $progressRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         // Get all courses with their related data
-        $kursus = Kursus::with(['pengajar', 'modul', 'enrollments'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Kursus::with(['pengajar', 'modul', 'enrollments']);
+        
+        // Apply kategori filter
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+        
+        // Apply pengajar filter
+        if ($request->filled('pengajar_id')) {
+            $query->where('user_id', $request->pengajar_id);
+        }
+        
+        $kursus = $query->orderBy('created_at', 'desc')->get();
         
         // Get all users with pengajar role
         $pengajars = User::role('pengajar')->orWhere('id', Auth::id())->get();
         
-        return view('admin.pelatihan.index', compact('kursus', 'pengajars'));
+        // Get unique categories from database
+        $kategoris = [
+            'programming' => 'Programming',
+            'design' => 'Design',
+            'business' => 'Business',
+            'marketing' => 'Marketing',
+            'data_science' => 'Data Science',
+            'other' => 'Other'
+        ];
+        
+        return view('admin.pelatihan.index', compact('kursus', 'pengajars', 'kategoris'));
     }
 
     public function show($id)
@@ -63,15 +83,24 @@ class PelatihanController extends Controller
 
     public function store(Request $request)
     {
+        // Normalisasi input numerik
+        $request->merge([
+            'durasi' => $request->durasi !== null ? preg_replace('/[^0-9]/', '', $request->durasi) : null,
+            'harga' => $request->harga !== null ? preg_replace('/[^0-9]/', '', $request->harga) : null,
+            'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
+        ]);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
-            'durasi' => 'required|string|max:100',
-            'harga' => 'required|string|max:100',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
+            'durasi' => 'required|integer|min:1',
+            'harga' => 'required|integer|min:0',
+            'kapasitas' => 'nullable|integer|min:1',
+            // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
 
         // Handle thumbnail upload
@@ -106,15 +135,24 @@ class PelatihanController extends Controller
     {
         $kursus = Kursus::findOrFail($id);
 
+        // Normalisasi input numerik
+        $request->merge([
+            'durasi' => $request->durasi !== null ? preg_replace('/[^0-9]/', '', $request->durasi) : null,
+            'harga' => $request->harga !== null ? preg_replace('/[^0-9]/', '', $request->harga) : null,
+            'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
+        ]);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
-            'durasi' => 'required|string|max:100',
-            'harga' => 'required|string|max:100',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
+            'durasi' => 'required|integer|min:1',
+            'harga' => 'required|integer|min:0',
+            'kapasitas' => 'nullable|integer|min:1',
+            // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
 
         // Handle thumbnail upload

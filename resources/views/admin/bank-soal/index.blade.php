@@ -42,7 +42,7 @@
                                 <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
                                 <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5"/>
                             </svg>
-                            <input type="text" id="searchInput" placeholder="Cari berdasarkan pertanyaan, kategori, kursus, atau tipe..." onkeyup="loadData()">
+                            <input type="text" id="searchInput" placeholder="Cari berdasarkan pertanyaan, kategori, kursus, atau tipe..." onkeyup="debounceSearch()">
                         </div>
 
                         {{-- Filter Dropdowns (3 columns) --}}
@@ -399,10 +399,24 @@
     }
 
     /**
+     * Debounce untuk search input agar tidak terlalu sering request ke server
+     */
+    let searchTimeout = null;
+    function debounceSearch() {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        searchTimeout = setTimeout(() => {
+            loadData(true); // Reset ke halaman 1 saat search
+        }, 300);
+    }
+
+    /**
      * Load data soal dari server dengan filter
      * Mendukung pencarian, filter kategori, kursus, dan tipe soal
+     * @param {boolean} resetPage - true untuk reset ke halaman 1 (digunakan saat search/filter)
      */
-    async function loadData() {
+    async function loadData(resetPage = true) {
         try {
             // Ambil nilai filter
             const search = document.getElementById('searchInput').value;
@@ -423,7 +437,11 @@
             
             soalData = result.data;
             filteredData = soalData;
-            currentPage = 1;
+            
+            // Reset ke halaman 1 jika resetPage true (untuk search/filter)
+            if (resetPage) {
+                currentPage = 1;
+            }
             
             renderTable();
             renderPagination();
