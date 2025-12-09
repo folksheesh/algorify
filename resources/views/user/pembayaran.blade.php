@@ -17,12 +17,12 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSyste
 .summary-value { font-weight: 600; word-break: break-word; }
 .divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
 .total-label { font-weight: bold; }
-.total-value { color: #5D3FFF; font-weight: bold; }
+.total-value { color: #3A6DFF; font-weight: bold; }
 .section-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
 .subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
 .info-note { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-top: 20px; }
 .info-note p { color: #0369a1; font-size: 14px; margin: 0; }
-.btn-primary { background: #5D3FFF; color: #fff; border: none; padding: 15px 30px; width: 100%; max-width: 100%; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
+.btn-primary { background: #3A6DFF; color: #fff; border: none; padding: 15px 30px; width: 100%; max-width: 100%; margin: 0 auto; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; text-decoration: none; display: block; text-align: center; }
 .btn-primary:hover { background: #4a2fcc; color: #fff; }
 .btn-disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
 
@@ -172,7 +172,7 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSyste
 }
 
 .doku-modal-header {
-    background: linear-gradient(135deg, #5D3FFF, #7C3AED);
+    background: linear-gradient(135deg, #3A6DFF, #3A6DFF);
     padding: 16px 20px;
     display: flex;
     align-items: center;
@@ -248,8 +248,8 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSyste
     width: 100%;
     height: 100%;
     border: 4px solid transparent;
-    border-top-color: #5D3FFF;
-    border-right-color: #5D3FFF;
+    border-top-color: #3A6DFF;
+    border-right-color: #3A6DFF;
     border-radius: 50%;
     animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
@@ -277,7 +277,7 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSyste
 .loading-dots .dot {
     width: 8px;
     height: 8px;
-    background: #5D3FFF;
+    background: #3A6DFF;
     border-radius: 50%;
     animation: pulse 1.5s ease-in-out infinite;
 }
@@ -511,7 +511,7 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSyste
         <div class="doku-modal-header">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="doku-header-icon">
-                    <svg style="width: 18px; height: 18px; color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
+                    <svg style="width: 18px; height: 18px; color: #3A6DFF;" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
                         <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
                     </svg>

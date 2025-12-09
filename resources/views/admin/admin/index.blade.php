@@ -13,14 +13,15 @@ Features: CRUD, Search, Filter, Export
 
 {{-- Load CSS dan Fonts --}}
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/admin/admin-index.css') }}">
 
     {{-- Custom CSS untuk halaman admin --}}
-    <style>
+    {{-- <style>
         /* ----- Global Font Setting ----- */
         * {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -1033,7 +1034,7 @@ Features: CRUD, Search, Filter, Export
             padding: 0 0.5rem;
             color: #94A3B8;
         }
-    </style>
+    </style> --}}
 @endpush
 
 @section('content')

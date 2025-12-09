@@ -3,28 +3,13 @@
 @section('title', 'Data Kursus - Algorify')
 
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/pelatihan-index.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Topbar Layout Adjustment for Pengajar */
-        .dashboard-container.with-topbar {
-            padding-top: 64px;
-        }
-        
-        .dashboard-container.with-topbar .main-content {
-            padding-top: 1.5rem;
-        }
-        
-        @media (max-width: 992px) {
-            .dashboard-container.with-topbar .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
+    
 @endpush
 
 @section('content')
@@ -39,10 +24,12 @@
             <div class="page-container">
                 <!-- Page Header -->
                 <div class="page-header">
-                    <h1 class="page-title">Data Kursus</h1>
+                    <div class="page-header-top">
+                        <h1 class="page-title">Data Kursus</h1>
+                    </div>
                     
-                    <!-- Search Bar -->
-                    <div class="search-wrapper">
+                    <!-- Search Bar & Filters -->
+                    <div class="search-filter-wrapper">
                         <div class="search-box">
                             <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
@@ -54,6 +41,26 @@
                                 placeholder="Cari kursus berdasarkan judul..."
                                 autocomplete="off"
                             >
+                        </div>
+                        
+                        <div class="filters-container">
+                            <select id="filterKategori" class="filter-select" onchange="applyFilters()">
+                                <option value="">Semua Kategori</option>
+                                @foreach($kategoris as $key => $value)
+                                    <option value="{{ $key }}" {{ request('kategori') == $key ? 'selected' : '' }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            
+                            <select id="filterPengajar" class="filter-select" onchange="applyFilters()">
+                                <option value="">Semua Pengajar</option>
+                                @foreach($pengajars as $pengajar)
+                                    <option value="{{ $pengajar->id }}" {{ request('pengajar_id') == $pengajar->id ? 'selected' : '' }}>
+                                        {{ $pengajar->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -106,7 +113,7 @@
                                             <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                                         </svg>
                                         <p class="upload-text">Drag & drop Gambar</p>
-                                        <p class="upload-hint">Format: PNG atau JPG (Max 500KB)</p>
+                                        <p class="upload-hint">Format: PNG atau JPG (Max 1MB)</p>
                                         <button type="button" class="btn-upload" onclick="event.stopPropagation(); document.getElementById('thumbnail').click();">Pilih File</button>
                                     </div>
                                     <div id="previewContainer" class="preview-container" style="display: none;">
@@ -145,7 +152,7 @@
                                             Kategori <span class="required">*</span>
                                         </label>
                                         <select name="kategori" id="kategori" class="form-select" required>
-                                            <option value="">UI/UX DESIGN</option>
+                                            <option value="" disabled selected hidden>Pilih Kategori</option>
                                             <option value="programming">Programming</option>
                                             <option value="design">UI/UX Design</option>
                                             <option value="data_science">Data Science</option>
@@ -160,7 +167,7 @@
                                             Tipe Kursus <span class="required">*</span>
                                         </label>
                                         <select name="tipe_kursus" id="tipe_kursus" class="form-select" required>
-                                            <option value="">Online</option>
+                                            <option value="" disabled selected hidden>Pilih Tipe Kursus</option>
                                             <option value="online">Online</option>
                                             <option value="hybrid">Hybrid</option>
                                             <option value="offline">Offline</option>
@@ -189,11 +196,9 @@
                                         Nama Pengajar <span class="required">*</span>
                                     </label>
                                     <select name="pengajar_id" id="pengajar_id" class="form-select" required>
-                                        <option value="">Pilih Pengajar</option>
+                                        <option value="" disabled selected hidden>Pilih Pengajar</option>
                                         @foreach($pengajars as $pengajar)
-                                            <option value="{{ $pengajar->id }}" {{ $pengajar->id == auth()->id() ? 'selected' : '' }}>
-                                                {{ $pengajar->name }}
-                                            </option>
+                                            <option value="{{ $pengajar->id }}">{{ $pengajar->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -204,11 +209,13 @@
                                             Durasi <span class="required">*</span>
                                         </label>
                                         <input 
-                                            type="text" 
+                                            type="number" 
                                             name="durasi" 
                                             id="durasi"
                                             class="form-input" 
-                                            placeholder="Contoh: 8 Minggu"
+                                            placeholder="Contoh: 8"
+                                            min="1"
+                                            step="1"
                                             required
                                         >
                                     </div>
@@ -223,7 +230,23 @@
                                             id="harga"
                                             class="form-input" 
                                             placeholder="Contoh: Rp 2.500.000"
+                                            inputmode="numeric"
                                             required
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Kapasitas Peserta (Opsional)
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            name="kapasitas" 
+                                            id="kapasitas"
+                                            class="form-input" 
+                                            placeholder="Contoh: 30"
+                                            min="1"
+                                            step="1"
                                         >
                                     </div>
                                 </div>
@@ -311,6 +334,41 @@
 @push('scripts')
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
+
+        // Format harga ke rupiah saat input
+        const hargaInput = document.getElementById('harga');
+        if (hargaInput) {
+            hargaInput.addEventListener('input', function (e) {
+                const digits = (e.target.value || '').replace(/[^0-9]/g, '');
+                if (!digits) {
+                    e.target.value = '';
+                    return;
+                }
+                const formatted = new Intl.NumberFormat('id-ID').format(parseInt(digits, 10));
+                e.target.value = 'Rp ' + formatted;
+            });
+        }
+        
+        // Filter functionality
+        function applyFilters() {
+            const kategori = document.getElementById('filterKategori').value;
+            const pengajarId = document.getElementById('filterPengajar').value;
+            
+            // Build URL with query parameters
+            const url = new URL(window.location.href);
+            url.search = ''; // Clear existing params
+            
+            if (kategori) {
+                url.searchParams.set('kategori', kategori);
+            }
+            
+            if (pengajarId) {
+                url.searchParams.set('pengajar_id', pengajarId);
+            }
+            
+            // Reload page with filters
+            window.location.href = url.toString();
+        }
         
         // Search functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -428,9 +486,14 @@
                     document.getElementById('pengajar_id').value = data.user_id || '{{ auth()->id() }}';
                     document.getElementById('durasi').value = data.durasi || '';
                     document.getElementById('harga').value = data.harga;
+                    document.getElementById('kapasitas').value = data.kapasitas || '';
                     
                     if (data.thumbnail) {
-                        document.getElementById('previewImage').src = '{{ asset("") }}' + data.thumbnail;
+                        // Gunakan storage path yang benar
+                        const thumbnailUrl = data.thumbnail.startsWith('http') 
+                            ? data.thumbnail 
+                            : '{{ asset("storage") }}/' + data.thumbnail;
+                        document.getElementById('previewImage').src = thumbnailUrl;
                         document.getElementById('uploadArea').style.display = 'none';
                         document.getElementById('previewContainer').style.display = 'block';
                     } else {

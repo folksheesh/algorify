@@ -47,13 +47,16 @@ Route::get('/dashboard', function () {
     
     // Student Dashboard - Get user's enrollments
     $enrollments = \App\Models\Enrollment::where('user_id', $user->id)
-        ->with(['kursus'])
+        ->with(['kursus' => function($query) {
+            $query->with('pengajar');
+        }])
         ->latest()
         ->get();
     
     // Get recommended courses (latest courses that user hasn't enrolled in)
     $enrolledKursusIds = $enrollments->pluck('kursus_id')->toArray();
     $recommendedCourses = \App\Models\Kursus::whereNotIn('id', $enrolledKursusIds)
+        ->with('pengajar')
         ->latest()
         ->limit(6)
         ->get();

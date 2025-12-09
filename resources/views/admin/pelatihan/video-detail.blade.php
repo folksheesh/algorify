@@ -5,8 +5,9 @@
 @push('styles')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{ asset('css/admin/pelatihan-video.css') }}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
+{{-- <style>
     * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
@@ -257,7 +258,7 @@
             padding-top: calc(64px + 1rem);
         }
     }
-</style>
+</style> --}}
 @endpush
 
 @section('content')

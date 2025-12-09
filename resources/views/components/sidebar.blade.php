@@ -1,9 +1,9 @@
 <aside class="sidebar" id="sidebar">
     <header class="sidebar-header">
-        <div class="logo">
+        <a href="javascript:location.reload();" class="logo" title="Refresh halaman">
             <img src="{{ asset('template/img/icon-logo.png') }}" alt="Algorify Logo" class="logo-icon">
             <span class="logo-text">Algorify</span>
-        </div>
+        </a>
         <button class="sidebar-toggle-btn" onclick="toggleSidebarCollapse()" title="Toggle Sidebar">
             <svg class="toggle-icon collapse-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -218,6 +218,13 @@
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <style>
+/* Active menu item background color */
+.nav-item.active > .nav-link {
+    background: #3A6DFF;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 12px;
+}
 /* ============================================
    SIDEBAR COLLAPSIBLE - Gmail Style
    ============================================ */
@@ -235,7 +242,7 @@
     transform: translateY(-50%);
     width: 24px;
     height: 48px;
-    background: #5D3FFF;
+    background: #3A6DFF;
     color: white;
     border: none;
     border-radius: 0 8px 8px 0;
@@ -244,12 +251,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 2px 0 8px rgba(93, 63, 255, 0.3);
+    box-shadow: 2px 0 8px rgba(58, 109, 255, 0.3);
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, transform 0.2s;
 }
 
 .sidebar-edge-toggle:hover {
-    background: #4D2FEF;
+    background: #2952CC;
     transform: translateY(-50%) scale(1.05);
 }
 
@@ -280,8 +287,8 @@
 }
 
 .sidebar-toggle-btn:hover {
-    background: #5D3FFF;
-    border-color: #5D3FFF;
+    background: #3A6DFF;
+    border-color: #3A6DFF;
     color: #FFFFFF;
 }
 
@@ -317,6 +324,17 @@
 
 .sidebar .logo {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar .logo:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
 }
 
 .sidebar .sidebar-header {

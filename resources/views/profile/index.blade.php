@@ -6,7 +6,7 @@
 
 {{-- Tambahkan stylesheet dan style khusus halaman --}}
 @push('styles')
-    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <style>
         .profile-edit-container {
@@ -110,7 +110,7 @@
         .upload-button {
             background: transparent;
             border: none;
-            color: #5D3FFF;
+            color: #3A6DFF;
             font-weight: 500;
             cursor: pointer;
             padding: 0.5rem 1rem;
@@ -164,7 +164,7 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #5D3FFF;
+            border-color: #3A6DFF;
             background: white;
             box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
         }

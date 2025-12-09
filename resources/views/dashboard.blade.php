@@ -5,101 +5,7 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
-    <style>
-        /* Topbar Layout Adjustment */
-        .dashboard-container.with-topbar {
-            padding-top: 72px;
-        }
-        
-        .dashboard-container.with-topbar .main-content {
-            padding-top: 1.5rem;
-        }
-        
-        @media (max-width: 992px) {
-            .dashboard-container.with-topbar .main-content {
-                margin-left: 0;
-            }
-        }
-        
-        .course-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .course-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-        .course-image {
-            transition: transform 0.3s ease;
-        }
-        .course-card:hover .course-image {
-            transform: scale(1.05);
-        }
-        .bookmark-button {
-            transition: all 0.3s ease;
-        }
-        .bookmark-button:hover {
-            background: #6366F1;
-            color: white;
-        }
-        .stat-card {
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-        }
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .course-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            background: #EEF2FF;
-            color: #6366F1;
-            border-radius: 1rem;
-            font-weight: 600;
-        }
-        
-        /* Responsive adjustments untuk inline styles */
-        @media (max-width: 768px) {
-            .course-card:hover {
-                transform: translateY(-4px);
-            }
-            
-            .course-description-text {
-                font-size: 0.8rem !important;
-                -webkit-line-clamp: 2;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
-            
-            .course-price-footer {
-                flex-direction: column !important;
-                gap: 8px !important;
-                align-items: flex-start !important;
-            }
-            
-            .course-price-footer span:last-child {
-                align-self: flex-end;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .course-card:hover {
-                transform: translateY(-2px);
-            }
-            
-            .author-avatar {
-                width: 28px !important;
-                height: 28px !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/peserta/dashboard.css') }}">
 @endpush
 
 @section('content')
@@ -109,39 +15,23 @@
     <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-            <section class="hero-banner">
+            <section class="hero-banner" style="background-image: url('{{ asset('template/img/hero-banner-bg.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                 <div class="hero-content">
-                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bareng Pelatihan Profesional</h1>
-                    <p class="hero-description">Berlangganan pelatihan lainnya untuk pengetahuan yang<br />lebih luas.</p>
-                </div>
-                <div class="hero-illustration">
-                    <img src="{{ asset('template/img/hero-illustration.png') }}" alt="Hero Illustration" class="illustration-graphic">
+                    <h1 class="hero-title">Tingkatkan Skill-mu<br />Bersama Pelatihan Profesional</h1>
+                    <p class="hero-description">Jelajahi pelatihan terbaik untuk mengembangkan kemampuanmu.</p>
+                    <a href="{{ route('kursus.index') }}" class="hero-cta-btn">Mulai Belajar Sekarang</a>
                 </div>
             </section>
             
             <section class="courses-section" style="margin-bottom: 2rem;">
                 <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <h2 class="section-title" style="margin: 0;">Lanjutkan Belajar</h2>
-                        <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
-                            Lihat Semua 
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="carousel-nav" style="display: flex; gap: 0.5rem;">
-                        <button onclick="scrollCarousel(-1)" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E2E8F0; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M13 16L7 10L13 4" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <button onclick="scrollCarousel(1)" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E2E8F0; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <h2 class="section-title" style="margin: 0;">Lanjutkan Belajar</h2>
+                    <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                        Lihat Semua 
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
                 </header>
                 <div id="continueCarousel" class="continue-carousel-wrapper">
                     @forelse($enrollments as $enrollment)
@@ -249,21 +139,52 @@
                 }
             </script>
 
+            <script>
+                // Make recommendation cards navigate to the course detail page on click/keyboard
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelectorAll('.course-card[data-course-url]').forEach(function (card) {
+                        const navigateToCourse = function () {
+                            const targetUrl = card.dataset.courseUrl;
+                            if (targetUrl) {
+                                window.location.href = targetUrl;
+                            }
+                        };
+
+                        card.addEventListener('click', function (event) {
+                            if (event.target.closest('.bookmark-button')) {
+                                return;
+                            }
+                            navigateToCourse();
+                        });
+
+                        card.addEventListener('keydown', function (event) {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                navigateToCourse();
+                            }
+                        });
+                    });
+                });
+            </script>
+
             <section class="courses-section">
                 <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <h2 class="section-title" style="margin: 0;">Rekomendasi Pelatihan</h2>
-                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
-                            Lihat Semua 
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
+                    <h2 class="section-title" style="margin: 0;">Rekomendasi Pelatihan</h2>
+                    <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                        Lihat Semua 
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
                 </header>
                 <div class="courses-grid">
                     @forelse($recommendedCourses as $kursus)
-                    <article class="course-card">
+                    <article
+                        class="course-card"
+                        data-course-url="{{ route('kursus.show', $kursus->id) }}"
+                        role="button"
+                        tabindex="0"
+                    >
                         <div class="course-thumbnail">
                             @if($kursus->gambar)
                                 <img src="{{ asset('storage/' . $kursus->gambar) }}" alt="{{ $kursus->judul }}" class="course-image" />
@@ -282,17 +203,19 @@
                             <p class="course-description-text" style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
                                 {{ Str::limit($kursus->deskripsi_singkat ?? $kursus->deskripsi, 80) }}
                             </p>
-                            @if($kursus->pengajar)
+                            @if($kursus->pengajar && is_object($kursus->pengajar))
                             <div class="course-author">
-                                @if($kursus->pengajar->profile_photo)
+                                @if(isset($kursus->pengajar->profile_photo) && $kursus->pengajar->profile_photo)
                                     <img src="{{ asset('storage/' . $kursus->pengajar->profile_photo) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
+                                @elseif(isset($kursus->pengajar->foto_profil) && $kursus->pengajar->foto_profil)
+                                    <img src="{{ asset('storage/' . $kursus->pengajar->foto_profil) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
                                 @else
                                     <div class="author-avatar" style="background: #6366F1; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                        {{ substr($kursus->pengajar->name, 0, 1) }}
+                                        {{ substr($kursus->pengajar->name ?? 'P', 0, 1) }}
                                     </div>
                                 @endif
                                 <div class="author-info">
-                                    <p class="author-name">{{ $kursus->pengajar->name }}</p>
+                                    <p class="author-name">{{ $kursus->pengajar->name ?? 'Pengajar' }}</p>
                                     <p class="author-role">Pengajar</p>
                                 </div>
                             </div>
