@@ -67,7 +67,7 @@
                             </div>
 
                             <div class="course-section">
-                                <h2 class="section-title">Investasi</h2>
+                                <h2 class="section-title">Harga</h2>
                                 <div class="course-price-detail">
                                     @if($kursus->harga > 0)
                                         Rp {{ number_format($kursus->harga, 0, ',', '.') }}

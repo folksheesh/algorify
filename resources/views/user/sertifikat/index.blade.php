@@ -47,10 +47,11 @@
                     <div class="cert-card">
                         <!-- Header dengan background biru -->
                         <div class="cert-header">
-                            <svg class="cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 15l-2 5l2-1l2 1l-2-5z"/>
-                                <circle cx="12" cy="9" r="6"/>
-                            </svg>
+                            <img
+                                src="{{ asset('template/img/medali keren.png') }}"
+                                alt="Medali Sertifikat"
+                                class="cert-icon"
+                            >
                             @if($enrollment->has_certificate)
                                 <span class="cert-badge">Sertifikat Tersedia</span>
                             @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)

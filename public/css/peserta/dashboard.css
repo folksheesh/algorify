@@ -3,6 +3,21 @@
         .dashboard-container.with-topbar {
             padding-top: 72px;
         }
+
+        /* Override untuk menjaga konsistensi dropdown topbar */
+        .topbar-user .topbar-user-btn .topbar-username,
+        nav.topbar-user .topbar-username,
+        .topbar-username {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-weight: 500 !important;
+            font-size: 0.875rem !important;
+        }
+
+        .topbar-user .dropdown-item,
+        nav.topbar-user .dropdown-item {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-weight: 500 !important;
+        }
         
         .dashboard-container.with-topbar .main-content {
             padding-top: 1.5rem;

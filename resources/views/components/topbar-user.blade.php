@@ -1,4 +1,8 @@
 {{-- Topbar untuk Peserta (User) --}}
+@php
+    $displayName = display_user_name();
+    $avatarInitial = strtoupper(substr($displayName, 0, 1));
+@endphp
 <nav class="topbar-user">
     <div class="topbar-left">
         <button class="hamburger-btn" onclick="toggleSidebar()">
@@ -32,14 +36,14 @@
         <div class="topbar-user-menu">
             <button class="topbar-user-btn" onclick="toggleUserDropdown()">
                 @if (Auth::user()->foto_profil)
-                    <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->name }}"
+                    <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ $displayName }}"
                         class="topbar-avatar">
                 @else
                     <div class="topbar-avatar-placeholder">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        {{ $avatarInitial }}
                     </div>
                 @endif
-                <span class="topbar-username">{{ Auth::user()->name }}</span>
+                <span class="topbar-username">{{ $displayName }}</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
