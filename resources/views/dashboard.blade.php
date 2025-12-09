@@ -27,27 +27,13 @@
             
             <section class="courses-section" style="margin-bottom: 2rem;">
                 <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <h2 class="section-title" style="margin: 0;">Lanjutkan Belajar</h2>
-                        <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
-                            Lihat Semua 
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="carousel-nav" style="display: flex; gap: 0.5rem;">
-                        <button onclick="scrollCarousel(-1)" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E2E8F0; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M13 16L7 10L13 4" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <button onclick="scrollCarousel(1)" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E2E8F0; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <h2 class="section-title" style="margin: 0;">Lanjutkan Belajar</h2>
+                    <a href="{{ route('user.pelatihan-saya.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                        Lihat Semua 
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
                 </header>
                 <div id="continueCarousel" class="continue-carousel-wrapper">
                     @forelse($enrollments as $enrollment)
@@ -155,21 +141,52 @@
                 }
             </script>
 
+            <script>
+                // Make recommendation cards navigate to the course detail page on click/keyboard
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelectorAll('.course-card[data-course-url]').forEach(function (card) {
+                        const navigateToCourse = function () {
+                            const targetUrl = card.dataset.courseUrl;
+                            if (targetUrl) {
+                                window.location.href = targetUrl;
+                            }
+                        };
+
+                        card.addEventListener('click', function (event) {
+                            if (event.target.closest('.bookmark-button')) {
+                                return;
+                            }
+                            navigateToCourse();
+                        });
+
+                        card.addEventListener('keydown', function (event) {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                navigateToCourse();
+                            }
+                        });
+                    });
+                });
+            </script>
+
             <section class="courses-section">
                 <header class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <h2 class="section-title" style="margin: 0;">Rekomendasi Pelatihan</h2>
-                        <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
-                            Lihat Semua 
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                                <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </div>
+                    <h2 class="section-title" style="margin: 0;">Rekomendasi Pelatihan</h2>
+                    <a href="{{ route('kursus.index') }}" style="color: #6366F1; text-decoration: none; font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.25rem;">
+                        Lihat Semua 
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
                 </header>
                 <div class="courses-grid">
                     @forelse($recommendedCourses as $kursus)
-                    <article class="course-card">
+                    <article
+                        class="course-card"
+                        data-course-url="{{ route('kursus.show', $kursus->id) }}"
+                        role="button"
+                        tabindex="0"
+                    >
                         <div class="course-thumbnail">
                             @if($kursus->gambar)
                                 <img src="{{ asset('storage/' . $kursus->gambar) }}" alt="{{ $kursus->judul }}" class="course-image" />

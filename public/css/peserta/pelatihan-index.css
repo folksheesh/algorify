@@ -2,6 +2,21 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* Override untuk menjaga konsistensi dropdown topbar */
+.topbar-user .topbar-user-btn .topbar-username,
+nav.topbar-user .topbar-username,
+.topbar-username {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+}
+
+.topbar-user .dropdown-item,
+nav.topbar-user .dropdown-item {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 500 !important;
+}
+
 .page-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 20px;
@@ -24,25 +39,40 @@
 }
 
 .search-filter-bar {
-    display: flex;
-    gap: 1rem;
+    display: block;
+    width: 100%;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 0.85rem 1.75rem;
+    box-shadow: 0 20px 45px rgba(102, 126, 234, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .search-box {
-    flex: 1;
+    width: 100%;
     min-width: 300px;
     position: relative;
+    border-radius: 16px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.75rem;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    background: white;
+    padding: 0.65rem 1rem 0.65rem 2.75rem;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    background: transparent;
+    color: #0f172a;
+}
+
+.search-box input:focus {
+    outline: none;
+}
+
+.search-box:focus-within {
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    border-radius: 16px;
 }
 
 .search-box svg {

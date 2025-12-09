@@ -122,11 +122,13 @@
     background: linear-gradient(135deg, #EDE9FE 0%, #E0E7FF 100%);
     border: 2px solid #C4B5FD;
     border-radius: 16px;
-    padding: 1.5rem 2rem;
-    max-width: 500px;
+    padding: 1.5rem 2.5rem;
+    max-width: 640px;
+    width: 100%;
     display: flex;
     gap: 1.5rem;
     align-items: flex-start;
+    margin: 0 auto 2.5rem auto;
 }
 
 .info-box-icon-wrapper {
