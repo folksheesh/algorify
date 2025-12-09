@@ -203,17 +203,19 @@
                             <p class="course-description-text" style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
                                 {{ Str::limit($kursus->deskripsi_singkat ?? $kursus->deskripsi, 80) }}
                             </p>
-                            @if($kursus->pengajar)
+                            @if($kursus->pengajar && is_object($kursus->pengajar))
                             <div class="course-author">
-                                @if($kursus->pengajar && is_object($kursus->pengajar) && $kursus->pengajar->profile_photo)
+                                @if(isset($kursus->pengajar->profile_photo) && $kursus->pengajar->profile_photo)
                                     <img src="{{ asset('storage/' . $kursus->pengajar->profile_photo) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
+                                @elseif(isset($kursus->pengajar->foto_profil) && $kursus->pengajar->foto_profil)
+                                    <img src="{{ asset('storage/' . $kursus->pengajar->foto_profil) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
                                 @else
                                     <div class="author-avatar" style="background: #6366F1; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                        {{ $kursus->pengajar && is_object($kursus->pengajar) ? substr($kursus->pengajar->name, 0, 1) : '?' }}
+                                        {{ substr($kursus->pengajar->name ?? 'P', 0, 1) }}
                                     </div>
                                 @endif
                                 <div class="author-info">
-                                    <p class="author-name">{{ $kursus->pengajar && is_object($kursus->pengajar) ? $kursus->pengajar->name : 'Pengajar' }}</p>
+                                    <p class="author-name">{{ $kursus->pengajar->name ?? 'Pengajar' }}</p>
                                     <p class="author-role">Pengajar</p>
                                 </div>
                             </div>

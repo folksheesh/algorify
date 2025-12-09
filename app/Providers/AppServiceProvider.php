@@ -16,6 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Ensure global helper functions are loaded even if Composer autoload files are stale.
+        $helpersPath = app_path('helpers.php');
+        if (file_exists($helpersPath)) {
+            require_once $helpersPath;
+        }
+
         // Register ProgressRepository as singleton
         $this->app->singleton(ProgressRepository::class, function ($app) {
             return new ProgressRepository();
