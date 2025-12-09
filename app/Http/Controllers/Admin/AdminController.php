@@ -52,6 +52,7 @@ class AdminController extends Controller
         ]);
 
         $user = User::create([
+            'id' => User::generateId('admin'),
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
@@ -60,7 +61,6 @@ class AdminController extends Controller
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'status' => $validated['status'] ?? 'active',
-            'kode_unik' => User::generateKodeUnik('admin'),
         ]);
 
         $user->assignRole('admin');

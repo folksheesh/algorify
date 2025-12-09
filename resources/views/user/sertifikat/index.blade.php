@@ -5,191 +5,41 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
-    <style>
-        .cert-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .cert-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.75rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        .cert-icon-wrapper {
-            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-        }
-        .cert-icon-svg {
-            width: 28px;
-            height: 28px;
-            color: #5D3FFF;
-        }
-        .cert-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1E293B;
-            margin-bottom: 0.35rem;
-            text-align: center;
-        }
-        .cert-subtitle {
-            color: #64748B;
-            font-size: 0.875rem;
-            margin-bottom: 1.25rem;
-            text-align: center;
-        }
-        .cert-details {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-        .cert-detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #E2E8F0;
-        }
-        .cert-detail-row:last-child {
-            border-bottom: none;
-        }
-        .cert-detail-label {
-            color: #64748B;
-            font-size: 0.9rem;
-        }
-        .cert-detail-value {
-            color: #1E293B;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .btn-download {
-            background: #5D3FFF;
-            color: white;
-            border: none;
-            padding: 0.875rem 2rem;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .btn-download:hover {
-            background: #4a2fcc;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
-        }
-        .info-box {
-            background: #EFF6FF;
-            border: 1px solid #BFDBFE;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .info-box-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            color: #1E40AF;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-        .info-box-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .info-box-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            color: #1E40AF;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            line-height: 1.5;
-        }
-        .info-box-list li:last-child {
-            margin-bottom: 0;
-        }
-        .check-icon {
-            width: 20px;
-            height: 20px;
-            background: #3B82F6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 16px;
-        }
-        .empty-icon {
-            font-size: 5rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
-        }
-        .empty-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1E293B;
-            margin-bottom: 0.75rem;
-        }
-        .empty-text {
-            color: #64748B;
-            margin-bottom: 2rem;
-            font-size: 1rem;
-        }
-        .btn-explore {
-            background: #5D3FFF;
-            color: white;
-            padding: 0.875rem 2rem;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s;
-        }
-        .btn-explore:hover {
-            background: #4a2fcc;
-            transform: translateY(-2px);
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/peserta/sertifikat-index.css') }}">
+
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar User --}}
+    @include('components.topbar-user')
+    
+    <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-            <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #1E293B;">Sertifikat Saya</h1>
-            <p style="color: #64748B; margin-bottom: 2rem;">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
+            <!-- Tombol Kembali -->
+            <a href="{{ route('user.pelatihan-saya.index') }}" class="back-button">
+                <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Kembali ke Pelatihan Saya
+            </a>
+
+            <div class="page-header">
+                <h1 class="page-title">Sertifikat Saya</h1>
+                <p class="page-subtitle">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
+            </div>
 
             @if(session('success'))
-                <div style="background: #D1FAE5; border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                <div style="background: #D1FAE5; border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; max-width: 400px;">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div style="background: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                <div style="background: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; max-width: 400px;">
                     {{ session('error') }}
                 </div>
+<<<<<<< HEAD
             </section>
             <section class="stats-section">
                 <div style="padding: 2rem; background: white; border-radius: 12px; margin-top: 2rem;">
@@ -197,155 +47,175 @@
                     <p style="color: #64748B;">Konten untuk halaman Sertifikat Saya akan segera ditambahkan.</p>
                 </div>
             </section>
-        </main>
-    </div>
-@endsection
+=======
+            @endif
 
-@push('scripts')
-    <script>
-        document.documentElement.setAttribute('data-bs-theme', 'light');
-
-        // Download Modal
-        function showDownloadModal(courseName, certNumber, downloadUrl) {
-            const modal = document.getElementById('download-modal');
-            document.getElementById('modal-course-name').textContent = courseName;
-            document.getElementById('modal-cert-number').textContent = certNumber;
-            document.getElementById('modal-download-link').href = downloadUrl;
-            modal.style.display = 'flex';
-        }
-
-        function closeDownloadModal() {
-            document.getElementById('download-modal').style.display = 'none';
-        }
-
-        // Incomplete Course Modal
-        function showIncompleteModal(courseName, progress, score) {
-            const modal = document.getElementById('incomplete-modal');
-            document.getElementById('incomplete-course-name').textContent = courseName;
-            document.getElementById('incomplete-progress').textContent = progress;
-            document.getElementById('incomplete-score').textContent = score;
-            modal.style.display = 'flex';
-        }
-
-        function closeIncompleteModal() {
-            document.getElementById('incomplete-modal').style.display = 'none';
-        }
-
-        // Close modals on ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeDownloadModal();
-                closeIncompleteModal();
-            }
-        });
-
-        // Close modals on background click
-        window.onclick = function(event) {
-            const downloadModal = document.getElementById('download-modal');
-            const incompleteModal = document.getElementById('incomplete-modal');
-            if (event.target === downloadModal) {
-                closeDownloadModal();
-            }
-            if (event.target === incompleteModal) {
-                closeIncompleteModal();
-            }
-        };
-    </script>
-@endpush
-
-<!-- Download Modal -->
-<div id="download-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); width: 90%; max-width: 500px; overflow: hidden; animation: slideIn 0.3s ease-out;">
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #5D3FFF, #7C3AED); padding: 24px; text-align: center; position: relative;">
-            <div style="width: 64px; height: 64px; background: white; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                <svg width="32" height="32" style="color: #5D3FFF;" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <h3 style="margin: 0; color: white; font-size: 1.5rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">Sertifikat Tersedia!</h3>
-            <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 0.95rem; font-family: 'Plus Jakarta Sans', sans-serif;">Selamat telah menyelesaikan pelatihan</p>
-        </div>
-
-        <!-- Content -->
-        <div style="padding: 32px 24px;">
-            <div style="text-align: center; margin-bottom: 24px;">
-                <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Kursus:</p>
-                <h4 id="modal-course-name" style="color: #1E293B; font-size: 1.1rem; font-weight: 600; margin: 0 0 16px 0; font-family: 'Plus Jakarta Sans', sans-serif;"></h4>
-                <div style="background: #F1F5F9; padding: 12px 16px; border-radius: 8px; display: inline-block;">
-                    <p style="color: #64748B; font-size: 0.85rem; margin: 0 0 4px 0; font-family: 'Plus Jakarta Sans', sans-serif;">Nomor Sertifikat:</p>
-                    <p id="modal-cert-number" style="color: #5D3FFF; font-weight: 600; font-size: 1rem; margin: 0; font-family: 'Courier New', monospace;"></p>
+            @if($completedEnrollments->count() > 0)
+                @foreach($completedEnrollments as $enrollment)
+                    <!-- Certificate Card -->
+                    <div class="cert-card">
+                        <!-- Header dengan background biru -->
+                        <div class="cert-header">
+                            <img
+                                src="{{ asset('template/img/medali keren.png') }}"
+                                alt="Medali Sertifikat"
+                                class="cert-icon"
+                            >
+                            @if($enrollment->has_certificate)
+                                <span class="cert-badge">Sertifikat Tersedia</span>
+                            @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)
+                                <span class="cert-badge" style="background: #F59E0B;">Siap Dibuat</span>
+                            @else
+                                <span class="cert-badge" style="background: #94A3B8;">Belum Selesai</span>
+                            @endif
+                        </div>
+                        
+                        <!-- Body -->
+                        <div class="cert-body">
+                            <h3 class="cert-course-title">{{ $enrollment->kursus->judul }}</h3>
+                            <p class="cert-instructor">Oleh {{ $enrollment->kursus->pengajar->name ?? 'Instruktur' }}</p>
+                            
+                            @if($enrollment->has_certificate && $enrollment->certificate)
+                                <div class="cert-info-row">
+                                    <span class="cert-info-label">Tanggal Selesai:</span>
+                                    <span class="cert-info-value">{{ \Carbon\Carbon::parse($enrollment->certificate->created_at)->locale('id')->translatedFormat('d F Y') }}</span>
+                                </div>
+                            @endif
+                            
+                            <div class="cert-info-row">
+                                <span class="cert-info-label">Nilai Akhir:</span>
+                                <span class="cert-info-value highlight">{{ $enrollment->nilai_akhir ?? 0 }}/100</span>
+                            </div>
+                            
+                            <div class="cert-button-wrapper">
+                                @if($enrollment->has_certificate)
+                                    <button type="button" class="btn-download-cert" onclick="openDownloadModal('{{ $enrollment->certificate->id }}', '{{ $enrollment->kursus->judul }}', '{{ $enrollment->certificate->certificate_number ?? 'CERT-' . strtoupper(substr(md5($enrollment->certificate->id), 0, 8)) }}')">
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Download Sertifikat (PDF)
+                                    </button>
+                                @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)
+                                    <form action="{{ route('user.sertifikat.generate', $enrollment->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <button type="submit" class="btn-download-cert">
+                                            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                                            </svg>
+                                            Dapatkan Sertifikat
+                                        </button>
+                                    </form>
+                                @else
+                                    <button disabled class="btn-download-cert" style="background: #94A3B8; cursor: not-allowed;">
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Belum Dapat Sertifikat
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <h2 class="empty-title">Belum Ada Pelatihan Selesai</h2>
+                    <p class="empty-text">Selesaikan pelatihan untuk mendapatkan sertifikat</p>
+                    <a href="{{ route('user.pelatihan-saya.index') }}" class="btn-explore">
+                        Lihat Pelatihan Saya
+                    </a>
+                </div>
+            @endif
+            
+            <!-- Info Box -->
+            <div class="info-box">
+                <div class="info-box-icon-wrapper">
+                    <svg class="info-box-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 15l-2 5l2-1l2 1l-2-5z"/>
+                        <circle cx="12" cy="9" r="6"/>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <div class="info-box-header">
+                        <h4 class="info-box-title">Cara Mendapatkan Sertifikat</h4>
+                    </div>
+                    <ul class="info-box-list">
+                        <li class="info-box-item">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Selesaikan semua modul dalam pelatihan (100%)</span>
+                        </li>
+                        <li class="info-box-item">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Lulus quiz final dengan nilai minimal 70</span>
+                        </li>
+                        <li class="info-box-item">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Sertifikat dapat didownload dalam format PDF</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-
-            <div style="display: flex; gap: 12px;">
-                <button onclick="closeDownloadModal()" style="flex: 1; background: #F1F5F9; color: #64748B; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">
-                    Batal
-                </button>
-                <a id="modal-download-link" href="#" style="flex: 2; background: linear-gradient(135deg, #5D3FFF, #7C3AED); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(93,63,255,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
+>>>>>>> a067c11e8ff97c32eaf068b68eb0334084274b84
+        </main>
+    </div>
+    
+    <!-- Download Modal -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-content">
+            <svg class="modal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 15l-2 5l2-1l2 1l-2-5z"/>
+                <circle cx="12" cy="9" r="6"/>
+            </svg>
+            <h3 class="modal-title">Download Sertifikat</h3>
+            <p class="modal-cert-number" id="modalCertNumber"></p>
+            <p class="modal-text">Apakah Anda ingin mengunduh sertifikat untuk kursus <strong id="modalCourseName"></strong>?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeDownloadModal()">Batal</button>
+                <a href="#" id="modalDownloadLink" class="modal-btn modal-btn-confirm">
                     Download PDF
                 </a>
             </div>
         </div>
     </div>
-</div>
+    
+    @include('components.footer')
+@endsection
 
-<!-- Incomplete Course Modal -->
-<div id="incomplete-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); width: 90%; max-width: 500px; overflow: hidden; animation: slideIn 0.3s ease-out;">
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #F59E0B, #F97316); padding: 24px; text-align: center;">
-            <div style="width: 64px; height: 64px; background: white; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                <svg width="32" height="32" style="color: #F59E0B;" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <h3 style="margin: 0; color: white; font-size: 1.5rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">Pelatihan Belum Selesai</h3>
-            <p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.9); font-size: 0.95rem; font-family: 'Plus Jakarta Sans', sans-serif;">Selesaikan persyaratan berikut</p>
-        </div>
-
-        <!-- Content -->
-        <div style="padding: 32px 24px;">
-            <div style="text-align: center; margin-bottom: 24px;">
-                <h4 id="incomplete-course-name" style="color: #1E293B; font-size: 1.1rem; font-weight: 600; margin: 0 0 24px 0; font-family: 'Plus Jakarta Sans', sans-serif;"></h4>
-                
-                <div style="background: #FEF3C7; border: 2px solid #FCD34D; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
-                    <p style="color: #92400E; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; font-family: 'Plus Jakarta Sans', sans-serif;">Persyaratan Sertifikat:</p>
-                    <div style="display: flex; justify-content: space-around; gap: 16px;">
-                        <div>
-                            <p style="color: #78350F; font-size: 0.85rem; margin: 0 0 4px 0; font-family: 'Plus Jakarta Sans', sans-serif;">Progress Anda</p>
-                            <p style="color: #92400E; font-size: 1.75rem; font-weight: 700; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;"><span id="incomplete-progress"></span>%</p>
-                            <p style="color: #78350F; font-size: 0.75rem; margin: 4px 0 0 0; font-family: 'Plus Jakarta Sans', sans-serif;">Target: 100%</p>
-                        </div>
-                        <div style="border-left: 2px solid #FCD34D; height: auto;"></div>
-                        <div>
-                            <p style="color: #78350F; font-size: 0.85rem; margin: 0 0 4px 0; font-family: 'Plus Jakarta Sans', sans-serif;">Nilai Anda</p>
-                            <p style="color: #92400E; font-size: 1.75rem; font-weight: 700; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;"><span id="incomplete-score"></span>/100</p>
-                            <p style="color: #78350F; font-size: 0.75rem; margin: 4px 0 0 0; font-family: 'Plus Jakarta Sans', sans-serif;">Target: ≥70</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: #EFF6FF; border-radius: 8px; padding: 16px; text-align: left;">
-                    <p style="color: #1E40AF; font-size: 0.9rem; margin: 0; line-height: 1.6; font-family: 'Plus Jakarta Sans', sans-serif;">
-                        <strong>Tips:</strong> Selesaikan semua modul pembelajaran dan kerjakan quiz final dengan baik untuk mendapatkan sertifikat.
-                    </p>
-                </div>
-            </div>
-
-            <button onclick="closeIncompleteModal()" style="width: 100%; background: linear-gradient(135deg, #F59E0B, #F97316); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(245,158,11,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                Mengerti
-            </button>
-        </div>
-    </div>
-</div>
-
-<style>
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-</style>
+@push('scripts')
+    <script>
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+        
+        function openDownloadModal(certId, courseName, certNumber) {
+            document.getElementById('modalCourseName').textContent = courseName;
+            document.getElementById('modalCertNumber').textContent = 'No. Sertifikat: ' + certNumber;
+            document.getElementById('modalDownloadLink').href = '/user/sertifikat/' + certId + '/download';
+            document.getElementById('downloadModal').classList.add('active');
+        }
+        
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('downloadModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDownloadModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDownloadModal();
+            }
+        });
+    </script>
+@endpush

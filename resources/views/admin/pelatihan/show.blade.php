@@ -17,7 +17,12 @@
 @endpush
 
 @section('content')
-    <div class="dashboard-container">
+    {{-- Topbar Pengajar --}}
+    @role('pengajar')
+    @include('components.topbar-pengajar')
+    @endrole
+    
+    <div class="dashboard-container @role('pengajar') with-topbar @endrole">
         @include('components.sidebar')
         <main class="main-content">
             <div class="page-container">
@@ -44,13 +49,24 @@
         <div class="content-card">
             <div class="card-header">
                 <h2 class="card-title">Modul Kursus</h2>
-                @hasanyrole('admin|pengajar')
-                <button class="add-btn" onclick="openAddWeekModal()">
-                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    Tambah Modul
-                </button>
+                @hasanyrole('admin|super admin|pengajar')
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="{{ route('admin.pelatihan.peserta', $kursus->id) }}" class="add-btn" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); text-decoration: none;">
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Detail Peserta
+                    </a>
+                    <button class="add-btn" onclick="openAddWeekModal()">
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Tambah Modul
+                    </button>
+                </div>
                 @endhasanyrole
             </div>
 
@@ -61,7 +77,7 @@
                             <div class="week-item" id="week-{{ $modul->id }}" data-id="{{ $modul->id }}">
                                 <div class="week-header" onclick="toggleWeek({{ $modul->id }})">
                                     <div class="week-title-section">
-                                        @hasanyrole('admin|pengajar')
+                                        @hasanyrole('admin|super admin|pengajar')
                                         <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan">
                                             <svg class="drag-handle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; color: #667eea; margin-right: 0.5rem;">
                                                 <line x1="4" y1="6" x2="20" y2="6"/>
@@ -78,7 +94,7 @@
                                             <div class="week-subtitle">Materi pembelajaran dan konten kursus</div>
                                         </div>
                                     </div>
-                                    @hasanyrole('admin|pengajar')
+                                    @hasanyrole('admin|super admin|pengajar')
                                     <div class="week-actions" onclick="event.stopPropagation()">
                                         <button class="action-btn edit-btn" onclick="event.stopPropagation(); editWeek({{ $modul->id }})" title="Edit">
                                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
@@ -100,7 +116,7 @@
                                     
                                     <div class="sections-header">
                                         <h3 class="sections-title">Section Pembelajaran</h3>
-                                        @hasanyrole('admin|pengajar')
+                                        @hasanyrole('admin|super admin|pengajar')
                                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                             <button class="add-section-btn" onclick="openVideoModal({{ $modul->id }})" style="background: #EEF2FF; color: #667eea; padding: 0.5rem 1rem; font-size: 0.75rem;">
                                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;">
@@ -213,7 +229,7 @@
                                                             </div>
                                                         </div>
                                                     </a>
-                                                    @hasanyrole('admin|pengajar')
+                                                    @hasanyrole('admin|super admin|pengajar')
                                                     <div style="display: flex; gap: 0.5rem;">
                                                         <button onclick="event.stopPropagation(); 
                                                             @if($item['type'] === 'video')
@@ -266,7 +282,9 @@
                             <path d="M16 24H48M16 32H48M16 40H32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <h3 class="empty-title">Belum ada modul</h3>
+                        @hasanyrole('admin|super admin|pengajar')
                         <p class="empty-text">Klik tombol "Tambah Modul" untuk menambahkan modul pembelajaran</p>
+                        @endhasanyrole
                     </div>
                 @endif
             </div>
@@ -486,6 +504,11 @@
                     <div class="form-group">
                         <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi" id="quizDeskripsi" class="form-input" rows="3" placeholder="Deskripsi singkat tentang kuis ini"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Pengerjaan (menit) *</label>
+                        <input type="number" name="waktu_pengerjaan" id="quizWaktu" class="form-input" placeholder="Contoh: 15" min="1" value="15" required>
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Masukkan waktu dalam menit (contoh: 15 untuk kuis singkat)</small>
                     </div>
                     <p style="font-size: 0.875rem; color: #6B7280; margin-top: 1rem; padding: 0.75rem; background: #F3F4F6; border-radius: 6px;">
                         💡 Soal dapat ditambahkan setelah kuis dibuat
@@ -1130,6 +1153,7 @@
                         document.getElementById('quizJudul').value = data.judul;
                         document.getElementById('quizDeskripsi').value = data.deskripsi || '';
                         document.getElementById('quizModulId').value = data.modul_id;
+                        document.getElementById('quizWaktu').value = data.waktu_pengerjaan || 15;
                         document.getElementById('quizModalTitle').textContent = 'Edit Kuis';
                     } else {
                         document.getElementById('examMethod').value = 'PUT';
@@ -1224,7 +1248,7 @@
         // ===================================
         // DRAG AND DROP FUNCTIONALITY
         // ===================================
-        @hasanyrole('admin|pengajar')
+        @hasanyrole('admin|super admin|pengajar')
         // Initialize Sortable for module list
         const weeksList = document.querySelector('.weeks-list');
         if (weeksList) {

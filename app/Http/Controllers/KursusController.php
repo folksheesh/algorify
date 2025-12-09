@@ -20,12 +20,13 @@ class KursusController extends Controller
             $query->where('kategori_id', $request->kategori);
         }
 
-        // Pencarian berdasarkan judul, deskripsi, atau deskripsi singkat
+        // Pencarian berdasarkan judul, deskripsi, atau deskripsi singkat (case-insensitive)
         if ($request->has('search') && $request->search != '') {
-            $query->where(function($q) use ($request) {
-                $q->where('judul', 'like', '%' . $request->search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%')
-                  ->orWhere('deskripsi_singkat', 'like', '%' . $request->search . '%');
+            $search = strtolower(trim($request->search));
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(judul) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(deskripsi) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(deskripsi_singkat) LIKE ?', ['%' . $search . '%']);
             });
         }
 

@@ -15,7 +15,7 @@ class ProgressRepository
     /**
      * Get or create progress record for a user and item
      */
-    public function getOrCreate(int $userId, int $kursusId, string $itemType, int $itemId): UserProgress
+    public function getOrCreate(string $userId, int $kursusId, string $itemType, int $itemId): UserProgress
     {
         return UserProgress::firstOrCreate(
             [
@@ -33,7 +33,7 @@ class ProgressRepository
     /**
      * Update video progress
      */
-    public function updateVideoProgress(int $userId, int $videoId, int $watchTime, int $totalDuration): UserProgress
+    public function updateVideoProgress(string $userId, int $videoId, int $watchTime, int $totalDuration): UserProgress
     {
         $video = Video::with('modul')->findOrFail($videoId);
         $kursusId = $video->modul->kursus_id;
@@ -63,7 +63,7 @@ class ProgressRepository
     /**
      * Mark materi/bacaan as completed
      */
-    public function markMateriCompleted(int $userId, int $materiId): UserProgress
+    public function markMateriCompleted(string $userId, int $materiId): UserProgress
     {
         $materi = Materi::with('modul')->findOrFail($materiId);
         $kursusId = $materi->modul->kursus_id;
@@ -83,7 +83,7 @@ class ProgressRepository
     /**
      * Update quiz progress based on score
      */
-    public function updateQuizProgress(int $userId, int $quizId, float $score, float $passingGrade): UserProgress
+    public function updateQuizProgress(string $userId, int $quizId, float $score, float $passingGrade): UserProgress
     {
         $quiz = Ujian::with('modul')->findOrFail($quizId);
         $kursusId = $quiz->modul->kursus_id;
@@ -111,7 +111,7 @@ class ProgressRepository
     /**
      * Update exam/ujian progress based on score
      */
-    public function updateUjianProgress(int $userId, int $ujianId, float $score, float $passingGrade): UserProgress
+    public function updateUjianProgress(string $userId, int $ujianId, float $score, float $passingGrade): UserProgress
     {
         $ujian = Ujian::with('modul')->findOrFail($ujianId);
         $kursusId = $ujian->modul->kursus_id;
@@ -139,7 +139,7 @@ class ProgressRepository
     /**
      * Calculate progress percentage for a course
      */
-    public function calculateProgress(int $userId, int $kursusId): array
+    public function calculateProgress(string $userId, int $kursusId): array
     {
         // Get all items in the course
         $totalItems = $this->getTotalCourseItems($kursusId);
@@ -196,7 +196,7 @@ class ProgressRepository
     /**
      * Get detailed progress breakdown
      */
-    public function getDetailedProgress(int $userId, int $kursusId): array
+    public function getDetailedProgress(string $userId, int $kursusId): array
     {
         $kursus = Kursus::with(['modul.video', 'modul.materi', 'modul.ujian'])->find($kursusId);
         
@@ -280,7 +280,7 @@ class ProgressRepository
     /**
      * Recalculate and update course progress in enrollment table
      */
-    public function recalculateCourseProgress(int $userId, int $kursusId): void
+    public function recalculateCourseProgress(string $userId, int $kursusId): void
     {
         $progressData = $this->calculateProgress($userId, $kursusId);
         
@@ -304,7 +304,7 @@ class ProgressRepository
     /**
      * Get user's progress for a specific item
      */
-    public function getItemProgress(int $userId, string $itemType, int $itemId): ?UserProgress
+    public function getItemProgress(string $userId, string $itemType, int $itemId): ?UserProgress
     {
         return UserProgress::forUser($userId)
             ->ofType($itemType)
@@ -315,7 +315,7 @@ class ProgressRepository
     /**
      * Check if an item is completed by user
      */
-    public function isItemCompleted(int $userId, string $itemType, int $itemId): bool
+    public function isItemCompleted(string $userId, string $itemType, int $itemId): bool
     {
         $progress = $this->getItemProgress($userId, $itemType, $itemId);
         return $progress && $progress->isCompleted();
@@ -324,7 +324,7 @@ class ProgressRepository
     /**
      * Get all completed items for a user in a course
      */
-    public function getCompletedItems(int $userId, int $kursusId): array
+    public function getCompletedItems(string $userId, int $kursusId): array
     {
         $completed = UserProgress::forUser($userId)
             ->forKursus($kursusId)

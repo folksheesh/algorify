@@ -2,247 +2,13 @@
 @extends('layouts.template')
 
 {{-- Judul halaman --}}
-@section('title', 'Algorify - Edit Profil Peserta')
+@section('title', 'Algorify - Edit Profil ' . (str_starts_with(auth()->user()->id, 'PJR') ? 'Pengajar' : 'Peserta'))
 
 {{-- Tambahkan stylesheet dan style khusus halaman --}}
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
-    <style>
-        .profile-edit-container {
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
-
-        .profile-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .profile-header {
-            background: #5D3FFF;
-            color: white;
-            padding: 2rem;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .profile-header h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .profile-header p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .profile-form-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .profile-photo-section {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #6b7280;
-            margin-right: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .upload-icon {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: #5D3FFF;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 2px solid white;
-        }
-
-        .upload-icon svg {
-            width: 14px;
-            height: 14px;
-            color: white;
-        }
-
-        .photo-info h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 0 0 0.25rem 0;
-        }
-
-        .photo-info p {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin: 0;
-        }
-
-        .upload-button {
-            background: transparent;
-            border: none;
-            color: #5D3FFF;
-            font-weight: 500;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .upload-button:hover {
-            background: #f3f4f6;
-        }
-
-        #foto_profil {
-            display: none;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            background: #f9fafb;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #5D3FFF;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-start;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .btn-primary {
-            background: #5D3FFF;
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: #4c32cc;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #6b7280;
-            border: 1px solid #e5e7eb;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .profile-content {
-                padding: 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/profile/index.css') }}">
 @endpush
 
 @section('content')
@@ -256,7 +22,7 @@
                 <div class="profile-content">
                     {{-- Header halaman --}}
                     <div class="profile-header">
-                        <h1>Edit Profil Peserta</h1>
+                        <h1>Edit Profil {{ str_starts_with(auth()->user()->id, 'PJR') ? 'Pengajar' : 'Peserta' }}</h1>
                         <p>Perbarui informasi profil Anda</p>
                     </div>
                     
@@ -369,6 +135,9 @@
             </main>
         </div>
     </div>
+    
+    {{-- Footer --}}
+    @include('components.footer')
 @endsection
 
 {{-- Script khusus halaman:

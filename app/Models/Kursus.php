@@ -25,6 +25,7 @@ class Kursus extends Model
         'pengajar',
         'durasi',
         'tipe_kursus',
+        'kapasitas',
     ];
 
     protected $casts = [

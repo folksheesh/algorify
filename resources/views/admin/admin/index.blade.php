@@ -18,9 +18,10 @@ Features: CRUD, Search, Filter, Export
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/admin/admin-index.css') }}">
 
     {{-- Custom CSS untuk halaman admin --}}
-    <style>
+    {{-- <style>
         /* ----- Global Font Setting ----- */
         * {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -1033,7 +1034,7 @@ Features: CRUD, Search, Filter, Export
             padding: 0 0.5rem;
             color: #94A3B8;
         }
-    </style>
+    </style> --}}
 @endpush
 
 @section('content')
@@ -1565,7 +1566,7 @@ Features: CRUD, Search, Filter, Export
                 const phone = item.phone || '-';
 
                 return `
-            <tr onclick="showDetail(${item.id})">
+            <tr onclick="showDetail('${item.id}')">
                 <td>${startIndex + index + 1}</td>
                 <td>${item.name}</td>
                 <td>${item.email}</td>
@@ -1575,12 +1576,12 @@ Features: CRUD, Search, Filter, Export
                 </td>
                 <td onclick="event.stopPropagation()">
                     <div class="action-buttons">
-                        <button class="btn-action btn-edit" onclick="openEditModal(${item.id})" title="Edit">
+                        <button class="btn-action btn-edit" onclick="openEditModal('${item.id}')" title="Edit">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
                         </button>
-                        <button class="btn-action btn-delete" onclick="openDeleteModal(${item.id})" title="Hapus">
+                        <button class="btn-action btn-delete" onclick="openDeleteModal('${item.id}')" title="Hapus">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
@@ -1714,10 +1715,10 @@ Features: CRUD, Search, Filter, Export
 
         /**
          * Menampilkan modal detail admin (readonly)
-         * @param {number} id - ID admin yang akan ditampilkan
+         * @param {string} id - ID admin yang akan ditampilkan
          */
         function showDetail(id) {
-            const admin = adminData.find(p => p.id === id);
+            const admin = adminData.find(p => String(p.id) === String(id));
             if (!admin) return;
 
             // Populate form fields
@@ -1776,10 +1777,10 @@ Features: CRUD, Search, Filter, Export
 
         /**
          * Membuka modal untuk edit data admin
-         * @param {number} id - ID admin yang akan diedit
+         * @param {string} id - ID admin yang akan diedit
          */
         function openEditModal(id) {
-            const admin = adminData.find(p => p.id === id);
+            const admin = adminData.find(p => String(p.id) === String(id));
             if (!admin) return;
 
             // Set judul modal

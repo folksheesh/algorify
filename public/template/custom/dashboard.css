@@ -2,6 +2,91 @@
    DASHBOARD CSS - Algorify Platform
    ============================================ */
 
+/* Reset untuk memastikan fixed positioning berfungsi */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+/* ============================================
+   GLOBAL ANIMATIONS
+   ============================================ */
+
+/* Keyframes untuk berbagai animasi */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes fadeInDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes slideInLeft {
+    from { 
+        opacity: 0; 
+        transform: translateX(-30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slideInRight {
+    from { 
+        opacity: 0; 
+        transform: translateX(30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0; 
+        transform: scale(0.9); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
 /* ============================================
    1. LAYOUT UTAMA
    ============================================ */
@@ -66,12 +151,13 @@
 }
 
 /* ============================================
-   3. USER PROFILE (Bagian Profil User)
+   3. USER PROFILE (Bagian Profil User) - DEPRECATED
+   Tidak digunakan lagi, sidebar sekarang tanpa greeting
    ============================================ */
 
 /* Container profil user di sidebar */
 .user-profile {
-    display: flex;
+    display: none; /* Hidden - tidak digunakan lagi */
     flex-direction: column;
     align-items: center;
     padding: 0 16px 16px 16px;
@@ -157,7 +243,7 @@
 /* List navigasi */
 .nav-list {
     list-style: none;
-    padding: 0;
+    padding: 12px 0;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -168,7 +254,19 @@
 .nav-item {
     margin: 0;
     list-style: none;
+    animation: slideInLeft 0.3s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk nav items */
+.nav-item:nth-child(1) { animation-delay: 0.05s; }
+.nav-item:nth-child(2) { animation-delay: 0.1s; }
+.nav-item:nth-child(3) { animation-delay: 0.15s; }
+.nav-item:nth-child(4) { animation-delay: 0.2s; }
+.nav-item:nth-child(5) { animation-delay: 0.25s; }
+.nav-item:nth-child(6) { animation-delay: 0.3s; }
+.nav-item:nth-child(7) { animation-delay: 0.35s; }
+.nav-item:nth-child(8) { animation-delay: 0.4s; }
 
 /* Menghilangkan marker list */
 .nav-item::marker {
@@ -186,7 +284,7 @@
     color: #64748B;
     font-size: 15px;
     font-weight: 500;
-    transition: all .2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
 }
 
@@ -194,6 +292,11 @@
 .nav-link:hover {
     background-color: #F8FAFC;
     color: #1E293B;
+    transform: translateX(4px);
+}
+
+.nav-link:hover .nav-icon {
+    transform: scale(1.15);
 }
 
 /* Link navigasi yang sedang aktif */
@@ -207,6 +310,7 @@
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Text navigasi */
@@ -292,13 +396,14 @@
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
 }
 
 /* Hover state tombol logout */
 .logout-button:hover {
     background-color: #FEF2F2;
+    transform: translateX(4px);
 }
 
 /* Icon logout */
@@ -322,8 +427,21 @@
 .main-content {
     flex: 1;
     padding: 32px 48px;
-    overflow-y: auto;
     margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main content when sidebar is collapsed */
+.sidebar.collapsed ~ .main-content {
+    margin-left: 72px;
+}
+
+/* Wrapper untuk konten utama agar footer sticky di bawah */
+.content-wrapper {
+    flex: 1;
 }
 
 /* Header konten utama */
@@ -351,7 +469,7 @@
     font-family: inherit;
     color: #1E293B;
     background-color: #FFF;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Placeholder search input */
@@ -364,6 +482,7 @@
     outline: none;
     border-color: #5D3FFF;
     box-shadow: 0 0 0 3px rgba(93, 63, 255, .1);
+    transform: scale(1.01);
 }
 
 /* Tombol search */
@@ -382,13 +501,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol search */
 .search-button:hover {
     background-color: #F1F5F9;
     color: #1E293B;
+    transform: translateY(-50%) scale(1.1);
 }
 
 /* Icon search */
@@ -412,12 +532,15 @@
     align-items: center;
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.6s ease forwards;
 }
 
 /* Konten hero banner */
 .hero-content {
     flex: 1;
     z-index: 1;
+    animation: slideInLeft 0.7s ease 0.2s forwards;
+    opacity: 0;
 }
 
 /* Judul hero banner */
@@ -442,6 +565,8 @@
 .hero-illustration {
     flex-shrink: 0;
     z-index: 1;
+    animation: slideInRight 0.7s ease 0.3s forwards;
+    opacity: 0;
 }
 
 /* Grafik ilustrasi - support untuk SVG dan PNG */
@@ -451,6 +576,11 @@
     object-fit: contain;
     max-width: 100%;
     opacity: 0.7;
+    transition: transform 0.3s ease;
+}
+
+.hero-banner:hover .illustration-graphic {
+    transform: scale(1.05) rotate(2deg);
 }
 
 /* ============================================
@@ -474,14 +604,22 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 72px;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk stat cards */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
 
 /* Hover state card statistik */
 .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(93, 63, 255, 0.15);
+    transform: translateY(-4px);
 }
 
 /* Icon statistik */
@@ -540,13 +678,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol menu */
 .menu-button:hover {
     background-color: #F1F5F9;
     color: #1E293B;
+    transform: scale(1.1);
 }
 
 /* ============================================
@@ -592,7 +731,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover state tombol kontrol */
@@ -600,6 +739,7 @@
     background-color: #F8FAFC;
     border-color: #CBD5E1;
     color: #1E293B;
+    transform: scale(1.1);
 }
 
 /* ============================================
@@ -619,13 +759,26 @@
     border: 1px solid #E2E8F0;
     border-radius: 16px;
     overflow: hidden;
-    transition: all .3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
 }
+
+/* Staggered animation untuk course cards */
+.course-card:nth-child(1) { animation-delay: 0.1s; }
+.course-card:nth-child(2) { animation-delay: 0.15s; }
+.course-card:nth-child(3) { animation-delay: 0.2s; }
+.course-card:nth-child(4) { animation-delay: 0.25s; }
+.course-card:nth-child(5) { animation-delay: 0.3s; }
+.course-card:nth-child(6) { animation-delay: 0.35s; }
+.course-card:nth-child(7) { animation-delay: 0.4s; }
+.course-card:nth-child(8) { animation-delay: 0.45s; }
+.course-card:nth-child(9) { animation-delay: 0.5s; }
 
 /* Hover state card kursus */
 .course-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
-    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(93, 63, 255, 0.15);
+    transform: translateY(-8px);
 }
 
 /* Thumbnail/gambar preview kursus */
@@ -645,6 +798,11 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-card:hover .course-image {
+    transform: scale(1.08);
 }
 
 /* Tombol bookmark */
@@ -662,7 +820,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all .2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(4px);
 }
 
@@ -670,7 +828,8 @@
 .bookmark-button:hover {
     background-color: #FFF;
     color: #5D3FFF;
-    transform: scale(1.05);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(93, 63, 255, 0.2);
 }
 
 /* Konten card kursus */
@@ -721,7 +880,7 @@
     height: 100%;
     background: linear-gradient(90deg, #5D3FFF 0%, #7C3FFF 100%);
     border-radius: 3px;
-    transition: width .3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
@@ -765,58 +924,681 @@
 }
 
 /* ============================================
-   13. RESPONSIVE DESIGN
+   13. MOBILE MENU TOGGLE
    ============================================ */
 
-/* Tablet - 2 kolom grid kursus */
-@media (max-width: 1200px) {
-    .courses-grid {
-        grid-template-columns: repeat(2, 1fr);
+/* Tombol hamburger menu untuk mobile */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1001;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background: #5D3FFF;
+    color: #FFF;
+    border-radius: 12px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(93, 63, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: #4a2fcc;
+    transform: scale(1.05);
+}
+
+.mobile-menu-toggle svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Overlay untuk menutup sidebar di mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ============================================
+   14. RESPONSIVE DESIGN
+   ============================================ */
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+    .main-content {
+        padding: 28px 32px;
+    }
+    
+    .hero-banner {
+        padding: 32px 36px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
     }
 }
 
-/* Mobile - layout vertikal */
+/* Tablet Landscape - 2 kolom grid kursus */
+@media (max-width: 1200px) {
+    .courses-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .main-content {
+        padding: 24px;
+    }
+    
+    .hero-title {
+        font-size: 26px;
+    }
+    
+    .hero-description {
+        font-size: 14px;
+    }
+    
+    .illustration-graphic {
+        width: 160px;
+        height: 120px;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 992px) {
+    /* Tampilkan tombol hamburger */
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    /* Overlay siap digunakan di mobile (tetap hidden sampai active) */
+    .sidebar-overlay {
+        display: block;
+    }
+    
+    /* Sidebar hidden by default di mobile */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    /* Sidebar active saat menu dibuka */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Main content full width */
+    .main-content {
+        margin-left: 0;
+        padding: 80px 24px 24px 24px;
+    }
+    
+    /* Stats grid 2 kolom */
+    .stats-section {
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        flex: 1 1 calc(50% - 10px);
+        min-width: calc(50% - 10px);
+    }
+    
+    /* Hero banner adjustments */
+    .hero-banner {
+        padding: 28px;
+    }
+    
+    .hero-title {
+        font-size: 24px;
+    }
+    
+    .illustration-graphic {
+        width: 140px;
+        height: 100px;
+    }
+}
+
+/* Mobile Landscape */
 @media (max-width: 768px) {
     /* Dashboard container menjadi vertikal */
     .dashboard-container {
         flex-direction: column;
     }
 
-    /* Sidebar menjadi full width dan tidak fixed */
+    /* Sidebar styling untuk mobile */
     .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #E2E8F0;
-        position: relative;
-        height: auto;
-        overflow: visible;
-        padding: 24px 16px;
+        width: 280px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 100;
+        border-right: 1px solid #E2E8F0;
+        overflow-y: auto;
     }
 
     /* Main content tanpa margin kiri */
     .main-content {
-        padding: 24px 16px;
+        padding: 80px 16px 24px 16px;
         margin-left: 0;
+    }
+    
+    /* Main header / Search */
+    .main-header {
+        margin-bottom: 16px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 14px 48px 14px 16px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+    
+    .search-button {
+        right: 8px;
+        width: 36px;
+        height: 36px;
     }
 
     /* Grid kursus menjadi 1 kolom */
     .courses-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     /* Stats section menjadi vertikal */
     .stats-section {
         flex-direction: column;
+        gap: 12px;
+    }
+    
+    .stat-card {
+        flex: 1 1 100%;
+        min-width: 100%;
+        padding: 1rem;
+    }
+    
+    /* Stats grid untuk Lanjutkan Belajar */
+    .stats-grid {
+        gap: 12px !important;
+    }
+    
+    .stats-grid .stat-card {
+        padding: 1rem !important;
+        border-radius: 10px !important;
+    }
+    
+    .stats-grid .stat-icon {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 10px !important;
+        margin-right: 0.75rem !important;
+    }
+    
+    .stats-grid .stat-icon svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    .stats-grid .stat-content .stat-value {
+        font-size: 0.7rem !important;
+    }
+    
+    .stats-grid .stat-content .stat-label {
+        font-size: 0.9rem !important;
     }
 
     /* Hero banner menjadi vertikal dengan text center */
     .hero-banner {
         flex-direction: column;
         text-align: center;
+        padding: 24px 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .hero-content {
+        order: 1;
+    }
+    
+    .hero-title {
+        font-size: 1.35rem;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+    
+    .hero-title br {
+        display: none;
+    }
+    
+    .hero-description {
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+    
+    .hero-description br {
+        display: none;
     }
 
     /* Ilustrasi hero dengan margin top */
     .hero-illustration {
-        margin-top: 24px;
+        order: 2;
+        margin-top: 20px;
+    }
+    
+    .illustration-graphic {
+        width: 140px;
+        height: auto;
+        max-height: 100px;
+    }
+    
+    /* Section header */
+    .section-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .section-header a {
+        font-size: 0.8rem !important;
+        white-space: nowrap;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    /* Courses section */
+    .courses-section {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Course card adjustments */
+    .course-card {
+        border-radius: 14px;
+    }
+    
+    .course-thumbnail {
+        padding-top: 52%;
+    }
+    
+    .course-content {
+        padding: 14px 16px;
+    }
+    
+    .course-badge {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+    }
+    
+    .course-title {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+    
+    .course-author {
+        margin-top: 10px;
+    }
+    
+    .author-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .author-name {
+        font-size: 0.8rem;
+    }
+    
+    .author-role {
+        font-size: 0.7rem;
+    }
+    
+    /* Bookmark button */
+    .bookmark-button {
+        width: 36px;
+        height: 36px;
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Payment grid untuk pembayaran */
+    .payment-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+}/* Mobile Portrait (Small phones) */
+@media (max-width: 480px) {
+    .mobile-menu-toggle {
+        top: 12px;
+        left: 12px;
+        width: 44px;
+        height: 44px;
+    }
+    
+    .main-content {
+        padding: 70px 12px 20px 12px;
+    }
+    
+    /* Search */
+    .search-input {
+        padding: 12px 44px 12px 14px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .search-button {
+        right: 6px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* Hero Banner */
+    .hero-banner {
+        padding: 18px 14px;
+        border-radius: 14px;
+        margin-bottom: 16px;
+    }
+    
+    .hero-title {
+        font-size: 1.15rem;
+        line-height: 1.35;
+    }
+    
+    .hero-description {
+        font-size: 0.8rem;
+        margin-top: 6px;
+    }
+    
+    .illustration-graphic {
+        width: 100px;
+        height: auto;
+        max-height: 80px;
+    }
+    
+    .hero-illustration {
+        margin-top: 16px;
+    }
+    
+    /* Section */
+    .section-title {
+        font-size: 1rem;
+    }
+    
+    .section-header a {
+        font-size: 0.75rem !important;
+    }
+    
+    .courses-section {
+        margin-bottom: 1.25rem !important;
+    }
+    
+    /* Stats grid - Lanjutkan Belajar */
+    .stats-grid {
+        gap: 10px !important;
+    }
+    
+    .stats-grid .stat-card {
+        padding: 0.875rem !important;
+        border-radius: 10px !important;
+    }
+    
+    .stats-grid .stat-icon {
+        width: 36px !important;
+        height: 36px !important;
+        margin-right: 0.625rem !important;
+    }
+    
+    .stats-grid .stat-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    .stats-grid .stat-content .stat-value {
+        font-size: 0.65rem !important;
+    }
+    
+    .stats-grid .stat-content .stat-label {
+        font-size: 0.85rem !important;
+    }
+    
+    .stats-grid .stat-menu svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Course card */
+    .course-card {
+        border-radius: 12px;
+    }
+    
+    .course-thumbnail {
+        padding-top: 50%;
+    }
+    
+    .course-content {
+        padding: 12px 14px;
+    }
+    
+    .course-badge {
+        font-size: 0.6rem;
+        padding: 3px 8px;
+        margin-bottom: 6px;
+    }
+    
+    .course-title {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    
+    .course-author {
+        margin-top: 8px;
+    }
+    
+    .author-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .author-name {
+        font-size: 0.75rem;
+    }
+    
+    .author-role {
+        font-size: 0.65rem;
+    }
+    
+    /* Bookmark button */
+    .bookmark-button {
+        width: 32px;
+        height: 32px;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .bookmark-button svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Stat cards */
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+    }
+    
+    /* User profile di sidebar */
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .greeting-title {
+        font-size: 16px;
+    }
+    
+    .greeting-subtitle {
+        font-size: 12px;
+    }
+    
+    /* Navigation */
+    .nav-link {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+    
+    /* Footer/Logout */
+    .logout-button {
+        padding: 10px 14px;
+        font-size: 14px;
     }
 }
+
+/* ============================================
+   15. UTILITY CLASSES
+   ============================================ */
+
+/* Hide on mobile */
+.hide-mobile {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Hide on desktop */
+.hide-desktop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hide-desktop {
+        display: block !important;
+    }
+}
+
+/* ============================================
+   16. BACK BUTTON (Tombol Kembali)
+   ============================================ */
+
+/* Tombol kembali default styling */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.back-button:hover {
+    color: #5D3FFF;
+}
+
+.back-button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Back button untuk mobile - posisi fixed di bawah hamburger menu */
+@media (max-width: 992px) {
+    .back-button {
+        position: relative;
+        z-index: 50;
+        background: white;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .back-button {
+        position: fixed;
+        top: 16px;
+        left: 70px;
+        z-index: 90;
+        background: white;
+        padding: 0.625rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0;
+        font-size: 0.85rem;
+    }
+    
+    .back-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Tambah padding top pada detail-content untuk memberi ruang back button fixed */
+    .detail-content {
+        padding-top: 70px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-button {
+        top: 14px;
+        left: 65px;
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8rem;
+        max-width: calc(100% - 80px);
+    }
+    
+    .back-button span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .back-button svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+

@@ -8,9 +8,8 @@ use App\Models\User;
 use App\Models\Kursus;
 use App\Models\Modul;
 use App\Models\Materi;
-use App\Models\Kuis;
+use App\Models\Ujian;
 use App\Models\Soal;
-use App\Models\Jawaban;
 use App\Models\PilihanJawaban;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Hash;
@@ -60,7 +59,7 @@ class PelatihanDummySeeder extends Seeder
             'tanggal_selesai' => now()->addMonths(3),
             'status' => 'published',
             'harga' => 600000,
-            'thumbnail' => 'thumbnails/uiux-design.jpg',
+            'thumbnail' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80',
         ]);
 
         // 3. Enroll user ke kursus
@@ -165,7 +164,7 @@ class PelatihanDummySeeder extends Seeder
         // 6. Buat Quiz 1: Quiz Dasar UI/UX (Modul 4)
         $this->command->info('❓ Membuat Quiz Dasar UI/UX...');
         
-        $quiz1 = Kuis::create([
+        $quiz1 = Ujian::create([
             'kursus_id' => $kursus->id,
             'modul_id' => $modul4->id,
             'judul' => 'Quiz: Dasar UI/UX',
@@ -242,7 +241,7 @@ class PelatihanDummySeeder extends Seeder
         // 7. Buat Quiz 2: Quiz Final UI/UX (Modul 8)
         $this->command->info('❓ Membuat Quiz Final UI/UX...');
         
-        $quiz2 = Kuis::create([
+        $quiz2 = Ujian::create([
             'kursus_id' => $kursus->id,
             'modul_id' => $modul8->id,
             'judul' => 'Quiz Final: UI/UX Design',

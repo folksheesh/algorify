@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kursus;
 use App\Models\User;
+use App\Models\Enrollment;
+use App\Models\Nilai;
 use App\Repositories\ProgressRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -19,17 +21,37 @@ class PelatihanController extends Controller
         $this->progressRepository = $progressRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         // Get all courses with their related data
-        $kursus = Kursus::with(['pengajar', 'modul', 'enrollments'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Kursus::with(['pengajar', 'modul', 'enrollments']);
+        
+        // Apply kategori filter
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+        
+        // Apply pengajar filter
+        if ($request->filled('pengajar_id')) {
+            $query->where('user_id', $request->pengajar_id);
+        }
+        
+        $kursus = $query->orderBy('created_at', 'desc')->get();
         
         // Get all users with pengajar role
         $pengajars = User::role('pengajar')->orWhere('id', Auth::id())->get();
         
-        return view('admin.pelatihan.index', compact('kursus', 'pengajars'));
+        // Get unique categories from database
+        $kategoris = [
+            'programming' => 'Programming',
+            'design' => 'Design',
+            'business' => 'Business',
+            'marketing' => 'Marketing',
+            'data_science' => 'Data Science',
+            'other' => 'Other'
+        ];
+        
+        return view('admin.pelatihan.index', compact('kursus', 'pengajars', 'kategoris'));
     }
 
     public function show($id)
@@ -61,15 +83,24 @@ class PelatihanController extends Controller
 
     public function store(Request $request)
     {
+        // Normalisasi input numerik
+        $request->merge([
+            'durasi' => $request->durasi !== null ? preg_replace('/[^0-9]/', '', $request->durasi) : null,
+            'harga' => $request->harga !== null ? preg_replace('/[^0-9]/', '', $request->harga) : null,
+            'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
+        ]);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
-            'durasi' => 'required|string|max:100',
-            'harga' => 'required|string|max:100',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
+            'durasi' => 'required|integer|min:1',
+            'harga' => 'required|integer|min:0',
+            'kapasitas' => 'nullable|integer|min:1',
+            // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
 
         // Handle thumbnail upload
@@ -104,15 +135,24 @@ class PelatihanController extends Controller
     {
         $kursus = Kursus::findOrFail($id);
 
+        // Normalisasi input numerik
+        $request->merge([
+            'durasi' => $request->durasi !== null ? preg_replace('/[^0-9]/', '', $request->durasi) : null,
+            'harga' => $request->harga !== null ? preg_replace('/[^0-9]/', '', $request->harga) : null,
+            'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
+        ]);
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
-            'durasi' => 'required|string|max:100',
-            'harga' => 'required|string|max:100',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
+            'durasi' => 'required|integer|min:1',
+            'harga' => 'required|integer|min:0',
+            'kapasitas' => 'nullable|integer|min:1',
+            // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
 
         // Handle thumbnail upload
@@ -157,5 +197,61 @@ class PelatihanController extends Controller
             'success' => true,
             'message' => 'Kursus berhasil dihapus'
         ]);
+    }
+
+    /**
+     * Show peserta (students) enrolled in the course with their grades
+     */
+    public function peserta($id)
+    {
+        $kursus = Kursus::with(['modul.ujian'])->findOrFail($id);
+        
+        // Get all enrollments for this course with user data
+        $enrollments = Enrollment::where('kursus_id', $id)
+            ->with('user')
+            ->get();
+        
+        // Get all ujian (exams) for this course
+        $ujianList = $kursus->modul->flatMap(function($modul) {
+            return $modul->ujian;
+        });
+        
+        // Prepare peserta data with their grades
+        $pesertaData = $enrollments->map(function($enrollment) use ($ujianList) {
+            $user = $enrollment->user;
+            
+            // Get nilai for each ujian
+            $nilaiData = [];
+            foreach ($ujianList as $ujian) {
+                $nilai = Nilai::where('user_id', $user->id)
+                    ->where('ujian_id', $ujian->id)
+                    ->first();
+                
+                $nilaiData[] = [
+                    'ujian_id' => $ujian->id,
+                    'ujian_judul' => $ujian->judul,
+                    'ujian_tipe' => $ujian->tipe,
+                    'nilai' => $nilai ? $nilai->nilai : null,
+                    'status' => $nilai ? $nilai->status : 'belum',
+                ];
+            }
+            
+            // Calculate average
+            $nilaiValues = collect($nilaiData)->pluck('nilai')->filter()->values();
+            $rataRata = $nilaiValues->count() > 0 ? $nilaiValues->avg() : null;
+            
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'foto_profil' => $user->foto_profil,
+                'tanggal_daftar' => $enrollment->tanggal_daftar,
+                'progress' => $enrollment->progress,
+                'nilai_list' => $nilaiData,
+                'rata_rata' => $rataRata,
+            ];
+        });
+        
+        return view('admin.pelatihan.peserta', compact('kursus', 'pesertaData', 'ujianList'));
     }
 }

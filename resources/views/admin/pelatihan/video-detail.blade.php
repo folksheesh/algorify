@@ -5,8 +5,9 @@
 @push('styles')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{ asset('css/admin/pelatihan-video.css') }}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
+{{-- <style>
     * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
@@ -246,10 +247,26 @@
     .check-icon {
         flex-shrink: 0;
     }
-</style>
+    
+    /* Topbar Layout Adjustment for Pengajar */
+    .page-container.with-topbar {
+        padding-top: calc(64px + 2rem);
+    }
+    
+    @media (max-width: 992px) {
+        .page-container.with-topbar {
+            padding-top: calc(64px + 1rem);
+        }
+    }
+</style> --}}
 @endpush
 
 @section('content')
+{{-- Topbar Pengajar --}}
+@role('pengajar')
+@include('components.topbar-pengajar')
+@endrole
+
 @php
     $fileVideo = $video->file_video;
     $isYoutube = str_contains($fileVideo, 'youtube.com') || str_contains($fileVideo, 'youtu.be');
@@ -261,7 +278,7 @@
         $youtubeId = $matches[1] ?? '';
     }
 @endphp
-<div class="page-container">
+<div class="page-container @role('pengajar') with-topbar @endrole"
     
     <!-- Back Button -->
     <a href="{{ route('admin.pelatihan.show', $video->modul->kursus_id) }}?open_modul={{ $video->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
