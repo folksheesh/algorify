@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <style>
         .admin-header {
-            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
             border-radius: 20px;
             padding: 2.5rem 2rem;
             color: white;
@@ -361,7 +361,7 @@
                 <div class="stat-cards-grid">
                     <a href="{{ route('admin.peserta.index') }}" style="text-decoration: none;">
                         <div class="stat-card-modern">
-                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);">
+                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="white"/>
                                     <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="white"/>
@@ -511,7 +511,7 @@
                 
                 // Warna untuk setiap metode pembayaran
                 const colorMap = {
-                    'Transfer Bank': '#3A6DFF',
+                    'Transfer Bank': '#5D3FFF',
                     'E-Wallet': '#f093fb',
                     'Kartu Kredit': '#4facfe',
                     'Qris': '#10B981',
@@ -700,7 +700,7 @@
                         datasets: [{
                             label: 'Peserta Baru',
                             data: values,
-                            backgroundColor: '#3A6DFF',
+                            backgroundColor: '#5D3FFF',
                             borderRadius: 8,
                             barThickness: 30
                         }]
@@ -772,7 +772,7 @@
                         datasets: [{
                             label: 'Peserta Baru',
                             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            backgroundColor: '#3A6DFF',
+                            backgroundColor: '#5D3FFF',
                             borderRadius: 8,
                             barThickness: 30
                         }]

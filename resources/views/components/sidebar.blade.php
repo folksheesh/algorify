@@ -220,7 +220,7 @@
 <style>
 /* Active menu item background color */
 .nav-item.active > .nav-link {
-    background: #3A6DFF;
+    background: #5D3FFF;
     color: #fff;
     font-weight: 600;
     border-radius: 12px;
@@ -242,7 +242,7 @@
     transform: translateY(-50%);
     width: 24px;
     height: 48px;
-    background: #3A6DFF;
+    background: #5D3FFF;
     color: white;
     border: none;
     border-radius: 0 8px 8px 0;
@@ -287,8 +287,8 @@
 }
 
 .sidebar-toggle-btn:hover {
-    background: #3A6DFF;
-    border-color: #3A6DFF;
+    background: #5D3FFF;
+    border-color: #5D3FFF;
     color: #FFFFFF;
 }
 

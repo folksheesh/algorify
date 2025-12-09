@@ -13,7 +13,7 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         .page-header {
-            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
             border-radius: 20px;
             padding: 2.5rem 2rem;
             color: white;
@@ -80,7 +80,7 @@
             height: 180px;
             overflow: hidden;
             flex-shrink: 0;
-            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
         }
         .course-thumbnail {
             width: 100%;
@@ -145,7 +145,7 @@
         .progress-value {
             font-size: 0.8125rem;
             font-weight: 700;
-            color: #3A6DFF;
+            color: #5D3FFF;
         }
         .progress-bar-container {
             height: 8px;
@@ -155,7 +155,7 @@
         }
         .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #3A6DFF 0%, #3A6DFF 100%);
+            background: linear-gradient(90deg, #5D3FFF 0%, #5D3FFF 100%);
             border-radius: 999px;
             transition: width 0.3s ease;
         }
@@ -167,7 +167,7 @@
         .btn-continue {
             flex: 1;
             padding: 0.75rem 1.5rem;
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
             border: none;
             border-radius: 8px;
@@ -249,7 +249,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.875rem 1.75rem;
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
             border: none;
             border-radius: 8px;

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <style>
         .admin-header {
-            background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+            background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
             border-radius: 20px;
             padding: 2.5rem 2rem;
             color: white;
@@ -147,7 +147,7 @@
         }
         .kategori-label.programming {
             background: #EEF2FF;
-            color: #3A6DFF;
+            color: #5D3FFF;
         }
         .kategori-label.design {
             background: #DBEAFE;
@@ -174,7 +174,7 @@
             transition: width 0.5s ease;
         }
         .kategori-bar-fill.programming {
-            background: linear-gradient(90deg, #3A6DFF, #3A6DFF);
+            background: linear-gradient(90deg, #5D3FFF, #5D3FFF);
         }
         .kategori-bar-fill.design {
             background: linear-gradient(90deg, #2563EB, #3B82F6);
@@ -223,10 +223,10 @@
             color: white;
         }
         .kursus-rank.rank-1 {
-            background: linear-gradient(135deg, #3A6DFF, #3A6DFF);
+            background: linear-gradient(135deg, #5D3FFF, #5D3FFF);
         }
         .kursus-rank.rank-2 {
-            background: linear-gradient(135deg, #3A6DFF, #3A6DFF);
+            background: linear-gradient(135deg, #5D3FFF, #5D3FFF);
         }
         .kursus-rank.rank-3 {
             background: linear-gradient(135deg, #10B981, #34D399);
@@ -436,10 +436,10 @@
                 <div class="stat-cards-grid">
                     <a href="{{ route('admin.pelatihan.index') }}" style="text-decoration: none;">
                         <div class="stat-card-modern">
-                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);">
+                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" fill="white"/>
-                                    <path d="M8 10H16M8 14H12" stroke="#3A6DFF" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M8 10H16M8 14H12" stroke="#5D3FFF" stroke-width="1.5" stroke-linecap="round"/>
                                 </svg>
                             </div>
                             <div class="stat-info">
