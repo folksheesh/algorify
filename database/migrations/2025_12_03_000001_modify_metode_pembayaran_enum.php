@@ -15,6 +15,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
         // MySQL requires ALTER TABLE to change enum values
         DB::statement("ALTER TABLE transaksi MODIFY COLUMN metode_pembayaran ENUM('bank_transfer', 'e_wallet', 'credit_card', 'qris', 'mini_market', 'kartu_debit') NULL");
     }
@@ -24,6 +27,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
         DB::statement("ALTER TABLE transaksi MODIFY COLUMN metode_pembayaran ENUM('bank_transfer', 'e_wallet', 'credit_card', 'qris', 'virtual_account') NULL");
     }
 };

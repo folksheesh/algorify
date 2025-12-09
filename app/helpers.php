@@ -2,6 +2,24 @@
 
 use Illuminate\Support\Str;
 
+if (!function_exists('display_user_name')) {
+    /**
+     * Normalize and return the currently authenticated user's name.
+     */
+    function display_user_name(?\Illuminate\Contracts\Auth\Authenticatable $user = null): string
+    {
+        $raw = trim(($user?->name) ?? (auth()->user()->name ?? ''));
+
+        if ($raw === '') {
+            return 'Pengguna';
+        }
+
+        $normalized = preg_replace('/\s+/', ' ', $raw);
+
+        return Str::title($normalized);
+    }
+}
+
 if (!function_exists('resolve_thumbnail_url')) {
     /**
      * Determine the correct thumbnail URL, allowing external links or storage paths.

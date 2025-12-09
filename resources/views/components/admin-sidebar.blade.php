@@ -8,15 +8,19 @@
     <!-- User Profile Section -->
     <div class="user-profile p-6 border-b border-gray-200">
         <div class="flex items-center space-x-3">
+            @php
+                $displayName = display_user_name();
+                $avatarInitial = strtoupper(substr($displayName, 0, 1));
+            @endphp
             @if(Auth::user()->foto_profil)
-                <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ $displayName }}" class="w-12 h-12 rounded-full object-cover">
             @else
                 <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    {{ $avatarInitial }}
                 </div>
             @endif
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                <p class="text-sm font-medium text-gray-900 truncate">{{ $displayName }}</p>
                 <p class="text-xs text-blue-600 font-medium">Admin</p>
             </div>
         </div>

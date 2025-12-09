@@ -13,6 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Skip this migration on SQLite (testing) because ALTER/MODIFY not supported
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Step 1: Simpan mapping id lama ke kode_unik baru
         $users = DB::table('users')->get();
         $idMapping = [];
