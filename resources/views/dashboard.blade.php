@@ -207,15 +207,15 @@
                             </p>
                             @if($kursus->pengajar)
                             <div class="course-author">
-                                @if($kursus->pengajar->profile_photo)
+                                @if($kursus->pengajar && is_object($kursus->pengajar) && $kursus->pengajar->profile_photo)
                                     <img src="{{ asset('storage/' . $kursus->pengajar->profile_photo) }}" alt="{{ $kursus->pengajar->name }}" class="author-avatar" />
                                 @else
                                     <div class="author-avatar" style="background: #6366F1; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">
-                                        {{ substr($kursus->pengajar->name, 0, 1) }}
+                                        {{ $kursus->pengajar && is_object($kursus->pengajar) ? substr($kursus->pengajar->name, 0, 1) : '?' }}
                                     </div>
                                 @endif
                                 <div class="author-info">
-                                    <p class="author-name">{{ $kursus->pengajar->name }}</p>
+                                    <p class="author-name">{{ $kursus->pengajar && is_object($kursus->pengajar) ? $kursus->pengajar->name : 'Pengajar' }}</p>
                                     <p class="author-role">Pengajar</p>
                                 </div>
                             </div>
