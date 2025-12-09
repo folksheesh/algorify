@@ -9,20 +9,20 @@
         .page-header {
             margin-bottom: 2rem;
         }
-        
+
         .page-title {
             font-size: 1.75rem;
             font-weight: 700;
             color: #1E293B;
             margin: 0 0 0.5rem 0;
         }
-        
+
         .page-subtitle {
             color: #64748B;
             margin: 0;
             font-size: 0.95rem;
         }
-        
+
         /* Certificate Card */
         .cert-card {
             background: white;
@@ -32,7 +32,7 @@
             margin-bottom: 2rem;
             max-width: 380px;
         }
-        
+
         .cert-header {
             background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
             padding: 2rem;
@@ -41,7 +41,7 @@
             flex-direction: column;
             align-items: center;
         }
-        
+
         .cert-icon {
             width: 64px;
             height: 64px;
@@ -49,7 +49,7 @@
             display: block;
             margin-bottom: 1rem;
         }
-        
+
         .cert-badge {
             display: inline-block;
             background: #5D3FFF;
@@ -59,50 +59,50 @@
             padding: 0.4rem 1rem;
             border-radius: 20px;
         }
-        
+
         .cert-body {
             padding: 1.5rem;
         }
-        
+
         .cert-course-title {
             font-size: 1.1rem;
             font-weight: 600;
             color: #1E293B;
             margin: 0 0 0.25rem 0;
         }
-        
+
         .cert-instructor {
             color: #64748B;
             font-size: 0.9rem;
             margin: 0 0 1rem 0;
         }
-        
+
         .cert-info-row {
             display: flex;
             gap: 0.35rem;
             margin-bottom: 0.4rem;
             font-size: 0.9rem;
         }
-        
+
         .cert-info-label {
             color: #64748B;
         }
-        
+
         .cert-info-value {
             color: #1E293B;
             font-weight: 500;
         }
-        
+
         .cert-info-value.highlight {
             color: #5D3FFF;
             font-weight: 600;
         }
-        
+
         .cert-button-wrapper {
             text-align: center;
             margin-top: 1rem;
         }
-        
+
         .btn-download-cert {
             display: inline-flex;
             align-items: center;
@@ -119,12 +119,12 @@
             border: none;
             cursor: pointer;
         }
-        
+
         .btn-download-cert:hover {
             background: #4a2fcc;
             color: white;
         }
-        
+
         /* Info Box */
         .info-box {
             background: linear-gradient(135deg, #EDE9FE 0%, #E0E7FF 100%);
@@ -136,7 +136,7 @@
             gap: 1.5rem;
             align-items: flex-start;
         }
-        
+
         .info-box-icon-wrapper {
             background: white;
             width: 60px;
@@ -147,34 +147,34 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        
+
         .info-box-content {
             flex: 1;
         }
-        
+
         .info-box-header {
             margin-bottom: 0.75rem;
         }
-        
+
         .info-box-icon {
             width: 32px;
             height: 32px;
             color: #5D3FFF;
         }
-        
+
         .info-box-title {
             font-size: 0.95rem;
             font-weight: 600;
             color: #1E293B;
             margin: 0;
         }
-        
+
         .info-box-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .info-box-item {
             display: flex;
             align-items: flex-start;
@@ -183,11 +183,11 @@
             font-size: 0.875rem;
             color: #64748B;
         }
-        
+
         .info-box-item:last-child {
             margin-bottom: 0;
         }
-        
+
         .info-box-item svg {
             width: 18px;
             height: 18px;
@@ -195,7 +195,7 @@
             flex-shrink: 0;
             margin-top: 2px;
         }
-        
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -204,26 +204,26 @@
             border-radius: 16px;
             max-width: 400px;
         }
-        
+
         .empty-icon {
             font-size: 4rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
-        
+
         .empty-title {
             font-size: 1.25rem;
             font-weight: 600;
             color: #1E293B;
             margin-bottom: 0.5rem;
         }
-        
+
         .empty-text {
             color: #64748B;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .btn-explore {
             background: #5D3FFF;
             color: white;
@@ -234,12 +234,12 @@
             display: inline-block;
             transition: all 0.2s;
         }
-        
+
         .btn-explore:hover {
             background: #4a2fcc;
             color: white;
         }
-        
+
         /* Modal Styles */
         .modal-overlay {
             display: none;
@@ -253,11 +253,11 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .modal-overlay.active {
             display: flex;
         }
-        
+
         .modal-content {
             background: white;
             border-radius: 16px;
@@ -267,7 +267,7 @@
             text-align: center;
             animation: modalSlide 0.3s ease;
         }
-        
+
         @keyframes modalSlide {
             from {
                 opacity: 0;
@@ -278,14 +278,14 @@
                 transform: translateY(0);
             }
         }
-        
+
         .modal-icon {
             width: 64px;
             height: 64px;
             color: #5D3FFF;
             margin-bottom: 1rem;
         }
-        
+
         .modal-title {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 1.25rem;
@@ -293,7 +293,7 @@
             color: #1E293B;
             margin-bottom: 0.75rem;
         }
-        
+
         .modal-cert-number {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.85rem;
@@ -301,20 +301,20 @@
             font-weight: 600;
             margin-bottom: 0.75rem;
         }
-        
+
         .modal-text {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #64748B;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .modal-buttons {
             display: flex;
             gap: 1rem;
             justify-content: center;
         }
-        
+
         .modal-btn {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 0.7rem 1.5rem;
@@ -326,26 +326,26 @@
             transition: all 0.2s;
             text-decoration: none;
         }
-        
+
         .modal-btn-cancel {
             background: #F1F5F9;
             color: #64748B;
         }
-        
+
         .modal-btn-cancel:hover {
             background: #E2E8F0;
         }
-        
+
         .modal-btn-confirm {
             background: #5D3FFF;
             color: white;
         }
-        
+
         .modal-btn-confirm:hover {
             background: #4a2fcc;
             color: white;
         }
-        
+
         /* Back Button */
         .back-button {
             display: inline-flex;
@@ -358,46 +358,46 @@
             font-weight: 500;
             transition: color 0.2s;
         }
-        
+
         .back-button:hover {
             color: #5D3FFF;
         }
-        
+
         .back-button svg {
             width: 20px;
             height: 20px;
         }
-        
+
         /* Topbar Layout Adjustment */
         .dashboard-container.with-topbar {
             padding-top: 72px;
         }
-        
+
         .dashboard-container.with-topbar .main-content {
             padding-top: 1.5rem;
         }
-        
+
         /* Responsive */
         @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding-top: 70px;
             }
-            
+
             .dashboard-container.with-topbar .main-content {
                 margin-left: 0;
             }
         }
-        
+
         @media (max-width: 768px) {
             .main-content {
                 padding: 80px 16px 60px 16px;
             }
-            
+
             .cert-card, .info-box, .empty-state {
                 max-width: 100%;
             }
-            
+
             .back-button {
                 position: fixed;
                 top: 16px;
@@ -410,20 +410,20 @@
                 margin: 0;
             }
         }
-        
+
         @media (max-width: 480px) {
             .main-content {
                 padding: 70px 12px 80px 12px;
             }
-            
+
             .page-title {
                 font-size: 1.5rem;
             }
-            
+
             .cert-card {
                 padding: 1.25rem;
             }
-            
+
             .info-box {
                 padding: 1.25rem;
             }
@@ -434,7 +434,7 @@
 @section('content')
     {{-- Topbar User --}}
     @include('components.topbar-user')
-    
+
     <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
@@ -461,15 +461,6 @@
                 <div style="background: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; max-width: 400px;">
                     {{ session('error') }}
                 </div>
-<<<<<<< HEAD
-            </section>
-            <section class="stats-section">
-                <div style="padding: 2rem; background: white; border-radius: 12px; margin-top: 2rem;">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: #1E293B;">Halaman dalam pengembangan</h2>
-                    <p style="color: #64748B;">Konten untuk halaman Sertifikat Saya akan segera ditambahkan.</p>
-                </div>
-            </section>
-=======
             @endif
 
             @if($completedEnrollments->count() > 0)
@@ -490,24 +481,24 @@
                                 <span class="cert-badge" style="background: #94A3B8;">Belum Selesai</span>
                             @endif
                         </div>
-                        
+
                         <!-- Body -->
                         <div class="cert-body">
                             <h3 class="cert-course-title">{{ $enrollment->kursus->judul }}</h3>
                             <p class="cert-instructor">Oleh {{ $enrollment->kursus->pengajar->name ?? 'Instruktur' }}</p>
-                            
+
                             @if($enrollment->has_certificate && $enrollment->certificate)
                                 <div class="cert-info-row">
                                     <span class="cert-info-label">Tanggal Selesai:</span>
                                     <span class="cert-info-value">{{ \Carbon\Carbon::parse($enrollment->certificate->created_at)->locale('id')->translatedFormat('d F Y') }}</span>
                                 </div>
                             @endif
-                            
+
                             <div class="cert-info-row">
                                 <span class="cert-info-label">Nilai Akhir:</span>
                                 <span class="cert-info-value highlight">{{ $enrollment->nilai_akhir ?? 0 }}/100</span>
                             </div>
-                            
+
                             <div class="cert-button-wrapper">
                                 @if($enrollment->has_certificate)
                                     <button type="button" class="btn-download-cert" onclick="openDownloadModal('{{ $enrollment->certificate->id }}', '{{ $enrollment->kursus->judul }}', '{{ $enrollment->certificate->certificate_number ?? 'CERT-' . strtoupper(substr(md5($enrollment->certificate->id), 0, 8)) }}')">
@@ -549,7 +540,7 @@
                     </a>
                 </div>
             @endif
-            
+
             <!-- Info Box -->
             <div class="info-box">
                 <div class="info-box-icon-wrapper">
@@ -584,10 +575,9 @@
                     </ul>
                 </div>
             </div>
->>>>>>> a067c11e8ff97c32eaf068b68eb0334084274b84
         </main>
     </div>
-    
+
     <!-- Download Modal -->
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-content">
@@ -606,32 +596,32 @@
             </div>
         </div>
     </div>
-    
+
     @include('components.footer')
 @endsection
 
 @push('scripts')
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
-        
+
         function openDownloadModal(certId, courseName, certNumber) {
             document.getElementById('modalCourseName').textContent = courseName;
             document.getElementById('modalCertNumber').textContent = 'No. Sertifikat: ' + certNumber;
             document.getElementById('modalDownloadLink').href = '/user/sertifikat/' + certId + '/download';
             document.getElementById('downloadModal').classList.add('active');
         }
-        
+
         function closeDownloadModal() {
             document.getElementById('downloadModal').classList.remove('active');
         }
-        
+
         // Close modal when clicking outside
         document.getElementById('downloadModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDownloadModal();
             }
         });
-        
+
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
