@@ -45,14 +45,14 @@
         .cert-icon {
             width: 64px;
             height: 64px;
-            color: #3A6DFF;
+            color: #5D3FFF;
             display: block;
             margin-bottom: 1rem;
         }
         
         .cert-badge {
             display: inline-block;
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
             font-size: 0.8rem;
             font-weight: 600;
@@ -94,7 +94,7 @@
         }
         
         .cert-info-value.highlight {
-            color: #3A6DFF;
+            color: #5D3FFF;
             font-weight: 600;
         }
         
@@ -108,7 +108,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
             padding: 0.7rem 1.25rem;
             border-radius: 8px;
@@ -159,7 +159,7 @@
         .info-box-icon {
             width: 32px;
             height: 32px;
-            color: #3A6DFF;
+            color: #5D3FFF;
         }
         
         .info-box-title {
@@ -191,7 +191,7 @@
         .info-box-item svg {
             width: 18px;
             height: 18px;
-            color: #3A6DFF;
+            color: #5D3FFF;
             flex-shrink: 0;
             margin-top: 2px;
         }
@@ -225,7 +225,7 @@
         }
         
         .btn-explore {
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -282,7 +282,7 @@
         .modal-icon {
             width: 64px;
             height: 64px;
-            color: #3A6DFF;
+            color: #5D3FFF;
             margin-bottom: 1rem;
         }
         
@@ -297,7 +297,7 @@
         .modal-cert-number {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.85rem;
-            color: #3A6DFF;
+            color: #5D3FFF;
             font-weight: 600;
             margin-bottom: 0.75rem;
         }
@@ -337,7 +337,7 @@
         }
         
         .modal-btn-confirm {
-            background: #3A6DFF;
+            background: #5D3FFF;
             color: white;
         }
         
@@ -360,7 +360,7 @@
         }
         
         .back-button:hover {
-            color: #3A6DFF;
+            color: #5D3FFF;
         }
         
         .back-button svg {
