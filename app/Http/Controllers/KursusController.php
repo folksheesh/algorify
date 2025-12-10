@@ -15,13 +15,18 @@ class KursusController extends Controller
         // Ambil data kursus beserta data pengajar, hanya yang statusnya published
         $query = Kursus::with('pengajar')->where('status', 'published');
 
-        // Filter berdasarkan kategori jika parameter kategori ada dan tidak kosong
-        if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('kategori_id', $request->kategori);
+        // Filter berdasarkan kategori (string) jika parameter kategori ada dan tidak kosong
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        // Filter berdasarkan tipe kursus jika parameter tipe_kursus ada dan tidak kosong
+        if ($request->filled('tipe_kursus')) {
+            $query->where('tipe_kursus', $request->tipe_kursus);
         }
 
         // Pencarian berdasarkan judul, deskripsi, atau deskripsi singkat (case-insensitive)
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $search = strtolower(trim($request->search));
             $query->where(function($q) use ($search) {
                 $q->whereRaw('LOWER(judul) LIKE ?', ['%' . $search . '%'])
@@ -33,8 +38,15 @@ class KursusController extends Controller
         // Urutkan dari yang terbaru dan paginasi 9 data per halaman
         $kursus = $query->latest()->paginate(9);
         
-        // Ambil semua kategori untuk filter
-        $categories = KategoriPelatihan::all();
+        // Dummy categories (tidak perlu query dari DB)
+        $categories = collect([
+            (object)['id' => 1, 'nama_kategori' => 'Programming'],
+            (object)['id' => 2, 'nama_kategori' => 'Design'],
+            (object)['id' => 3, 'nama_kategori' => 'Business'],
+            (object)['id' => 4, 'nama_kategori' => 'Marketing'],
+            (object)['id' => 5, 'nama_kategori' => 'Data Science'],
+            (object)['id' => 6, 'nama_kategori' => 'Other'],
+        ]);
 
         // Tampilkan ke view kursus.index dengan data kursus dan kategori
         return view('kursus.index', compact('kursus', 'categories'));
