@@ -42,7 +42,14 @@ Route::get('/dashboard', function () {
         // Jumlah peserta yang mengikuti kursus milik pengajar
         $totalSiswa = \App\Models\Enrollment::whereIn('kursus_id', $kursusIds)->distinct('user_id')->count('user_id');
 
-        return view('pengajar.dashboard', compact('totalKursus', 'totalSiswa'));
+        // Daftar kursus terbaru yang diajar
+        $kursusDiajarkan = \App\Models\Kursus::withCount('enrollments')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('pengajar.dashboard', compact('totalKursus', 'totalSiswa', 'kursusDiajarkan'));
     }
     
     // Student Dashboard - Get user's enrollments

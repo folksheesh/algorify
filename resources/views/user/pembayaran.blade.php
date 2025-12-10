@@ -124,15 +124,45 @@
                         </form>
                     @endif
 
-                    <div class="instructions" style="margin-top: 20px;">
-                        <h6>Instruksi Pembayaran:</h6>
-                        <ul>
-                            <li>1. Klik tombol "Bayar dengan DOKU"</li>
-                            <li>2. Anda akan diarahkan ke halaman pembayaran DOKU</li>
-                            <li>3. Pilih metode pembayaran (Virtual Account, E-Wallet, Credit Card, dll)</li>
-                            <li>4. Selesaikan pembayaran sesuai instruksi</li>
-                            <li>5. Setelah berhasil, Anda akan otomatis terdaftar di kursus</li>
-                        </ul>
+                </div>
+            </div>
+
+            <div class="card instruction-card">
+                <div class="instruction-header">
+                    <div>
+                        <p class="instruction-label">Langkah Pembayaran</p>
+                        <h3>Ikuti panduan ini untuk menyelesaikan transaksi</h3>
+                    </div>
+                    <span class="instruction-status">Gateway: DOKU</span>
+                </div>
+                <div class="instruction-steps">
+                    <div class="instruction-step-card">
+                        <div class="step-number">1</div>
+                        <div>
+                            <p class="step-title">Mulai Pembayaran</p>
+                            <p class="step-desc">Tekan tombol <strong>Bayar dengan DOKU</strong> lalu tunggu jendela pembayaran muncul.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step-card">
+                        <div class="step-number">2</div>
+                        <div>
+                            <p class="step-title">Pilih Metode</p>
+                            <p class="step-desc">Di halaman DOKU, pilih metode yang diinginkan seperti Virtual Account, E-Wallet, atau Kartu Kredit.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step-card">
+                        <div class="step-number">3</div>
+                        <div>
+                            <p class="step-title">Selesaikan Pembayaran</p>
+                            <p class="step-desc">Ikuti instruksi pada kanal yang dipilih hingga transaksi dinyatakan berhasil.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step-card">
+                        <div class="step-number">4</div>
+                        <div>
+                            <p class="step-title">Akses Kursus</p>
+                            <p class="step-desc">Setelah status berubah menjadi berhasil, Anda otomatis terdaftar dan bisa langsung belajar.</p>
+                        </div>
                     </div>
                 </div>
             </div>

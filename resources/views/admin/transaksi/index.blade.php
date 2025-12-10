@@ -90,8 +90,14 @@
                 <!-- Filters -->
                 <div class="filter-section">
                     <div class="filter-row">
-                        <div class="filter-group" style="flex: 1.2;">
+                        <div class="filter-group filter-search-group" style="flex: 1.2;">
                             <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi, tanggal, nama, atau kursus...">
+                            <button type="button" id="searchButton" class="filter-search-button">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
+                                </svg>
+                                Cari
+                            </button>
                         </div>
                         <div style="width: 1.5rem;"></div>
                         <div class="filter-group" style="flex: 0.8;">
@@ -114,14 +120,7 @@
                             </select>
                         </div>
                         <div class="filter-group" style="flex: 0.8;">
-                            <select id="filterPeriode" class="filter-select">
-                                <option value="">Semua Waktu</option>
-                                <option value="hari_ini">Hari Ini</option>
-                                <option value="7_hari">7 Hari Terakhir</option>
-                                <option value="bulan_ini">Bulan Ini</option>
-                                <option value="bulan_lalu">Bulan Lalu</option>
-                                <option value="tahun_ini">Tahun Ini</option>
-                            </select>
+                            <input type="date" id="filterTanggalMulai" class="filter-input filter-date-input" placeholder="Tanggal Mulai">
                         </div>
                     </div>
                 </div>
@@ -313,15 +312,15 @@
         const searchInput = document.getElementById('searchTable');
         const statusFilter = document.getElementById('filterStatus');
         const metodeFilter = document.getElementById('filterMetode');
-        const periodeFilter = document.getElementById('filterPeriode');
-        let searchTimeout = null;
+        const tanggalMulaiFilter = document.getElementById('filterTanggalMulai');
+        const searchButton = document.getElementById('searchButton');
         
         // Set initial values from URL params
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('search')) searchInput.value = urlParams.get('search');
         if (urlParams.get('status')) statusFilter.value = urlParams.get('status');
         if (urlParams.get('metode')) metodeFilter.value = urlParams.get('metode');
-        if (urlParams.get('periode')) periodeFilter.value = urlParams.get('periode');
+        if (urlParams.get('tanggal_mulai')) tanggalMulaiFilter.value = urlParams.get('tanggal_mulai');
         
         // Function to apply filters via server-side request
         function applyFilters() {
@@ -330,25 +329,26 @@
             if (searchInput.value) params.append('search', searchInput.value);
             if (statusFilter.value) params.append('status', statusFilter.value);
             if (metodeFilter.value) params.append('metode', metodeFilter.value);
-            if (periodeFilter.value) params.append('periode', periodeFilter.value);
+            if (tanggalMulaiFilter.value) params.append('tanggal_mulai', tanggalMulaiFilter.value);
             
             // Redirect to same page with query params (page will reset to 1)
             const queryString = params.toString();
             window.location.href = '{{ route("admin.transaksi.index") }}' + (queryString ? '?' + queryString : '');
         }
         
-        // Search dengan debounce 500ms
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
+        // Search only when clicking button or pressing Enter
+        searchButton.addEventListener('click', () => applyFilters());
+        searchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
                 applyFilters();
-            }, 500);
+            }
         });
         
         // Filter langsung apply saat berubah
         statusFilter.addEventListener('change', applyFilters);
         metodeFilter.addEventListener('change', applyFilters);
-        periodeFilter.addEventListener('change', applyFilters);
+        tanggalMulaiFilter.addEventListener('change', applyFilters);
         
         // Export CSV function
         function exportTransaksiCsv() {
@@ -357,7 +357,7 @@
             if (searchInput.value) params.append('search', searchInput.value);
             if (statusFilter.value) params.append('status', statusFilter.value);
             if (metodeFilter.value) params.append('metode', metodeFilter.value);
-            if (periodeFilter.value) params.append('periode', periodeFilter.value);
+            if (tanggalMulaiFilter.value) params.append('tanggal_mulai', tanggalMulaiFilter.value);
             
             // Open export URL with filters
             const queryString = params.toString();

@@ -92,29 +92,9 @@ class TransaksiController extends Controller
                 $query->where('metode_pembayaran', $metode);
             }
 
-            // Server-side periode filter
-            if ($request->filled('periode')) {
-                $now = now();
-                switch ($request->periode) {
-                    case 'hari_ini':
-                        $query->whereDate('tanggal_transaksi', $now->toDateString());
-                        break;
-                    case '7_hari':
-                        $query->where('tanggal_transaksi', '>=', $now->copy()->subDays(7));
-                        break;
-                    case 'bulan_ini':
-                        $query->whereMonth('tanggal_transaksi', $now->month)
-                              ->whereYear('tanggal_transaksi', $now->year);
-                        break;
-                    case 'bulan_lalu':
-                        $lastMonth = $now->copy()->subMonth();
-                        $query->whereMonth('tanggal_transaksi', $lastMonth->month)
-                              ->whereYear('tanggal_transaksi', $lastMonth->year);
-                        break;
-                    case 'tahun_ini':
-                        $query->whereYear('tanggal_transaksi', $now->year);
-                        break;
-                }
+            // Server-side date filter (mulai saja)
+            if ($request->filled('tanggal_mulai')) {
+                $query->where('tanggal_transaksi', '>=', $request->tanggal_mulai . ' 00:00:00');
             }
 
             $transaksi = $query->paginate(10)->withQueryString();
@@ -238,28 +218,9 @@ class TransaksiController extends Controller
                 $query->where('metode_pembayaran', $metode);
             }
 
-            if ($request->filled('periode')) {
-                $now = now();
-                switch ($request->periode) {
-                    case 'hari_ini':
-                        $query->whereDate('tanggal_transaksi', $now->toDateString());
-                        break;
-                    case '7_hari':
-                        $query->where('tanggal_transaksi', '>=', $now->copy()->subDays(7));
-                        break;
-                    case 'bulan_ini':
-                        $query->whereMonth('tanggal_transaksi', $now->month)
-                              ->whereYear('tanggal_transaksi', $now->year);
-                        break;
-                    case 'bulan_lalu':
-                        $lastMonth = $now->copy()->subMonth();
-                        $query->whereMonth('tanggal_transaksi', $lastMonth->month)
-                              ->whereYear('tanggal_transaksi', $lastMonth->year);
-                        break;
-                    case 'tahun_ini':
-                        $query->whereYear('tanggal_transaksi', $now->year);
-                        break;
-                }
+            // Server-side date filter (mulai saja)
+            if ($request->filled('tanggal_mulai')) {
+                $query->where('tanggal_transaksi', '>=', $request->tanggal_mulai . ' 00:00:00');
             }
 
             $transaksi = $query->get();
