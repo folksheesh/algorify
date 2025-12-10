@@ -52,7 +52,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            
+
                             <select id="filterPengajar" class="filter-select" onchange="applyFilters()">
                                 <option value="">Semua Pengajar</option>
                                 @foreach($pengajars as $pengajar)
@@ -60,6 +60,13 @@
                                         {{ $pengajar->name }}
                                     </option>
                                 @endforeach
+                            </select>
+
+                            <select id="filterTipeKursus" class="filter-select" onchange="applyFilters()">
+                                <option value="">Semua Tipe Kursus</option>
+                                <option value="online" {{ request('tipe_kursus') == 'online' ? 'selected' : '' }}>Online</option>
+                                <option value="offline" {{ request('tipe_kursus') == 'offline' ? 'selected' : '' }}>Offline</option>
+                                <option value="hybrid" {{ request('tipe_kursus') == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
                             </select>
                         </div>
                     </div>
@@ -353,6 +360,7 @@
         function applyFilters() {
             const kategori = document.getElementById('filterKategori').value;
             const pengajarId = document.getElementById('filterPengajar').value;
+            const tipeKursus = document.getElementById('filterTipeKursus').value;
             
             // Build URL with query parameters
             const url = new URL(window.location.href);
@@ -364,6 +372,10 @@
             
             if (pengajarId) {
                 url.searchParams.set('pengajar_id', pengajarId);
+            }
+
+            if (tipeKursus) {
+                url.searchParams.set('tipe_kursus', tipeKursus);
             }
             
             // Reload page with filters

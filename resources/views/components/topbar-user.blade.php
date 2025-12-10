@@ -272,7 +272,7 @@
         width: 38px;
         height: 38px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
+        background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
         color: white;
         display: flex;
         align-items: center;
