@@ -146,6 +146,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            margin-top: 1.5rem;
         }
         
         .info-box-content {
