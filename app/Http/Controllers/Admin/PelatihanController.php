@@ -30,10 +30,15 @@ class PelatihanController extends Controller
         if ($request->filled('kategori')) {
             $query->where('kategori', $request->kategori);
         }
-        
+
         // Apply pengajar filter
         if ($request->filled('pengajar_id')) {
             $query->where('user_id', $request->pengajar_id);
+        }
+
+        // Apply tipe kursus filter
+        if ($request->filled('tipe_kursus')) {
+            $query->where('tipe_kursus', $request->tipe_kursus);
         }
         
         $kursus = $query->orderBy('created_at', 'desc')->get();
