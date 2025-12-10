@@ -72,10 +72,10 @@
                     </div>
                 </div>
 
-                <!-- Grafik Pendapatan -->
+                <!-- Tren Transaksi -->
                 <div class="chart-container" id="revenue-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3>Grafik Pendapatan</h3>
+                        <h3>Tren Transaksi</h3>
                         <form method="GET" action="{{ route('admin.analitik.index') }}#revenue-section" style="display: inline-block;">
                             <input type="hidden" name="sort" value="{{ $sortBy }}">
                             <input type="hidden" name="search" value="{{ $search }}">
@@ -213,7 +213,7 @@
                 <!-- Top Kursus dengan Filter Sort dan Pagination -->
                 <div class="table-container" id="top-kursus-section">
                     <div class="table-header">
-                        <h2>Data Kursus</h2>
+                        <h2>Tren Kursus</h2>
                         <form method="GET" action="{{ route('admin.analitik.index') }}#top-kursus-section" style="display: inline-block;">
                             <input type="hidden" name="search" value="{{ $search }}">
                             <input type="hidden" name="status" value="{{ $statusFilter }}">
