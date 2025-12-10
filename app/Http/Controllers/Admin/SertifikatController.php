@@ -14,6 +14,7 @@ class SertifikatController extends Controller
         // Get current signature if exists
         $signaturePath = 'signatures/director_signature.png';
         $signature = null;
+        $signatureOwner = null;
         
         // Check for PNG first, then JPG, then JPEG
         foreach (['png', 'jpg', 'jpeg'] as $ext) {
@@ -23,8 +24,16 @@ class SertifikatController extends Controller
                 break;
             }
         }
+
+        // Get stored owner name if available
+        if (Storage::disk('public')->exists('signatures/director_name.txt')) {
+            $signatureOwner = trim(Storage::disk('public')->get('signatures/director_name.txt'));
+        }
             
-        return view('admin.sertifikat.index', compact('signature'));
+        return view('admin.sertifikat.index', [
+            'signature' => $signature,
+            'signatureOwner' => $signatureOwner,
+        ]);
     }
 
     public function uploadSignature(Request $request)
@@ -65,6 +74,33 @@ class SertifikatController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengupload tanda tangan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function saveSignatureInfo(Request $request)
+    {
+        $request->validate([
+            'owner_name' => 'required|string|max:150'
+        ], [
+            'owner_name.required' => 'Nama pemilik wajib diisi',
+            'owner_name.string' => 'Nama pemilik harus berupa teks',
+            'owner_name.max' => 'Nama pemilik maksimal 150 karakter'
+        ]);
+
+        try {
+            Storage::disk('public')->put('signatures/director_name.txt', $request->owner_name);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Nama pemilik tanda tangan tersimpan',
+                'owner_name' => $request->owner_name,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving signature owner name: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan nama pemilik tanda tangan'
             ], 500);
         }
     }

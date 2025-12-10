@@ -26,32 +26,81 @@
     margin-bottom: 2rem;
 }
 
-.search-box {
-    position: relative;
-    margin-bottom: 1.5rem;
+
+.search-filter-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
 }
 
-.search-box input {
+.search-box {
+    position: relative;
+    flex: 1 1 0%;
+    min-width: 0;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
     width: 100%;
-    padding: 0.875rem 1rem 0.875rem 3rem;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 0.875rem;
     transition: all 0.2s;
 }
 
-.search-box input:focus {
+.search-input:focus {
     outline: none;
     border-color: #5D3FFF;
     box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
 }
 
-.search-box svg {
+.search-icon {
     position: absolute;
-    left: 1rem;
+    left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #6b7280;
+    width: 20px;
+    height: 20px;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+.filters-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.filter-select {
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #374151;
+    background: #f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%235D3FFF'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat right 0.5rem center;
+    background-size: 1.5em 1.5em;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s;
+    min-width: 120px;
+    width: auto;
+    max-width: 200px;
+}
+
+.filter-select:hover {
+    border-color: #d1d5db;
+    background-color: #f3f4f6;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #5D3FFF;
+    box-shadow: 0 0 0 3px rgba(93, 63, 255, 0.1);
 }
 
 .filter-section {
@@ -235,9 +284,9 @@
 .view-detail-btn {
     width: 100%;
     padding: 0.5rem;
-    background: white;
+    background: #5D3FFF;
     border: 1.5px solid #5D3FFF;
-    color: #5D3FFF;
+    color: #fff;
     border-radius: 6px;
     font-size: 0.8125rem;
     font-weight: 500;
@@ -376,6 +425,24 @@
 
     .filter-badges {
         gap: 0.5rem;
+    }
+
+    .search-filter-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box {
+        min-width: auto;
+    }
+
+    .filters-container {
+        flex-direction: column;
+    }
+
+    .filter-select {
+        width: 100%;
+        min-width: auto;
     }
 
     .filter-badge {

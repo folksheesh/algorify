@@ -37,16 +37,13 @@
                     @forelse($enrollments as $enrollment)
                         @if($enrollment->kursus)
                         <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="continue-card">
+                            <div class="continue-card-thumbnail">
+                                <img src="{{ resolve_thumbnail_url($enrollment->kursus->thumbnail, asset('template/assets/compiled/jpg/2.jpg')) }}" alt="{{ $enrollment->kursus->judul }}" />
+                            </div>
                             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
-                                <div style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: #fff; width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 6L17 12L9 18V6Z" fill="currentColor" />
-                                        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none" />
-                                    </svg>
-                                </div>
                                 <div style="flex: 1; min-width: 0;">
                                     <h3 style="font-size: 1rem; color: #1E293B; margin: 0; font-weight: 600; line-height: 1.4;">{{ Str::limit($enrollment->kursus->judul, 40) }}</h3>
-                                    <p style="font-size: 0.8125rem; color: #64748B; margin: 0.25rem 0 0 0;">{{ $enrollment->kursus->kategori ?? 'Pelatihan' }}</p>
+                                    <p class="course-badge">{{ Str::title(str_replace(['-','_'], ' ', $enrollment->kursus->kategori ?? 'Pelatihan')) }}</p>
                                 </div>
                             </div>
                             <div style="margin-top: auto;">
@@ -101,16 +98,35 @@
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     display: flex;
                     flex-direction: column;
-                    padding: 1.5rem;
+                    padding: 1rem;
                     background: #fff;
                     border-radius: 16px;
                     border: 1px solid #E2E8F0;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                    /* height: 360px; */
+                }
+                .continue-card-thumbnail {
+                    width: 100%;
+                    height: 140px;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    margin-bottom: 1rem;
+                    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+                    flex-shrink: 0;
+                }
+                .continue-card-thumbnail img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
                 }
                 .continue-card:hover { 
                     transform: translateY(-4px); 
                     box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15); 
                     border-color: #6366F1;
+                }
+                .continue-card:hover .continue-card-thumbnail img {
+                    transform: scale(1.05);
                 }
                 .carousel-nav button:hover { border-color: #6366F1; background: #EEF2FF; }
                 .carousel-nav button:hover svg path { stroke: #6366F1; }
@@ -186,11 +202,11 @@
                         tabindex="0"
                     >
                         <div class="course-thumbnail">
-                            @if($kursus->gambar)
-                                <img src="{{ asset('storage/' . $kursus->gambar) }}" alt="{{ $kursus->judul }}" class="course-image" />
-                            @else
-                                <img src="{{ asset('template/assets/compiled/jpg/' . (($loop->index % 3) + 2) . '.jpg') }}" alt="{{ $kursus->judul }}" class="course-image" />
-                            @endif
+                            <img
+                                src="{{ resolve_thumbnail_url($kursus->thumbnail, asset('template/assets/compiled/jpg/' . (($loop->index % 3) + 2) . '.jpg')) }}"
+                                alt="{{ $kursus->judul }}"
+                                class="course-image"
+                            />
                             <a href="{{ route('kursus.show', $kursus->id) }}" class="bookmark-button" aria-label="Lihat detail">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -198,7 +214,7 @@
                             </a>
                         </div>
                         <div class="course-content">
-                            <span class="course-badge">{{ strtoupper($kursus->kategori ?? 'PELATIHAN') }}</span>
+                            <span class="course-badge">{{ Str::title(str_replace(['-','_'], ' ', $kursus->kategori ?? 'Pelatihan')) }}</span>
                             <h3 class="course-title">{{ Str::limit($kursus->judul, 50) }}</h3>
                             <p class="course-description-text" style="font-size: 0.875rem; color: #64748B; margin: 0.5rem 0; line-height: 1.5;">
                                 {{ Str::limit($kursus->deskripsi_singkat ?? $kursus->deskripsi, 80) }}

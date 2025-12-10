@@ -24,32 +24,39 @@
                     </div>
 
                     <div class="search-filter-section">
-                        <form method="GET" action="{{ route('kursus.index') }}">
-                            <div class="search-box">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5" />
-                                </svg>
-                                <input type="search" name="search" placeholder="Cari pelatihan..." value="{{ request('search') }}" />
-                            </div>
-
-                            <div class="filter-section">
-                                <div class="filter-label">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 4h14M5 8h10M7 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <form method="GET" action="{{ route('kursus.index') }}" id="filterForm">
+                            <div class="search-filter-wrapper">
+                                <div class="search-box">
+                                    <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                                     </svg>
-                                    Filter Pelatihan
+                                    <input 
+                                        type="text" 
+                                        class="search-input" 
+                                        name="search"
+                                        placeholder="Cari pelatihan berdasarkan judul..."
+                                        value="{{ request('search') }}"
+                                        autocomplete="off"
+                                    >
                                 </div>
-                                <label class="kategori-label">Kategori</label>
-                                <div class="filter-badges">
-                                    <a href="{{ route('kursus.index') }}" class="filter-badge {{ !request('kategori') ? 'active' : '' }}">
-                                        Semua
-                                    </a>
-                                    @foreach($categories as $category)
-                                    <a href="{{ route('kursus.index', ['kategori' => $category->id]) }}" class="filter-badge {{ request('kategori') == $category->id ? 'active' : '' }}">
-                                        {{ $category->nama_kategori }}
-                                    </a>
-                                    @endforeach
+                                
+                                <div class="filters-container">
+                                    <select name="kategori" class="filter-select" onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Semua Kategori</option>
+                                        <option value="programming" {{ request('kategori') == 'programming' ? 'selected' : '' }}>Programming</option>
+                                        <option value="design" {{ request('kategori') == 'design' ? 'selected' : '' }}>Design</option>
+                                        <option value="business" {{ request('kategori') == 'business' ? 'selected' : '' }}>Business</option>
+                                        <option value="marketing" {{ request('kategori') == 'marketing' ? 'selected' : '' }}>Marketing</option>
+                                        <option value="data_science" {{ request('kategori') == 'data_science' ? 'selected' : '' }}>Data Science</option>
+                                        <option value="other" {{ request('kategori') == 'other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+
+                                    <select name="tipe_kursus" class="filter-select" onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Semua Tipe Kursus</option>
+                                        <option value="online" {{ request('tipe_kursus') == 'online' ? 'selected' : '' }}>Online</option>
+                                        <option value="offline" {{ request('tipe_kursus') == 'offline' ? 'selected' : '' }}>Offline</option>
+                                        <option value="hybrid" {{ request('tipe_kursus') == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
+                                    </select>
                                 </div>
                             </div>
                         </form>

@@ -17,8 +17,90 @@
         <main class="main-content">
             <div style="padding: 0 2rem 2rem;">
                 <div class="page-header">
-                    <h1>Kelola Tanda Tangan Sertifikat</h1>
-                    <p>Upload tanda tangan yang akan digunakan pada sertifikat pelatihan TIK</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h1>Kelola Tanda Tangan Sertifikat</h1>
+                            <p>Upload tanda tangan yang akan digunakan pada sertifikat pelatihan TIK</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="openModalPreviewSertif()" style="margin-top: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            </svg>
+                            Preview Sertifikat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Preview Sertifikat -->
+                <div id="modalPreviewSertif" class="modal-overlay" style="display:none;">
+                    <div class="modal-content" style="max-width: 900px;">
+                        <button class="modal-close" onclick="closeModalPreviewSertif()" aria-label="Close">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                        <div class="certificate-preview-card">
+                            <div class="certificate-preview-header">
+                                <div>
+                                    <div class="preview-title">Preview Sertifikat</div>
+                                    <div class="preview-subtitle">Menampilkan tata letak mendekati sertifikat asli</div>
+                                </div>
+                                <div class="preview-badge">Sampel</div>
+                            </div>
+                            <div class="certificate-preview-body">
+                                <div class="certificate-preview">
+                                    <div class="preview-frame">
+                                        <div class="preview-logo">
+                                            <div class="preview-logo-mark"></div>
+                                            <span>Algorify</span>
+                                        </div>
+                                        <div class="preview-title-script">Sertifikat Penyelesaian</div>
+                                        <div class="preview-subtitle-en">Certificate of Completion</div>
+                                        <div class="preview-label">Diberikan kepada</div>
+                                        <div class="preview-name" id="certificatePreviewName">{{ $signatureOwner ?? 'Nama Pemilik Tanda Tangan' }}</div>
+                                        <div class="preview-course-label">Telah berhasil menyelesaikan pelatihan</div>
+                                        <div class="preview-course">Analisis Data</div>
+                                        <div class="preview-desc">dengan menunjukkan dedikasi, pemahaman mendalam, dan keterampilan praktis dalam bidang analisis data.</div>
+
+                                        <div class="preview-info-row">
+                                            <div class="preview-info-box">
+                                                <span class="lbl">Tanggal Selesai</span>
+                                                <span class="val">09 December 2025</span>
+                                            </div>
+                                            <div class="preview-info-box">
+                                                <span class="lbl">Nilai Akhir</span>
+                                                <span class="val score">100/100</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="preview-footer-row">
+                                            <div class="preview-qr">
+                                                <div class="qr-box"></div>
+                                                <div class="qr-text">Scan untuk verifikasi<br>CERT-2025-AUSZV7MZEM</div>
+                                            </div>
+                                            <div class="preview-badge-official">
+                                                <div class="badge-circle"></div>
+                                                <div class="badge-text">Sertifikat Resmi</div>
+                                            </div>
+                                            <div class="preview-signature-block">
+                                                @if($signature)
+                                                    <img src="{{ $signature }}" alt="Tanda Tangan" id="certificatePreviewSignature">
+                                                @else
+                                                    <div class="preview-signature-placeholder" id="certificatePreviewSignature">Belum ada tanda tangan</div>
+                                                @endif
+                                                <div class="preview-sign-name" id="certificatePreviewNameSignature">{{ $signatureOwner ?? 'Nama Pemilik Tanda Tangan' }}</div>
+                                                <div class="preview-sign-role">Direktur Algorify</div>
+                                                <div class="preview-sign-loc">Jakarta, Indonesia</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="preview-verify">Sertifikat ini dapat diverifikasi di <span>algorify.com/verify</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="content-card">
@@ -28,19 +110,21 @@
                     <!-- Alert Messages -->
                     <div id="alertContainer"></div>
 
-                    <!-- Upload Guidelines -->
+
+                    <!-- Syarat dan Ketentuan (moved up) -->
                     <div class="upload-guidelines">
                         <div class="guidelines-title">
                             <svg viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                             </svg>
-                            Panduan Upload Tanda Tangan:
+                            Syarat dan Ketentuan:
                         </div>
-                        <ul class="guidelines-list">
-                            <li>Format file yang diterima: PNG, JPG, atau JPEG</li>
-                            <li>Ukuran maksimal file: 2MB</li>
-                            <li>Disarankan menggunakan tanda tangan dengan latar belakang transparan (PNG)</li>
-                            <li>Resolusi yang disarankan: minimal 300 x 150 pixel untuk hasil terbaik</li>
+                        <ul class="guidelines-list" style="padding-left: 0;">
+                            <li>Tanda tangan harus dalam format digital dengan kualitas yang baik dan jelas</li>
+                            <li>File harus memiliki transparansi background (PNG) untuk hasil terbaik pada sertifikat</li>
+                            <li>Ukuran file maksimal 2MB untuk memastikan proses upload yang cepat</li>
+                            <li>Tanda tangan yang diupload akan diterapkan pada semua sertifikat yang diterbitkan</li>
+                            <li>Pastikan tanda tangan sudah mendapat persetujuan dari pihak yang berwenang</li>
                         </ul>
                     </div>
 
@@ -92,6 +176,15 @@
                         </div>
                     </div>
 
+                    <div class="signature-owner-form">
+                        <label for="signatureOwnerInput" class="owner-label">Nama Pemilik Tanda Tangan</label>
+                        <div class="owner-input-group">
+                            <input type="text" id="signatureOwnerInput" class="owner-input" placeholder="Contoh: Dr. Andi Pratama" value="{{ $signatureOwner }}">
+                            <button type="button" class="btn btn-primary" id="saveOwnerButton">Simpan Nama</button>
+                        </div>
+                        <p class="owner-hint">Nama ini akan ditampilkan pada sertifikat bersama tanda tangan.</p>
+                    </div>
+
                     <!-- Privacy Note -->
                     <div class="privacy-note">
                         <svg viewBox="0 0 20 20" fill="currentColor">
@@ -104,17 +197,7 @@
                     </div>
                 </div>
 
-                <!-- Additional Info Section -->
-                <div class="content-card" style="margin-top: 1.5rem;">
-                    <h2 class="card-title">Syarat dan Ketentuan</h2>
-                    <ul class="guidelines-list" style="padding-left: 0;">
-                        <li>Tanda tangan harus dalam format digital dengan kualitas yang baik dan jelas</li>
-                        <li>File harus memiliki transparansi background (PNG) untuk hasil terbaik pada sertifikat</li>
-                        <li>Ukuran file maksimal 2MB untuk memastikan proses upload yang cepat</li>
-                        <li>Tanda tangan yang diupload akan diterapkan pada semua sertifikat yang diterbitkan</li>
-                        <li>Pastikan tanda tangan sudah mendapat persetujuan dari pihak yang berwenang</li>
-                    </ul>
-                </div>
+                <!-- Additional Info Section (removed, now shown above) -->
             </div>
         </main>
     </div>
@@ -127,10 +210,59 @@
 
 @push('scripts')
     <script>
+        function openModalPreviewSertif() {
+            // Open modal in new popup window
+            const width = 1000;
+            const height = 800;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            const modal = document.getElementById('modalPreviewSertif');
+            const modalContent = modal.querySelector('.certificate-preview-card').outerHTML;
+            
+            const popup = window.open('', 'PreviewSertifikat', 
+                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+            
+            if (popup) {
+                popup.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Preview Sertifikat - Algorify</title>
+                        <link rel="stylesheet" href="{{ asset('css/admin/sertifikat-index.css') }}">
+                        <link rel="preconnect" href="https://fonts.googleapis.com">
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+                        <style>
+                            * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+                            body { margin: 0; padding: 2rem; background: linear-gradient(135deg, #f6f4ff 0%, #eeedff 100%); }
+                            .certificate-preview-card { margin: 0; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+                        </style>
+                    </head>
+                    <body>
+                        ${modalContent}
+                    </body>
+                    </html>
+                `);
+                popup.document.close();
+            } else {
+                alert('Popup diblokir oleh browser. Mohon izinkan popup untuk melihat preview.');
+            }
+        }
+        function closeModalPreviewSertif() {
+            document.getElementById('modalPreviewSertif').style.display = 'none';
+        }
         document.documentElement.setAttribute('data-bs-theme', 'light');
 
         // CSRF Token
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const ownerInput = document.getElementById('signatureOwnerInput');
+        const saveOwnerButton = document.getElementById('saveOwnerButton');
+        const previewName = document.getElementById('certificatePreviewName');
+        const previewNameSignature = document.getElementById('certificatePreviewNameSignature');
+        let previewSignature = document.getElementById('certificatePreviewSignature');
+        let currentSignatureUrl = `{{ $signature }}` || '';
 
         // File input change handler
         document.getElementById('signatureInput').addEventListener('change', function(e) {
@@ -169,6 +301,47 @@
             } else {
                 showAlert('Format file tidak valid. Gunakan PNG, JPG, atau JPEG.', 'error');
             }
+        });
+
+        // Owner name live update
+        ownerInput?.addEventListener('input', () => {
+            const val = ownerInput.value.trim() || 'Nama Pemilik Tanda Tangan';
+            previewName.textContent = val;
+            if (previewNameSignature) previewNameSignature.textContent = val;
+        });
+
+        saveOwnerButton?.addEventListener('click', () => {
+            const name = ownerInput.value.trim();
+            if (!name) {
+                showAlert('Nama pemilik wajib diisi', 'error');
+                return;
+            }
+
+            showLoading();
+
+            fetch('{{ route("admin.sertifikat.save-signature-info") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({ owner_name: name })
+            })
+            .then(res => res.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    previewName.textContent = data.owner_name;
+                    if (previewNameSignature) previewNameSignature.textContent = data.owner_name;
+                } else {
+                    showAlert(data.message || 'Gagal menyimpan nama', 'error');
+                }
+            })
+            .catch(() => {
+                hideLoading();
+                showAlert('Terjadi kesalahan saat menyimpan nama', 'error');
+            });
         });
 
         // Upload signature function
@@ -251,6 +424,7 @@
         function updateSignaturePreview(url) {
             const section = document.getElementById('signatureSection');
             section.classList.add('has-signature');
+            currentSignatureUrl = url;
             
             section.innerHTML = `
                 <div id="signaturePreviewContainer">
@@ -291,6 +465,17 @@
                     uploadSignature(file);
                 }
             });
+
+            // Update certificate preview image
+            if (previewSignature.tagName.toLowerCase() === 'img') {
+                previewSignature.src = url;
+            } else {
+                const img = document.createElement('img');
+                img.id = 'certificatePreviewSignature';
+                img.src = url;
+                previewSignature.replaceWith(img);
+                previewSignature = img;
+            }
         }
 
         // Remove signature preview
@@ -299,6 +484,7 @@
             section.classList.remove('has-signature');
             section.style.borderColor = '#CBD5E1';
             section.style.background = '#F8FAFC';
+            currentSignatureUrl = '';
             
             section.innerHTML = `
                 <div id="uploadPlaceholder" class="upload-placeholder">
@@ -328,6 +514,14 @@
                     uploadSignature(file);
                 }
             });
+
+            // Reset certificate preview image
+            const placeholder = document.createElement('div');
+            placeholder.className = 'preview-signature-placeholder';
+            placeholder.id = 'certificatePreviewSignature';
+            placeholder.textContent = 'Belum ada tanda tangan';
+            previewSignature.replaceWith(placeholder);
+            previewSignature = placeholder;
         }
 
         // Show alert

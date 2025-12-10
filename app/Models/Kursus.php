@@ -56,9 +56,9 @@ class Kursus extends Model
         return $this->hasMany(Materi::class);
     }
 
-    public function kuis()
+    public function ujian()
     {
-        return $this->hasMany(Kuis::class);
+        return $this->hasMany(Ujian::class);
     }
 
     public function soal()
