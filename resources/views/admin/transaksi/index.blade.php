@@ -90,17 +90,10 @@
                 <!-- Filters -->
                 <div class="filter-section">
                     <div class="filter-row">
-                        <div class="filter-group filter-search-group" style="flex: 1.2;">
+                        <div class="filter-group" style="flex: 1;">
                             <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi, tanggal, nama, atau kursus...">
-                            <button type="button" id="searchButton" class="filter-search-button">
-                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
-                                </svg>
-                                Cari
-                            </button>
                         </div>
-                        <div style="width: 1.5rem;"></div>
-                        <div class="filter-group" style="flex: 0.8;">
+                        <div class="filter-group" style="flex: 0.5;">
                             <select id="filterStatus" class="filter-select">
                                 <option value="">Semua Status</option>
                                 <option value="lunas">Lunas</option>
@@ -108,7 +101,7 @@
                                 <option value="gagal">Gagal</option>
                             </select>
                         </div>
-                        <div class="filter-group" style="flex: 0.8;">
+                        <div class="filter-group" style="flex: 0.5;">
                             <select id="filterMetode" class="filter-select">
                                 <option value="">Semua Metode</option>
                                 <option value="transfer bank">Transfer Bank</option>
@@ -119,9 +112,15 @@
                                 <option value="kartu debit">Kartu Debit</option>
                             </select>
                         </div>
-                        <div class="filter-group" style="flex: 0.8;">
+                        <div class="filter-group" style="flex: 0.5;">
                             <input type="date" id="filterTanggalMulai" class="filter-input filter-date-input" placeholder="Tanggal Mulai">
                         </div>
+                        <button type="button" id="searchButton" class="filter-search-button">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
+                            </svg>
+                            Cari
+                        </button>
                     </div>
                 </div>
 

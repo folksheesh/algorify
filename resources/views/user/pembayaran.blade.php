@@ -48,6 +48,29 @@
                 <div class="card">
                     <h2 class="card-title">Ringkasan Pembelian</h2>
 
+                    @php
+                        $thumbnailPath = $kursus->thumbnail ?? null;
+                        $thumbnailUrl = null;
+                        if ($thumbnailPath) {
+                            $thumbnailUrl = \Illuminate\Support\Str::startsWith($thumbnailPath, ['http://', 'https://'])
+                                ? $thumbnailPath
+                                : (\Illuminate\Support\Str::startsWith($thumbnailPath, ['storage/', 'public/'])
+                                    ? asset($thumbnailPath)
+                                    : asset('storage/' . $thumbnailPath));
+                        }
+                    @endphp
+
+                    <div class="course-media {{ $thumbnailUrl ? '' : 'no-image' }}">
+                        @if ($thumbnailUrl)
+                            <img src="{{ $thumbnailUrl }}" alt="Poster {{ $kursus->judul }}">
+                        @else
+                            <div class="course-media-placeholder">
+                                <span>{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($kursus->judul, 0, 1)) }}</span>
+                                <p>Tidak ada gambar kursus</p>
+                            </div>
+                        @endif
+                    </div>
+
                     <div class="summary-row">
                         <span class="summary-label">Nama Kursus:</span>
                         <span class="summary-value">{{ $kursus->judul }}</span>
