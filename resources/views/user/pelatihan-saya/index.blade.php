@@ -19,14 +19,19 @@
         @include('components.sidebar')
         <main class="main-content">
             <div style="padding: 0 2rem 2rem;">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Pelatihan Saya</h1>
-                    <p>Lihat dan kelola pelatihan yang sedang Anda ikuti. Lanjutkan perjalanan Anda menuju target Anda</p>
+                <!-- Page Header with Hero Banner -->
+                <div class="page-header-hero">
+                    <div class="hero-content-left">
+                        <h1>Pelatihan Saya</h1>
+                        <p>Lihat dan kelola pelatihan yang sedang Anda ikuti. Lanjutkan perjalanan Anda menuju target Anda</p>
+                    </div>
+                    <div class="hero-icon-right">
+                        <img src="{{ asset('template/img/icon-hero-banner-pelatihan.png') }}" alt="Pelatihan Icon" class="hero-icon-img">
+                    </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="search-filter-bar">
+                <!-- Search Bar di bawah hero -->
+                <div class="search-filter-bar-below">
                     <div class="search-box">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5" fill="none" />
