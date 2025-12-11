@@ -8,6 +8,7 @@ use App\Models\Kursus;
 use App\Models\User;
 use App\Models\Enrollment;
 use App\Models\Nilai;
+use App\Models\KategoriPelatihan;
 use App\Repositories\ProgressRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -26,19 +27,28 @@ class PelatihanController extends Controller
         // Get all courses with their related data
         $query = Kursus::with(['pengajar', 'modul', 'enrollments']);
         
-        // Apply kategori filter
+        // Apply kategori filter (supports multiple values separated by comma)
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $kategoriValues = array_filter(explode(',', $request->kategori));
+            if (count($kategoriValues) > 0) {
+                $query->whereIn('kategori', $kategoriValues);
+            }
         }
 
-        // Apply pengajar filter
+        // Apply pengajar filter (supports multiple values separated by comma)
         if ($request->filled('pengajar_id')) {
-            $query->where('user_id', $request->pengajar_id);
+            $pengajarValues = array_filter(explode(',', $request->pengajar_id));
+            if (count($pengajarValues) > 0) {
+                $query->whereIn('user_id', $pengajarValues);
+            }
         }
 
-        // Apply tipe kursus filter
+        // Apply tipe kursus filter (supports multiple values separated by comma)
         if ($request->filled('tipe_kursus')) {
-            $query->where('tipe_kursus', $request->tipe_kursus);
+            $tipeValues = array_filter(explode(',', $request->tipe_kursus));
+            if (count($tipeValues) > 0) {
+                $query->whereIn('tipe_kursus', $tipeValues);
+            }
         }
         
         $kursus = $query->orderBy('created_at', 'desc')->get();
@@ -46,15 +56,8 @@ class PelatihanController extends Controller
         // Get all users with pengajar role
         $pengajars = User::role('pengajar')->orWhere('id', Auth::id())->get();
         
-        // Get unique categories from database
-        $kategoris = [
-            'programming' => 'Programming',
-            'design' => 'Design',
-            'business' => 'Business',
-            'marketing' => 'Marketing',
-            'data_science' => 'Data Science',
-            'other' => 'Other'
-        ];
+        // Get categories from database (KategoriPelatihan model)
+        $kategoris = KategoriPelatihan::orderBy('nama_kategori', 'asc')->get();
         
         return view('admin.pelatihan.index', compact('kursus', 'pengajars', 'kategoris'));
     }
@@ -95,9 +98,12 @@ class PelatihanController extends Controller
             'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
         ]);
 
+        // Get valid category slugs from database
+        $validKategoris = KategoriPelatihan::pluck('slug')->toArray();
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
+            'kategori' => 'required|in:' . implode(',', $validKategoris),
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
@@ -147,9 +153,12 @@ class PelatihanController extends Controller
             'kapasitas' => $request->kapasitas !== null ? preg_replace('/[^0-9]/', '', $request->kapasitas) : null,
         ]);
 
+        // Get valid category slugs from database
+        $validKategoris = KategoriPelatihan::pluck('slug')->toArray();
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'kategori' => 'required|in:programming,design,business,marketing,data_science,other',
+            'kategori' => 'required|in:' . implode(',', $validKategoris),
             'tipe_kursus' => 'required|in:online,hybrid,offline',
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
