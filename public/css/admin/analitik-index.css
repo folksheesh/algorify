@@ -644,3 +644,18 @@
 .distribusi-card:hover .click-hint {
     opacity: 1;
 }
+
+/* Kursus Row Clickable */
+.kursus-row {
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.kursus-row:hover {
+    background: #F0F4FF !important;
+    transform: scale(1.01);
+}
+
+.kursus-row:active {
+    transform: scale(0.99);
+}

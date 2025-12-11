@@ -26,19 +26,32 @@ class AnalitikController extends Controller
             $gagalCount = Transaksi::where('status', 'expired')->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
 
-            // Top Kursus berdasarkan sort parameter
+            // Top Kursus berdasarkan sort parameter dan filter tahun
             $kursusSort = $request->get('kursus_sort', 'pendapatan_desc'); // default: pendapatan tertinggi
             $kursusPage = $request->get('kursus_page', 1);
+            $kursusYear = $request->get('kursus_year', 'all'); // default: semua tahun
             
-            $topKursusData = \App\Models\Kursus::withCount('enrollments')
+            $topKursusData = \App\Models\Kursus::withCount(['enrollments' => function($query) use ($kursusYear) {
+                    if ($kursusYear !== 'all') {
+                        $query->whereYear('created_at', $kursusYear);
+                    }
+                }])
                 ->get()
-                ->map(function($kursus, $index) {
+                ->map(function($kursus) use ($kursusYear) {
                     // Hitung pendapatan dari transaksi yang success untuk kursus ini
-                    $pendapatan = \App\Models\Transaksi::whereHas('enrollment', function($query) use ($kursus) {
+                    $pendapatanQuery = \App\Models\Transaksi::whereHas('enrollment', function($query) use ($kursus) {
                         $query->where('kursus_id', $kursus->id);
-                    })->where('status', 'success')->sum('jumlah');
+                    })->where('status', 'success');
+                    
+                    // Filter by year if specified
+                    if ($kursusYear !== 'all') {
+                        $pendapatanQuery->whereYear('created_at', $kursusYear);
+                    }
+                    
+                    $pendapatan = $pendapatanQuery->sum('jumlah');
                     
                     return (object)[
+                        'id' => $kursus->id, // Tambahkan ID untuk link ke detail
                         'nama' => $kursus->judul, // Field nama kursus adalah 'judul'
                         'peserta' => $kursus->enrollments_count,
                         'pendapatan' => $pendapatan
@@ -75,6 +88,12 @@ class AnalitikController extends Controller
                 $kursusPage,
                 ['path' => $request->url(), 'query' => $request->except('kursus_page'), 'pageName' => 'kursus_page']
             );
+            
+            // Generate available years untuk filter kursus (dari tahun pertama ada transaksi sampai sekarang)
+            $firstTransactionYear = \App\Models\Transaksi::min('created_at');
+            $startYear = $firstTransactionYear ? date('Y', strtotime($firstTransactionYear)) : 2024;
+            $kursusAvailableYears = range($startYear, date('Y'));
+            rsort($kursusAvailableYears);
 
             // Distribusi Profesi - dari tabel users dengan role peserta (Top 5 + Others)
             $distribusiProfesiRaw = \App\Models\User::role('peserta')
@@ -306,6 +325,8 @@ class AnalitikController extends Controller
                 'gagalCount',
                 'topKursus',
                 'kursusSort',
+                'kursusYear',
+                'kursusAvailableYears',
                 'distribusiProfesi',
                 'distribusiProfesiFull',
                 'distribusiLokasi',

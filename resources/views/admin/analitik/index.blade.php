@@ -214,17 +214,25 @@
                 <div class="table-container" id="top-kursus-section">
                     <div class="table-header">
                         <h2>Tren Kursus</h2>
-                        <form method="GET" action="{{ route('admin.analitik.index') }}#top-kursus-section" style="display: inline-block;">
-                            <input type="hidden" name="search" value="{{ $search }}">
-                            <input type="hidden" name="status" value="{{ $statusFilter }}">
-                            <input type="hidden" name="year" value="{{ $year }}">
-                            <select name="kursus_sort" class="filter-select" onchange="this.form.submit()">
-                                <option value="pendapatan_desc" {{ $kursusSort == 'pendapatan_desc' ? 'selected' : '' }}>Pendapatan Tertinggi</option>
-                                <option value="pendapatan_asc" {{ $kursusSort == 'pendapatan_asc' ? 'selected' : '' }}>Pendapatan Terendah</option>
-                                <option value="peserta_desc" {{ $kursusSort == 'peserta_desc' ? 'selected' : '' }}>Peserta Terbanyak</option>
-                                <option value="peserta_asc" {{ $kursusSort == 'peserta_asc' ? 'selected' : '' }}>Peserta Paling Sedikit</option>
-                            </select>
-                        </form>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <form method="GET" action="{{ route('admin.analitik.index') }}#top-kursus-section" id="kursusFilterForm" style="display: flex; gap: 0.75rem;">
+                                <input type="hidden" name="search" value="{{ $search }}">
+                                <input type="hidden" name="status" value="{{ $statusFilter }}">
+                                <input type="hidden" name="year" value="{{ $year }}">
+                                <select name="kursus_year" class="filter-select" onchange="this.form.submit()">
+                                    <option value="all" {{ $kursusYear == 'all' ? 'selected' : '' }}>Semua Tahun</option>
+                                    @foreach($kursusAvailableYears as $availYear)
+                                        <option value="{{ $availYear }}" {{ $kursusYear == $availYear ? 'selected' : '' }}>Tahun {{ $availYear }}</option>
+                                    @endforeach
+                                </select>
+                                <select name="kursus_sort" class="filter-select" onchange="this.form.submit()">
+                                    <option value="pendapatan_desc" {{ $kursusSort == 'pendapatan_desc' ? 'selected' : '' }}>Pendapatan Tertinggi</option>
+                                    <option value="pendapatan_asc" {{ $kursusSort == 'pendapatan_asc' ? 'selected' : '' }}>Pendapatan Terendah</option>
+                                    <option value="peserta_desc" {{ $kursusSort == 'peserta_desc' ? 'selected' : '' }}>Peserta Terbanyak</option>
+                                    <option value="peserta_asc" {{ $kursusSort == 'peserta_asc' ? 'selected' : '' }}>Peserta Paling Sedikit</option>
+                                </select>
+                            </form>
+                        </div>
                     </div>
                     @if($topKursus->count() > 0)
                     <table class="data-table">
@@ -238,7 +246,7 @@
                         </thead>
                         <tbody>
                             @foreach($topKursus as $kursus)
-                            <tr>
+                            <tr class="kursus-row" onclick="window.location.href='{{ route('kursus.show', $kursus->id) }}'" title="Klik untuk lihat detail kursus">
                                 <td>{{ $kursus->no }}</td>
                                 <td style="font-weight: 500;">{{ $kursus->nama }}</td>
                                 <td>{{ $kursus->peserta }}</td>
