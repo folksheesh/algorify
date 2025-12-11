@@ -246,7 +246,7 @@
                         </thead>
                         <tbody>
                             @foreach($topKursus as $kursus)
-                            <tr class="kursus-row" onclick="window.location.href='{{ route('kursus.show', $kursus->id) }}'" title="Klik untuk lihat detail kursus">
+                            <tr class="kursus-row" onclick="window.location.href='{{ route('admin.pelatihan.show', $kursus->id) }}'" title="Klik untuk lihat detail kursus">
                                 <td>{{ $kursus->no }}</td>
                                 <td style="font-weight: 500;">{{ $kursus->nama }}</td>
                                 <td>{{ $kursus->peserta }}</td>
