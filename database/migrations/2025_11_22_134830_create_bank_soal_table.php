@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignId('kategori_id')->nullable()->constrained('kursus')->onDelete('set null');
             $table->foreignId('kursus_id')->nullable()->constrained('kursus')->onDelete('set null');
             $table->string('lampiran')->nullable();
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->string('created_by', 10)->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

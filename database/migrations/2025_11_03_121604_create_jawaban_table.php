@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('jawaban', function (Blueprint $table) {
             $table->id();
             $table->foreignId('soal_id')->constrained('soal')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('user_id', 10)->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('jawaban'); // Jawaban yang dipilih user (A, B, C, D, atau E)
             $table->enum('status', ['correct', 'incorrect', 'pending'])->default('pending');
             $table->timestamps();

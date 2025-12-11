@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('nilai', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('user_id', 10)->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('kuis_id')->constrained('kuis')->onDelete('cascade');
             $table->decimal('nilai', 5, 2); // Nilai dengan 2 desimal (contoh: 85.50)
             $table->enum('status', ['passed', 'failed', 'pending'])->default('pending');
