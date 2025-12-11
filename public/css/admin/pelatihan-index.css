@@ -30,48 +30,54 @@
 
 
 
-/* SEARCH & FILTER BAR - GRID LAYOUT (ONE ROW, NO OVERLAP) */
+/* SEARCH & FILTER BAR - 90/10 RATIO (SEARCH / FILTERS) */
 .search-filter-wrapper {
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    display: flex;
     gap: 1rem;
-    width: 100%;
     align-items: center;
+    width: 100%;
     box-sizing: border-box;
 }
 
 .search-box {
     position: relative;
-    width: 100%;
+    flex: 0 1 90%;
+    width: 90%;
+    /* allow flex children to shrink and respect container width */
+    min-width: 0;
+    max-width: 100%;
     z-index: 1;
-    grid-column: 1;
 }
 
 .filters-container {
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    flex: 0 1 10%;
+    width: 10%;
     flex-wrap: nowrap;
     justify-content: flex-end;
     z-index: 0;
-    grid-column: 2 / -1;
+    min-width: 140px;
 }
 
 /* RESPONSIVE: TABLET & BELOW */
 @media (max-width: 1024px) {
     .search-filter-wrapper {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
         gap: 0.75rem;
     }
     .search-box {
-        grid-column: 1;
+        flex: 1 1 100%;
         width: 100%;
     }
     .filters-container {
-        grid-column: 1;
+        flex: 1 1 100%;
         width: 100%;
         justify-content: flex-start;
         flex-wrap: wrap;
+        min-width: auto;
     }
 }
 
@@ -144,6 +150,8 @@
 
 .search-input {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 0.875rem 1rem 0.875rem 3rem;
     border: 2px solid #E2E8F0;
     border-radius: 12px;
