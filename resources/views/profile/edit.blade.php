@@ -61,8 +61,10 @@
 
                             <div class="photo-section">
                                 <div class="profile-avatar">
-                                    @if($user->foto_profil)
-                                        <img src="{{ asset('storage/' . $user->foto_profil) }}" alt="Foto Profil" id="preview-image">
+                                    @if(session()->has('temp_profile_photo') && \Storage::disk('public')->exists(session('temp_profile_photo')))
+                                        <img src="{{ asset('storage/' . session('temp_profile_photo')) }}?v={{ time() }}" alt="Foto Profil" id="preview-image">
+                                    @elseif($user->foto_profil && \Storage::disk('public')->exists($user->foto_profil))
+                                        <img src="{{ asset('storage/' . $user->foto_profil) }}?v={{ time() }}" alt="Foto Profil" id="preview-image">
                                     @else
                                         <span id="avatar-initial">{{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $user->name)[1] ?? '', 0, 1)) }}</span>
                                     @endif
@@ -164,24 +166,71 @@
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
 
-        // Preview foto profil
+        // Load foto dari localStorage saat halaman dimuat
+        (function() {
+            const savedPhoto = localStorage.getItem('temp_profile_photo');
+            console.log('Loading saved photo:', savedPhoto ? 'Found' : 'Not found');
+            
+            if (savedPhoto) {
+                const avatar = document.querySelector('.profile-avatar');
+                const initial = document.getElementById('avatar-initial');
+                let existingImg = document.getElementById('preview-image');
+                
+                if (existingImg) {
+                    existingImg.src = savedPhoto;
+                } else {
+                    if (initial) initial.style.display = 'none';
+                    const img = document.createElement('img');
+                    img.id = 'preview-image';
+                    img.src = savedPhoto;
+                    img.alt = 'Foto Profil';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '50%';
+                    avatar.appendChild(img);
+                }
+            }
+        })();
+
+        // Preview foto profil saat pilih file
         document.getElementById('foto_profil').addEventListener('change', function(e) {
             const file = e.target.files[0];
+            console.log('File selected:', file ? file.name : 'none');
+            
             if (file) {
+                // Validasi ukuran file (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar. Maksimal 2MB.');
+                    return;
+                }
+                
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function(event) {
                     const avatar = document.querySelector('.profile-avatar');
                     const initial = document.getElementById('avatar-initial');
-                    const existingImg = document.getElementById('preview-image');
+                    let existingImg = document.getElementById('preview-image');
+                    
+                    // Simpan foto ke localStorage
+                    try {
+                        localStorage.setItem('temp_profile_photo', event.target.result);
+                        console.log('Photo saved to localStorage');
+                    } catch(err) {
+                        console.error('Failed to save to localStorage:', err);
+                    }
                     
                     if (existingImg) {
-                        existingImg.src = e.target.result;
+                        existingImg.src = event.target.result;
                     } else {
-                        if (initial) initial.remove();
+                        if (initial) initial.style.display = 'none';
                         const img = document.createElement('img');
                         img.id = 'preview-image';
-                        img.src = e.target.result;
+                        img.src = event.target.result;
                         img.alt = 'Foto Profil';
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '50%';
                         avatar.appendChild(img);
                     }
                 };

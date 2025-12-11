@@ -28,11 +28,12 @@
         <div class="topbar-user-menu">
             <button class="topbar-user-btn" onclick="toggleUserDropdown()">
                 @if(Auth::user()->foto_profil)
-                    <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->name }}" class="topbar-avatar">
+                    <img src="{{ asset('storage/' . Auth::user()->foto_profil) }}" alt="{{ Auth::user()->name }}" class="topbar-avatar" id="topbar-avatar-img">
                 @else
-                    <div class="topbar-avatar-placeholder">
+                    <div class="topbar-avatar-placeholder" id="topbar-avatar-placeholder">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
+                    <img src="" alt="{{ Auth::user()->name }}" class="topbar-avatar" id="topbar-avatar-img" style="display: none;">
                 @endif
                 <span class="topbar-username">{{ Auth::user()->name }}</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -413,6 +414,23 @@
 </style>
 
 <script>
+    // Load foto profil dari localStorage untuk topbar
+    (function() {
+        const savedPhoto = localStorage.getItem('temp_profile_photo');
+        if (savedPhoto) {
+            const avatarImg = document.getElementById('topbar-avatar-img');
+            const avatarPlaceholder = document.getElementById('topbar-avatar-placeholder');
+            
+            if (avatarImg) {
+                avatarImg.src = savedPhoto;
+                avatarImg.style.display = 'block';
+            }
+            if (avatarPlaceholder) {
+                avatarPlaceholder.style.display = 'none';
+            }
+        }
+    })();
+
     function toggleUserDropdown() {
         const dropdown = document.getElementById('userDropdown');
         dropdown.classList.toggle('show');
