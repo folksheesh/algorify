@@ -52,6 +52,9 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Refresh data user untuk memastikan data terbaru
+        $user->fresh();
+
         return response()->json([
             'message' => 'Profile updated successfully',
             'user' => $user

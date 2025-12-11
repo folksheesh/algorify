@@ -15,14 +15,28 @@ class KursusController extends Controller
         // Ambil data kursus beserta data pengajar, hanya yang statusnya published
         $query = Kursus::with('pengajar')->where('status', 'published');
 
-        // Filter berdasarkan kategori (string) jika parameter kategori ada dan tidak kosong
+        // Filter berdasarkan kategori (supports multiple values separated by comma)
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $kategoriValues = array_filter(explode(',', $request->kategori));
+            if (count($kategoriValues) > 0) {
+                $query->whereIn('kategori', $kategoriValues);
+            }
         }
 
-        // Filter berdasarkan tipe kursus jika parameter tipe_kursus ada dan tidak kosong
+        // Filter berdasarkan tipe kursus (supports multiple values separated by comma)
         if ($request->filled('tipe_kursus')) {
-            $query->where('tipe_kursus', $request->tipe_kursus);
+            $tipeValues = array_filter(explode(',', $request->tipe_kursus));
+            if (count($tipeValues) > 0) {
+                $query->whereIn('tipe_kursus', $tipeValues);
+            }
+        }
+
+        // Filter berdasarkan pengajar (supports multiple values separated by comma)
+        if ($request->filled('pengajar_id')) {
+            $pengajarValues = array_filter(explode(',', $request->pengajar_id));
+            if (count($pengajarValues) > 0) {
+                $query->whereIn('user_id', $pengajarValues);
+            }
         }
 
         // Pencarian berdasarkan judul, deskripsi, atau deskripsi singkat (case-insensitive)
@@ -38,18 +52,14 @@ class KursusController extends Controller
         // Urutkan dari yang terbaru dan paginasi 9 data per halaman
         $kursus = $query->latest()->paginate(9);
         
-        // Dummy categories (tidak perlu query dari DB)
-        $categories = collect([
-            (object)['id' => 1, 'nama_kategori' => 'Programming'],
-            (object)['id' => 2, 'nama_kategori' => 'Design'],
-            (object)['id' => 3, 'nama_kategori' => 'Business'],
-            (object)['id' => 4, 'nama_kategori' => 'Marketing'],
-            (object)['id' => 5, 'nama_kategori' => 'Data Science'],
-            (object)['id' => 6, 'nama_kategori' => 'Other'],
-        ]);
+        // Get categories from database
+        $kategoris = KategoriPelatihan::orderBy('nama_kategori', 'asc')->get();
+        
+        // Get all pengajar with role 'pengajar'
+        $pengajars = \App\Models\User::role('pengajar')->get();
 
-        // Tampilkan ke view kursus.index dengan data kursus dan kategori
-        return view('kursus.index', compact('kursus', 'categories'));
+        // Tampilkan ke view kursus.index dengan data kursus, kategori, dan pengajar
+        return view('kursus.index', compact('kursus', 'kategoris', 'pengajars'));
     }
 
     // Menampilkan detail satu kursus berdasarkan id

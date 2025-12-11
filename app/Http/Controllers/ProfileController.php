@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse; // Untuk response redirect
 use Illuminate\Http\Request; // Untuk request HTTP
 use Illuminate\Support\Facades\Auth; // Untuk autentikasi
 use Illuminate\Support\Facades\Redirect; // Untuk redirect
+use Illuminate\Support\Facades\Storage; // Untuk storage
 use Illuminate\View\View; // Untuk view
 
 // Controller ini menangani fitur profil user
@@ -17,9 +18,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        // Ambil data user terbaru dari database
+        $user = $request->user()->fresh();
+
         // Kirim data user ke view profile.index
         return view('profile.index', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -41,13 +45,14 @@ class ProfileController extends Controller
 
         // Proses upload foto profil baru
         if ($request->hasFile('foto_profil')) {
-            // Hapus foto lama jika ada
-            if ($user->foto_profil && \Storage::disk('public')->exists($user->foto_profil)) {
-                \Storage::disk('public')->delete($user->foto_profil);
-            }
-            // Simpan foto baru
+            // Simpan foto baru ke storage
             $path = $request->file('foto_profil')->store('profile-photos', 'public');
-            $user->foto_profil = $path;
+
+            // Simpan path foto ke session untuk ditampilkan tanpa menyimpan ke database
+            $request->session()->put('temp_profile_photo', $path);
+
+            // Jika user ingin menyimpan foto ke database (opsional), uncomment baris berikut:
+            // $user->foto_profil = $path;
         }
 
         // Proses ganti password
@@ -61,7 +66,14 @@ class ProfileController extends Controller
         }
 
         // Simpan perubahan ke database
-        $user->save(); 
+        $user->save();
+
+        // Refresh data user dari database untuk memastikan data terbaru
+        $user = $user->fresh();
+
+        // Update authenticated user di session
+        $request->session()->put('user', $user);
+        Auth::setUser($user);
 
         // Redirect ke halaman edit profil dengan status sukses
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
