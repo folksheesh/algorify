@@ -83,22 +83,34 @@
 
                             <div class="form-group">
                                 <label class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-input" name="name" value="{{ old('name', $user->name) }}" required>
+                                <input type="text" class="form-input @error('name') is-invalid @enderror" name="name" value="{{ old('name', $user->name) }}" required>
+                                @error('name')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-input" name="email" value="{{ old('email', $user->email) }}" required>
+                                <input type="email" class="form-input @error('email') is-invalid @enderror" name="email" value="{{ old('email', $user->email) }}" required>
+                                @error('email')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Nomor Telepon</label>
-                                <input type="tel" class="form-input" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812-3456-7890">
+                                <input type="tel" class="form-input @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812-3456-7890">
+                                @error('phone')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Bio</label>
-                                <textarea class="form-input form-textarea" name="bio" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio', $user->bio ?? '') }}</textarea>
+                                <textarea class="form-input form-textarea @error('bio') is-invalid @enderror" name="bio" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio', $user->bio ?? '') }}</textarea>
+                                @error('bio')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="card-footer">
@@ -130,17 +142,26 @@
 
                             <div class="form-group">
                                 <label class="form-label">Password Saat Ini</label>
-                                <input type="password" class="form-input" name="current_password" placeholder="Masukkan password saat ini">
+                                <input type="password" class="form-input @error('current_password') is-invalid @enderror" name="current_password" placeholder="Masukkan password saat ini">
+                                @error('current_password')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Password Baru</label>
-                                <input type="password" class="form-input" name="password" placeholder="Masukkan password baru">
+                                <input type="password" class="form-input @error('password') is-invalid @enderror" name="password" placeholder="Masukkan password baru">
+                                @error('password')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Konfirmasi Password Baru</label>
-                                <input type="password" class="form-input" name="password_confirmation" placeholder="Konfirmasi password baru">
+                                <input type="password" class="form-input @error('password_confirmation') is-invalid @enderror" name="password_confirmation" placeholder="Konfirmasi password baru">
+                                @error('password_confirmation')
+                                    <span class="field-error">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="card-footer">
