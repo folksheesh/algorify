@@ -208,6 +208,83 @@ body {
     margin-bottom: 8px;
 }
 
+.instruction-card {
+    margin-top: 30px;
+    border: 1px solid #e2e8f0;
+    padding: 28px;
+}
+
+.instruction-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 24px;
+    align-items: flex-start;
+}
+
+.instruction-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: #94a3b8;
+    margin: 0 0 6px 0;
+}
+
+.instruction-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.instruction-status {
+    background: #f1f5ff;
+    color: #3949ab;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.instruction-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.instruction-step-card {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    box-shadow: inset 0 0 0 1px #e2e8f0;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5d3fff, #7c3aed);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.step-title {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.step-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
 /* Topbar Layout Adjustment */
 .dashboard-container.with-topbar {
     padding-top: 72px;
@@ -231,6 +308,10 @@ body {
 
     .dashboard-container.with-topbar .main-content {
         margin-left: 0;
+    }
+
+    .instruction-steps {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -273,6 +354,19 @@ body {
         padding: 12px 24px;
         font-size: 15px;
         max-width: 100%;
+    }
+
+    .instruction-card {
+        padding: 20px;
+    }
+
+    .instruction-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .instruction-steps {
+        grid-template-columns: 1fr;
     }
 }
 

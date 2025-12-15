@@ -26,35 +26,74 @@ class AnalitikController extends Controller
             $gagalCount = Transaksi::where('status', 'expired')->count();
             $tingkatKeberhasilan = $totalTransaksi > 0 ? round(($lunasCount / $totalTransaksi) * 100, 1) : 0;
 
-            // Top Kursus berdasarkan sort parameter
-            $topKursusData = \App\Models\Kursus::withCount('enrollments')
+            // Top Kursus berdasarkan sort parameter dan filter tahun
+            $kursusSort = $request->get('kursus_sort', 'pendapatan_desc'); // default: pendapatan tertinggi
+            $kursusPage = $request->get('kursus_page', 1);
+            $kursusYear = $request->get('kursus_year', 'all'); // default: semua tahun
+            
+            $topKursusData = \App\Models\Kursus::withCount(['enrollments' => function($query) use ($kursusYear) {
+                    if ($kursusYear !== 'all') {
+                        $query->whereYear('created_at', $kursusYear);
+                    }
+                }])
                 ->get()
-                ->map(function($kursus, $index) {
+                ->map(function($kursus) use ($kursusYear) {
                     // Hitung pendapatan dari transaksi yang success untuk kursus ini
-                    $pendapatan = \App\Models\Transaksi::whereHas('enrollment', function($query) use ($kursus) {
+                    $pendapatanQuery = \App\Models\Transaksi::whereHas('enrollment', function($query) use ($kursus) {
                         $query->where('kursus_id', $kursus->id);
-                    })->where('status', 'success')->sum('jumlah');
+                    })->where('status', 'success');
+                    
+                    // Filter by year if specified
+                    if ($kursusYear !== 'all') {
+                        $pendapatanQuery->whereYear('created_at', $kursusYear);
+                    }
+                    
+                    $pendapatan = $pendapatanQuery->sum('jumlah');
                     
                     return (object)[
+                        'id' => $kursus->id, // Tambahkan ID untuk link ke detail
                         'nama' => $kursus->judul, // Field nama kursus adalah 'judul'
                         'peserta' => $kursus->enrollments_count,
                         'pendapatan' => $pendapatan
                     ];
                 });
             
-            // Sort based on parameter
-            switch($sortBy) {
-                case 'peserta':
+            // Sort based on parameter (support asc/desc)
+            switch($kursusSort) {
+                case 'peserta_desc':
                     $topKursusData = $topKursusData->sortByDesc('peserta');
                     break;
-                default:
+                case 'peserta_asc':
+                    $topKursusData = $topKursusData->sortBy('peserta');
+                    break;
+                case 'pendapatan_asc':
+                    $topKursusData = $topKursusData->sortBy('pendapatan');
+                    break;
+                default: // pendapatan_desc
                     $topKursusData = $topKursusData->sortByDesc('pendapatan');
             }
             
-            $topKursus = $topKursusData->take(5)->values()->map(function($item, $index) {
+            // Add numbering dan pagination manual
+            $topKursusData = $topKursusData->values()->map(function($item, $index) {
                 $item->no = $index + 1;
                 return $item;
             });
+            
+            $kursusPerPage = 5;
+            $kursusTotal = $topKursusData->count();
+            $topKursus = new \Illuminate\Pagination\LengthAwarePaginator(
+                $topKursusData->forPage($kursusPage, $kursusPerPage),
+                $kursusTotal,
+                $kursusPerPage,
+                $kursusPage,
+                ['path' => $request->url(), 'query' => $request->except('kursus_page'), 'pageName' => 'kursus_page']
+            );
+            
+            // Generate available years untuk filter kursus (dari tahun pertama ada transaksi sampai sekarang)
+            $firstTransactionYear = \App\Models\Transaksi::min('created_at');
+            $startYear = $firstTransactionYear ? date('Y', strtotime($firstTransactionYear)) : 2024;
+            $kursusAvailableYears = range($startYear, date('Y'));
+            rsort($kursusAvailableYears);
 
             // Distribusi Profesi - dari tabel users dengan role peserta (Top 5 + Others)
             $distribusiProfesiRaw = \App\Models\User::role('peserta')
@@ -67,7 +106,16 @@ class AnalitikController extends Controller
             
             $totalProfesi = $distribusiProfesiRaw->sum('jumlah');
             
-            // Take top 5 and group the rest as "Others"
+            // Data lengkap untuk popup (tanpa "Lainnya")
+            $distribusiProfesiFull = $distribusiProfesiRaw->map(function($item) use ($totalProfesi) {
+                return (object)[
+                    'profesi' => $item->profesi,
+                    'jumlah' => $item->jumlah,
+                    'percentage' => $totalProfesi > 0 ? round(($item->jumlah / $totalProfesi) * 100, 1) : 0
+                ];
+            });
+            
+            // Take top 5 and group the rest as "Others" for chart
             $top5Profesi = $distribusiProfesiRaw->take(5);
             $othersCount = $distribusiProfesiRaw->skip(5)->sum('jumlah');
             
@@ -99,7 +147,16 @@ class AnalitikController extends Controller
                 
             $totalLokasi = $distribusiLokasiRaw->sum('jumlah');
             
-            // Take top 5 and group the rest as "Others"
+            // Data lengkap untuk popup (tanpa "Lainnya")
+            $distribusiLokasiFull = $distribusiLokasiRaw->map(function($item) use ($totalLokasi) {
+                return (object)[
+                    'lokasi' => $item->lokasi,
+                    'jumlah' => $item->jumlah,
+                    'percentage' => $totalLokasi > 0 ? round(($item->jumlah / $totalLokasi) * 100, 1) : 0
+                ];
+            });
+            
+            // Take top 5 and group the rest as "Others" for chart
             $top5Lokasi = $distribusiLokasiRaw->take(5);
             $othersCountLokasi = $distribusiLokasiRaw->skip(5)->sum('jumlah');
             
@@ -153,17 +210,56 @@ class AnalitikController extends Controller
             // Apply search filter - case insensitive, partial match
             if ($search) {
                 $searchLower = strtolower(trim($search));
-                $studentsQuery->where(function($query) use ($searchLower) {
-                    $query->whereHas('user', function($q) use ($searchLower) {
-                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . $searchLower . '%'])
-                          ->orWhereRaw('LOWER(email) LIKE ?', ['%' . $searchLower . '%'])
-                          ->orWhereRaw('LOWER(id) LIKE ?', ['%' . $searchLower . '%']);
-                    })
-                    ->orWhereHas('kursus', function($q) use ($searchLower) {
-                        $q->whereRaw('LOWER(judul) LIKE ?', ['%' . $searchLower . '%']);
-                    })
-                    ->orWhereRaw('LOWER(CAST(tanggal_daftar AS CHAR)) LIKE ?', ['%' . $searchLower . '%']);
-                });
+                
+                // Map nama bulan Indonesia ke nomor bulan
+                $bulanMap = [
+                    'januari' => 1, 'jan' => 1,
+                    'februari' => 2, 'feb' => 2,
+                    'maret' => 3, 'mar' => 3,
+                    'april' => 4, 'apr' => 4,
+                    'mei' => 5,
+                    'juni' => 6, 'jun' => 6,
+                    'juli' => 7, 'jul' => 7,
+                    'agustus' => 8, 'agu' => 8, 'aug' => 8,
+                    'september' => 9, 'sep' => 9,
+                    'oktober' => 10, 'okt' => 10, 'oct' => 10,
+                    'november' => 11, 'nov' => 11,
+                    'desember' => 12, 'des' => 12, 'dec' => 12
+                ];
+                
+                // Cek apakah search term adalah nama bulan (exact match)
+                $searchMonth = null;
+                if (isset($bulanMap[$searchLower])) {
+                    $searchMonth = $bulanMap[$searchLower];
+                }
+                
+                // Jika search term adalah nama bulan, filter berdasarkan bulan saja
+                if ($searchMonth) {
+                    $studentsQuery->where(function($query) use ($searchMonth) {
+                        // Filter by month dari tanggal_daftar atau created_at
+                        $query->where(function($q) use ($searchMonth) {
+                            $q->whereNotNull('tanggal_daftar')
+                              ->whereMonth('tanggal_daftar', $searchMonth);
+                        })->orWhere(function($q) use ($searchMonth) {
+                            $q->whereNull('tanggal_daftar')
+                              ->whereMonth('created_at', $searchMonth);
+                        });
+                    });
+                } else {
+                    // Jika bukan nama bulan, search berdasarkan text biasa
+                    $studentsQuery->where(function($query) use ($searchLower) {
+                        $query->whereHas('user', function($q) use ($searchLower) {
+                            $q->whereRaw('LOWER(name) LIKE ?', ['%' . $searchLower . '%'])
+                              ->orWhereRaw('LOWER(email) LIKE ?', ['%' . $searchLower . '%'])
+                              ->orWhereRaw('LOWER(CAST(id AS CHAR)) LIKE ?', ['%' . $searchLower . '%']);
+                        })
+                        ->orWhereHas('kursus', function($q) use ($searchLower) {
+                            $q->whereRaw('LOWER(judul) LIKE ?', ['%' . $searchLower . '%']);
+                        })
+                        ->orWhereRaw('LOWER(CAST(tanggal_daftar AS CHAR)) LIKE ?', ['%' . $searchLower . '%'])
+                        ->orWhereRaw('LOWER(CAST(created_at AS CHAR)) LIKE ?', ['%' . $searchLower . '%']);
+                    });
+                }
             }
             
             // Apply status filter - handle both Indonesian and English status
@@ -183,8 +279,28 @@ class AnalitikController extends Controller
                 }
             }
             
-            // Pagination dengan 10 items per page
-            $students = $studentsQuery->paginate(10);
+            // Get data dan sort manual
+            $students = $studentsQuery->get()
+                ->sortBy(function($item) {
+                    // Sort by nama (primary), then by tanggal (secondary)
+                    $name = $item->user->name ?? 'zzz';
+                    $date = $item->tanggal_daftar ?? $item->created_at;
+                    $dateStr = $date ? $date->format('Y-m-d H:i:s') : '9999-12-31';
+                    return $name . '_' . $dateStr;
+                })
+                ->values();
+            
+            // Manual pagination
+            $page = $request->get('page', 1);
+            $perPage = 10;
+            $total = $students->count();
+            $students = new \Illuminate\Pagination\LengthAwarePaginator(
+                $students->forPage($page, $perPage),
+                $total,
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
 
             // Grafik Pendapatan per Bulan (tahun dipilih) - PostgreSQL compatible, status success
             $revenueByMonth = [];
@@ -208,8 +324,13 @@ class AnalitikController extends Controller
                 'pendingCount',
                 'gagalCount',
                 'topKursus',
+                'kursusSort',
+                'kursusYear',
+                'kursusAvailableYears',
                 'distribusiProfesi',
+                'distribusiProfesiFull',
                 'distribusiLokasi',
+                'distribusiLokasiFull',
                 'distribusiUmur',
                 'students',
                 'revenueByMonth',
@@ -223,7 +344,8 @@ class AnalitikController extends Controller
             Log::error('Error fetching analytics: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
             
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data analitik');
+            // Abort dengan error page, jangan redirect ke route yang sama
+            abort(500, 'Terjadi kesalahan saat memuat data analitik: ' . $e->getMessage());
         }
     }
 }

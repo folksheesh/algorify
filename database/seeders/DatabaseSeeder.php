@@ -1,3 +1,7 @@
+        // Clone struktur pelatihan Laravel ke semua kursus lain yang kosong
+        $this->call([
+            PelatihanCloneLaravelSeeder::class,
+        ]);
 <?php
 
 namespace Database\Seeders;
@@ -35,6 +39,21 @@ class DatabaseSeeder extends Seeder
         // Seed kursus
         $this->call([
             KursusSeeder::class,
+        ]);
+
+        // Seed 1/4 kursus dengan modul/materi/video ringkas
+        $this->call([
+            PelatihanQuarterSeeder::class,
+        ]);
+
+        // Seed sisa 3/4 kursus dengan modul/materi/video ringkas
+        $this->call([
+            PelatihanRemainingSeeder::class,
+        ]);
+
+        // Pastikan semua kursus punya modul/materi/video dummy jika masih kosong
+        $this->call([
+            PelatihanFillAllSeeder::class,
         ]);
 
         // Seed Web Development content (Modul, Video, Materi, Ujian, Soal)
