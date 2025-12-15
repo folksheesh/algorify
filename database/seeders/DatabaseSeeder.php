@@ -1,9 +1,4 @@
-        // Clone struktur pelatihan Laravel ke semua kursus lain yang kosong
-        $this->call([
-            PelatihanCloneLaravelSeeder::class,
-        ]);
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\User;

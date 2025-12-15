@@ -364,7 +364,12 @@
                 <input type="hidden" name="kursus_id" value="{{ $kursus->id }}">
                 <input type="hidden" name="modul_id" id="modulId">
                 
-                <div class="modal-body">
+                <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
+                                        <div class="form-group">
+                                            <label class="form-label">YouTube URL (opsional)</label>
+                                            <input type="url" name="youtube_url" id="videoYoutubeUrl" class="form-input" placeholder="https://youtube.com/watch?v=xxxx">
+                                            <small style="color:#64748B;font-size:0.85em;">Jika diisi, video akan diambil dari YouTube dan file upload akan diabaikan.</small>
+                                        </div>
                     <div class="form-group">
                         <label class="form-label">Judul Modul *</label>
                         <input type="text" name="judul" id="judul" class="form-input" placeholder="contoh: Pengenalan Dasar UI/UX Design" required>
@@ -411,7 +416,7 @@
                         <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi" id="videoDeskripsi" class="form-input" rows="3" placeholder="Deskripsi singkat tentang video ini"></textarea>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="videoFileGroup">
                         <label class="form-label">Upload File Video *</label>
                         <div class="upload-area" onclick="document.getElementById('videoFile').click()">
                             <div class="upload-icon" id="videoIcon">
@@ -429,7 +434,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeVideoModal()">Batal</button>
-                    <button type="submit" class="btn-submit">Simpan</button>
+                    <button type="submit" class="btn-submit" id="btnVideoSubmit">
+                        <span class="btn-text">Simpan</span>
+                        <span class="btn-loading" style="display:none;margin-left:8px;vertical-align:middle;">
+                            <svg width="18" height="18" viewBox="0 0 50 50" style="display:inline-block;vertical-align:middle;">
+                                <circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.4 31.4" stroke-dashoffset="0">
+                                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+                                </circle>
+                            </svg>
+                        </span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -588,6 +602,18 @@
     <script>
         // Check if there's a modul to open from URL parameter
         document.addEventListener('DOMContentLoaded', function() {
+                        // Hide file upload if YouTube URL is filled
+                        const youtubeInput = document.getElementById('videoYoutubeUrl');
+                        const fileGroup = document.getElementById('videoFileGroup');
+                        if (youtubeInput && fileGroup) {
+                            youtubeInput.addEventListener('input', function() {
+                                if (this.value.trim() !== '') {
+                                    fileGroup.style.display = 'none';
+                                } else {
+                                    fileGroup.style.display = '';
+                                }
+                            });
+                        }
             const urlParams = new URLSearchParams(window.location.search);
             const openModulId = urlParams.get('open_modul');
             
@@ -828,15 +854,24 @@
             // Video form submit
             const formVideo = document.getElementById('formVideo');
             if (formVideo) {
+                const btnVideoSubmit = document.getElementById('btnVideoSubmit');
+                const btnText = btnVideoSubmit.querySelector('.btn-text');
+                const btnLoading = btnVideoSubmit.querySelector('.btn-loading');
                 formVideo.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    btnVideoSubmit.disabled = true;
+                    btnText.style.display = 'none';
+                    btnLoading.style.display = 'inline-block';
                     const formData = new FormData(this);
                     const method = document.getElementById('videoMethod').value;
-                    
+                    const youtubeUrl = document.getElementById('videoYoutubeUrl').value.trim();
+                    if (youtubeUrl !== '') {
+                        // Remove file from formData if present
+                        formData.delete('file_video');
+                    }
                     if (method === 'PUT') {
                         formData.append('_method', 'PUT');
                     }
-                    
                     fetch(this.action, {
                         method: 'POST',
                         body: formData,
@@ -844,10 +879,18 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        btnVideoSubmit.disabled = false;
+                        btnText.style.display = '';
+                        btnLoading.style.display = 'none';
                         if (data.success) {
                             closeVideoModal();
                             location.reload();
                         }
+                    })
+                    .catch(() => {
+                        btnVideoSubmit.disabled = false;
+                        btnText.style.display = '';
+                        btnLoading.style.display = 'none';
                     });
                 });
             }

@@ -390,6 +390,7 @@
     flex: 1 1 auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    max-height: 50vh;
 }
 
 .modal-body form {
