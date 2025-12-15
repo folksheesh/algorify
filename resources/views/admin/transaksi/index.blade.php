@@ -144,7 +144,7 @@
                             </thead>
                             <tbody>
                                 @foreach($transaksi as $item)
-                                <tr class="table-row-hover">
+                                <tr class="table-row-hover" onclick="showTransaksiDetail({{ $item->id }})" data-transaksi-id="{{ $item->id }}">
                                     <td class="transaction-code">{{ $item->kode_transaksi }}</td>
                                     <td>{{ $item->tanggal_transaksi ? $item->tanggal_transaksi->format('d M Y, H:i') : '-' }}</td>
                                     <td>
@@ -298,6 +298,32 @@
                         </div>
                     @endif
                 </div>
+
+                <!-- Modal Detail Transaksi -->
+                <div class="modal-overlay" id="transaksiDetailModal">
+                    <div class="modal-detail">
+                        <div class="modal-detail-header">
+                            <div>
+                                <h3>Detail Transaksi</h3>
+                                <p class="modal-subtitle">Informasi lengkap transaksi</p>
+                            </div>
+                            <button type="button" class="modal-close" onclick="closeTransaksiDetail()">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="modal-detail-body" id="transaksiDetailContent">
+                            <div class="detail-loading">
+                                <svg class="spinner" viewBox="0 0 50 50">
+                                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                                </svg>
+                                <p>Memuat detail transaksi...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -306,6 +332,262 @@
 @push('scripts')
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
+        
+        // ===========================
+        // MODAL DETAIL TRANSAKSI
+        // ===========================
+        
+        const transaksiData = {!! json_encode($transaksi->map(function($item) {
+            return [
+                'id' => $item->id,
+                'kode_transaksi' => $item->kode_transaksi,
+                'tanggal_transaksi' => $item->tanggal_transaksi ? $item->tanggal_transaksi->format('d M Y, H:i') : '-',
+                'tanggal_kadaluarsa' => $item->tanggal_kadaluarsa ? $item->tanggal_kadaluarsa->format('d M Y, H:i') : '-',
+                'jumlah' => $item->jumlah,
+                'jumlah_formatted' => 'Rp ' . number_format($item->jumlah, 0, ',', '.'),
+                'metode_pembayaran' => $item->metode_pembayaran,
+                'metode_pembayaran_label' => ucfirst(str_replace('_', ' ', $item->metode_pembayaran)),
+                'status' => $item->status,
+                'status_label' => $item->status == 'success' ? 'Lunas' : ($item->status == 'pending' ? 'Pending' : 'Gagal'),
+                'user_name' => $item->user->name ?? 'N/A',
+                'user_email' => $item->user->email ?? 'N/A',
+                'kursus_judul' => $item->kursus->judul ?? 'N/A',
+                'kursus_harga' => $item->kursus ? 'Rp ' . number_format($item->kursus->harga, 0, ',', '.') : 'N/A',
+                'snap_token' => $item->snap_token ?? null,
+                'payment_url' => $item->payment_url ?? null,
+                'external_id' => $item->external_id ?? null,
+                'created_at' => $item->created_at->format('d M Y, H:i'),
+                'updated_at' => $item->updated_at->format('d M Y, H:i'),
+            ];
+        })->values()) !!};
+        
+        function showTransaksiDetail(transaksiId) {
+            const modal = document.getElementById('transaksiDetailModal');
+            const contentDiv = document.getElementById('transaksiDetailContent');
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Find transaction data
+            const transaksi = transaksiData.find(t => t.id === transaksiId);
+            
+            if (!transaksi) {
+                contentDiv.innerHTML = `
+                    <div class="detail-error">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        <h3>Data tidak ditemukan</h3>
+                        <p>Transaksi tidak ditemukan dalam sistem</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Build status badge HTML
+            let statusBadgeHtml = '';
+            if (transaksi.status === 'success') {
+                statusBadgeHtml = `
+                    <span class="status-badge success" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Lunas
+                    </span>
+                `;
+            } else if (transaksi.status === 'pending') {
+                statusBadgeHtml = `
+                    <span class="status-badge pending" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        Pending
+                    </span>
+                `;
+            } else {
+                statusBadgeHtml = `
+                    <span class="status-badge failed" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        Gagal
+                    </span>
+                `;
+            }
+            
+            // Build payment method icon
+            let metodeIcon = '';
+            if (transaksi.metode_pembayaran === 'bank_transfer') {
+                metodeIcon = `
+                    <svg viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px; color: #3B82F6;">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                    </svg>
+                `;
+            } else if (transaksi.metode_pembayaran === 'qris') {
+                metodeIcon = `
+                    <svg viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px; color: #10B981;">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1z" clip-rule="evenodd"/>
+                    </svg>
+                `;
+            } else {
+                metodeIcon = `
+                    <svg viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px; color: #8B5CF6;">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                    </svg>
+                `;
+            }
+            
+            // Populate modal content
+            contentDiv.innerHTML = `
+                <div class="detail-sections">
+                    <!-- Status Section -->
+                    <div class="detail-status-section">
+                        <div class="detail-status-header">
+                            <div>
+                                <h3>${transaksi.kode_transaksi}</h3>
+                                <p class="detail-date">${transaksi.tanggal_transaksi}</p>
+                            </div>
+                            ${statusBadgeHtml}
+                        </div>
+                        <div class="detail-amount">
+                            <span class="detail-amount-label">Total Pembayaran</span>
+                            <span class="detail-amount-value">${transaksi.jumlah_formatted}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Info Grid -->
+                    <div class="detail-info-grid">
+                        <!-- Informasi Transaksi -->
+                        <div class="detail-card">
+                            <div class="detail-card-header">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <h4>Informasi Transaksi</h4>
+                            </div>
+                            <div class="detail-card-content">
+                                <div class="detail-row">
+                                    <span class="detail-label">Kode Transaksi</span>
+                                    <span class="detail-value">${transaksi.kode_transaksi}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Metode Pembayaran</span>
+                                    <span class="detail-value" style="display: flex; align-items: center; gap: 0.5rem;">
+                                        ${metodeIcon}
+                                        ${transaksi.metode_pembayaran_label}
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Tanggal Transaksi</span>
+                                    <span class="detail-value">${transaksi.tanggal_transaksi}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Tanggal Kadaluarsa</span>
+                                    <span class="detail-value">${transaksi.tanggal_kadaluarsa}</span>
+                                </div>
+                                ${transaksi.external_id ? `
+                                <div class="detail-row">
+                                    <span class="detail-label">External ID</span>
+                                    <span class="detail-value" style="font-family: monospace; font-size: 0.8125rem;">${transaksi.external_id}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Peserta -->
+                        <div class="detail-card">
+                            <div class="detail-card-header">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
+                                <h4>Informasi Peserta</h4>
+                            </div>
+                            <div class="detail-card-content">
+                                <div class="detail-row">
+                                    <span class="detail-label">Nama Lengkap</span>
+                                    <span class="detail-value">${transaksi.user_name}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Email</span>
+                                    <span class="detail-value">${transaksi.user_email}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Kursus -->
+                        <div class="detail-card">
+                            <div class="detail-card-header">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                </svg>
+                                <h4>Informasi Kursus</h4>
+                            </div>
+                            <div class="detail-card-content">
+                                <div class="detail-row">
+                                    <span class="detail-label">Judul Kursus</span>
+                                    <span class="detail-value">${transaksi.kursus_judul}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Harga Kursus</span>
+                                    <span class="detail-value">${transaksi.kursus_harga}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Sistem -->
+                        <div class="detail-card">
+                            <div class="detail-card-header">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <h4>Informasi Sistem</h4>
+                            </div>
+                            <div class="detail-card-content">
+                                <div class="detail-row">
+                                    <span class="detail-label">Dibuat Pada</span>
+                                    <span class="detail-value">${transaksi.created_at}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Terakhir Update</span>
+                                    <span class="detail-value">${transaksi.updated_at}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function closeTransaksiDetail() {
+            const modal = document.getElementById('transaksiDetailModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('transaksiDetailModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTransaksiDetail();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('transaksiDetailModal');
+                if (modal.classList.contains('active')) {
+                    closeTransaksiDetail();
+                }
+            }
+        });
+        
+        // ===========================
+        // SEARCH AND FILTER
+        // ===========================
         
         // Search and filter functionality - Server-side
         const searchInput = document.getElementById('searchTable');
