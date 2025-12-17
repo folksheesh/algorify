@@ -70,7 +70,13 @@ class GoogleController extends Controller
         }
 
         try {
-            // Get user data from Google OAuth
+            // Log untuk debugging
+            Log::info('Google OAuth Callback received', [
+                'has_code' => $request->has('code'),
+                'redirect_url' => config('services.google.redirect'),
+                'app_url' => config('app.url')
+            ]);
+            
             // Get user data from Google OAuth
             $googleUser = Socialite::driver('google')
                 ->user();
@@ -113,12 +119,22 @@ class GoogleController extends Controller
         } catch (\Exception $e) {
             // Log error untuk debugging
             Log::error('Google OAuth Error: ' . $e->getMessage(), [
-                'exception' => $e,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
             
-            // Tangani error apapun yang terjadi saat OAuth
-            return redirect()->route('login')->with('oauth_error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
+            // Tampilkan pesan error yang lebih spesifik untuk debugging
+            $errorMessage = 'Terjadi kesalahan saat login dengan Google. ';
+            if (config('app.debug')) {
+                $errorMessage .= $e->getMessage();
+            } else {
+                $errorMessage .= 'Silakan coba lagi.';
+            }
+            
+            return redirect()->route('login')->with('oauth_error', $errorMessage);
         }
     }
 }

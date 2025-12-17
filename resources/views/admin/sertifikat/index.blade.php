@@ -206,6 +206,37 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
     </div>
+
+    {{-- Modal Konfirmasi Hapus Tanda Tangan --}}
+    <style>
+        @keyframes deleteModalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes deleteModalFadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes deleteModalSlideIn { from { opacity: 0; transform: scale(0.9) translateY(-20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes deleteModalSlideOut { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.9) translateY(-20px); } }
+        #deleteSignatureModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+        #deleteSignatureModal.active { display: flex; animation: deleteModalFadeIn 0.2s ease-out forwards; }
+        #deleteSignatureModal.closing { animation: deleteModalFadeOut 0.2s ease-out forwards; }
+        #deleteSignatureModal .delete-modal-box { background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); position: relative; animation: deleteModalSlideIn 0.3s ease-out forwards; }
+        #deleteSignatureModal.closing .delete-modal-box { animation: deleteModalSlideOut 0.2s ease-out forwards; }
+    </style>
+    <div id="deleteSignatureModal">
+        <div class="delete-modal-box">
+            <button onclick="closeDeleteSignatureModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748B; line-height: 1;">&times;</button>
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; background: #FEE2E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
+                    </svg>
+                </div>
+                <h2 style="color: #1E293B; margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 600;">Konfirmasi Hapus</h2>
+                <p style="color: #64748B; font-size: 0.875rem; margin: 0 0 1.5rem;">Apakah Anda yakin ingin menghapus tanda tangan ini?</p>
+                <div style="display: flex; justify-content: center; gap: 1rem;">
+                    <button type="button" onclick="closeDeleteSignatureModal()" style="padding: 0.625rem 1.5rem; border-radius: 8px; font-weight: 500; background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; cursor: pointer;">Batal</button>
+                    <button type="button" onclick="confirmDeleteSignature()" style="background: #DC2626; color: white; padding: 0.625rem 1.5rem; border-radius: 8px; font-weight: 500; border: none; cursor: pointer;">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -388,12 +419,25 @@
             });
         }
 
-        // Delete signature function
+        // Delete signature function - open modal
         function deleteSignature() {
-            if (!confirm('Apakah Anda yakin ingin menghapus tanda tangan ini?')) {
-                return;
-            }
+            const modal = document.getElementById('deleteSignatureModal');
+            modal.classList.remove('closing');
+            modal.classList.add('active');
+        }
 
+        // Close delete signature modal with animation
+        function closeDeleteSignatureModal() {
+            const modal = document.getElementById('deleteSignatureModal');
+            modal.classList.add('closing');
+            setTimeout(() => {
+                modal.classList.remove('active', 'closing');
+            }, 200);
+        }
+
+        // Confirm delete signature
+        function confirmDeleteSignature() {
+            closeDeleteSignatureModal();
             showLoading();
 
             fetch('{{ route("admin.sertifikat.delete-signature") }}', {
