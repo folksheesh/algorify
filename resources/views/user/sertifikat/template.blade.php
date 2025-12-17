@@ -41,7 +41,7 @@
                     </td>
                     <td>
                         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <img src="{{ public_path('template/img/medal-blue.png') }}" alt="Medal" style="width:56px;height:56px;display:block;margin-bottom:6px;">
+                            <img src="{{ public_path('template/img/medali-keren.png') }}" alt="Medal" style="width:56px;height:56px;display:block;margin-bottom:6px;">
                             <div class="badge-text">Sertifikat Resmi</div>
                         </div>
                     </td>
