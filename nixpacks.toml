@@ -1,12 +1,15 @@
 # Railway Nixpacks Configuration for Laravel
 # https://nixpacks.com/docs/providers/php
 
+[variables]
+PHP_VERSION = "8.3"
+
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.xml", "php82Extensions.curl", "php82Extensions.zip", "php82Extensions.gd", "php82Extensions.bcmath", "php82Extensions.tokenizer", "php82Extensions.fileinfo", "nodejs-18_x", "npm-9_x"]
+nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mbstring", "php83Extensions.xml", "php83Extensions.curl", "php83Extensions.zip", "php83Extensions.gd", "php83Extensions.bcmath", "php83Extensions.tokenizer", "php83Extensions.fileinfo", "php83Extensions.exif", "nodejs-18_x", "npm-9_x"]
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader --no-interaction",
+    "composer install --optimize-autoloader --no-interaction",
     "npm install",
     "npm run build"
 ]
