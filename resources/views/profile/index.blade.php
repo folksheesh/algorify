@@ -93,7 +93,7 @@
 
                                 <div class="form-group">
                                     <label for="phone">Nomor Telepon</label>
-                                    <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812 3456 7890">
+                                    <input type="number" id="phone" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812 3456 7890">
                                 </div>
 
                                 <div class="form-group">

@@ -91,6 +91,56 @@
     height: 16px;
 }
 
+/* Date Range Group */
+.date-range-group {
+    position: relative;
+}
+
+.date-range-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.date-range-wrapper:hover {
+    border-color: #CBD5E0;
+}
+
+.date-range-wrapper:focus-within {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.date-range-icon {
+    color: #94A3B8;
+    flex-shrink: 0;
+}
+
+.date-range-input {
+    border: none !important;
+    padding: 0.625rem 0 !important;
+    flex: 1;
+    min-width: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.date-range-input:focus {
+    outline: none;
+    box-shadow: none !important;
+}
+
+.date-range-separator {
+    color: #CBD5E0;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
 .info-banner {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     border-radius: 12px;
@@ -229,6 +279,33 @@
 
 .btn-export:hover {
     background: #F8FAFC;
+}
+
+/* Filter button styling (white background with icon) */
+.filter-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.filter-button:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.filter-button svg {
+    flex-shrink: 0;
 }
 
 .table-container {

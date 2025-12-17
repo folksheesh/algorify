@@ -99,7 +99,7 @@
 
                             <div class="form-group">
                                 <label class="form-label">Nomor Telepon</label>
-                                <input type="tel" class="form-input @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812-3456-7890">
+                                <input type="number" class="form-input @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="+62 812-3456-7890">
                                 @error('phone')
                                     <span class="field-error">{{ $message }}</span>
                                 @enderror

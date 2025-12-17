@@ -9,6 +9,10 @@ body {
     background: #f8f9fa;
 }
 
+.course-media{
+    max-width: 300px;
+}
+
 .dashboard-container {
     display: flex;
     min-height: 100vh;

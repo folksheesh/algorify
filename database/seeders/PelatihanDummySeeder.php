@@ -59,7 +59,7 @@ class PelatihanDummySeeder extends Seeder
             'tanggal_selesai' => now()->addMonths(3),
             'status' => 'published',
             'harga' => 600000,
-            'thumbnail' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80',
+            'thumbnail' => 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=900&q=80',
         ]);
 
         // 3. Enroll user ke kursus

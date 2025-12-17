@@ -10,7 +10,7 @@ Platform E-Learning & Sertifikasi Digital
 
 ## 1.1 Judul Proyek
 
-**Algorify** - Platform Pembelajaran Online dan Sertifikasi Digital
+**Algorify**
 
 ---
 
@@ -76,7 +76,7 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 
 ### Fitur Berdasarkan Role
 
-#### Peserta (Student)
+#### Peserta
 - Mendaftar akun baru dan login (email/password atau Google OAuth)
 - Mengelola data pribadi (profil)
 - Melihat katalog dan memilih kursus
@@ -86,7 +86,7 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 - Mengikuti ujian dengan soal teracak
 - Mengunduh sertifikat digital setelah lulus
 
-#### Pengajar (Instructor)
+#### Pengajar
 - Login dan mengelola profil
 - Membuat dan mengelola kursus
 - Mengunggah materi (video, modul, PDF)

@@ -93,28 +93,18 @@
                         <div class="filter-group" style="flex: 1;">
                             <input type="text" id="searchTable" class="filter-input" placeholder="Cari kode transaksi, tanggal, nama, atau kursus...">
                         </div>
-                        <div class="filter-group" style="flex: 0.5;">
-                            <select id="filterStatus" class="filter-select">
-                                <option value="">Semua Status</option>
-                                <option value="lunas">Lunas</option>
-                                <option value="pending">Pending</option>
-                                <option value="gagal">Gagal</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0.5;">
-                            <select id="filterMetode" class="filter-select">
-                                <option value="">Semua Metode</option>
-                                <option value="transfer bank">Transfer Bank</option>
-                                <option value="e-wallet">E-Wallet</option>
-                                <option value="kartu kredit">Kartu Kredit</option>
-                                <option value="qris">Qris</option>
-                                <option value="mini market">Mini Market</option>
-                                <option value="kartu debit">Kartu Debit</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="flex: 0.5;">
-                            <input type="date" id="filterTanggalMulai" class="filter-input filter-date-input" placeholder="Tanggal Mulai">
-                        </div>
+                        <button type="button" id="statusMetodeButton" class="filter-button">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
+                            </svg>
+                            <span id="statusMetodeText">Filter</span>
+                        </button>
+                        <button type="button" id="dateRangeButton" class="filter-button">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                            <span id="dateRangeText">Tanggal</span>
+                        </button>
                         <button type="button" id="searchButton" class="filter-search-button">
                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
@@ -320,6 +310,93 @@
                                     <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
                                 </svg>
                                 <p>Memuat detail transaksi...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Filter Status & Metode -->
+                <div class="modal-overlay" id="statusMetodeModal">
+                    <div class="modal-detail" style="max-width: 450px;">
+                        <div class="modal-detail-header">
+                            <div>
+                                <h3>Filter Status & Metode</h3>
+                                <p class="modal-subtitle">Pilih status transaksi dan metode pembayaran</p>
+                            </div>
+                            <button type="button" class="modal-close" onclick="closeStatusMetodeModal()">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="modal-detail-body" style="padding: 1.5rem;">
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #475569; margin-bottom: 0.5rem;">Status Transaksi</label>
+                                    <select id="filterStatus" class="filter-input" style="width: 100%;">
+                                        <option value="">Semua Status</option>
+                                        <option value="lunas">Lunas</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="gagal">Gagal</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #475569; margin-bottom: 0.5rem;">Metode Pembayaran</label>
+                                    <select id="filterMetode" class="filter-input" style="width: 100%;">
+                                        <option value="">Semua Metode</option>
+                                        <option value="transfer bank">Transfer Bank</option>
+                                        <option value="e-wallet">E-Wallet</option>
+                                        <option value="kartu kredit">Kartu Kredit</option>
+                                        <option value="qris">Qris</option>
+                                        <option value="mini market">Mini Market</option>
+                                        <option value="kartu debit">Kartu Debit</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                    <button type="button" onclick="clearStatusMetode()" style="flex: 1; padding: 0.625rem; border: 1px solid #E2E8F0; background: white; color: #475569; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                                        Reset
+                                    </button>
+                                    <button type="button" onclick="applyStatusMetode()" style="flex: 1; padding: 0.625rem; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                                        Terapkan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Filter Tanggal -->
+                <div class="modal-overlay" id="dateRangeModal">
+                    <div class="modal-detail" style="max-width: 450px;">
+                        <div class="modal-detail-header">
+                            <div>
+                                <h3>Filter Rentang Tanggal</h3>
+                                <p class="modal-subtitle">Pilih periode transaksi</p>
+                            </div>
+                            <button type="button" class="modal-close" onclick="closeDateRangeModal()">
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="modal-detail-body" style="padding: 1.5rem;">
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #475569; margin-bottom: 0.5rem;">Dari Tanggal</label>
+                                    <input type="date" id="filterTanggalMulai" class="filter-input" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #475569; margin-bottom: 0.5rem;">Sampai Tanggal</label>
+                                    <input type="date" id="filterTanggalAkhir" class="filter-input" style="width: 100%;">
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                    <button type="button" onclick="clearDateRange()" style="flex: 1; padding: 0.625rem; border: 1px solid #E2E8F0; background: white; color: #475569; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                                        Reset
+                                    </button>
+                                    <button type="button" onclick="applyDateRange()" style="flex: 1; padding: 0.625rem; background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                                        Terapkan
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -582,8 +659,169 @@
                 if (modal.classList.contains('active')) {
                     closeTransaksiDetail();
                 }
+                const dateModal = document.getElementById('dateRangeModal');
+                if (dateModal.classList.contains('active')) {
+                    closeDateRangeModal();
+                }
+                const statusModal = document.getElementById('statusMetodeModal');
+                if (statusModal.classList.contains('active')) {
+                    closeStatusMetodeModal();
+                }
             }
         });
+        
+        // ===========================
+        // STATUS & METODE MODAL
+        // ===========================
+        
+        const statusMetodeButton = document.getElementById('statusMetodeButton');
+        const statusMetodeModal = document.getElementById('statusMetodeModal');
+        const statusMetodeText = document.getElementById('statusMetodeText');
+        const filterStatus = document.getElementById('filterStatus');
+        const filterMetode = document.getElementById('filterMetode');
+        
+        // Open status metode modal
+        statusMetodeButton.addEventListener('click', function() {
+            statusMetodeModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close status metode modal
+        function closeStatusMetodeModal() {
+            statusMetodeModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal on overlay click
+        statusMetodeModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeStatusMetodeModal();
+            }
+        });
+        
+        // Apply status metode filter
+        function applyStatusMetode() {
+            updateStatusMetodeText();
+            closeStatusMetodeModal();
+            applyFilters();
+        }
+        
+        // Clear status metode
+        function clearStatusMetode() {
+            filterStatus.value = '';
+            filterMetode.value = '';
+            statusMetodeText.textContent = 'Filter';
+            closeStatusMetodeModal();
+            applyFilters();
+        }
+        
+        // Update button text
+        function updateStatusMetodeText() {
+            const status = filterStatus.value;
+            const metode = filterMetode.value;
+            const parts = [];
+            
+            if (status) {
+                const statusLabels = { 'lunas': 'Lunas', 'pending': 'Pending', 'gagal': 'Gagal' };
+                parts.push(statusLabels[status] || status);
+            }
+            if (metode) {
+                const metodeShort = {
+                    'transfer bank': 'Transfer',
+                    'e-wallet': 'E-Wallet',
+                    'kartu kredit': 'Kredit',
+                    'qris': 'QRIS',
+                    'mini market': 'Minimarket',
+                    'kartu debit': 'Debit'
+                };
+                parts.push(metodeShort[metode] || metode);
+            }
+            
+            statusMetodeText.textContent = parts.length > 0 ? parts.join(' | ') : 'Filter';
+        }
+        
+        // Initialize from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('status')) filterStatus.value = urlParams.get('status');
+        if (urlParams.get('metode')) filterMetode.value = urlParams.get('metode');
+        updateStatusMetodeText();
+        
+        // ===========================
+        // DATE RANGE MODAL
+        // ===========================
+        
+        const dateRangeButton = document.getElementById('dateRangeButton');
+        const dateRangeModal = document.getElementById('dateRangeModal');
+        const dateRangeText = document.getElementById('dateRangeText');
+        
+        // Open date range modal
+        dateRangeButton.addEventListener('click', function() {
+            dateRangeModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close date range modal
+        function closeDateRangeModal() {
+            dateRangeModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal on overlay click
+        dateRangeModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDateRangeModal();
+            }
+        });
+        
+        // Apply date range filter
+        function applyDateRange() {
+            const mulai = document.getElementById('filterTanggalMulai').value;
+            const akhir = document.getElementById('filterTanggalAkhir').value;
+            
+            // Update button text
+            if (mulai && akhir) {
+                dateRangeText.textContent = `${formatDateDisplay(mulai)} - ${formatDateDisplay(akhir)}`;
+            } else if (mulai) {
+                dateRangeText.textContent = `Dari ${formatDateDisplay(mulai)}`;
+            } else if (akhir) {
+                dateRangeText.textContent = `Sampai ${formatDateDisplay(akhir)}`;
+            } else {
+                dateRangeText.textContent = 'Pilih Rentang Tanggal';
+            }
+            
+            closeDateRangeModal();
+            applyFilters();
+        }
+        
+        // Clear date range
+        function clearDateRange() {
+            document.getElementById('filterTanggalMulai').value = '';
+            document.getElementById('filterTanggalAkhir').value = '';
+            dateRangeText.textContent = 'Tanggal';
+            closeDateRangeModal();
+            applyFilters();
+        }
+        
+        // Format date for display
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+        
+        // Initialize button text from URL params
+        if (urlParams.get('tanggal_mulai') || urlParams.get('tanggal_akhir')) {
+            const mulai = urlParams.get('tanggal_mulai');
+            const akhir = urlParams.get('tanggal_akhir');
+            if (mulai && akhir) {
+                dateRangeText.textContent = `${formatDateDisplay(mulai)} - ${formatDateDisplay(akhir)}`;
+            } else if (mulai) {
+                dateRangeText.textContent = `Dari ${formatDateDisplay(mulai)}`;
+            } else if (akhir) {
+                dateRangeText.textContent = `Sampai ${formatDateDisplay(akhir)}`;
+            }
+        }
         
         // ===========================
         // SEARCH AND FILTER
@@ -593,24 +831,26 @@
         const searchInput = document.getElementById('searchTable');
         const statusFilter = document.getElementById('filterStatus');
         const metodeFilter = document.getElementById('filterMetode');
-        const tanggalMulaiFilter = document.getElementById('filterTanggalMulai');
         const searchButton = document.getElementById('searchButton');
         
         // Set initial values from URL params
-        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('search')) searchInput.value = urlParams.get('search');
-        if (urlParams.get('status')) statusFilter.value = urlParams.get('status');
-        if (urlParams.get('metode')) metodeFilter.value = urlParams.get('metode');
-        if (urlParams.get('tanggal_mulai')) tanggalMulaiFilter.value = urlParams.get('tanggal_mulai');
+
+        if (urlParams.get('tanggal_mulai')) document.getElementById('filterTanggalMulai').value = urlParams.get('tanggal_mulai');
+        if (urlParams.get('tanggal_akhir')) document.getElementById('filterTanggalAkhir').value = urlParams.get('tanggal_akhir');
         
         // Function to apply filters via server-side request
         function applyFilters() {
             const params = new URLSearchParams();
             
             if (searchInput.value) params.append('search', searchInput.value);
-            if (statusFilter.value) params.append('status', statusFilter.value);
-            if (metodeFilter.value) params.append('metode', metodeFilter.value);
-            if (tanggalMulaiFilter.value) params.append('tanggal_mulai', tanggalMulaiFilter.value);
+            if (filterStatus.value) params.append('status', filterStatus.value);
+            if (filterMetode.value) params.append('metode', filterMetode.value);
+            
+            const tanggalMulai = document.getElementById('filterTanggalMulai').value;
+            const tanggalAkhir = document.getElementById('filterTanggalAkhir').value;
+            if (tanggalMulai) params.append('tanggal_mulai', tanggalMulai);
+            if (tanggalAkhir) params.append('tanggal_akhir', tanggalAkhir);
             
             // Redirect to same page with query params (page will reset to 1)
             const queryString = params.toString();
@@ -626,19 +866,18 @@
             }
         });
         
-        // Filter langsung apply saat berubah
-        statusFilter.addEventListener('change', applyFilters);
-        metodeFilter.addEventListener('change', applyFilters);
-        tanggalMulaiFilter.addEventListener('change', applyFilters);
-        
         // Export CSV function
         function exportTransaksiCsv() {
             const params = new URLSearchParams();
             
             if (searchInput.value) params.append('search', searchInput.value);
-            if (statusFilter.value) params.append('status', statusFilter.value);
-            if (metodeFilter.value) params.append('metode', metodeFilter.value);
-            if (tanggalMulaiFilter.value) params.append('tanggal_mulai', tanggalMulaiFilter.value);
+            if (filterStatus.value) params.append('status', filterStatus.value);
+            if (filterMetode.value) params.append('metode', filterMetode.value);
+            
+            const tanggalMulai = document.getElementById('filterTanggalMulai').value;
+            const tanggalAkhir = document.getElementById('filterTanggalAkhir').value;
+            if (tanggalMulai) params.append('tanggal_mulai', tanggalMulai);
+            if (tanggalAkhir) params.append('tanggal_akhir', tanggalAkhir);
             
             // Open export URL with filters
             const queryString = params.toString();

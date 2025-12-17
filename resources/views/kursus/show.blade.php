@@ -13,71 +13,54 @@
     @include('components.topbar-user')
     
     <div class="detail-container">
-        <div class="dashboard-container with-topbar">
+        <div class="dashboard-container with-topbar" style="font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
             @include('components.sidebar')
-            
-            <main class="main-content" style="background: #f8f9fa;">
-                <div class="detail-content">
-                    <a href="{{ route('kursus.index') }}" class="back-button">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span class="hide-mobile">Kembali ke Daftar Pelatihan</span>
-                        <span class="hide-desktop">Kembali</span>
-                    </a>
-
-                    <div class="course-detail-card">
-                        <div class="course-header">
-                            <span class="course-category">{{ strtoupper(str_replace('_', ' ', $kursus->kategori)) }}</span>
-                            <h1 class="course-title-detail">{{ $kursus->judul }}</h1>
-                            <div class="course-meta-detail">
-                                <div class="meta-item">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="white" stroke-width="1.5"/>
-                                        <path d="M10 6V10L13 13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                    {{ $kursus->tanggal_mulai ? $kursus->tanggal_mulai->diffForHumans() : 'Segera' }}
+            <main class="main-content" style="background: #f8f9fa; min-height: 100vh;">
+                @include('components.topbar-user')
+                <div class="detail-content" style="max-width:1100px;margin:0 auto;padding:40px 0;">
+                    <h1 style="font-size:2rem;font-weight:700;margin-bottom:2rem;">{{ $kursus->judul }}</h1>
+                    <div style="display:grid;grid-template-columns:1.1fr 1.2fr;gap:2.5rem;align-items:start;">
+                        <div>
+                            <div style="border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:1.5rem;background:#fff;">
+                                <img src="{{ $kursus->cover ? asset('storage/' . $kursus->cover) : asset('images/default-course.jpg') }}" alt="Cover" style="width:100%;height:220px;object-fit:cover;">
+                            </div>
+                            <div style="background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:1.5rem;">
+                                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                                    <svg width="24" height="24" fill="none" stroke="#667eea" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 8h8v8H8z"/></svg>
+                                    <div>
+                                        <div style="font-weight:600;font-size:1rem;">{{ $kursus->modul->count() }} modul</div>
+                                        <div style="font-size:0.95em;color:#64748B;">Dapatkan wawasan mendalam tentang fundamental desain UI/UX.</div>
+                                    </div>
                                 </div>
-                                <div class="meta-item">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M17 18C17 16.3431 14.7614 15 12 15H8C5.23858 15 3 16.3431 3 18M15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                                    </svg>
-                                    {{ $kursus->enrollments->count() }} Peserta
+                                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                                    <svg width="24" height="24" fill="none" stroke="#667eea" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                    <div>
+                                        <div style="font-weight:600;font-size:1rem;">180 Hari waktu akses</div>
+                                        <div style="font-size:0.95em;color:#64748B;">Deskripsi</div>
+                                    </div>
                                 </div>
+                                <div style="display:flex;align-items:center;gap:1rem;">
+                                    <svg width="24" height="24" fill="none" stroke="#667eea" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 12h8"/></svg>
+                                    <div>
+                                        <div style="font-weight:600;font-size:1rem;">Jadwal Fleksibel</div>
+                                        <div style="font-size:0.95em;color:#64748B;">Belajar sesuai kecepatan Anda sendiri</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                                <div style="font-weight:600;font-size:1rem;margin-bottom:0.5rem;">Instruktur</div>
+                                <div style="font-size:1.1em;font-weight:500;">{{ $kursus->pengajar->name ?? 'Nama Instruktur' }}</div>
+                                <div style="color:#64748B;font-size:0.95em;">{{ $kursus->pengajar->profesi ?? 'Senior UI/UX Designer' }}</div>
+                                <div style="color:#64748B;font-size:0.95em;margin-top:0.5rem;">Instruktur berpengalaman dengan lebih dari 8 tahun di industri desain digital.</div>
                             </div>
                         </div>
-
-                        <div class="course-body">
-                            <div class="course-section">
-                                <h2 class="section-title">Deskripsi Pelatihan</h2>
-                                <p class="course-description-full">{{ $kursus->deskripsi }}</p>
+                        <div>
+                            <div style="background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:2rem;">
+                                <div style="font-size:1.15rem;font-weight:600;margin-bottom:1rem;">Deskripsi Kursus</div>
+                                <div style="font-size:1.05rem;color:#334155;line-height:1.7;">{{ $kursus->deskripsi }}</div>
                             </div>
-
-                            <div class="course-section">
-                                <h2 class="section-title">Instruktur</h2>
-                                <div class="instructor-card">
-                                    <div class="instructor-avatar-large">
-                                        {{ $kursus->pengajar ? strtoupper(substr($kursus->pengajar->name ?? 'N', 0, 1)) : 'N' }}
-                                    </div>
-                                    <div class="instructor-info">
-                                        <div class="instructor-name-detail">{{ $kursus->pengajar->name ?? 'N/A' }}</div>
-                                        <div class="instructor-role">{{ $kursus->pengajar->profesi ?? 'Instruktur' }}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="course-section">
-                                <h2 class="section-title">Harga</h2>
-                                <div class="course-price-detail">
-                                    @if($kursus->harga > 0)
-                                        Rp {{ number_format($kursus->harga, 0, ',', '.') }}
-                                    @else
-                                        Gratis
-                                    @endif
-                                </div>
-                                <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-button" style="display: inline-block; text-align: center; text-decoration: none; padding: 12px 24px;">
-                                    Daftar Sekarang
-                                </a>
+                            <div style="text-align:center;">
+                                <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-button" style="display:inline-block;background:#2563eb;color:#fff;font-weight:600;font-size:1.1rem;padding:16px 0;width:100%;border-radius:12px;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,0.08);transition:background 0.2s;">Daftar Sekarang</a>
                             </div>
                         </div>
                     </div>
