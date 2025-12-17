@@ -200,6 +200,77 @@
             <button class="btn btn-submit" onclick="closeSuccessModal()" style="width: 100%;">OK</button>
         </div>
     </div>
+
+    <!-- Modal Konfirmasi Delete -->
+    <div id="deleteConfirmModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeDeleteConfirmModal()" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Hapus Peserta</h2>
+                <p>Konfirmasi penghapusan data peserta</p>
+            </div>
+
+            <div style="padding: 0 1.5rem 1.5rem;">
+                <input type="hidden" id="deletePesertaId">
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Peserta</label>
+                    <input type="text" class="form-input" id="deletePesertaName" readonly>
+                </div>
+
+                <div style="background: #FEF2F2; border: 1px solid #FEE2E2; border-radius: 8px; padding: 0.75rem; margin-bottom: 1.5rem;">
+                    <p style="font-size: 0.875rem; color: #991B1B; margin: 0;">
+                        <strong>Peringatan:</strong> Data yang dihapus tidak dapat dikembalikan.
+                    </p>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeDeleteConfirmModal()">Batal</button>
+                    <button type="button" class="btn" onclick="executePesertaDelete()" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white; border: none;">
+                        Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Warning Peserta Aktif -->
+    <div id="warningActiveModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeWarningActiveModal()" aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Peserta Masih Aktif</h2>
+                <p>Tidak dapat menghapus peserta aktif</p>
+            </div>
+
+            <div style="padding: 0 1.5rem 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Nama Peserta</label>
+                    <input type="text" class="form-input" id="warningPesertaName" readonly>
+                </div>
+
+                <div style="background: #FFFBEB; border: 1px solid #FEF3C7; border-radius: 8px; padding: 0.75rem; margin-bottom: 1.5rem;">
+                    <p style="font-size: 0.875rem; color: #92400E; margin: 0;">
+                        <strong>Informasi:</strong> Peserta harus dinonaktifkan terlebih dahulu sebelum dapat dihapus. Ubah status peserta menjadi "Nonaktif" terlebih dahulu.
+                    </p>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-submit" onclick="closeWarningActiveModal()" style="width: 100%;">Mengerti</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -369,10 +440,65 @@
 
         // Confirm delete
         function confirmDelete(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus peserta ini?')) {
-                // Implementasi delete
-                console.log('Delete peserta:', id);
+            const peserta = pesertaData.find(p => String(p.id) === String(id));
+            if (!peserta) return;
+
+            // Normalize status untuk perbandingan
+            let status = peserta.status || 'active';
+            status = status.toLowerCase();
+            
+            // Cek jika peserta masih aktif
+            if (status === 'active' || status === 'aktif') {
+                // Tampilkan modal warning
+                document.getElementById('warningPesertaName').value = peserta.name;
+                document.getElementById('warningActiveModal').classList.add('active');
+            } else {
+                // Tampilkan modal konfirmasi delete
+                document.getElementById('deletePesertaId').value = peserta.id;
+                document.getElementById('deletePesertaName').value = peserta.name;
+                document.getElementById('deleteConfirmModal').classList.add('active');
             }
+        }
+
+        // Close delete confirm modal
+        function closeDeleteConfirmModal() {
+            document.getElementById('deleteConfirmModal').classList.remove('active');
+        }
+
+        // Close warning active modal
+        function closeWarningActiveModal() {
+            document.getElementById('warningActiveModal').classList.remove('active');
+        }
+
+        // Execute peserta delete
+        function executePesertaDelete() {
+            const id = document.getElementById('deletePesertaId').value;
+            
+            fetch(`/admin/peserta/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeDeleteConfirmModal();
+                    document.getElementById('successTitle').textContent = 'Berhasil Dihapus!';
+                    document.getElementById('successMessage').textContent = data.message || 'Peserta berhasil dihapus dari sistem';
+                    document.getElementById('successModal').classList.add('active');
+                    loadPesertaData(currentPage);
+                } else {
+                    closeDeleteConfirmModal();
+                    alert(data.message || 'Gagal menghapus peserta');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                closeDeleteConfirmModal();
+                alert('Terjadi kesalahan saat menghapus peserta');
+            });
         }
 
         // Close modal saat klik di luar
@@ -485,6 +611,12 @@
         });
         document.getElementById('successModal').addEventListener('click', function(e) {
             if (e.target === this) closeSuccessModal();
+        });
+        document.getElementById('deleteConfirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteConfirmModal();
+        });
+        document.getElementById('warningActiveModal').addEventListener('click', function(e) {
+            if (e.target === this) closeWarningActiveModal();
         });
     </script>
 @endpush

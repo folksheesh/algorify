@@ -72,10 +72,10 @@
                     </div>
                 </div>
 
-                <!-- Grafik Pendapatan -->
+                <!-- Tren Transaksi -->
                 <div class="chart-container" id="revenue-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3>Grafik Pendapatan</h3>
+                        <h3>Tren Transaksi</h3>
                         <form method="GET" action="{{ route('admin.analitik.index') }}#revenue-section" style="display: inline-block;">
                             <input type="hidden" name="sort" value="{{ $sortBy }}">
                             <input type="hidden" name="search" value="{{ $search }}">
@@ -92,15 +92,29 @@
                     </div>
                 </div>
 
+                <!-- Popup Modal untuk Detail Distribusi -->
+                <div id="distribusiModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modalTitle">Detail Distribusi</h3>
+                            <button class="modal-close" onclick="closeModal()">&times;</button>
+                        </div>
+                        <div class="modal-body" id="modalBody">
+                            <!-- Content will be injected via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Distribusi Section dengan Pie Charts -->
                 <div class="distribusi-section" id="distribusi-section">
                     <!-- Distribusi Profesi -->
-                    <div class="distribusi-card">
+                    <div class="distribusi-card" onclick="showDistribusiDetail('profesi')" style="cursor: pointer;">
                         <h3>
                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
                             </svg>
                             Distribusi Berdasarkan Profesi
+                            <span class="click-hint" style="font-size: 0.75rem; color: #64748B; font-weight: 400; margin-left: 0.5rem;">(Klik untuk detail)</span>
                         </h3>
                         @if($distribusiProfesi->count() > 0)
                             <div class="pie-chart-container" style="flex-direction: column;">
@@ -128,12 +142,13 @@
                     </div>
 
                     <!-- Distribusi Lokasi -->
-                    <div class="distribusi-card">
+                    <div class="distribusi-card" onclick="showDistribusiDetail('lokasi')" style="cursor: pointer;">
                         <h3>
                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
                             </svg>
                             Distribusi Berdasarkan Lokasi
+                            <span class="click-hint" style="font-size: 0.75rem; color: #64748B; font-weight: 400; margin-left: 0.5rem;">(Klik untuk detail)</span>
                         </h3>
                         @if($distribusiLokasi->count() > 0)
                             <div class="pie-chart-container" style="flex-direction: column;">
@@ -161,12 +176,13 @@
                     </div>
 
                     <!-- Distribusi Umur -->
-                    <div class="distribusi-card">
+                    <div class="distribusi-card" onclick="showDistribusiDetail('umur')" style="cursor: pointer;">
                         <h3>
                             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                             </svg>
                             Distribusi Berdasarkan Umur
+                            <span class="click-hint" style="font-size: 0.75rem; color: #64748B; font-weight: 400; margin-left: 0.5rem;">(Klik untuk detail)</span>
                         </h3>
                         @if(isset($distribusiUmur) && $distribusiUmur->count() > 0)
                             <div class="pie-chart-container" style="flex-direction: column;">
@@ -194,21 +210,31 @@
                     </div>
                 </div>
 
-                <!-- Top Kursus dengan Filter Sort -->
-                @if($topKursus->count() > 0)
+                <!-- Top Kursus dengan Filter Sort dan Pagination -->
                 <div class="table-container" id="top-kursus-section">
                     <div class="table-header">
-                        <h2>Top Kursus</h2>
-                        <form method="GET" action="{{ route('admin.analitik.index') }}#top-kursus-section" style="display: inline-block;">
-                            <input type="hidden" name="search" value="{{ $search }}">
-                            <input type="hidden" name="status" value="{{ $statusFilter }}">
-                            <input type="hidden" name="year" value="{{ $year }}">
-                            <select name="sort" class="filter-select" onchange="this.form.submit()">
-                                <option value="pendapatan" {{ $sortBy == 'pendapatan' ? 'selected' : '' }}>Sort by Pendapatan</option>
-                                <option value="peserta" {{ $sortBy == 'peserta' ? 'selected' : '' }}>Sort by Jumlah Peserta</option>
-                            </select>
-                        </form>
+                        <h2>Tren Kursus</h2>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <form method="GET" action="{{ route('admin.analitik.index') }}#top-kursus-section" id="kursusFilterForm" style="display: flex; gap: 0.75rem;">
+                                <input type="hidden" name="search" value="{{ $search }}">
+                                <input type="hidden" name="status" value="{{ $statusFilter }}">
+                                <input type="hidden" name="year" value="{{ $year }}">
+                                <select name="kursus_year" class="filter-select" onchange="this.form.submit()">
+                                    <option value="all" {{ $kursusYear == 'all' ? 'selected' : '' }}>Semua Tahun</option>
+                                    @foreach($kursusAvailableYears as $availYear)
+                                        <option value="{{ $availYear }}" {{ $kursusYear == $availYear ? 'selected' : '' }}>Tahun {{ $availYear }}</option>
+                                    @endforeach
+                                </select>
+                                <select name="kursus_sort" class="filter-select" onchange="this.form.submit()">
+                                    <option value="pendapatan_desc" {{ $kursusSort == 'pendapatan_desc' ? 'selected' : '' }}>Pendapatan Tertinggi</option>
+                                    <option value="pendapatan_asc" {{ $kursusSort == 'pendapatan_asc' ? 'selected' : '' }}>Pendapatan Terendah</option>
+                                    <option value="peserta_desc" {{ $kursusSort == 'peserta_desc' ? 'selected' : '' }}>Peserta Terbanyak</option>
+                                    <option value="peserta_asc" {{ $kursusSort == 'peserta_asc' ? 'selected' : '' }}>Peserta Paling Sedikit</option>
+                                </select>
+                            </form>
+                        </div>
                     </div>
+                    @if($topKursus->count() > 0)
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -220,7 +246,7 @@
                         </thead>
                         <tbody>
                             @foreach($topKursus as $kursus)
-                            <tr>
+                            <tr class="kursus-row" onclick="window.location.href='{{ route('admin.pelatihan.show', $kursus->id) }}'" title="Klik untuk lihat detail kursus">
                                 <td>{{ $kursus->no }}</td>
                                 <td style="font-weight: 500;">{{ $kursus->nama }}</td>
                                 <td>{{ $kursus->peserta }}</td>
@@ -229,11 +255,38 @@
                             @endforeach
                         </tbody>
                     </table>
+                    
+                    <!-- Pagination untuk Top Kursus -->
+                    <div style="padding: 1.5rem; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.875rem; color: #64748B;">
+                            Menampilkan {{ $topKursus->firstItem() ?? 0 }} - {{ $topKursus->lastItem() ?? 0 }} dari {{ $topKursus->total() }} kursus
+                        </span>
+                        <div style="display: flex; gap: 0.5rem;">
+                            @if($topKursus->onFirstPage())
+                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 6px; font-size: 0.875rem; color: #CBD5E1; cursor: not-allowed;">Sebelumnya</button>
+                            @else
+                                <a href="{{ $topKursus->previousPageUrl() }}#top-kursus-section" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; background: white; border-radius: 6px; font-size: 0.875rem; cursor: pointer; text-decoration: none; color: #1E293B;">Sebelumnya</a>
+                            @endif
+                            
+                            @if($topKursus->hasMorePages())
+                                <a href="{{ $topKursus->nextPageUrl() }}#top-kursus-section" style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; background: white; border-radius: 6px; font-size: 0.875rem; cursor: pointer; text-decoration: none; color: #1E293B;">Selanjutnya</a>
+                            @else
+                                <button disabled style="padding: 0.5rem 1rem; border: 1px solid #E2E8F0; background: #F8FAFC; border-radius: 6px; font-size: 0.875rem; color: #CBD5E1; cursor: not-allowed;">Selanjutnya</button>
+                            @endif
+                        </div>
+                    </div>
+                    @else
+                    <div style="padding: 3rem 1.5rem; text-align: center;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" style="margin: 0 auto 1rem;">
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <h3 style="font-size: 1.125rem; font-weight: 600; color: #1E293B; margin: 0 0 0.5rem;">Belum Ada Data Kursus</h3>
+                        <p style="font-size: 0.875rem; color: #64748B; margin: 0;">Data kursus akan muncul setelah ada kursus yang dibuat</p>
+                    </div>
+                    @endif
                 </div>
-                @endif
 
                 <!-- Data Nilai Peserta -->
-                @if($students->count() > 0)
                 <div class="table-container" id="data-nilai-section">
                     <div class="table-header">
                         <h2>Data Nilai Peserta</h2>
@@ -243,7 +296,7 @@
                             <input type="hidden" name="sort" value="{{ $sortBy }}">
                             <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
                                 <div style="flex: 1;">
-                                    <input type="text" name="search" id="searchInput" class="filter-select" style="width: 100%;" placeholder="Cari nama, email, ID, kursus, atau tanggal..." value="{{ $search }}">
+                                    <input type="text" name="search" id="searchInput" class="filter-select" style="width: 100%;" placeholder="Cari nama, email, ID, kursus, bulan (misal: Januari)..." value="{{ $search }}">
                                 </div>
                                 <div style="width: 1.5rem;"></div>
                                 <select name="status" class="filter-select">
@@ -251,7 +304,6 @@
                                     <option value="selesai" {{ in_array($statusFilter, ['selesai', 'completed']) ? 'selected' : '' }}>Selesai</option>
                                     <option value="berlangsung" {{ in_array($statusFilter, ['berlangsung', 'active']) ? 'selected' : '' }}>Berlangsung</option>
                                     <option value="dropped" {{ $statusFilter == 'dropped' ? 'selected' : '' }}>Dibatalkan</option>
-                                    <option value="expired" {{ $statusFilter == 'expired' ? 'selected' : '' }}>Kadaluarsa</option>
                                 </select>
                                 <button type="submit" class="filter-select" style="background: #5D3FFF; color: white; padding: 0.625rem 1.5rem; cursor: pointer; border: none;">
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="display: inline-block; vertical-align: middle;">
@@ -262,6 +314,7 @@
                             </div>
                         </form>
                     </div>
+                    @if($students->count() > 0)
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -360,8 +413,38 @@
                             @endif
                         </div>
                     </div>
+                    @else
+                    <!-- Empty State - Data tidak ditemukan -->
+                    <div style="padding: 3rem 1.5rem; text-align: center;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5" style="margin: 0 auto 1rem;">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                            <path d="M8 8l6 6M14 8l-6 6" stroke="#EF4444" stroke-width="2"/>
+                        </svg>
+                        <h3 style="font-size: 1.125rem; font-weight: 600; color: #1E293B; margin: 0 0 0.5rem;">Data Tidak Ditemukan</h3>
+                        <p style="font-size: 0.875rem; color: #64748B; margin: 0 0 1rem;">
+                            @if($search)
+                                Tidak ada hasil untuk pencarian "<strong>{{ $search }}</strong>"
+                                @if($statusFilter)
+                                    dengan status "<strong>{{ $statusFilter }}</strong>"
+                                @endif
+                            @elseif($statusFilter)
+                                Tidak ada data dengan status "<strong>{{ $statusFilter }}</strong>"
+                            @else
+                                Belum ada data peserta yang tersedia
+                            @endif
+                        </p>
+                        @if($search || $statusFilter)
+                        <a href="{{ route('admin.analitik.index') }}#data-nilai-section" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #5D3FFF; color: white; border-radius: 8px; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s;">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                            </svg>
+                            Reset Filter
+                        </a>
+                        @endif
+                    </div>
+                    @endif
                 </div>
-                @endif
             </div>
         </main>
     </div>
@@ -541,5 +624,84 @@
             });
         }
         @endif
+        
+        // ========== Modal Popup Functions ==========
+        // Data distribusi lengkap dari server (tanpa "Lainnya")
+        const distribusiData = {
+            profesi: {!! json_encode(isset($distribusiProfesiFull) ? $distribusiProfesiFull->map(function($item) { return ['label' => $item->profesi, 'jumlah' => $item->jumlah, 'percentage' => $item->percentage]; }) : $distribusiProfesi->map(function($item) { return ['label' => $item->profesi, 'jumlah' => $item->jumlah, 'percentage' => $item->percentage]; })) !!},
+            lokasi: {!! json_encode(isset($distribusiLokasiFull) ? $distribusiLokasiFull->map(function($item) { return ['label' => $item->lokasi, 'jumlah' => $item->jumlah, 'percentage' => $item->percentage]; }) : $distribusiLokasi->map(function($item) { return ['label' => $item->lokasi, 'jumlah' => $item->jumlah, 'percentage' => $item->percentage]; })) !!},
+            umur: {!! json_encode(isset($distribusiUmur) ? $distribusiUmur->map(function($item) { return ['label' => $item->kelompok, 'jumlah' => $item->jumlah, 'percentage' => $item->percentage]; }) : []) !!}
+        };
+        
+        const distribusiTitles = {
+            profesi: 'Detail Distribusi Profesi',
+            lokasi: 'Detail Distribusi Lokasi',
+            umur: 'Detail Distribusi Umur'
+        };
+        
+        function showDistribusiDetail(type) {
+            const modal = document.getElementById('distribusiModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            const data = distribusiData[type] || [];
+            modalTitle.textContent = distribusiTitles[type] || 'Detail Distribusi';
+            
+            if (data.length === 0) {
+                modalBody.innerHTML = '<p style="color: #64748B; text-align: center;">Belum ada data tersedia</p>';
+            } else {
+                let html = '<div class="modal-table-container"><table class="modal-table">';
+                html += '<thead><tr><th>No</th><th>Kategori</th><th>Jumlah</th><th>Persentase</th></tr></thead>';
+                html += '<tbody>';
+                
+                data.forEach((item, index) => {
+                    const color = chartColors[index % chartColors.length];
+                    html += `<tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="width: 12px; height: 12px; border-radius: 50%; background: ${color};"></span>
+                                ${item.label}
+                            </div>
+                        </td>
+                        <td style="font-weight: 600;">${item.jumlah}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="flex: 1; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: ${item.percentage}%; height: 100%; background: ${color};"></div>
+                                </div>
+                                <span style="min-width: 45px; text-align: right;">${item.percentage}%</span>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table></div>';
+                modalBody.innerHTML = html;
+            }
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('distribusiModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('distribusiModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
 @endpush

@@ -42,7 +42,14 @@ Route::get('/dashboard', function () {
         // Jumlah peserta yang mengikuti kursus milik pengajar
         $totalSiswa = \App\Models\Enrollment::whereIn('kursus_id', $kursusIds)->distinct('user_id')->count('user_id');
 
-        return view('pengajar.dashboard', compact('totalKursus', 'totalSiswa'));
+        // Daftar kursus terbaru yang diajar
+        $kursusDiajarkan = \App\Models\Kursus::withCount('enrollments')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('pengajar.dashboard', compact('totalKursus', 'totalSiswa', 'kursusDiajarkan'));
     }
     
     // Student Dashboard - Get user's enrollments
@@ -104,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
         Route::get('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'show'])->name('peserta.show');
         Route::put('/peserta/{id}/status', [\App\Http\Controllers\Admin\PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
+        Route::delete('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'destroy'])->name('peserta.destroy');
         
         // Data Pengajar
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');

@@ -85,4 +85,28 @@ class PesertaController extends Controller
             'message' => 'Status peserta berhasil diperbarui'
         ]);
     }
+
+    public function destroy($id)
+    {
+        $user = User::role('peserta')->findOrFail($id);
+        
+        // Cek apakah status peserta adalah inactive
+        if ($user->status !== 'inactive') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Peserta harus dinonaktifkan terlebih dahulu sebelum dapat dihapus'
+            ], 400);
+        }
+
+        // Hapus enrollments peserta terlebih dahulu
+        $user->enrollments()->delete();
+        
+        // Hapus peserta
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Peserta berhasil dihapus dari sistem'
+        ]);
+    }
 }

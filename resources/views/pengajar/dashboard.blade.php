@@ -59,6 +59,56 @@
                     </div>
                 </div>
                 <!-- END Stat Cards -->
+
+                @if(isset($kursusDiajarkan) && $kursusDiajarkan->count())
+                    <div class="section-card teaching-courses-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Kursus yang Anda Ajar</h2>
+                                <p class="section-subtitle">Menampilkan hingga 4 kursus terbaru yang sedang Anda kelola.</p>
+                            </div>
+                            <a href="{{ route('admin.pelatihan.index') }}" class="section-link">Kelola Semua Kursus</a>
+                        </div>
+                        <div class="teaching-courses-grid">
+                            @foreach($kursusDiajarkan as $kursus)
+                                <div class="teaching-course-card">
+                                    @php
+                                        $thumbnailPath = $kursus->thumbnail ?? null;
+                                        $thumbnailUrl = null;
+                                        if ($thumbnailPath) {
+                                            $thumbnailUrl = \Illuminate\Support\Str::startsWith($thumbnailPath, ['http://', 'https://'])
+                                                ? $thumbnailPath
+                                                : (\Illuminate\Support\Str::startsWith($thumbnailPath, ['storage/', 'public/'])
+                                                    ? asset($thumbnailPath)
+                                                    : asset('storage/' . $thumbnailPath));
+                                        }
+                                    @endphp
+
+                                    <div class="course-card-media {{ $thumbnailUrl ? '' : 'no-image' }}">
+                                        @if ($thumbnailUrl)
+                                            <img src="{{ $thumbnailUrl }}" alt="Poster {{ $kursus->judul }}">
+                                        @else
+                                            <div class="course-card-media-placeholder">
+                                                <span>{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($kursus->judul, 0, 1)) }}</span>
+                                                <p>Belum ada gambar kursus</p>
+                                            </div>
+                                        @endif
+                                        <span class="course-card-category">{{ strtoupper($kursus->kategori ?? 'Umum') }}</span>
+                                    </div>
+
+                                    <div class="course-card-body">
+                                        <h4 class="course-card-title">{{ $kursus->judul }}</h4>
+                                        <p class="course-card-status">{{ ucfirst($kursus->status ?? 'draft') }}</p>
+                                        <div class="course-card-footer">
+                                            <span class="course-card-students">{{ $kursus->enrollments_count }} siswa</span>
+                                            <a href="{{ route('admin.pelatihan.show', $kursus->id) }}" class="course-card-link">Lihat Detail</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </main>
     </div>

@@ -1,3 +1,15 @@
+/* Chrome, Edge, Safari */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .settings-container {
     background: #f8f9fa;
     min-height: 100vh;
@@ -234,6 +246,24 @@
     background: #fef2f2;
     color: #991b1b;
     border: 1px solid #fecaca;
+}
+
+/* Field Error Styles */
+.field-error {
+    display: block;
+    color: #dc2626;
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+}
+
+.form-input.is-invalid {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.form-input.is-invalid:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* Responsive */

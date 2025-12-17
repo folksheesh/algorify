@@ -17,13 +17,16 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->text('deskripsi_singkat')->nullable();
             $table->enum('kategori', ['programming', 'design', 'business', 'marketing', 'data_science', 'other'])->default('other');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Pengajar/Instructor
+            $table->string('user_id', 10)->nullable(); // Pengajar/Instructor
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->decimal('harga', 10, 2)->default(0);
             $table->string('thumbnail')->nullable();
             $table->timestamps();
+
+            // Foreign key constraint for user_id (string) to users.id (string)
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

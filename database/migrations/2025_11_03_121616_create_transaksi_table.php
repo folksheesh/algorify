@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enrollment_id')->constrained('enrollment')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('user_id', 10)->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamp('tanggal_transaksi')->useCurrent();
             $table->decimal('nominal_pembayaran', 10, 2);
             $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
