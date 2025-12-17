@@ -365,11 +365,6 @@
                 <input type="hidden" name="modul_id" id="modulId">
                 
                 <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
-                                        <div class="form-group">
-                                            <label class="form-label">YouTube URL (opsional)</label>
-                                            <input type="url" name="youtube_url" id="videoYoutubeUrl" class="form-input" placeholder="https://youtube.com/watch?v=xxxx">
-                                            <small style="color:#64748B;font-size:0.85em;">Jika diisi, video akan diambil dari YouTube dan file upload akan diabaikan.</small>
-                                        </div>
                     <div class="form-group">
                         <label class="form-label">Judul Modul *</label>
                         <input type="text" name="judul" id="judul" class="form-input" placeholder="contoh: Pengenalan Dasar UI/UX Design" required>
@@ -430,6 +425,11 @@
                             <div id="videoPreview" style="display: none; font-size: 0.875rem; color: #667eea;"></div>
                         </div>
                         <input type="file" id="videoFile" name="file_video" accept="video/*" style="display: none;" onchange="previewFile(this, 'videoPreview', 'videoIcon')">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">YouTube URL (opsional)</label>
+                        <input type="url" name="youtube_url" id="videoYoutubeUrl" class="form-input" placeholder="https://youtube.com/watch?v=xxxx">
+                        <small style="color:#64748B;font-size:0.85em;">Jika diisi, video akan diambil dari YouTube dan file upload akan diabaikan.</small>
                     </div>
                 </div>
                 <div class="modal-footer">

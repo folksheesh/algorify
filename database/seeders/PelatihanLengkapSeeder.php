@@ -46,6 +46,7 @@ class PelatihanLengkapSeeder extends Seeder
             'harga' => 750000,
             'durasi' => '12 Minggu',
             'tipe_kursus' => 'online',
+            'thumbnail' => 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=900&q=80',
         ]);
 
         // MODUL 1: Pengenalan Laravel

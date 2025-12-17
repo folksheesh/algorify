@@ -522,6 +522,8 @@
                 </div>
 
                 @if($kursus->count() > 0)
+                    <!-- No-match message (hidden by default) -->
+                    <div id="noMatchMessage" style="display:none;background:#fff;padding:1rem;border-radius:8px;margin-bottom:1rem;border:1px dashed #e5e7eb;color:#374151;"></div>
                     <!-- Courses Grid -->
                     <div class="courses-grid">
                         @foreach($kursus as $course)
@@ -1133,21 +1135,35 @@
             const courseCards = document.querySelectorAll('.course-card');
             
             if (searchInput) {
+                const noMatchEl = document.getElementById('noMatchMessage');
                 searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase().trim();
-                    
+                    const rawValue = e.target.value || '';
+                    const searchTerm = rawValue.toLowerCase().trim();
+
+                    let visibleCount = 0;
                     courseCards.forEach(card => {
                         const title = card.querySelector('.course-title');
                         if (title) {
                             const titleText = title.textContent.toLowerCase();
-                            
-                            if (titleText.includes(searchTerm)) {
-                                card.style.display = 'flex';
+                            if (searchTerm === '' || titleText.includes(searchTerm)) {
+                                // reset display so CSS/grid can control layout
+                                card.style.display = '';
+                                visibleCount++;
                             } else {
                                 card.style.display = 'none';
                             }
                         }
                     });
+
+                    if (noMatchEl) {
+                        if (visibleCount === 0 && searchTerm !== '') {
+                            noMatchEl.style.display = 'block';
+                            // Use textContent to avoid HTML injection
+                            noMatchEl.textContent = 'Tidak dapat menemukan kursus dengan nama "' + rawValue + '"';
+                        } else {
+                            noMatchEl.style.display = 'none';
+                        }
+                    }
                 });
             }
 
