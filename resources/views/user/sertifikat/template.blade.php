@@ -40,8 +40,10 @@
                         <div class="qr-text">Scan untuk verifikasi<br>{{ $kode }}</div>
                     </td>
                     <td>
-                        <div class="badge"></div>
-                        <div class="badge-text">Sertifikat Resmi</div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <img src="{{ public_path('template/img/medal-blue.png') }}" alt="Medal" style="width:56px;height:56px;display:block;margin-bottom:6px;">
+                            <div class="badge-text">Sertifikat Resmi</div>
+                        </div>
                     </td>
                     <td>
                         <div class="dir">Anton Ahim</div>

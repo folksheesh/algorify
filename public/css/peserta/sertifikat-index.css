@@ -35,11 +35,11 @@
 }
 
 .cert-icon {
-    width: 64px;
-    height: 64px;
-    color: #5D3FFF;
+    width: 48px;
+    height: 48px;
     display: block;
     margin-bottom: 1rem;
+    object-fit: contain;
 }
 
 .cert-badge {

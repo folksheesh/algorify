@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta/data', [\App\Http\Controllers\Admin\PesertaController::class, 'getData'])->name('peserta.data');
         Route::get('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'show'])->name('peserta.show');
         Route::put('/peserta/{id}/status', [\App\Http\Controllers\Admin\PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
+        Route::delete('/peserta/{id}', [\App\Http\Controllers\Admin\PesertaController::class, 'destroy'])->name('peserta.destroy');
         
         // Data Pengajar
         Route::get('/pengajar', [\App\Http\Controllers\Admin\PengajarController::class, 'index'])->name('pengajar.index');

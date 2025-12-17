@@ -58,7 +58,7 @@
                                         <div class="preview-title-script">Sertifikat Penyelesaian</div>
                                         <div class="preview-subtitle-en">Certificate of Completion</div>
                                         <div class="preview-label">Diberikan kepada</div>
-                                        <div class="preview-name" id="certificatePreviewName">{{ $signatureOwner ?? 'Nama Pemilik Tanda Tangan' }}</div>
+                                        <div class="preview-name" id="certificatePreviewName">Peserta</div>
                                         <div class="preview-course-label">Telah berhasil menyelesaikan pelatihan</div>
                                         <div class="preview-course">Analisis Data</div>
                                         <div class="preview-desc">dengan menunjukkan dedikasi, pemahaman mendalam, dan keterampilan praktis dalam bidang analisis data.</div>

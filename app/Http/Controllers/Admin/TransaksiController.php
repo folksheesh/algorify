@@ -92,9 +92,16 @@ class TransaksiController extends Controller
                 $query->where('metode_pembayaran', $metode);
             }
 
-            // Server-side date filter (mulai saja)
-            if ($request->filled('tanggal_mulai')) {
+            // Server-side date filter (range)
+            if ($request->filled('tanggal_mulai') && $request->filled('tanggal_akhir')) {
+                $query->whereBetween('tanggal_transaksi', [
+                    $request->tanggal_mulai . ' 00:00:00',
+                    $request->tanggal_akhir . ' 23:59:59'
+                ]);
+            } elseif ($request->filled('tanggal_mulai')) {
                 $query->where('tanggal_transaksi', '>=', $request->tanggal_mulai . ' 00:00:00');
+            } elseif ($request->filled('tanggal_akhir')) {
+                $query->where('tanggal_transaksi', '<=', $request->tanggal_akhir . ' 23:59:59');
             }
 
             $transaksi = $query->paginate(10)->withQueryString();
@@ -218,9 +225,16 @@ class TransaksiController extends Controller
                 $query->where('metode_pembayaran', $metode);
             }
 
-            // Server-side date filter (mulai saja)
-            if ($request->filled('tanggal_mulai')) {
+            // Server-side date filter (range)
+            if ($request->filled('tanggal_mulai') && $request->filled('tanggal_akhir')) {
+                $query->whereBetween('tanggal_transaksi', [
+                    $request->tanggal_mulai . ' 00:00:00',
+                    $request->tanggal_akhir . ' 23:59:59'
+                ]);
+            } elseif ($request->filled('tanggal_mulai')) {
                 $query->where('tanggal_transaksi', '>=', $request->tanggal_mulai . ' 00:00:00');
+            } elseif ($request->filled('tanggal_akhir')) {
+                $query->where('tanggal_transaksi', '<=', $request->tanggal_akhir . ' 23:59:59');
             }
 
             $transaksi = $query->get();

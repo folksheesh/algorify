@@ -9,6 +9,10 @@ body {
     background: #f8f9fa;
 }
 
+.course-media{
+    max-width: 300px;
+}
+
 .dashboard-container {
     display: flex;
     min-height: 100vh;
@@ -261,15 +265,24 @@ body {
 }
 
 .step-number {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, #5d3fff, #7c3aed);
-    color: white;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
+    font-size: 1.15rem;
+    box-shadow: 0 2px 8px rgba(93,63,255,0.08);
+    border: 2px solid #fff;
+    box-sizing: border-box;
+    margin-right: 16px;
+    margin-bottom: 0;
+    transition: box-shadow 0.2s;
 }
 
 .step-title {
