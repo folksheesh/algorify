@@ -41,6 +41,7 @@
             @endif
 
             @if($completedEnrollments->count() > 0)
+                <div class="cert-grid">
                 @foreach($completedEnrollments as $enrollment)
                     <!-- Certificate Card -->
                     <div class="cert-card">
@@ -103,6 +104,7 @@
                         </div>
                     </div>
                 @endforeach
+                </div>
             @else
                 <!-- Empty State -->
                 <div class="empty-state">

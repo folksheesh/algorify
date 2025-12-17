@@ -358,7 +358,7 @@
                         
                         <div>
                             <div style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.25rem;">Pengajar</div>
-                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->pengajar->name ?? '-' }}</div>
+                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->user->name ?? '-' }}</div>
                         </div>
                     </div>
                 </div>
@@ -1380,13 +1380,8 @@ body.exam-active-mode #examSidebar {
         `;
 
         try {
-            // Build query with kategori filter
-            const params = new URLSearchParams();
-            if (kursusKategori) {
-                params.append('kategori_nama', kursusKategori);
-            }
-            
-            const response = await fetch(`{{ route('admin.bank-soal.data') }}?${params.toString()}`);
+            // Load all bank soal - user can filter manually using search and tipe filters
+            const response = await fetch(`{{ route('admin.bank-soal.data') }}`);
             const result = await response.json();
             
             bankSoalData = result.data || [];

@@ -34,8 +34,8 @@ class BankSoalController extends Controller
                 $q->whereRaw('LOWER(pertanyaan) like ?', ["%{$search}%"])
                   ->orWhereRaw('LOWER(tipe_soal) like ?', ["%{$search}%"])
                   ->orWhereHas('kategori', function($q) use ($search) {
-                      // kategori adalah relasi ke Kursus, jadi pakai 'judul'
-                      $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
+                      // kategori adalah relasi ke KategoriPelatihan, jadi pakai 'nama_kategori'
+                      $q->whereRaw('LOWER(nama_kategori) like ?', ["%{$search}%"]);
                   })
                   ->orWhereHas('kursus', function($q) use ($search) {
                       $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
@@ -53,14 +53,14 @@ class BankSoalController extends Controller
             $query->where('kategori_id', $request->kategori);
         }
 
-        // Filter by kategori name (for modal bank soal in ujian)
-        // This filters bank soal where the linked kursus has a matching kategori field
+        // Filter by kategori name/slug (for modal bank soal in ujian)
+        // This filters bank soal by kategori_pelatihan slug or kursus kategori field
         if ($request->has('kategori_nama') && $request->kategori_nama != '') {
             $kategoriNama = $request->kategori_nama;
             $query->where(function($q) use ($kategoriNama) {
-                // Filter by kategori_id (which links to kursus with matching kategori)
+                // Filter by kategori_id (which links to kategori_pelatihan with matching slug)
                 $q->whereHas('kategori', function($subQ) use ($kategoriNama) {
-                    $subQ->where('kategori', $kategoriNama);
+                    $subQ->where('slug', $kategoriNama);
                 })
                 // Or filter by kursus_id (which links to kursus with matching kategori)
                 ->orWhereHas('kursus', function($subQ) use ($kategoriNama) {
@@ -90,7 +90,7 @@ class BankSoalController extends Controller
                     'tipe_soal' => $item->tipe_soal,
                     'opsi_jawaban' => $item->opsi_jawaban,
                     'jawaban_benar' => $item->jawaban_benar,
-                    'kategori' => $item->kategori ? $item->kategori->judul : ($item->kursus ? $item->kursus->judul : '-'),
+                    'kategori' => $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'),
                     'poin' => $item->poin ?? 1,
                     'created_by' => $item->creator ? $item->creator->name : '-',
                     'created_at' => $item->created_at->format('d/m/Y')
@@ -462,7 +462,7 @@ class BankSoalController extends Controller
                     $item->tipe_soal,
                     $opsiStr,
                     $jawabanStr,
-                    $item->kategori ? $item->kategori->judul : ($item->kursus ? $item->kursus->judul : '-'),
+                    $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'),
                     $item->poin ?? 1,
                     $item->creator ? $item->creator->name : '-',
                     $item->created_at->format('d/m/Y H:i')

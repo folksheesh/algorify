@@ -16,7 +16,6 @@
         <div class="dashboard-container with-topbar" style="font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
             @include('components.sidebar')
             <main class="main-content" style="background: #f8f9fa; min-height: 100vh;">
-                @include('components.topbar-user')
                 <div class="detail-content" style="max-width:1100px;margin:0 auto;padding:40px 0;">
                     <h1 style="font-size:2rem;font-weight:700;margin-bottom:2rem;">{{ $kursus->judul }}</h1>
                     <div style="display:grid;grid-template-columns:1.1fr 1.2fr;gap:2.5rem;align-items:start;">
@@ -49,9 +48,9 @@
                             </div>
                             <div style="background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
                                 <div style="font-weight:600;font-size:1rem;margin-bottom:0.5rem;">Instruktur</div>
-                                <div style="font-size:1.1em;font-weight:500;">{{ $kursus->pengajar->name ?? 'Nama Instruktur' }}</div>
-                                <div style="color:#64748B;font-size:0.95em;">{{ $kursus->pengajar->profesi ?? 'Senior UI/UX Designer' }}</div>
-                                <div style="color:#64748B;font-size:0.95em;margin-top:0.5rem;">Instruktur berpengalaman dengan lebih dari 8 tahun di industri desain digital.</div>
+                                <div style="font-size:1.1em;font-weight:500;">{{ $kursus->user->name ?? 'Nama Instruktur' }}</div>
+                                <div style="color:#64748B;font-size:0.95em;">{{ $kursus->user->profesi ?? '-' }}</div>
+                                <div style="color:#64748B;font-size:0.95em;margin-top:0.5rem;">{{ $kursus->user->bio ?? '' }}</div>
                             </div>
                         </div>
                         <div>

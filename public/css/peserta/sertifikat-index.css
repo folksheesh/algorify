@@ -15,14 +15,20 @@
     font-size: 0.95rem;
 }
 
+/* Certificate Grid */
+.cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
 /* Certificate Card */
 .cert-card {
     background: white;
     border: 2px solid #C4B5FD;
     border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 2rem;
-    max-width: 380px;
 }
 
 .cert-header {
@@ -382,6 +388,10 @@
     .dashboard-container.with-topbar .main-content {
         margin-left: 0;
     }
+
+    .cert-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -393,6 +403,10 @@
     .info-box,
     .empty-state {
         max-width: 100%;
+    }
+
+    .cert-grid {
+        grid-template-columns: 1fr;
     }
 
     .back-button {
