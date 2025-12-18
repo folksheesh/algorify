@@ -151,6 +151,27 @@
     @keyframes toastSlideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
     </style>
+
+    {{-- MODAL KONFIRMASI HAPUS KATEGORI --}}
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px;">
+            <div style="padding: 1.75rem; text-align: center;">
+                <div style="width: 48px; height: 48px; background: #FEE2E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <svg width="24" height="24" viewBox="0 0 20 20" fill="#DC2626">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <h2 style="font-size: 1.1rem; font-weight: 700; color: #1A1A1A; margin-bottom: 0.5rem;">Konfirmasi Penghapusan</h2>
+                <p id="deleteModalText" style="font-size: 0.8125rem; color: #64748B; margin-bottom: 0.75rem;">Apakah Anda yakin ingin menghapus kategori ini?</p>
+                <p style="font-size: 0.7rem; color: #EF4444; margin-bottom: 1.5rem;">Tindakan ini tidak dapat dibatalkan</p>
+                
+                <div style="display: flex; gap: 0.75rem; justify-content: center;">
+                    <button type="button" class="btn btn-cancel" onclick="closeDeleteModal()" style="flex: 1; max-width: 120px; padding: 0.5rem 1rem; font-size: 0.875rem;">Batal</button>
+                    <button type="button" class="btn btn-submit" onclick="confirmDeleteKategori()" style="flex: 1; max-width: 120px; padding: 0.5rem 1rem; font-size: 0.875rem; background: #DC2626 !important; border-color: #DC2626 !important;">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -241,7 +262,7 @@
                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
                         </button>
-                        <button class="btn-action btn-delete" onclick="deleteKategori(${item.id})" title="Hapus">
+                        <button class="btn-action btn-delete" onclick="deleteKategori(${item.id}, '${item.nama_kategori.replace(/'/g, "\\'")}')" title="Hapus">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
@@ -351,12 +372,30 @@
         }
     }
 
-    // Delete kategori
-    async function deleteKategori(id) {
-        if (!confirm('Yakin ingin menghapus kategori ini?')) return;
+    // Variable untuk menyimpan ID kategori yang akan dihapus
+    let deleteKategoriId = null;
+
+    // Open delete modal
+    function deleteKategori(id, namaKategori = '') {
+        deleteKategoriId = id;
+        document.getElementById('deleteModalText').innerHTML = namaKategori 
+            ? `Apakah Anda yakin ingin menghapus kategori:<br><strong>"${namaKategori}"</strong>?`
+            : 'Apakah Anda yakin ingin menghapus kategori ini?';
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    // Close delete modal
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+        deleteKategoriId = null;
+    }
+
+    // Confirm delete kategori
+    async function confirmDeleteKategori() {
+        if (!deleteKategoriId) return;
         
         try {
-            const response = await fetch(`{{ route("admin.kategori.destroy", ":id") }}`.replace(':id', id), {
+            const response = await fetch(`{{ route("admin.kategori.destroy", ":id") }}`.replace(':id', deleteKategoriId), {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -364,6 +403,8 @@
                 }
             });
             const result = await response.json();
+            
+            closeDeleteModal();
             
             if (result.success) {
                 showToast('Berhasil', 'Kategori berhasil dihapus', 'success');
@@ -373,6 +414,7 @@
             }
         } catch (error) {
             console.error('Error:', error);
+            closeDeleteModal();
             showToast('Error', 'Terjadi kesalahan saat menghapus kategori', 'error');
         }
     }

@@ -133,7 +133,7 @@
     width: 100%;
     display: flex;
     gap: 1.5rem;
-    align-items: flex-start;
+    align-items: center;
     margin: 0 auto 2.5rem auto;
 }
 

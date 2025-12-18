@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use App\Models\Nilai;
+
 class SertifikatSayaController extends Controller
 {
     public function index()
@@ -25,21 +27,39 @@ class SertifikatSayaController extends Controller
                 $query->where('progress', '>=', 100)
                       ->orWhere('nilai_akhir', '>=', 70);
             })
-            ->with(['kursus.pengajar'])
+            ->with(['kursus.user', 'kursus.modul.ujian'])
             ->latest()
             ->get();
         
         // Get certificates
         $certificates = Sertifikat::where('user_id', $user->id)
-            ->with(['kursus.pengajar'])
+            ->with(['kursus.user'])
             ->latest()
             ->get();
         
-        // Map enrollments with certificate status
-        $enrollmentsWithCertStatus = $completedEnrollments->map(function($enrollment) use ($certificates) {
+        // Map enrollments with certificate status and calculate nilai_akhir if missing
+        $enrollmentsWithCertStatus = $completedEnrollments->map(function($enrollment) use ($certificates, $user) {
             $cert = $certificates->where('kursus_id', $enrollment->kursus_id)->first();
             $enrollment->has_certificate = $cert ? true : false;
             $enrollment->certificate = $cert;
+            
+            // Calculate nilai_akhir from Nilai table if not set
+            if (empty($enrollment->nilai_akhir) || $enrollment->nilai_akhir == 0) {
+                // Get all ujian IDs from this kursus
+                $ujianIds = $enrollment->kursus->modul->flatMap(function($modul) {
+                    return $modul->ujian->pluck('id');
+                })->toArray();
+                
+                if (!empty($ujianIds)) {
+                    // Calculate average nilai from all ujian in this kursus
+                    $avgNilai = Nilai::where('user_id', $user->id)
+                        ->whereIn('ujian_id', $ujianIds)
+                        ->avg('nilai');
+                    
+                    $enrollment->nilai_akhir = $avgNilai ? round($avgNilai, 2) : 0;
+                }
+            }
+            
             return $enrollment;
         });
         

@@ -60,7 +60,7 @@
                         <!-- Body -->
                         <div class="cert-body">
                             <h3 class="cert-course-title">{{ $enrollment->kursus->judul }}</h3>
-                            <p class="cert-instructor">Oleh {{ $enrollment->kursus->pengajar->name ?? 'Instruktur' }}</p>
+                            <p class="cert-instructor">Oleh {{ $enrollment->kursus->user->name ?? 'Instruktur' }}</p>
                             
                             @if($enrollment->has_certificate && $enrollment->certificate)
                                 <div class="cert-info-row">
