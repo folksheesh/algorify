@@ -239,6 +239,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Pengajar-specific routes for accessing own courses only
+// Pengajar-specific routes for accessing own courses only
 Route::middleware(['auth', 'role:pengajar'])->prefix('pengajar')->name('pengajar.')->group(function () {
     Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
 });

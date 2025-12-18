@@ -666,6 +666,9 @@
 @push('scripts')
     <script>
         document.documentElement.setAttribute('data-bs-theme', 'light');
+        
+        // Global variable untuk menyimpan ID kursus yang akan dihapus
+        let deleteKursusId = null;
 
         // Format harga ke rupiah saat input
         const hargaInput = document.getElementById('harga');

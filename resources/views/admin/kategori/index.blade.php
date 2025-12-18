@@ -150,6 +150,17 @@
     .toast-close-btn:hover { background: #F1F5F9; color: #64748B; }
     @keyframes toastSlideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
+    
+    /* Delete Modal Animations */
+    @keyframes deleteModalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes deleteModalFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes deleteModalSlideIn { from { opacity: 0; transform: scale(0.9) translateY(-20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes deleteModalSlideOut { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.9) translateY(-20px); } }
+    #deleteKategoriModal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+    #deleteKategoriModal.active { display: flex; animation: deleteModalFadeIn 0.2s ease-out forwards; }
+    #deleteKategoriModal.closing { animation: deleteModalFadeOut 0.2s ease-out forwards; }
+    #deleteKategoriModal .delete-modal-box { background: white; border-radius: 16px; max-width: 400px; width: 90%; padding: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); position: relative; animation: deleteModalSlideIn 0.3s ease-out forwards; }
+    #deleteKategoriModal.closing .delete-modal-box { animation: deleteModalSlideOut 0.2s ease-out forwards; }
     </style>
 
     {{-- MODAL KONFIRMASI HAPUS KATEGORI --}}
@@ -177,6 +188,7 @@
 @push('scripts')
 <script>
     let toastTimeout = null;
+    let deleteKategoriId = null;
     
     function showToast(title, message, type = 'success') {
         const toast = document.getElementById('toastNotification');
@@ -371,9 +383,6 @@
             showToast('Gagal', 'Gagal memuat data kategori', 'error');
         }
     }
-
-    // Variable untuk menyimpan ID kategori yang akan dihapus
-    let deleteKategoriId = null;
 
     // Open delete modal
     function deleteKategori(id, namaKategori = '') {
