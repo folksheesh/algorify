@@ -200,20 +200,20 @@ Features: CRUD, Search, Filter, Export
             </div>
 
             {{-- Form Input Data Admin --}}
-            <form id="adminForm" enctype="multipart/form-data">
+            <form id="adminForm" enctype="multipart/form-data" autocomplete="off">
                 <input type="hidden" id="adminId">
 
                 {{-- Nama Lengkap (Required) --}}
                 <div class="form-group">
                     <label class="form-label">Nama Lengkap *</label>
-                    <input type="text" class="form-input" id="formName" required placeholder="Masukkan nama lengkap">
+                    <input type="text" class="form-input" id="formName" required placeholder="Masukkan nama lengkap" autocomplete="off">
                     <div class="error-message" id="nameError"></div>
                 </div>
 
                 {{-- Email (Required) --}}
                 <div class="form-group">
                     <label class="form-label">Email *</label>
-                    <input type="email" class="form-input" id="formEmail" required placeholder="contoh@email.com">
+                    <input type="email" class="form-input" id="formEmail" required placeholder="contoh@email.com" autocomplete="new-email">
                     <div class="error-message" id="emailError"></div>
                 </div>
 
@@ -235,7 +235,7 @@ Features: CRUD, Search, Filter, Export
                     <label class="form-label" id="passwordLabel">Password *</label>
                     <div class="password-wrapper">
                         <input type="password" class="form-input" id="formPassword" placeholder="Minimal 8 karakter"
-                            style="padding-right: 2.5rem;">
+                            style="padding-right: 2.5rem;" autocomplete="new-password">
                         <button type="button" class="password-toggle" onclick="togglePassword('formPassword', this)">
                             <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -260,7 +260,7 @@ Features: CRUD, Search, Filter, Export
                     <label class="form-label" id="confirmPasswordLabel">Konfirmasi Password *</label>
                     <div class="password-wrapper">
                         <input type="password" class="form-input" id="formPasswordConfirm" placeholder="Ulangi password"
-                            style="padding-right: 2.5rem;">
+                            style="padding-right: 2.5rem;" autocomplete="new-password">
                         <button type="button" class="password-toggle" onclick="togglePassword('formPasswordConfirm', this)">
                             <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -483,6 +483,39 @@ Features: CRUD, Search, Filter, Export
             }
         }
 
+        // Cek format email dasar
+        function isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
+        // Validasi email saat user berhenti mengetik/blur
+        function attachEmailValidation() {
+            const emailInput = document.getElementById('formEmail');
+            if (!emailInput) return;
+
+            const validate = () => {
+                const value = emailInput.value.trim();
+                if (value && !isValidEmail(value)) {
+                    showFieldError('emailError', 'Format email tidak valid. Gunakan format nama@domain.com', 'formEmail');
+                }
+            };
+
+            emailInput.addEventListener('blur', validate);
+            emailInput.addEventListener('change', validate);
+            emailInput.addEventListener('input', () => {
+                const value = emailInput.value.trim();
+                if (isValidEmail(value)) {
+                    const errorElement = document.getElementById('emailError');
+                    if (errorElement) {
+                        errorElement.classList.remove('active');
+                        errorElement.textContent = '';
+                    }
+                    emailInput.style.borderColor = '';
+                }
+            });
+        }
+
         // ========================================
         // DATA LOADING & RENDERING
         // ========================================
@@ -499,6 +532,9 @@ Features: CRUD, Search, Filter, Export
             clearFieldError('formPhone', 'phoneError');
             clearFieldError('formPassword', 'passwordError');
             clearFieldError('formPasswordConfirm', 'passwordError');
+
+            // Inline validation untuk email
+            attachEmailValidation();
         });
 
         /**
@@ -810,8 +846,15 @@ Features: CRUD, Search, Filter, Export
             clearAllErrors();
 
             const id = document.getElementById('adminId').value;
+            const email = document.getElementById('formEmail').value.trim();
             const password = document.getElementById('formPassword').value;
             const passwordConfirm = document.getElementById('formPasswordConfirm').value;
+
+            // Validasi dasar format email agar tidak bisa tanpa simbol @
+            if (!isValidEmail(email)) {
+                showFieldError('emailError', 'Format email tidak valid. Gunakan format nama@domain.com', 'formEmail');
+                return;
+            }
 
             // Validasi password match saat tambah atau saat password diisi saat edit
             if (!id || password) {
@@ -830,7 +873,7 @@ Features: CRUD, Search, Filter, Export
             // Prepare form data
             const formData = new FormData();
             formData.append('name', document.getElementById('formName').value);
-            formData.append('email', document.getElementById('formEmail').value);
+            formData.append('email', email);
             formData.append('phone', document.getElementById('formPhone').value);
             formData.append('address', document.getElementById('formAddress').value);
             formData.append('tanggal_lahir', document.getElementById('formTanggalLahir').value);

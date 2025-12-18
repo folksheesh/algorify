@@ -1,0 +1,42 @@
+# Railway Nixpacks Configuration for Laravel
+# https://nixpacks.com/docs/providers/php
+
+[variables]
+PHP_VERSION = "8.3"
+
+[phases.setup]
+nixPkgs = [
+    "php83",
+    "php83Extensions.pdo",
+    "php83Extensions.pdo_mysql",
+    "php83Extensions.mbstring",
+    "php83Extensions.xml",
+    "php83Extensions.curl",
+    "php83Extensions.zip",
+    "php83Extensions.gd",
+    "php83Extensions.bcmath",
+    "php83Extensions.tokenizer",
+    "php83Extensions.fileinfo",
+    "php83Extensions.exif",
+    "php83Packages.composer",
+    "nodejs-22_x"
+]
+
+[phases.install]
+cmds = [
+    "php -v",
+    "composer --version",
+    "composer install --optimize-autoloader --no-interaction",
+    "npm install",
+    "npm run build"
+]
+
+[phases.build]
+cmds = [
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
+]
+
+[start]
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"

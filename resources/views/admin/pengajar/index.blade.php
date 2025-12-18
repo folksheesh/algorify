@@ -29,7 +29,7 @@ Features: CRUD, Search, Filter, Export
 
         {{-- Main Content Area --}}
         <main class="main-content">
-            <div style="padding: 0 2rem 2rem;">
+            <div class="content-padding">
                 {{-- Page Header --}}
                 <div class="page-header">
                     <h1>Halaman Data Pengajar</h1>
@@ -72,7 +72,7 @@ Features: CRUD, Search, Filter, Export
                     </div>
 
                     {{-- Tabel Data Pengajar --}}
-                    <div style="overflow-x: auto;">
+                    <div class="table-wrapper">
                         <table class="data-table">
                             {{-- Header Tabel --}}
                             <thead>

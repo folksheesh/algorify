@@ -24,9 +24,7 @@
         @endif
 
         <!-- Main Content -->
-        <main>
-            @yield('content')
-        </main>
+        @yield('content')
 
     <!-- Page/Template JS -->
     @stack('scripts')
