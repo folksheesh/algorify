@@ -246,4 +246,10 @@ Route::middleware(['auth', 'role:pengajar'])->prefix('pengajar')->name('pengajar
     Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
 });
 
+// Pengajar-specific routes for accessing own courses only
+Route::middleware(['auth', 'role:pengajar'])->prefix('pengajar')->name('pengajar.')->group(function () {
+    Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
+});
+
+// Include authentication routes (login, register, password reset, etc.)
 require __DIR__.'/auth.php';
