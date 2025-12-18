@@ -503,7 +503,7 @@ $user = User::where("email", "test@test.com")->first();</code></pre>',
                 'user_id' => $peserta->id,
                 'ujian_id' => $ujian->id,
                 'nilai' => $score,
-                'status' => 'lulus',
+                'status' => 'passed',
                 'tanggal_penilaian' => $completedAt->copy()->subDays($ujian->tipe === 'exam' ? 1 : rand(2, 5)),
             ]);
 
@@ -520,7 +520,7 @@ $user = User::where("email", "test@test.com")->first();</code></pre>',
                         'soal_id' => $soal->id,
                         'user_id' => $peserta->id,
                         'jawaban' => $correctPilihan->pilihan,
-                        'status' => 'benar',
+                        'status' => 'correct',
                     ]);
                 }
             }

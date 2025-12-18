@@ -335,14 +335,12 @@
                             @endforeach
                         </div>
 
-                        @if($kursus->hasPages())
-                            <div class="pagination-wrapper">
-                                {{ $kursus->links() }}
-                            </div>
-                            <div class="pagination-info">
-                                Menampilkan {{ $kursus->firstItem() }} - {{ $kursus->lastItem() }} dari {{ $kursus->total() }} pelatihan
-                            </div>
-                        @endif
+                        <div class="pagination-info">
+                            Menampilkan {{ $kursus->firstItem() }} - {{ $kursus->lastItem() }} dari {{ $kursus->total() }} pelatihan
+                        </div>
+                        <div class="pagination-wrapper">
+                            {{ $kursus->links('vendor.pagination.custom') }}
+                        </div>
                     @else
                         <div class="no-courses">
                             <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -47,7 +47,7 @@
                     <div class="cert-card">
                         <!-- Header dengan background biru -->
                         <div class="cert-header">
-                            <img class="cert-icon" src="{{ asset('template/img/medal-blue.png') }}" alt="Medal" style="width: 48px; height: 48px; object-fit: contain;" />
+                            <img class="cert-icon" src="{{ asset('template/img/medali-keren.png') }}" alt="Medal" style="width: 48px; height: 48px; object-fit: contain;" />
                             @if($enrollment->has_certificate)
                                 <span class="cert-badge">Sertifikat Tersedia</span>
                             @elseif($enrollment->progress >= 100 || $enrollment->nilai_akhir >= 70)
