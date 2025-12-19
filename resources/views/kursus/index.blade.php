@@ -318,11 +318,6 @@
                                         <img src="{{ $courseThumbnailUrl }}" alt="{{ $course->judul }}" />
                                     @endif
                                     <span class="course-badge">{{ strtoupper(str_replace('_', ' ', $course->kategori)) }}</span>
-                                    <button type="button" class="bookmark-btn" onclick="event.stopPropagation();">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M5 3C5 2.44772 5.44772 2 6 2H14C14.5523 2 15 2.44772 15 3V18L10 15L5 18V3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                        </svg>
-                                    </button>
                                 </div>
                                 <div class="course-content">
                                     <h3 class="course-title">{{ $course->judul }}</h3>
