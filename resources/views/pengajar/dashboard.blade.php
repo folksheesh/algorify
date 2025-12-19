@@ -65,9 +65,9 @@
                         <div class="section-header">
                             <div>
                                 <h2 class="section-title">Kursus yang Anda Ajar</h2>
-                                <p class="section-subtitle">Menampilkan hingga 4 kursus terbaru yang sedang Anda kelola.</p>
+                                <p class="section-subtitle">Menampilkan kursus yang sedang Anda kelola.</p>
                             </div>
-                            <a href="{{ route('admin.pelatihan.index') }}" class="section-link">Kelola Semua Kursus</a>
+                            {{-- <a href="{{ route('admin.pelatihan.index') }}" class="section-link">Kelola Semua Kursus</a> --}}
                         </div>
                         <div class="teaching-courses-grid">
                             @foreach($kursusDiajarkan as $kursus)

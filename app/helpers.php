@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('resolve_thumbnail_url')) {
     /**
@@ -21,5 +22,33 @@ if (!function_exists('resolve_thumbnail_url')) {
         }
 
         return asset('template/assets/static/images/samples/origami.jpg');
+    }
+}
+
+if (!function_exists('display_user_name')) {
+    /**
+     * Get a safe display name for the currently authenticated user.
+     */
+    function display_user_name(): string
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return 'Guest';
+        }
+
+        $name = trim((string) ($user->name ?? ''));
+        if ($name !== '') {
+            return $name;
+        }
+
+        $email = trim((string) ($user->email ?? ''));
+        if ($email !== '') {
+            $localPart = Str::before($email, '@');
+            return $localPart !== '' ? $localPart : $email;
+        }
+
+        $id = trim((string) ($user->id ?? ''));
+        return $id !== '' ? $id : 'User';
     }
 }
