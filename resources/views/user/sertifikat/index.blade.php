@@ -118,7 +118,7 @@
             @endif
             
             <!-- Info Box -->
-            <div class="info-box">
+            <div class="info-box" style="margin-left: 0; margin-right: auto; max-width: 500px;">
                 <div class="info-box-icon-wrapper">
                     <svg class="info-box-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M12 15l-2 5l2-1l2 1l-2-5z"/>

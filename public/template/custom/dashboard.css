@@ -1370,10 +1370,7 @@ body {
     .course-card {
         border-radius: 14px;
     }
-    
-    .course-thumbnail {
-        padding-top: 52%;
-    }
+
     
     .course-content {
         padding: 14px 16px;
@@ -1535,9 +1532,6 @@ body {
         border-radius: 12px;
     }
     
-    .course-thumbnail {
-        padding-top: 50%;
-    }
     
     .course-content {
         padding: 12px 14px;

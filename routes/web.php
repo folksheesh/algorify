@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\ProfileCompletionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,9 +67,15 @@ Route::get('/dashboard', function () {
         ->get();
     
     return view('dashboard', compact('enrollments', 'recommendedCourses'));
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth', 'profile.complete'])->name('dashboard');
 
+// Profile completion flow (accessible without profile.complete to avoid loops)
 Route::middleware('auth')->group(function () {
+    Route::get('/profile/complete', [ProfileCompletionController::class, 'show'])->name('profile.complete.show');
+    Route::post('/profile/complete', [ProfileCompletionController::class, 'store'])->name('profile.complete.store');
+});
+
+Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -238,9 +245,13 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Pengajar-specific routes for accessing own courses only
-// Pengajar-specific routes for accessing own courses only
+// Pengajar: Data Kursus hanya milik sendiri
 Route::middleware(['auth', 'role:pengajar'])->prefix('pengajar')->name('pengajar.')->group(function () {
+    Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
+});
+
+// Pengajar-specific routes for accessing own courses only
+Route::middleware(['auth', 'profile.complete', 'role:pengajar'])->prefix('pengajar')->name('pengajar.')->group(function () {
     Route::get('/kursus', [\App\Http\Controllers\PengajarKursusController::class, 'index'])->name('kursus.index');
 });
 

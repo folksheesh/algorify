@@ -670,17 +670,20 @@
         // Global variable untuk menyimpan ID kursus yang akan dihapus
         let deleteKursusId = null;
 
+        function formatRupiah(value) {
+            const digits = String(value ?? '').replace(/[^0-9]/g, '');
+            if (!digits) {
+                return '';
+            }
+            const formatted = new Intl.NumberFormat('id-ID').format(parseInt(digits, 10));
+            return 'Rp ' + formatted;
+        }
+
         // Format harga ke rupiah saat input
         const hargaInput = document.getElementById('harga');
         if (hargaInput) {
             hargaInput.addEventListener('input', function (e) {
-                const digits = (e.target.value || '').replace(/[^0-9]/g, '');
-                if (!digits) {
-                    e.target.value = '';
-                    return;
-                }
-                const formatted = new Intl.NumberFormat('id-ID').format(parseInt(digits, 10));
-                e.target.value = 'Rp ' + formatted;
+                e.target.value = formatRupiah(e.target.value);
             });
         }
         
@@ -1305,7 +1308,7 @@
                     document.getElementById('deskripsi').value = data.deskripsi || '';
                     document.getElementById('pengajar_id').value = data.user_id || '{{ auth()->id() }}';
                     document.getElementById('durasi').value = data.durasi || '';
-                    document.getElementById('harga').value = data.harga;
+                    document.getElementById('harga').value = formatRupiah(data.harga);
                     document.getElementById('kapasitas').value = data.kapasitas || '';
                     
                     if (data.thumbnail) {
