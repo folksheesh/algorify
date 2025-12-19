@@ -351,7 +351,7 @@
 
 /* Collapsed State Styles */
 .sidebar.collapsed {
-    width: 72px !important;
+    width: var(--sidebar-collapsed-width, 72px) !important;
     overflow: visible !important;
 }
 
@@ -433,7 +433,9 @@
 /* Adjust main content when sidebar is collapsed */
 .sidebar.collapsed ~ .main-content,
 body:has(.sidebar.collapsed) .main-content {
-    margin-left: 72px !important;
+    margin-left: var(--sidebar-collapsed-width, 72px) !important;
+    width: calc(100% - var(--sidebar-collapsed-width, 72px)) !important;
+    max-width: calc(100vw - var(--sidebar-collapsed-width, 72px));
 }
 
 /* Toggle icon visibility */
@@ -529,6 +531,8 @@ body:has(.sidebar.collapsed) .main-content {
     .sidebar.collapsed ~ .main-content,
     body:has(.sidebar.collapsed) .main-content {
         margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .sidebar.collapsed .nav-link::after,

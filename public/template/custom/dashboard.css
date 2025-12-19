@@ -12,6 +12,11 @@ body {
     overflow-y: auto;
 }
 
+:root {
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 72px;
+}
+
 /* ============================================
    GLOBAL ANIMATIONS
    ============================================ */
@@ -105,7 +110,7 @@ body {
 
 /* Sidebar utama - fixed position dengan scroll sendiri */
 .sidebar {
-    width: 280px;
+    width: var(--sidebar-width);
     background-color: #FFF;
     border-right: 1px solid #E2E8F0;
     display: flex;
@@ -427,7 +432,10 @@ body {
 .main-content {
     flex: 1;
     padding: 32px 48px;
-    margin-left: 280px;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    max-width: calc(100vw - var(--sidebar-width));
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -441,7 +449,9 @@ body {
 
 /* Main content when sidebar is collapsed */
 .sidebar.collapsed ~ .main-content {
-    margin-left: 72px;
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+    max-width: calc(100vw - var(--sidebar-collapsed-width));
 }
 
 /* Wrapper untuk konten utama agar footer sticky di bawah */
@@ -1153,6 +1163,8 @@ body {
     /* Main content full width */
     .main-content {
         margin-left: 0;
+        width: 100%;
+        max-width: 100%;
         padding: 80px 24px 24px 24px;
     }
     
@@ -1738,4 +1750,3 @@ body {
         height: 16px;
     }
 }
-

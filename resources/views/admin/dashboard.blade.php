@@ -172,6 +172,22 @@
             padding: 1.75rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+        .charts-grid {
+            min-width: 0;
+        }
+        .chart-card {
+            min-width: 0;
+            overflow: hidden;
+        }
+        .chart-content {
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .chart-content canvas {
+            max-width: 100%;
+            width: 100%;
+        }
         .chart-header {
             display: flex;
             justify-content: space-between;
