@@ -29,11 +29,11 @@ class BankSoal extends Model
     ];
 
     /**
-     * Get the kategori (kursus) that owns the soal
+     * Get the kategori pelatihan that owns the soal
      */
     public function kategori()
     {
-        return $this->belongsTo(Kursus::class, 'kategori_id');
+        return $this->belongsTo(KategoriPelatihan::class, 'kategori_id');
     }
 
     /**
@@ -60,11 +60,5 @@ class BankSoal extends Model
         return $this->hasMany(BankSoalPilihan::class, 'bank_soal_id');
     }
 
-    /**
-     * Get the kategori pelatihan that owns the soal
-     */
-    public function kategoriPelatihan()
-    {
-        return $this->belongsTo(KategoriPelatihan::class, 'kategori_id');
-    }
+    
 }
