@@ -117,6 +117,11 @@ class GoogleController extends Controller
             // Login user ke aplikasi (remember = true agar sesi persisten)
             Auth::login($user, true);
 
+            // Jika data profil wajib belum lengkap, arahkan ke halaman pelengkapan profil
+            if (! $this->hasCompleteProfile($user)) {
+                return redirect()->route('profile.complete.show');
+            }
+
             // Arahkan user ke halaman tujuan (dashboard) atau ke halaman yang diminta sebelumnya
             return redirect()->intended(route('dashboard'));
         } catch (\Exception $e) {
@@ -139,5 +144,27 @@ class GoogleController extends Controller
             
             return redirect()->route('login')->with('oauth_error', $errorMessage);
         }
+    }
+
+    /**
+     * Cek kelengkapan profil yang wajib diisi.
+     */
+    protected function hasCompleteProfile(User $user): bool
+    {
+        $requiredFields = [
+            'phone',
+            'profesi',
+            'tanggal_lahir',
+            'jenis_kelamin',
+            'address',
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (! filled($user->{$field} ?? null)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
