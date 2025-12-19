@@ -434,6 +434,11 @@ body {
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Add space for fixed topbar when present */
+.dashboard-container.with-topbar .main-content {
+    padding-top: calc(72px + 32px);
+}
+
 /* Main content when sidebar is collapsed */
 .sidebar.collapsed ~ .main-content {
     margin-left: 72px;
