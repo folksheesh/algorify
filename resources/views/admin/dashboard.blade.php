@@ -27,7 +27,7 @@
         }
         .stat-cards-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -310,29 +310,76 @@
             }
         }
         
-        /* Responsive container padding */
-        .dashboard-content-wrapper {
-            padding: 0 2rem 2rem;
+        /* Override main-content padding untuk dashboard admin */
+        .main-content {
+            padding: 0 !important;
+            overflow-x: hidden;
         }
-        .dashboard-page-header {
-            margin: 0 2rem;
+        
+        .dashboard-wrapper {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-content-inner {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .stat-cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.25rem;
+            }
+            .stat-icon-wrapper {
+                width: 60px;
+                height: 60px;
+            }
+            .stat-icon-wrapper svg {
+                width: 30px;
+                height: 30px;
+            }
+            .stat-info p {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .stat-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
         
         @media (max-width: 768px) {
-            .dashboard-content-wrapper {
-                padding: 0 1rem 1rem;
+            .dashboard-wrapper {
+                padding: 1.5rem !important;
             }
-            .dashboard-page-header {
-                margin: 0 1rem;
+            .admin-header {
+                padding: 1.5rem 1rem;
+                margin-top: 1rem;
+            }
+            .admin-header h1 {
+                font-size: 1.5rem;
+            }
+            .admin-header p {
+                font-size: 0.875rem;
+            }
+            .stat-cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .stat-card-modern {
+                padding: 1.25rem;
             }
         }
         
         @media (max-width: 640px) {
-            .dashboard-content-wrapper {
-                padding: 0 0.75rem 0.75rem;
-            }
-            .dashboard-page-header {
-                margin: 0 0.75rem;
+            .dashboard-wrapper {
+                padding: 1rem !important;
             }
         }
     </style>
@@ -342,20 +389,21 @@
     <div class="dashboard-container">
         @include('components.sidebar')
         <main class="main-content">
-            <header class="main-header">
-            </header>
-            
-            <!-- Page Header -->
-            <div class="page-header dashboard-page-header">
-                <h1>Dashboard Admin</h1>
-            </div>
-            
-            <div class="dashboard-content-wrapper">
-                <!-- Admin Header Banner -->
-                <div class="admin-header">
-                    <h1>Halo, Admin!</h1>
-                    <p>"Selamat datang di halaman Admin. Kelola peserta, pengajar, course, dan transaksi dengan mudah untuk mendukung jalannya pelatihan TIK."</p>
+            <div class="dashboard-wrapper" style="padding: 2rem;">
+                <header class="main-header" style="margin-bottom: 0;">
+                </header>
+                
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Dashboard Admin</h1>
                 </div>
+                
+                <div class="dashboard-content-inner">
+                    <!-- Admin Header Banner -->
+                    <div class="admin-header">
+                        <h1>Halo, Admin!</h1>
+                        <p>"Selamat datang di halaman Admin. Kelola peserta, pengajar, course, dan transaksi dengan mudah untuk mendukung jalannya pelatihan TIK."</p>
+                    </div>
 
                 <!-- Stat Cards -->
                 <div class="stat-cards-grid">
@@ -440,6 +488,7 @@
                             <canvas id="pertumbuhanChart"></canvas>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </main>

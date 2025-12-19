@@ -1,23 +1,46 @@
+/* Fix horizontal scroll */
+html,
+body {
+    overflow-x: hidden;
+}
+
+.dashboard-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.main-content {
+    overflow-x: hidden;
+    max-width: calc(100vw - 280px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ketika sidebar collapsed, main-content menjadi full width */
+.sidebar.collapsed~.main-content {
+    max-width: calc(100vw - 72px);
+}
+
 /* Page Header Style (sama dengan transaksi) */
 /* Header halaman dengan judul */
-        .page-header {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+.page-header {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        /* Judul halaman */
-        .page-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1E293B;
-            margin: 0;
-        }
+/* Judul halaman */
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+}
 
 .page-header::before {
     content: '';
@@ -26,7 +49,7 @@
     right: -10%;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
     border-radius: 50%;
 }
 
@@ -44,7 +67,7 @@
 }
 
 .info-banner-icon {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     padding: 0.625rem;
     border-radius: 8px;
     display: flex;
@@ -77,14 +100,14 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .stat-label {
@@ -142,7 +165,7 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 1.5rem;
 }
 
@@ -213,7 +236,7 @@
 .table-container {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     margin-bottom: 1.5rem;
 }
@@ -312,7 +335,7 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .distribusi-card h3 {
@@ -445,7 +468,7 @@
     .distribusi-section {
         grid-template-columns: 1fr;
     }
-    
+
     .pie-chart-container {
         flex-direction: column;
         gap: 1.5rem;
@@ -456,11 +479,11 @@
     .stats-cards {
         grid-template-columns: 1fr;
     }
-    
+
     .page-header h1 {
         font-size: 1.5rem;
     }
-    
+
     .modal-content {
         width: 95% !important;
         margin: 1rem !important;
@@ -500,6 +523,7 @@
         opacity: 0;
         transform: translateY(-20px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -550,40 +574,21 @@
 
 .modal-table-container {
     overflow-x: auto;
+    width: 100%;
+}
+
+/* --- Analitik Modal Table & Grid Responsive Fixes --- */
+.modal-table-container {
+    width: 100%;
+    overflow-x: unset !important;
 }
 
 .modal-table {
     width: 100%;
+    min-width: 0;
     border-collapse: collapse;
-}
-
-.modal-table thead {
-    position: sticky;
-    top: 0;
-    background: #F8FAFC;
-    z-index: 1;
-}
-
-.modal-table th,
-.modal-table td {
-    padding: 0.875rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #E2E8F0;
-}
-
-.modal-table th {
-    background: #F8FAFC;
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #64748B;
-}
-
-.modal-table tbody {
-    display: block;
-    max-height: 280px; /* Approx 5 rows visible */
-    overflow-y: auto;
+    table-layout: fixed;
+    word-break: break-word;
 }
 
 .modal-table thead,
@@ -591,18 +596,51 @@
     display: table;
     width: 100%;
     table-layout: fixed;
+    word-break: break-word;
 }
 
-.modal-table tbody tr {
-    transition: background 0.15s;
+@media (max-width: 1024px) {
+    .modal-content {
+        width: 98vw !important;
+        max-width: 98vw !important;
+        margin: 0.5rem !important;
+    }
+
+    .modal-table-container {
+        max-width: 100vw;
+        overflow-x: unset !important;
+    }
+
+    .modal-table {
+        font-size: 0.85rem;
+    }
 }
 
-.modal-table tbody tr:hover {
-    background: #F8FAFC;
-}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 99vw !important;
+        margin: 0.25rem !important;
+        max-width: 99vw !important;
+        max-height: 95vh !important;
+    }
 
-.modal-table tbody tr:last-child td {
-    border-bottom: none;
+    .modal-table-container {
+        max-width: 100vw;
+        overflow-x: unset !important;
+    }
+
+    .modal-table {
+        font-size: 0.8rem;
+    }
+
+    .table-container {
+        padding: 0.5rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem 0.5rem;
+    }
 }
 
 /* Custom scrollbar for modal table */

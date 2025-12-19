@@ -25,7 +25,8 @@ class GoogleController extends Controller
     public function redirectToGoogle(): RedirectResponse
     {
         // Gunakan driver 'google' dari Socialite untuk memulai redirect
-        return Socialite::driver('google')->redirect();
+        // Menggunakan stateless() untuk menghindari masalah InvalidStateException
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     /**
@@ -78,7 +79,9 @@ class GoogleController extends Controller
             ]);
             
             // Get user data from Google OAuth
+            // Menggunakan stateless() untuk menghindari masalah InvalidStateException
             $googleUser = Socialite::driver('google')
+                ->stateless()
                 ->user();
             // Cari user di database berdasarkan email (umumnya unik)
             $user = User::where('email', $googleUser->getEmail())->first();
