@@ -237,7 +237,7 @@
 /* Edge Toggle Button - positioned at sidebar edge */
 .sidebar-edge-toggle {
     position: fixed;
-    left: 268px; /* sidebar width (280px) - half button width */
+    left: 278px; /* sidebar width (280px) - sedikit ke kanan agar tidak nabrak menu */
     top: 50%;
     transform: translateY(-50%);
     width: 24px;
@@ -266,7 +266,7 @@
 
 /* Move toggle button when sidebar is collapsed */
 .sidebar.collapsed ~ .sidebar-edge-toggle {
-    left: 60px; /* collapsed width (72px) - half button width */
+    left: 70px; /* collapsed width (72px) - sedikit ke kanan agar tidak nabrak menu */
 }
 
 /* Toggle icon visibility based on sidebar state */
