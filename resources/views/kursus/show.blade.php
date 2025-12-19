@@ -27,6 +27,7 @@
             grid-template-columns: 1fr 1.2fr;
             gap: 2rem;
             margin-bottom: 2rem;
+            align-items: stretch;
         }
 
         .course-image-container {
@@ -34,11 +35,15 @@
             overflow: hidden;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .course-image-container img {
             width: 100%;
-            height: 280px;
+            height: 100%;
+            min-height: 280px;
             object-fit: cover;
             display: block;
         }
@@ -62,6 +67,28 @@
             list-style: none;
             padding: 0;
             margin: 0;
+            max-height: 160px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom scrollbar styling */
+        .learning-objectives-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .learning-objectives-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .learning-objectives-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .learning-objectives-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         .learning-objectives-list li {
@@ -337,6 +364,11 @@ if (count($objectives) < 2) {
                                     </li>
                                 @endforeach
                             </ul>
+                            
+                            {{-- Enroll Button - Moved here for compact layout --}}
+                            <div class="enroll-section-inline" style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e5e7eb; text-align: center;">
+                                <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-btn" style="width: 90%; text-align: center; display: inline-block; padding: 12px 24px; font-size: 0.95rem; border-radius: 10px;">Daftar Sekarang</a>
+                            </div>
                         </div>
                     </div>
 
@@ -406,11 +438,6 @@ if (count($objectives) < 2) {
                             </div>
                             <div class="price-note">Pembayaran dapat dilakukan melalui berbagai metode yang tersedia di halaman pembayaran.</div>
                         </div>
-                    </div>
-
-                    {{-- Enroll Button --}}
-                    <div class="enroll-section">
-                        <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-btn">Daftar Sekarang</a>
                     </div>
                 </div>
             </main>
