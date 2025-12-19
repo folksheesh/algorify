@@ -387,8 +387,8 @@ if (count($objectives) < 2) {
                     <div class="course-highlight-row">
                         <div class="instructor-section highlight-card">
                             <div class="instructor-label">Instruktur</div>
-                            <div class="instructor-name">{{ $kursus->pengajar->name ?? 'Nama Instruktur' }}</div>
-                            <div class="instructor-role">{{ $kursus->pengajar->profesi ?? 'Senior Instructor' }}</div>
+                            <div class="instructor-name">{{ $kursus->user->name ?? $kursus->pengajar ?? 'Nama Instruktur' }}</div>
+                            <div class="instructor-role">{{ $kursus->user->profesi ?? 'Senior Instructor' }}</div>
                             <div class="instructor-bio">Instruktur berpengalaman dengan keahlian di bidang
                                 {{ strtolower($kursus->judul) }} yang siap membimbing Anda mencapai tujuan pembelajaran.</div>
                         </div>

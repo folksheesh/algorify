@@ -5,6 +5,7 @@
 
 .pelatihan-content {
     padding: 1rem 2rem 2rem 2rem;
+    padding-bottom: 3.5rem;
 }
 
 .pelatihan-header {
@@ -211,7 +212,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center top;
     display: block;
     transform: scale(1);
     transition: transform 0.35s ease;
@@ -309,8 +310,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 2.5rem;
-    padding: 1.5rem 0;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
 }
 
 .pagination-wrapper nav {
@@ -453,6 +455,7 @@
 @media (max-width: 768px) {
     .courses-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .pelatihan-content {
@@ -464,16 +467,20 @@
     }
 
     .search-filter-wrapper {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.75rem;
     }
 
     .search-box {
         min-width: auto;
+        flex: 1 1 auto;
     }
 
     .filters-container {
-        flex-direction: column;
+        flex-direction: row;
+        flex: 0 0 auto;
     }
 
     .filter-select {
@@ -492,6 +499,66 @@
 
     .search-filter-section {
         padding: 1rem;
+    }
+
+    .course-thumbnail {
+        height: 180px;
+    }
+
+    .course-thumbnail::after {
+        display: none;
+    }
+
+    .course-content {
+        padding: 1rem;
+        gap: 0.5rem;
+    }
+
+    .course-title {
+        font-size: 1rem;
+        min-height: unset;
+    }
+
+    .course-description {
+        display: -webkit-box;
+        font-size: 0.875rem;
+        -webkit-line-clamp: 3;
+        min-height: 3.6em;
+    }
+
+    .view-detail-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        margin-top: 0.25rem;
+    }
+
+    .btn-filter.icon-only {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.55rem;
+    }
+
+    .btn-filter svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+
+    .pagination .page-item .page-link {
+        min-width: 30px;
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+    }
+
+    .pelatihan-content {
+        padding: 1rem;
+        padding-bottom: 3rem;
     }
 }
 
@@ -517,8 +584,40 @@
         padding: 0.875rem;
     }
 
+    .courses-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+
+    .course-thumbnail {
+        height: 190px;
+    }
+
     .course-title {
-        font-size: 0.875rem;
+        font-size: 0.95rem;
+    }
+
+    .course-description {
+        font-size: 0.82rem;
+        -webkit-line-clamp: 3;
+        min-height: 3.4em;
+    }
+
+    .view-detail-btn {
+        padding: 0.55rem;
+        font-size: 0.8rem;
+        border-radius: 9px;
+    }
+
+    .pagination .page-item .page-link {
+        min-width: 28px;
+        padding: 0.32rem 0.5rem;
+        font-size: 0.74rem;
+    }
+
+    .pelatihan-content {
+        padding: 0.75rem;
+        padding-bottom: 2.5rem;
     }
 }
 
@@ -544,6 +643,15 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     position: relative;
     overflow: hidden;
+}
+
+.btn-filter.icon-only {
+    padding: 0.75rem;
+    gap: 0;
+}
+
+.btn-filter.icon-only .btn-filter-text {
+    display: none;
 }
 
 .btn-filter::before {

@@ -46,11 +46,11 @@
                                     $tipeCount = request('tipe_kursus') ? count(array_filter(explode(',', request('tipe_kursus')))) : 0;
                                     $totalFilters = $kategoriCount + $pengajarCount + $tipeCount;
                                 @endphp
-                                <button type="button" class="btn-filter {{ $totalFilters > 0 ? 'has-filters' : '' }}" onclick="openFilterModal()">
+                                <button type="button" class="btn-filter icon-only {{ $totalFilters > 0 ? 'has-filters' : '' }}" onclick="openFilterModal()" aria-label="Filter">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
                                     </svg>
-                                    <span>Filter</span>
+                                    <span class="btn-filter-text">Filter</span>
                                     @if($totalFilters > 0)
                                         <span class="filter-badge">{{ $totalFilters }}</span>
                                     @endif
@@ -331,6 +331,15 @@
                                 </div>
                             </div>
                             @endforeach
+                        </div>
+
+                        <div class="no-courses" id="searchEmptyMessage" style="display: none;">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="60" cy="60" r="50" stroke="currentColor" stroke-width="2"/>
+                                <path d="M40 55h40M40 65h40M40 75h25" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <h3 style="margin-bottom: 0.5rem; color: #374151;">Kursus dengan nama "<span id="searchKeyword"></span>" tidak ditemukan</h3>
+                            <p>Coba ubah kata kunci pencarian Anda</p>
                         </div>
 
                         <div class="pagination-info">
@@ -824,10 +833,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchKursus');
             const courseCards = document.querySelectorAll('.course-card');
+            const searchEmptyMessage = document.getElementById('searchEmptyMessage');
+            const searchKeyword = document.getElementById('searchKeyword');
+            const paginationInfo = document.querySelector('.pagination-info');
+            const paginationWrapper = document.querySelector('.pagination-wrapper');
             
             if (searchInput) {
                 searchInput.addEventListener('input', function(e) {
                     const searchTerm = e.target.value.toLowerCase().trim();
+                    let visibleCount = 0;
                     
                     courseCards.forEach(card => {
                         const title = card.querySelector('.course-title');
@@ -836,11 +850,37 @@
                             
                             if (titleText.includes(searchTerm)) {
                                 card.style.display = 'flex';
+                                visibleCount += 1;
                             } else {
                                 card.style.display = 'none';
                             }
                         }
                     });
+
+                    if (searchTerm && visibleCount === 0) {
+                        if (searchKeyword) {
+                            searchKeyword.textContent = e.target.value.trim();
+                        }
+                        if (searchEmptyMessage) {
+                            searchEmptyMessage.style.display = 'block';
+                        }
+                        if (paginationInfo) {
+                            paginationInfo.style.display = 'none';
+                        }
+                        if (paginationWrapper) {
+                            paginationWrapper.style.display = 'none';
+                        }
+                    } else {
+                        if (searchEmptyMessage) {
+                            searchEmptyMessage.style.display = 'none';
+                        }
+                        if (paginationInfo) {
+                            paginationInfo.style.display = '';
+                        }
+                        if (paginationWrapper) {
+                            paginationWrapper.style.display = '';
+                        }
+                    }
                 });
             }
         });
