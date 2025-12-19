@@ -30,19 +30,23 @@
 
 <style>
     .app-footer {
+        --sidebar-width: 280px;
+        --sidebar-collapsed-width: 72px;
         background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
         color: #fff;
         padding: 1rem 48px;
-        margin-left: 280px;
+        padding-left: calc(48px + var(--sidebar-width));
+        width: 100%;
+        margin-left: 0;
         box-sizing: border-box;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     /* Adjust footer when sidebar is collapsed */
     .sidebar.collapsed ~ .app-footer,
     body:has(.sidebar.collapsed) .app-footer {
-        margin-left: 72px;
+        padding-left: calc(48px + var(--sidebar-collapsed-width));
     }
     
     .footer-bottom {
@@ -96,12 +100,13 @@
         .app-footer {
             background: linear-gradient(135deg, #5D3FFF 0%, #4831CC 100%);
             color: #fff;
-            padding: 1rem 48px;
-            margin-left: 270px;
-            padding-right: 10px
+            padding: 1rem;
+            margin-left: 0;
+            width: 100%;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-left: 1rem;
         }
     }
     
@@ -109,6 +114,8 @@
         .app-footer {
             padding: 1rem;
             margin-left: 0;
+            width: 100%;
+            padding-left: 1rem;
         }
         
         .footer-bottom {
@@ -125,6 +132,8 @@
         .app-footer {
             padding: 0.875rem 0.75rem;
             margin-left: 0;
+            width: 100%;
+            padding-left: 0.75rem;
         }
         
         .footer-copyright {
