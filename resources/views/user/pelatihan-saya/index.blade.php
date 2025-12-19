@@ -15,7 +15,6 @@
     <div class="dashboard-container with-topbar">
         @include('components.sidebar')
         <main class="main-content">
-<<<<<<< .merge_file_Zhn9rC
             <div style="padding: 0 2rem 2rem;">
                 <!-- Page Header with Hero Banner -->
                 <div class="page-header-hero">
@@ -37,26 +36,8 @@
                         </svg>
                         <input type="text" id="searchInput" placeholder="Cari pelatihan saya...">
                     </div>
-=======
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1>Pelatihan Saya</h1>
-                <p>Lihat dan kelola pelatihan yang sedang Anda ikuti. Lanjutkan perjalanan Anda menuju target Anda</p>
-            </div>
-
-            <!-- Search Bar -->
-            <div class="search-filter-bar">
-                <div class="search-box">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5" fill="none" />
-                        <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5" />
-                    </svg>
-                    <input type="text" id="searchInput" placeholder="Cari pelatihan saya...">
->>>>>>> .merge_file_6E4l7v
                 </div>
-            </div>
 
-            <div style="padding: 0 2rem 2rem;">
                 @if($enrollments->count() > 0)
                     <!-- Courses Grid -->
                     <div class="courses-grid" id="coursesGrid">

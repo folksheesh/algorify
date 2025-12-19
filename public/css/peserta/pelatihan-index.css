@@ -1,5 +1,23 @@
 * {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    box-sizing: border-box;
+}
+
+/* Fix horizontal scroll on mobile */
+html,
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.dashboard-container {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.main-content {
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* Override untuk menjaga konsistensi dropdown topbar */
@@ -23,14 +41,17 @@ nav.topbar-user .dropdown-item {
 
 /* Animasi khusus hero banner pelatihan */
 @keyframes heroGlowPelatihan {
-    0%, 100% { 
-        box-shadow: 
+
+    0%,
+    100% {
+        box-shadow:
             0 4px 20px rgba(102, 126, 234, 0.25),
             0 0 0 0 rgba(102, 126, 234, 0.1),
             inset 0 0 30px rgba(102, 126, 234, 0.05);
     }
-    50% { 
-        box-shadow: 
+
+    50% {
+        box-shadow:
             0 8px 40px rgba(102, 126, 234, 0.4),
             0 0 60px rgba(118, 75, 162, 0.2),
             inset 0 0 40px rgba(102, 126, 234, 0.08);
@@ -38,46 +59,63 @@ nav.topbar-user .dropdown-item {
 }
 
 @keyframes floatIcon {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-12px) rotate(3deg); }
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(3deg);
+    }
 }
 
 @keyframes slideInLeft {
-    from { 
-        opacity: 0; 
-        transform: translateX(-30px); 
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
 @keyframes slideInRight {
-    from { 
-        opacity: 0; 
-        transform: translateX(30px); 
+    from {
+        opacity: 0;
+        transform: translateX(30px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 @keyframes textGlowPelatihan {
-    0%, 100% { text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(102, 126, 234, 0.1); }
-    50% { text-shadow: 0 2px 15px rgba(255, 255, 255, 0.3), 0 0 30px rgba(102, 126, 234, 0.2); }
+
+    0%,
+    100% {
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(102, 126, 234, 0.1);
+    }
+
+    50% {
+        text-shadow: 0 2px 15px rgba(255, 255, 255, 0.3), 0 0 30px rgba(102, 126, 234, 0.2);
+    }
 }
 
 .page-header-hero {
@@ -88,7 +126,6 @@ nav.topbar-user .dropdown-item {
     border-radius: 20px;
     padding: 2.5rem 2rem;
     color: white;
-<<<<<<< .merge_file_1RzS7P
     margin-bottom: 0;
     display: flex;
     justify-content: space-between;
@@ -113,10 +150,6 @@ nav.topbar-user .dropdown-item {
     background: linear-gradient(90deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.4) 50%, rgba(118, 75, 162, 0.2) 100%);
     z-index: 0;
     pointer-events: none;
-=======
-    margin: 2rem 2rem 2rem 2rem;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
->>>>>>> .merge_file_rrQK3I
 }
 
 .hero-content-left {
@@ -132,7 +165,7 @@ nav.topbar-user .dropdown-item {
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: #FFFFFF;
-    text-shadow: 
+    text-shadow:
         0 2px 4px rgba(102, 126, 234, 0.4),
         0 4px 8px rgba(118, 75, 162, 0.3);
     animation: textGlowPelatihan 3s ease-in-out infinite;
@@ -144,7 +177,7 @@ nav.topbar-user .dropdown-item {
     line-height: 1.6;
     margin-bottom: 0;
     color: #FFFFFF;
-    text-shadow: 
+    text-shadow:
         0 1px 3px rgba(102, 126, 234, 0.5),
         0 2px 6px rgba(118, 75, 162, 0.3);
 }
@@ -152,7 +185,6 @@ nav.topbar-user .dropdown-item {
 /* Search bar di bawah hero */
 .search-filter-bar-below {
     display: block;
-<<<<<<< .merge_file_1RzS7P
     width: 100%;
     box-sizing: border-box;
     margin-top: 1.5rem;
@@ -166,15 +198,6 @@ nav.topbar-user .dropdown-item {
     opacity: 0;
     position: relative;
     z-index: 2;
-=======
-    width: auto;
-    margin: 0 2rem 2rem 2rem;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 0.85rem 2rem;
-    box-shadow: 0 20px 45px rgba(102, 126, 234, 0.12);
-    border: 1px solid rgba(148, 163, 184, 0.25);
->>>>>>> .merge_file_rrQK3I
 }
 
 .search-filter-bar-below .search-box {
@@ -536,25 +559,39 @@ nav.topbar-user .dropdown-item {
 }
 
 @media (max-width: 768px) {
+
+    /* Fix overflow on mobile */
+    html,
+    body,
+    .dashboard-container,
+    .main-content {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
     .main-content>div {
         padding: 0 1rem 1.5rem !important;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     /* Hero banner responsive */
     .page-header-hero {
         flex-direction: column;
         text-align: center;
-        padding: 1.75rem 1.5rem;
+        padding: 1.75rem 1rem;
         border-radius: 16px;
-        margin-bottom: 0;
+        margin: 0;
         min-height: auto;
+        width: 100%;
+        max-width: 100%;
     }
-    
+
     .page-header-hero::before {
         background: linear-gradient(180deg, rgba(102, 126, 234, 0.65) 0%, rgba(118, 75, 162, 0.5) 100%);
         border-radius: 16px;
     }
-    
+
     .hero-content-left {
         max-width: 100%;
         order: 1;
@@ -568,18 +605,18 @@ nav.topbar-user .dropdown-item {
         font-size: 0.875rem;
         margin-bottom: 0;
     }
-    
+
     .hero-icon-right {
         order: 0;
         margin-bottom: 1rem;
         margin-right: 0;
     }
-    
+
     .hero-icon-img {
         width: 120px;
         max-height: 100px;
     }
-    
+
     /* Search bar below hero - mobile */
     .search-filter-bar-below {
         margin-top: -0.25rem;
@@ -657,21 +694,21 @@ nav.topbar-user .dropdown-item {
         border-radius: 14px;
         margin-bottom: 0;
     }
-    
+
     .page-header-hero h1 {
         font-size: 1.25rem;
     }
-    
+
     .page-header-hero p {
         font-size: 0.8125rem;
         margin-bottom: 0;
     }
-    
+
     .hero-icon-img {
         width: 110px;
         max-height: 90px;
     }
-    
+
     /* Search bar below hero - small mobile */
     .search-filter-bar-below {
         padding: 0.5rem 1rem;
@@ -679,12 +716,12 @@ nav.topbar-user .dropdown-item {
         margin-top: -0.25rem;
         margin-bottom: 1rem;
     }
-    
+
     .search-filter-bar-below .search-box input {
         font-size: 0.8125rem;
         padding: 0.5rem 0.75rem 0.5rem 2.25rem;
     }
-    
+
     .search-filter-bar-below .search-box svg {
         width: 16px;
         height: 16px;
@@ -734,24 +771,24 @@ nav.topbar-user .dropdown-item {
         padding: 2rem 1.75rem;
         margin-bottom: 0;
     }
-    
+
     .hero-content-left {
         max-width: 55%;
     }
-    
+
     .page-header-hero h1 {
         font-size: 1.75rem;
     }
-    
+
     .hero-icon-right {
         margin-right: 2rem;
     }
-    
+
     .hero-icon-img {
         width: 160px;
         max-height: 140px;
     }
-    
+
     .search-filter-bar-below {
         margin-top: -0.5rem;
         margin-bottom: 1.5rem;
