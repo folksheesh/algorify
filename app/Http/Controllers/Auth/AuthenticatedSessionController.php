@@ -43,6 +43,9 @@ class AuthenticatedSessionController extends Controller
         // Buat ulang sesi untuk mencegah fixation
         $request->session()->regenerate();
 
+        // Login ini bukan dari Google OAuth, jadi pastikan flag direset
+        $request->session()->forget('login_via_google');
+
         // Arahkan ke halaman yang diminta sebelumnya atau ke dashboard
         return redirect()->intended(route('dashboard', absolute: false));
     }

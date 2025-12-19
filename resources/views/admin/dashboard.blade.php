@@ -5,16 +5,10 @@
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
-<<<<<<< .merge_file_LIOB8w
-    <style>
-        .admin-header {
-            background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);
-=======
     <link rel="stylesheet" href="{{ asset('css/admin/dashboard.css') }}">
     <style>
         .admin-header {
             background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);
->>>>>>> .merge_file_9nRBjX
             border-radius: 20px;
             padding: 2.5rem 2rem;
             color: white;
@@ -34,11 +28,7 @@
         }
         .stat-cards-grid {
             display: grid;
-<<<<<<< .merge_file_LIOB8w
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-=======
             grid-template-columns: repeat(3, 1fr);
->>>>>>> .merge_file_9nRBjX
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -321,72 +311,6 @@
             }
         }
         
-<<<<<<< .merge_file_LIOB8w
-        /* Override main-content padding untuk dashboard admin */
-        .main-content {
-            padding: 0 !important;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-wrapper {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-content-inner {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 1400px) {
-            .stat-cards-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1.25rem;
-            }
-            .stat-icon-wrapper {
-                width: 60px;
-                height: 60px;
-            }
-            .stat-icon-wrapper svg {
-                width: 30px;
-                height: 30px;
-            }
-            .stat-info p {
-                font-size: 1.75rem;
-            }
-        }
-        
-        @media (max-width: 1200px) {
-            .stat-cards-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .charts-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard-wrapper {
-                padding: 1.5rem !important;
-            }
-            .admin-header {
-                padding: 1.5rem 1rem;
-                margin-top: 1rem;
-            }
-            .admin-header h1 {
-                font-size: 1.5rem;
-            }
-            .admin-header p {
-                font-size: 0.875rem;
-            }
-            .stat-cards-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            .stat-card-modern {
-                padding: 1.25rem;
-=======
         /* Responsive container padding */
         .dashboard-content-wrapper {
             padding: 0 2rem 2rem;
@@ -401,21 +325,15 @@
             }
             .dashboard-page-header {
                 margin: 0 1rem;
->>>>>>> .merge_file_9nRBjX
             }
         }
         
         @media (max-width: 640px) {
-<<<<<<< .merge_file_LIOB8w
-            .dashboard-wrapper {
-                padding: 1rem !important;
-=======
             .dashboard-content-wrapper {
                 padding: 0 0.75rem 0.75rem;
             }
             .dashboard-page-header {
                 margin: 0 0.75rem;
->>>>>>> .merge_file_9nRBjX
             }
         }
     </style>
@@ -445,11 +363,7 @@
                 <div class="stat-cards-grid">
                     <a href="{{ route('admin.peserta.index') }}" style="text-decoration: none;">
                         <div class="stat-card-modern">
-<<<<<<< .merge_file_LIOB8w
-                            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #5D3FFF 0%, #5D3FFF 100%);">
-=======
                             <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, #3A6DFF 0%, #3A6DFF 100%);">
->>>>>>> .merge_file_9nRBjX
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="white"/>
                                     <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="white"/>
@@ -600,11 +514,7 @@
                 
                 // Warna untuk setiap metode pembayaran
                 const colorMap = {
-<<<<<<< .merge_file_LIOB8w
-                    'Transfer Bank': '#5D3FFF',
-=======
                     'Transfer Bank': '#3A6DFF',
->>>>>>> .merge_file_9nRBjX
                     'E-Wallet': '#f093fb',
                     'Kartu Kredit': '#4facfe',
                     'Qris': '#10B981',
@@ -793,11 +703,7 @@
                         datasets: [{
                             label: 'Peserta Baru',
                             data: values,
-<<<<<<< .merge_file_LIOB8w
-                            backgroundColor: '#5D3FFF',
-=======
                             backgroundColor: '#3A6DFF',
->>>>>>> .merge_file_9nRBjX
                             borderRadius: 8,
                             barThickness: 30
                         }]
@@ -869,11 +775,7 @@
                         datasets: [{
                             label: 'Peserta Baru',
                             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-<<<<<<< .merge_file_LIOB8w
-                            backgroundColor: '#5D3FFF',
-=======
                             backgroundColor: '#3A6DFF',
->>>>>>> .merge_file_9nRBjX
                             borderRadius: 8,
                             barThickness: 30
                         }]

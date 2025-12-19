@@ -15,8 +15,8 @@ class EnsureProfileComplete
     {
         $user = Auth::user();
 
-        // Allow guests or already completed profiles to proceed
-        if (! $user || $this->isProfileComplete($user)) {
+        // Allow guests, users that shouldn't be checked, or already completed profiles to proceed
+        if (! $user || ! $this->shouldEnforceProfile($user, $request) || $this->isProfileComplete($user)) {
             return $next($request);
         }
 
@@ -27,6 +27,22 @@ class EnsureProfileComplete
 
         return redirect()->route('profile.complete.show')
             ->with('status', 'Lengkapi profil Anda terlebih dahulu.');
+    }
+
+    /**
+     * Only enforce profile completion for peserta logging in via Google.
+     */
+    protected function shouldEnforceProfile($user, Request $request): bool
+    {
+        if (! method_exists($user, 'hasRole')) {
+            return false;
+        }
+
+        if (! $user->hasRole('peserta')) {
+            return false;
+        }
+
+        return $request->session()->get('login_via_google', false) === true;
     }
 
     /**

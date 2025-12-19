@@ -117,8 +117,11 @@ class GoogleController extends Controller
             // Login user ke aplikasi (remember = true agar sesi persisten)
             Auth::login($user, true);
 
-            // Jika data profil wajib belum lengkap, arahkan ke halaman pelengkapan profil
-            if (! $this->hasCompleteProfile($user)) {
+            // Tandai bahwa sesi ini berasal dari login Google
+            $request->session()->put('login_via_google', true);
+
+            // Jika peserta dari Google belum lengkap profilnya, arahkan ke halaman pelengkapan profil
+            if ($user->hasRole('peserta') && ! $this->hasCompleteProfile($user)) {
                 return redirect()->route('profile.complete.show');
             }
 
