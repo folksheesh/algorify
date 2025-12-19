@@ -312,11 +312,14 @@
                             <div class="course-card">
                                 <div class="course-thumbnail">
                                     @php
-                                        $courseThumbnailUrl = $course->thumbnail ? resolve_thumbnail_url($course->thumbnail) : null;
+                                        $courseThumbnailUrl = resolve_thumbnail_url($course->thumbnail);
                                     @endphp
-                                    @if($courseThumbnailUrl)
-                                        <img src="{{ $courseThumbnailUrl }}" alt="{{ $course->judul }}" />
-                                    @endif
+                                    <img 
+                                        src="{{ $courseThumbnailUrl }}" 
+                                        alt="{{ $course->judul }}" 
+                                        loading="lazy"
+                                        onerror="this.onerror=null; this.src='{{ asset('template/assets/static/images/samples/origami.jpg') }}';"
+                                    />
                                     <span class="course-badge">{{ strtoupper(str_replace('_', ' ', $course->kategori)) }}</span>
                                     <button type="button" class="bookmark-btn" onclick="event.stopPropagation();">
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
