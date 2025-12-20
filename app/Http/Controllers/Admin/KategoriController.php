@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriPelatihan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class KategoriController extends Controller
 {
@@ -54,6 +55,8 @@ class KategoriController extends Controller
             'deskripsi' => 'nullable|string'
         ]);
 
+        $validated['slug'] = $this->generateUniqueSlug($validated['nama_kategori']);
+
         KategoriPelatihan::create($validated);
 
         return response()->json([
@@ -82,6 +85,10 @@ class KategoriController extends Controller
             'nama_kategori' => 'required|string|max:255',
             'deskripsi' => 'nullable|string'
         ]);
+
+        if ($kategori->nama_kategori !== $validated['nama_kategori']) {
+            $validated['slug'] = $this->generateUniqueSlug($validated['nama_kategori'], $kategori->id);
+        }
 
         $kategori->update($validated);
 
@@ -112,5 +119,23 @@ class KategoriController extends Controller
             'success' => true,
             'message' => 'Kategori berhasil dihapus'
         ]);
+    }
+
+    private function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($name);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (
+            KategoriPelatihan::where('slug', $slug)
+                ->when($ignoreId, fn($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }

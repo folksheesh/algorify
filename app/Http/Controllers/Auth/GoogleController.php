@@ -78,16 +78,13 @@ class GoogleController extends Controller
                 'app_url' => config('app.url')
             ]);
             
-            // Get user data from Google OAuth
-<<<<<<< HEAD
-            // Gunakan stateless() untuk menghindari masalah InvalidStateException
-            // yang terjadi karena session state tidak tersimpan dengan baik
-=======
-            // Menggunakan stateless() untuk menghindari masalah InvalidStateException
->>>>>>> origin/main
-            $googleUser = Socialite::driver('google')
-                ->stateless()
-                ->user();
+// Get user data from Google OAuth
+// Gunakan stateless() untuk menghindari masalah InvalidStateException
+// yang terjadi karena session state tidak tersimpan dengan baik
+$googleUser = Socialite::driver('google')
+    ->stateless()
+    ->user();
+
             // Cari user di database berdasarkan email (umumnya unik)
             $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -122,8 +119,11 @@ class GoogleController extends Controller
             // Login user ke aplikasi (remember = true agar sesi persisten)
             Auth::login($user, true);
 
-            // Jika data profil wajib belum lengkap, arahkan ke halaman pelengkapan profil
-            if (! $this->hasCompleteProfile($user)) {
+            // Tandai bahwa sesi ini berasal dari login Google
+            $request->session()->put('login_via_google', true);
+
+            // Jika peserta dari Google belum lengkap profilnya, arahkan ke halaman pelengkapan profil
+            if ($user->hasRole('peserta') && ! $this->hasCompleteProfile($user)) {
                 return redirect()->route('profile.complete.show');
             }
 

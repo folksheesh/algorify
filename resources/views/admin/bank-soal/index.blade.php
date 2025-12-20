@@ -382,7 +382,7 @@
     let editingId = null;        // ID soal yang sedang diedit
     let deleteId = null;         // ID soal yang akan dihapus
     let opsiCounter = 0;         // Counter untuk membuat ID unik pada setiap opsi
-    const MAX_OPTIONS = 6;       // Batas maksimal pilihan jawaban
+    const MAX_OPTIONS = 5;       // Batas maksimal pilihan jawaban
     
     // Pagination variables
     let soalData = [];
@@ -681,16 +681,24 @@
         });
     }
 
+    function updateAddOpsiButton() {
+        const btnAddOpsi = document.getElementById('btnAddOpsi');
+        const opsiList = document.getElementById('opsiList');
+        if (!btnAddOpsi || !opsiList) return;
+        btnAddOpsi.style.display = opsiList.children.length >= MAX_OPTIONS ? 'none' : 'flex';
+    }
+
     /**
      * Tambah pilihan jawaban baru
-     * Maksimal 6 pilihan jawaban
+     * Maksimal 5 pilihan jawaban
      */
     function addOpsi() {
         const opsiList = document.getElementById('opsiList');
         
-        // Validasi maksimal 6 opsi
+        // Validasi maksimal 5 opsi
         if (opsiList.children.length >= MAX_OPTIONS) {
             showToast(`Maksimal ${MAX_OPTIONS} pilihan jawaban`, 'warning');
+            updateAddOpsiButton();
             return;
         }
         
@@ -711,6 +719,7 @@
         `;
         
         opsiList.appendChild(opsiItem);
+        updateAddOpsiButton();
     }
 
     /**
@@ -721,6 +730,7 @@
         const opsiList = document.getElementById('opsiList');
         if (opsiList.children.length > 2) {
             button.parentElement.remove();
+            updateAddOpsiButton();
         } else {
             showToast('Minimal harus ada 2 pilihan jawaban', 'warning');
         }
@@ -757,6 +767,7 @@
         // Show tambah pilihan button
         const btnAddOpsi = document.getElementById('btnAddOpsi');
         if (btnAddOpsi) btnAddOpsi.style.display = 'flex';
+        updateAddOpsiButton();
         
         // Show submit button
         document.querySelector('.btn-submit').style.display = 'inline-block';
@@ -907,6 +918,7 @@
             // Show tambah pilihan button
             const btnAddOpsi = document.getElementById('btnAddOpsi');
             if (btnAddOpsi) btnAddOpsi.style.display = 'flex';
+            updateAddOpsiButton();
             
             // Show submit button
             document.querySelector('.btn-submit').style.display = 'inline-block';

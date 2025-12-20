@@ -34,8 +34,8 @@ class BankSoalController extends Controller
                 $q->whereRaw('LOWER(pertanyaan) like ?', ["%{$search}%"])
                   ->orWhereRaw('LOWER(tipe_soal) like ?', ["%{$search}%"])
                   ->orWhereHas('kategori', function($q) use ($search) {
-                      // kategori adalah relasi ke KategoriPelatihan, jadi pakai 'nama_kategori'
-                      $q->whereRaw('LOWER(nama_kategori) like ?', ["%{$search}%"]);
+                      // kategori adalah relasi ke Kursus, jadi pakai 'judul'
+                      $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
                   })
                   ->orWhereHas('kursus', function($q) use ($search) {
                       $q->whereRaw('LOWER(judul) like ?', ["%{$search}%"]);
@@ -53,14 +53,14 @@ class BankSoalController extends Controller
             $query->where('kategori_id', $request->kategori);
         }
 
-        // Filter by kategori name/slug (for modal bank soal in ujian)
-        // This filters bank soal by kategori_pelatihan slug or kursus kategori field
+        // Filter by kategori name (for modal bank soal in ujian)
+        // This filters bank soal where the linked kursus has a matching kategori field
         if ($request->has('kategori_nama') && $request->kategori_nama != '') {
             $kategoriNama = $request->kategori_nama;
             $query->where(function($q) use ($kategoriNama) {
-                // Filter by kategori_id (which links to kategori_pelatihan with matching slug)
+                // Filter by kategori_id (which links to kursus with matching kategori)
                 $q->whereHas('kategori', function($subQ) use ($kategoriNama) {
-                    $subQ->where('slug', $kategoriNama);
+                    $subQ->where('kategori', $kategoriNama);
                 })
                 // Or filter by kursus_id (which links to kursus with matching kategori)
                 ->orWhereHas('kursus', function($subQ) use ($kategoriNama) {

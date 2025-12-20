@@ -180,6 +180,11 @@
                     @endif
                     @endhasrole
 
+                    @if($ujian->soal->isEmpty())
+                        <div style="padding: 2.5rem; text-align: center; color: #64748B; background: #F8FAFC; border: 1px dashed #CBD5F5; border-radius: 16px; margin-bottom: 2rem;">
+                            Belum ada soal
+                        </div>
+                    @endif
                     <form id="quizForm" @hasrole('peserta') @if(!$showResults) style="display: none;" @endif @endhasrole>
                         @foreach($ujian->soal as $index => $soal)
                         <div class="question-card">
@@ -325,13 +330,15 @@
                                     </a>
                                 @endif
                             @else
-                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Batal</button>
-                                <button type="submit" class="btn btn-success">
-                                    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Selesai
-                                </button>
+                                @hasrole('peserta')
+                                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Batal</button>
+                                    <button type="submit" class="btn btn-success">
+                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Selesai
+                                    </button>
+                                @endhasrole
                             @endif
                         </div>
                     </form>
@@ -1878,6 +1885,16 @@ body.exam-active-mode #examSidebar {
     @endif
 
     // Modal Soal Functions
+    const maxPilihanJawaban = 5;
+
+    function updateAddPilihanButton() {
+        const container = document.getElementById('pilihanJawabanContainer');
+        const button = document.getElementById('btnAddPilihan');
+        if (!container || !button) return;
+        const count = container.querySelectorAll('.pilihan-item-soal').length;
+        button.style.display = count >= maxPilihanJawaban ? 'none' : 'inline-flex';
+    }
+
     function openAddSoalModal() {
         // Reset form for add mode
         document.getElementById('soalMethod').value = 'POST';
@@ -1887,6 +1904,7 @@ body.exam-active-mode #examSidebar {
         
         document.getElementById('modalSoal').classList.add('active');
         document.body.style.overflow = 'hidden';
+        updateAddPilihanButton();
     }
 
     function closeAddSoalModal() {
@@ -1917,6 +1935,7 @@ body.exam-active-mode #examSidebar {
                 </label>
             </div>
         `;
+        updateAddPilihanButton();
     }
 
     function editSoal(soalId) {
@@ -1970,7 +1989,7 @@ body.exam-active-mode #examSidebar {
                                 <input type="radio" name="kunci_jawaban" value="${index}" ${index === soal.kunci_jawaban ? 'checked' : ''} required>
                                 <span class="radio-custom-soal"></span>
                             </label>
-                            ${index >= 2 ? `<button type="button" onclick="this.parentElement.remove()" class="btn-delete-pilihan-soal">
+                            ${index >= 2 ? `<button type="button" onclick="removePilihanJawaban(this)" class="btn-delete-pilihan-soal">
                                 <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
@@ -1978,6 +1997,7 @@ body.exam-active-mode #examSidebar {
                         `;
                         container.appendChild(div);
                     });
+                    updateAddPilihanButton();
                     
                     // Open modal
                     document.getElementById('modalSoal').classList.add('active');
@@ -2074,9 +2094,30 @@ body.exam-active-mode #examSidebar {
         }
     }
 
+    function removePilihanJawaban(button) {
+        if (!button) return;
+        const container = document.getElementById('pilihanJawabanContainer');
+        button.parentElement.remove();
+        updateAddPilihanButton();
+
+        if (container) {
+            const items = container.querySelectorAll('.pilihan-item-soal');
+            items.forEach((item, index) => {
+                const input = item.querySelector('.jawaban-input');
+                if (input) {
+                    input.value = index;
+                }
+            });
+        }
+    }
+
     function addPilihanJawaban() {
         const container = document.getElementById('pilihanJawabanContainer');
         const index = container.children.length;
+        if (index >= maxPilihanJawaban) {
+            updateAddPilihanButton();
+            return;
+        }
         const labels = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
         const label = labels[index - 2] || String.fromCharCode(67 + index - 2);
         const tipeSoal = document.querySelector('input[name="tipe_soal"]:checked').value;
@@ -2092,7 +2133,7 @@ body.exam-active-mode #examSidebar {
                     <input type="checkbox" name="kunci_jawaban[]" value="${index}" class="jawaban-input checkbox-custom">
                     <span class="checkbox-custom-soal"></span>
                 </label>
-                <button type="button" onclick="this.parentElement.remove()" class="btn-delete-pilihan-soal">
+                <button type="button" onclick="removePilihanJawaban(this)" class="btn-delete-pilihan-soal">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
@@ -2106,7 +2147,7 @@ body.exam-active-mode #examSidebar {
                     <input type="radio" name="kunci_jawaban" value="${index}" class="jawaban-input" required>
                     <span class="radio-custom-soal"></span>
                 </label>
-                <button type="button" onclick="this.parentElement.remove()" class="btn-delete-pilihan-soal">
+                <button type="button" onclick="removePilihanJawaban(this)" class="btn-delete-pilihan-soal">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
@@ -2114,6 +2155,7 @@ body.exam-active-mode #examSidebar {
             `;
         }
         container.appendChild(div);
+        updateAddPilihanButton();
     }
 
     // Form submission for soal
@@ -2403,7 +2445,7 @@ body.exam-active-mode #examSidebar {
                             </label>
                         </div>
                     </div>
-                    <button type="button" onclick="addPilihanJawaban()" class="btn-add-pilihan-soal">
+                    <button type="button" onclick="addPilihanJawaban()" class="btn-add-pilihan-soal" id="btnAddPilihan">
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
                         </svg>
