@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Kursus extends Model
 {
@@ -35,61 +34,6 @@ class Kursus extends Model
         'tanggal_selesai' => 'date',
         'harga' => 'decimal:2',
     ];
-
-    /**
-     * Boot the model - auto-generate slug from judul
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($kursus) {
-            if (empty($kursus->slug)) {
-                $kursus->slug = static::generateUniqueSlug($kursus->judul);
-            }
-        });
-
-        static::updating(function ($kursus) {
-            // Update slug if judul changed and slug not manually set
-            if ($kursus->isDirty('judul') && !$kursus->isDirty('slug')) {
-                $kursus->slug = static::generateUniqueSlug($kursus->judul, $kursus->id);
-            }
-        });
-    }
-
-    /**
-     * Generate unique slug
-     */
-    public static function generateUniqueSlug(string $judul, $excludeId = null): string
-    {
-        $baseSlug = Str::slug($judul);
-        $slug = $baseSlug;
-        $counter = 1;
-
-        $query = static::where('slug', $slug);
-        if ($excludeId) {
-            $query->where('id', '!=', $excludeId);
-        }
-
-        while ($query->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
-            $query = static::where('slug', $slug);
-            if ($excludeId) {
-                $query->where('id', '!=', $excludeId);
-            }
-        }
-
-        return $slug;
-    }
-
-    /**
-     * Get the route key for the model (use slug instead of id)
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
 
     // Relationships
     public function pengajar()
@@ -178,4 +122,3 @@ class Kursus extends Model
         return $slug;
     }
 }
-
