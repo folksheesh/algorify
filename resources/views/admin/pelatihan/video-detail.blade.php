@@ -269,13 +269,19 @@
 
 @php
     $fileVideo = $video->file_video;
-    $isYoutube = str_contains($fileVideo, 'youtube.com') || str_contains($fileVideo, 'youtu.be');
+    $youtubeUrl = $video->youtube_url;
+    $isYoutube = !empty($youtubeUrl) || (str_contains($fileVideo ?? '', 'youtube.com') || str_contains($fileVideo ?? '', 'youtu.be'));
     $youtubeId = '';
     
     if ($isYoutube) {
-        // Extract YouTube video ID
-        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $fileVideo, $matches);
-        $youtubeId = $matches[1] ?? '';
+        // First check youtube_url column
+        $urlToCheck = !empty($youtubeUrl) ? $youtubeUrl : $fileVideo;
+        // Extract YouTube video ID from embed URL or regular URL
+        if (preg_match('/embed\/([^\/?]+)/', $urlToCheck, $matches)) {
+            $youtubeId = $matches[1];
+        } elseif (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $urlToCheck, $matches)) {
+            $youtubeId = $matches[1];
+        }
     }
 @endphp
 <div class="page-container @role('pengajar') with-topbar @endrole"

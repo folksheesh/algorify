@@ -428,8 +428,12 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">YouTube URL (opsional)</label>
-                        <input type="url" name="youtube_url" id="videoYoutubeUrl" class="form-input" placeholder="https://youtube.com/watch?v=xxxx">
+                        <input type="url" name="youtube_url" id="videoYoutubeUrl" class="form-input" placeholder="https://youtube.com/watch?v=xxxx" oninput="previewYoutubeVideo(this.value)">
                         <small style="color:#64748B;font-size:0.85em;">Jika diisi, video akan diambil dari YouTube dan file upload akan diabaikan.</small>
+                        <!-- YouTube Preview -->
+                        <div id="youtubePreviewContainer" style="display:none; margin-top: 1rem; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            <iframe id="youtubePreviewFrame" width="100%" height="250" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -681,6 +685,49 @@
             weekItem.classList.toggle('expanded');
         }
         
+        // YouTube preview function
+        function previewYoutubeVideo(url) {
+            const container = document.getElementById('youtubePreviewContainer');
+            const iframe = document.getElementById('youtubePreviewFrame');
+            const fileGroup = document.getElementById('videoFileGroup');
+            
+            if (!url || url.trim() === '') {
+                container.style.display = 'none';
+                iframe.src = '';
+                if (fileGroup) fileGroup.style.display = 'block';
+                return;
+            }
+            
+            // Extract video ID from various YouTube URL formats
+            let videoId = null;
+            
+            // youtube.com/watch?v=xxxxx
+            let match = url.match(/youtube\.com\/watch\?v=([^&]+)/);
+            if (match) videoId = match[1];
+            
+            // youtu.be/xxxxx
+            if (!videoId) {
+                match = url.match(/youtu\.be\/([^?]+)/);
+                if (match) videoId = match[1];
+            }
+            
+            // youtube.com/embed/xxxxx
+            if (!videoId) {
+                match = url.match(/youtube\.com\/embed\/([^?]+)/);
+                if (match) videoId = match[1];
+            }
+            
+            if (videoId) {
+                iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                container.style.display = 'block';
+                if (fileGroup) fileGroup.style.display = 'none'; // Hide file upload when YouTube is used
+            } else {
+                container.style.display = 'none';
+                iframe.src = '';
+                if (fileGroup) fileGroup.style.display = 'block';
+            }
+        }
+        
         function addSection(modulId) {
             showToastNotif('Info', 'Fitur tambah section akan segera hadir', 'info');
             // TODO: Implement add section functionality
@@ -895,12 +942,23 @@
                         if (data.success) {
                             closeVideoModal();
                             location.reload();
+                        } else {
+                            // Show error message
+                            let errorMsg = 'Gagal menyimpan video';
+                            if (typeof data.message === 'object') {
+                                errorMsg = Object.values(data.message).flat().join(', ');
+                            } else if (data.message) {
+                                errorMsg = data.message;
+                            }
+                            showToastNotif('Error', errorMsg, 'error');
                         }
                     })
-                    .catch(() => {
+                    .catch((error) => {
                         btnVideoSubmit.disabled = false;
                         btnText.style.display = '';
                         btnLoading.style.display = 'none';
+                        console.error('Error:', error);
+                        showToastNotif('Error', 'Terjadi kesalahan saat menyimpan video', 'error');
                     });
                 });
             }

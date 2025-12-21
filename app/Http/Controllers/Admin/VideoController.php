@@ -20,27 +20,65 @@ class VideoController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'modul_id' => 'required|exists:modul,id',
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'file_video' => 'required|file|mimetypes:video/mp4,video/mpeg,video/quicktime,video/x-msvideo|max:204800', // 200MB
-        ]);
+        try {
+            // YouTube URL takes priority over file upload
+            $hasYoutube = $request->filled('youtube_url');
+            
+            $validated = $request->validate([
+                'modul_id' => 'required|exists:modul,id',
+                'judul' => 'required|string|max:255',
+                'deskripsi' => 'nullable|string',
+                'youtube_url' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                    if ($value && !preg_match('/(youtube\.com|youtu\.be)/', $value)) {
+                        $fail('URL harus berupa link YouTube yang valid.');
+                    }
+                }],
+                'file_video' => $hasYoutube ? 'nullable' : 'required|file|mimetypes:video/mp4,video/mpeg,video/quicktime,video/x-msvideo|max:204800', // 200MB
+            ]);
 
-        // Auto-generate urutan
-        $maxUrutan = Video::where('modul_id', $request->modul_id)->max('urutan');
-        $validated['urutan'] = $maxUrutan ? $maxUrutan + 1 : 1;
+            // Auto-generate urutan
+            $maxUrutan = Video::where('modul_id', $request->modul_id)->max('urutan');
+            $validated['urutan'] = $maxUrutan ? $maxUrutan + 1 : 1;
 
-        if ($request->hasFile('file_video')) {
-            $file = $request->file('file_video');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('videos', $filename, 'public');
-            $validated['file_video'] = $path;
+            // Handle YouTube URL - extract video ID and store
+            if ($hasYoutube) {
+                $validated['youtube_url'] = $this->normalizeYoutubeUrl($request->youtube_url);
+                $validated['file_video'] = null;
+            } elseif ($request->hasFile('file_video')) {
+                $file = $request->file('file_video');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('videos', $filename, 'public');
+                $validated['file_video'] = $path;
+                $validated['youtube_url'] = null;
+            }
+
+            Video::create($validated);
+
+            return response()->json(['success' => true, 'message' => 'Video berhasil ditambahkan!']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'message' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal menyimpan video: ' . $e->getMessage()], 500);
         }
-
-        Video::create($validated);
-
-        return response()->json(['success' => true, 'message' => 'Video berhasil ditambahkan!']);
+    }
+    
+    /**
+     * Normalize YouTube URL to embed format
+     */
+    private function normalizeYoutubeUrl($url)
+    {
+        // Extract video ID from various YouTube URL formats
+        $videoId = null;
+        
+        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match('/youtu\.be\/([^?]+)/', $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match('/youtube\.com\/embed\/([^?]+)/', $url, $matches)) {
+            $videoId = $matches[1];
+        }
+        
+        return $videoId ? "https://www.youtube.com/embed/{$videoId}" : $url;
     }
 
     public function edit($id)
@@ -52,14 +90,24 @@ class VideoController extends Controller
     public function update(Request $request, $id)
     {
         $video = Video::findOrFail($id);
+        $hasYoutube = $request->filled('youtube_url');
         
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'youtube_url' => 'nullable|url',
             'file_video' => 'nullable|file|mimetypes:video/mp4,video/mpeg,video/quicktime,video/x-msvideo|max:204800',
         ]);
 
-        if ($request->hasFile('file_video')) {
+        // Handle YouTube URL - takes priority
+        if ($hasYoutube) {
+            // Delete old file if exists
+            if ($video->file_video) {
+                Storage::disk('public')->delete($video->file_video);
+            }
+            $validated['youtube_url'] = $this->normalizeYoutubeUrl($request->youtube_url);
+            $validated['file_video'] = null;
+        } elseif ($request->hasFile('file_video')) {
             // Delete old file
             if ($video->file_video) {
                 Storage::disk('public')->delete($video->file_video);
@@ -69,6 +117,7 @@ class VideoController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('videos', $filename, 'public');
             $validated['file_video'] = $path;
+            $validated['youtube_url'] = null;
         }
 
         $video->update($validated);
