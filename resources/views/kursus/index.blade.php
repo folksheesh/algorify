@@ -325,7 +325,7 @@
                                 <div class="course-content">
                                     <h3 class="course-title">{{ $course->judul }}</h3>
                                     <p class="course-description">{{ $course->deskripsi_singkat }}</p>
-                                    <a href="{{ route('kursus.show', $course->id) }}" class="view-detail-btn">
+                                    <a href="{{ route('kursus.show', $course->slug) }}" class="view-detail-btn">
                                         Lihat Detail
                                     </a>
                                 </div>

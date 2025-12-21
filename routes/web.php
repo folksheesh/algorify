@@ -5,6 +5,11 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ProfileCompletionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\Kursus;
+use App\Models\Materi;
+use App\Models\Ujian;
+use App\Models\Video;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -22,6 +27,8 @@ Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentControll
 Route::get('/dashboard', function () {
     /** @var \App\Models\User $user */
     $user = Auth::user();
+
+    \App\Models\Kursus::whereNull('slug')->get()->each->save();
     
     // Check if user has admin or super admin role
     if ($user->hasAnyRole(['admin', 'super admin'])) {
@@ -85,16 +92,41 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
     
     // Kursus routes
     Route::get('/kursus', [\App\Http\Controllers\KursusController::class, 'index'])->name('kursus.index');
-    Route::get('/kursus/{id}', [\App\Http\Controllers\KursusController::class, 'show'])->name('kursus.show');
+    Route::get('/kursus/{kursusId}', function (string $kursusId) {
+        $kursus = Kursus::findOrFail($kursusId);
+
+        return redirect()->route('kursus.show', $kursus->slug);
+    })->whereNumber('kursusId');
+    Route::get('/kursus/{kursus:slug}', [\App\Http\Controllers\KursusController::class, 'show'])->name('kursus.show');
     
     // Admin routes - Routes yang dapat diakses semua role (view only)
     Route::prefix('admin')->name('admin.')->group(function () {
         // View routes - accessible by all authenticated users
         Route::get('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'index'])->name('pelatihan.index');
-        Route::get('/pelatihan/{id}', [\App\Http\Controllers\Admin\PelatihanController::class, 'show'])->name('pelatihan.show');
-        Route::get('/video/{id}', [\App\Http\Controllers\Admin\VideoController::class, 'show'])->name('video.show');
-        Route::get('/materi/{id}', [\App\Http\Controllers\Admin\MateriController::class, 'show'])->name('materi.show');
-        Route::get('/ujian/{id}', [\App\Http\Controllers\Admin\UjianController::class, 'show'])->name('ujian.show');
+        Route::get('/pelatihan/{kursusId}', function (string $kursusId) {
+            $kursus = Kursus::findOrFail($kursusId);
+
+            return redirect()->route('admin.pelatihan.show', $kursus->slug);
+        })->whereNumber('kursusId');
+        Route::get('/pelatihan/{kursus:slug}', [\App\Http\Controllers\Admin\PelatihanController::class, 'show'])->name('pelatihan.show');
+        Route::get('/video/{videoId}', function (string $videoId) {
+            $video = Video::findOrFail($videoId);
+
+            return redirect()->route('admin.video.show', $video->slug);
+        })->whereNumber('videoId');
+        Route::get('/video/{video:slug}', [\App\Http\Controllers\Admin\VideoController::class, 'show'])->name('video.show');
+        Route::get('/materi/{materiId}', function (string $materiId) {
+            $materi = Materi::findOrFail($materiId);
+
+            return redirect()->route('admin.materi.show', $materi->slug);
+        })->whereNumber('materiId');
+        Route::get('/materi/{materi:slug}', [\App\Http\Controllers\Admin\MateriController::class, 'show'])->name('materi.show');
+        Route::get('/ujian/{ujianId}', function (string $ujianId) {
+            $ujian = Ujian::findOrFail($ujianId);
+
+            return redirect()->route('admin.ujian.show', $ujian->slug);
+        })->whereNumber('ujianId');
+        Route::get('/ujian/{ujian:slug}', [\App\Http\Controllers\Admin\UjianController::class, 'show'])->name('ujian.show');
         
         // Dashboard API routes
         Route::get('/dashboard/transaksi-data', [\App\Http\Controllers\Admin\DashboardController::class, 'getTransaksiData'])->name('dashboard.transaksi-data');
@@ -129,7 +161,7 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
         Route::delete('/pengajar/{id}', [\App\Http\Controllers\Admin\PengajarController::class, 'destroy'])->name('pengajar.destroy');
         
         // Pelatihan/Kursus CUD routes (Create, Update, Delete)
-        Route::get('/pelatihan/{id}/peserta', [\App\Http\Controllers\Admin\PelatihanController::class, 'peserta'])->name('pelatihan.peserta');
+        Route::get('/pelatihan/{kursus:slug}/peserta', [\App\Http\Controllers\Admin\PelatihanController::class, 'peserta'])->name('pelatihan.peserta');
         Route::post('/pelatihan', [\App\Http\Controllers\Admin\PelatihanController::class, 'store'])->name('pelatihan.store');
         Route::get('/pelatihan/{id}/edit', [\App\Http\Controllers\Admin\PelatihanController::class, 'edit'])->name('pelatihan.edit');
         Route::put('/pelatihan/{id}', [\App\Http\Controllers\Admin\PelatihanController::class, 'update'])->name('pelatihan.update');
@@ -167,7 +199,12 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
         Route::delete('/soal/{id}', [\App\Http\Controllers\Admin\SoalController::class, 'destroy'])->name('soal.destroy');
         Route::get('/soal/template', [\App\Http\Controllers\Admin\SoalController::class, 'downloadTemplate'])->name('soal.template');
         Route::post('/soal/import', [\App\Http\Controllers\Admin\SoalController::class, 'import'])->name('soal.import');
-        Route::get('/soal/export/{ujianId}', [\App\Http\Controllers\Admin\SoalController::class, 'export'])->name('soal.export');
+        Route::get('/soal/export/{ujianId}', function (string $ujianId) {
+            $ujian = Ujian::findOrFail($ujianId);
+
+            return redirect()->route('admin.soal.export', $ujian->slug);
+        })->whereNumber('ujianId');
+        Route::get('/soal/export/{ujian:slug}', [\App\Http\Controllers\Admin\SoalController::class, 'export'])->name('soal.export');
         Route::post('/soal/add-from-bank', [\App\Http\Controllers\Admin\SoalController::class, 'addFromBank'])->name('soal.add-from-bank');
         
         // Urutan routes (drag and drop)
@@ -229,8 +266,18 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
         Route::post('/sertifikat/{enrollmentId}/generate', [\App\Http\Controllers\User\SertifikatSayaController::class, 'generate'])->name('sertifikat.generate');
         
         // Enrollment and Payment routes
-        Route::get('/kursus/{id}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
-        Route::post('/kursus/{id}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
+        Route::get('/kursus/{kursusId}/pembayaran', function (string $kursusId) {
+            $kursus = Kursus::findOrFail($kursusId);
+
+            return redirect()->route('user.kursus.pembayaran', $kursus->slug);
+        })->whereNumber('kursusId');
+        Route::get('/kursus/{kursus:slug}/pembayaran', [\App\Http\Controllers\User\EnrollmentController::class, 'showPayment'])->name('kursus.pembayaran');
+        Route::post('/kursus/{kursusId}/enroll', function (Request $request, string $kursusId) {
+            $kursus = Kursus::findOrFail($kursusId);
+
+            return app(\App\Http\Controllers\User\EnrollmentController::class)->enroll($request, $kursus);
+        })->whereNumber('kursusId');
+        Route::post('/kursus/{kursus:slug}/enroll', [\App\Http\Controllers\User\EnrollmentController::class, 'enroll'])->name('kursus.enroll');
         
         // Payment status and completion routes
         Route::post('/pembayaran/{kode_transaksi}/complete', [\App\Http\Controllers\User\EnrollmentController::class, 'completePayment'])->name('pembayaran.complete');
@@ -239,8 +286,18 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
         Route::get('/transaksi/{kode_transaksi}/status', [\App\Http\Controllers\User\EnrollmentController::class, 'checkStatus'])->name('transaksi.status');
         
         // Ujian routes
-        Route::post('/ujian/{id}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
-        Route::get('/ujian/{id}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
+        Route::post('/ujian/{ujianId}/submit', function (Request $request, string $ujianId) {
+            $ujian = Ujian::findOrFail($ujianId);
+
+            return app(\App\Http\Controllers\User\UjianController::class)->submit($request, $ujian);
+        })->whereNumber('ujianId');
+        Route::post('/ujian/{ujian:slug}/submit', [\App\Http\Controllers\User\UjianController::class, 'submit'])->name('ujian.submit');
+        Route::get('/ujian/{ujianId}/result', function (string $ujianId) {
+            $ujian = Ujian::findOrFail($ujianId);
+
+            return redirect()->route('user.ujian.result', $ujian->slug);
+        })->whereNumber('ujianId');
+        Route::get('/ujian/{ujian:slug}/result', [\App\Http\Controllers\User\UjianController::class, 'result'])->name('ujian.result');
         
         // Progress routes
         Route::post('/progress/reading', [\App\Http\Controllers\User\ProgressController::class, 'markReadingCompleted'])->name('progress.reading');

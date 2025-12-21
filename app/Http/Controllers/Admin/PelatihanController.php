@@ -24,6 +24,8 @@ class PelatihanController extends Controller
 
     public function index(Request $request)
     {
+        Kursus::whereNull('slug')->get()->each->save();
+
         // Get all courses with their related data
         $query = Kursus::with(['pengajar', 'modul', 'enrollments']);
         
@@ -62,9 +64,9 @@ class PelatihanController extends Controller
         return view('admin.pelatihan.index', compact('kursus', 'pengajars', 'kategoris'));
     }
 
-    public function show($id)
+    public function show(Kursus $kursus)
     {
-        $kursus = Kursus::with(['pengajar', 'modul' => function($query) {
+        $kursus->load(['pengajar', 'modul' => function($query) {
             $query->orderBy('urutan', 'asc')->with([
                 'materi' => function($q) {
                     $q->orderBy('urutan', 'asc');
@@ -74,7 +76,7 @@ class PelatihanController extends Controller
                 },
                 'ujian'
             ]);
-        }])->findOrFail($id);
+        }]);
         
         // Get user's progress data if user is enrolled
         $userProgress = null;
@@ -82,8 +84,8 @@ class PelatihanController extends Controller
         
         if (Auth::check()) {
             $userId = Auth::id();
-            $userProgress = $this->progressRepository->calculateProgress($userId, $id);
-            $completedItems = $this->progressRepository->getCompletedItems($userId, $id);
+            $userProgress = $this->progressRepository->calculateProgress($userId, $kursus->id);
+            $completedItems = $this->progressRepository->getCompletedItems($userId, $kursus->id);
         }
         
         return view('admin.pelatihan.show', compact('kursus', 'userProgress', 'completedItems'));
@@ -216,12 +218,12 @@ class PelatihanController extends Controller
     /**
      * Show peserta (students) enrolled in the course with their grades
      */
-    public function peserta($id)
+    public function peserta(Kursus $kursus)
     {
-        $kursus = Kursus::with(['modul.ujian'])->findOrFail($id);
+        $kursus->load(['modul.ujian']);
         
         // Get all enrollments for this course with user data
-        $enrollments = Enrollment::where('kursus_id', $id)
+        $enrollments = Enrollment::where('kursus_id', $kursus->id)
             ->with('user')
             ->get();
         

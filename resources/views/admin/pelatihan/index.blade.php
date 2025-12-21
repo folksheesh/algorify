@@ -527,7 +527,7 @@
                     <!-- Courses Grid -->
                     <div class="courses-grid">
                         @foreach($kursus as $course)
-                        <div class="course-card" onclick="window.location='{{ route('admin.pelatihan.show', $course->id) }}'" style="cursor: pointer;">
+                        <div class="course-card" onclick="{{ $course->slug ? "window.location='" . route('admin.pelatihan.show', $course->slug) . "'" : '' }}" style="cursor: pointer;">
                             <div class="course-thumbnail-container">
                                 @php
                                     $courseThumbnailUrl = $course->thumbnail ? resolve_thumbnail_url($course->thumbnail) : null;

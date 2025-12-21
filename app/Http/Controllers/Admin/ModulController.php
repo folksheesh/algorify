@@ -23,7 +23,8 @@ class ModulController extends Controller
 
         Modul::create($validated);
 
-        return redirect()->route('admin.pelatihan.show', $request->kursus_id)
+        $kursus = Kursus::find($request->kursus_id);
+        return redirect()->route('admin.pelatihan.show', $kursus?->slug ?? $request->kursus_id)
             ->with('success', 'Modul berhasil ditambahkan');
     }
 
@@ -45,7 +46,8 @@ class ModulController extends Controller
 
         $modul->update($validated);
 
-        return redirect()->route('admin.pelatihan.show', $request->kursus_id)
+        $kursus = Kursus::find($request->kursus_id);
+        return redirect()->route('admin.pelatihan.show', $kursus?->slug ?? $request->kursus_id)
             ->with('success', 'Modul berhasil diupdate');
     }
 

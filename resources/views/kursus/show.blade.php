@@ -367,7 +367,7 @@ if (count($objectives) < 2) {
                             
                             {{-- Enroll Button - Moved here for compact layout --}}
                             <div class="enroll-section-inline" style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e5e7eb; text-align: center;">
-                                <a href="{{ route('user.kursus.pembayaran', $kursus->id) }}" class="enroll-btn" style="width: 90%; text-align: center; display: inline-block; padding: 12px 24px; font-size: 0.95rem; border-radius: 10px;">Daftar Sekarang</a>
+                                <a href="{{ route('user.kursus.pembayaran', $kursus->slug) }}" class="enroll-btn" style="width: 90%; text-align: center; display: inline-block; padding: 12px 24px; font-size: 0.95rem; border-radius: 10px;">Daftar Sekarang</a>
                             </div>
                         </div>
                     </div>

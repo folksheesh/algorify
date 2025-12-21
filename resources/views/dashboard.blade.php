@@ -35,8 +35,8 @@
                 </header>
                 <div id="continueCarousel" class="continue-carousel-wrapper">
                     @forelse($enrollments as $enrollment)
-                        @if($enrollment->kursus)
-                        <a href="{{ route('kursus.show', $enrollment->kursus_id) }}" class="continue-card">
+                        @if($enrollment->kursus && $enrollment->kursus->slug)
+                        <a href="{{ route('kursus.show', $enrollment->kursus->slug) }}" class="continue-card">
                             <div class="continue-card-thumbnail">
                                 <img src="{{ resolve_thumbnail_url($enrollment->kursus->thumbnail, asset('template/assets/compiled/jpg/2.jpg')) }}" alt="{{ $enrollment->kursus->judul }}" />
                             </div>
@@ -197,7 +197,7 @@
                     @forelse($recommendedCourses as $kursus)
                     <article
                         class="course-card"
-                        data-course-url="{{ route('kursus.show', $kursus->id) }}"
+                        data-course-url="{{ route('kursus.show', $kursus->slug) }}"
                         role="button"
                         tabindex="0"
                     >
@@ -207,7 +207,7 @@
                                 alt="{{ $kursus->judul }}"
                                 class="course-image"
                             />
-                            <a href="{{ route('kursus.show', $kursus->id) }}" class="bookmark-button" aria-label="Lihat detail">
+                            <a href="{{ route('kursus.show', $kursus->slug) }}" class="bookmark-button" aria-label="Lihat detail">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>

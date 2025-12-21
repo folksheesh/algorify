@@ -12,6 +12,8 @@ class KursusController extends Controller
     // Menampilkan daftar kursus yang sudah dipublish
     public function index(Request $request)
     {
+        Kursus::whereNull('slug')->get()->each->save();
+
         // Ambil data kursus beserta data pengajar, hanya yang statusnya published
         $query = Kursus::with('pengajar')->where('status', 'published');
 
@@ -63,20 +65,20 @@ class KursusController extends Controller
     }
 
     // Menampilkan detail satu kursus berdasarkan id
-    public function show($id)
+    public function show(Kursus $kursus)
     {
         // Ambil data kursus beserta relasi pengajar, modul, dan enrollments
-        $kursus = Kursus::with('pengajar', 'modul', 'enrollments')->findOrFail($id);
+        $kursus->load('pengajar', 'modul', 'enrollments');
         
         // Cek apakah user sudah enrolled di kursus ini
         if (auth()->check()) {
             $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())
-                ->where('kursus_id', $id)
+                ->where('kursus_id', $kursus->id)
                 ->first();
             
             // Jika sudah enrolled, redirect ke halaman pelatihan admin
             if ($enrollment) {
-                return redirect()->route('admin.pelatihan.show', $id);
+                return redirect()->route('admin.pelatihan.show', $kursus->slug);
             }
         }
         

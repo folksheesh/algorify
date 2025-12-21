@@ -51,7 +51,7 @@
                 <h2 class="card-title">Modul Kursus</h2>
                 @hasanyrole('admin|super admin|pengajar')
                 <div style="display: flex; gap: 0.75rem;">
-                    <a href="{{ route('admin.pelatihan.peserta', $kursus->id) }}" class="add-btn" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); text-decoration: none;">
+                    <a href="{{ route('admin.pelatihan.peserta', $kursus->slug) }}" class="add-btn" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); text-decoration: none;">
                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
@@ -74,8 +74,8 @@
                 @if($kursus->modul->count() > 0)
                     <div class="weeks-list">
                         @foreach($kursus->modul as $index => $modul)
-                            <div class="week-item" id="week-{{ $modul->id }}" data-id="{{ $modul->id }}">
-                                <div class="week-header" onclick="toggleWeek({{ $modul->id }})">
+                            <div class="week-item" id="week-{{ $modul->slug }}" data-id="{{ $modul->id }}" data-slug="{{ $modul->slug }}">
+                                <div class="week-header" onclick="toggleWeek('{{ $modul->slug }}')">
                                     <div class="week-title-section">
                                         @hasanyrole('admin|super admin|pengajar')
                                         <div class="drag-handle-tooltip" data-tooltip="Seret untuk mengubah urutan">
@@ -173,7 +173,7 @@
                                                     $routeName = $item['type'] === 'video' ? 'admin.video.show' : ($item['type'] === 'pdf' ? 'admin.materi.show' : 'admin.ujian.show');
                                                 @endphp
                                                 <div class="materi-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;" data-id="{{ $data->id }}" data-type="{{ $item['type'] }}">
-                                                    <a href="{{ route($routeName, $data->id) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
+                                                    <a href="{{ route($routeName, $data->slug) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
                                                         @if($item['completed'] ?? false)
                                                             {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
                                                             <div style="width: 40px; height: 40px; background: #D1FAE5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
@@ -615,10 +615,10 @@
                             });
                         }
             const urlParams = new URLSearchParams(window.location.search);
-            const openModulId = urlParams.get('open_modul');
+            const openModulSlug = urlParams.get('open_modul');
             
-            if (openModulId) {
-                const weekItem = document.getElementById('week-' + openModulId);
+            if (openModulSlug) {
+                const weekItem = document.getElementById('week-' + openModulSlug);
                 if (weekItem) {
                     weekItem.classList.add('expanded');
                     // Scroll to the modul
@@ -666,8 +666,8 @@
             }, 300);
         }
 
-        function toggleWeek(id) {
-            const weekItem = document.getElementById('week-' + id);
+        function toggleWeek(slug) {
+            const weekItem = document.getElementById('week-' + slug);
             weekItem.classList.toggle('expanded');
         }
         
@@ -1326,9 +1326,9 @@
             const orders = [];
             
             modulElements.forEach((element, index) => {
-                const modulId = element.id.replace('week-', '');
+                const modulId = element.dataset.id;
                 orders.push({
-                    id: parseInt(modulId),
+                    id: parseInt(modulId, 10),
                     urutan: index
                 });
             });

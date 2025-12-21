@@ -248,12 +248,12 @@ class SoalController extends Controller
         }
     }
 
-    public function export($ujianId)
+    public function export(\App\Models\Ujian $ujian)
     {
-        $ujian = \App\Models\Ujian::with('soal.pilihanJawaban')->findOrFail($ujianId);
+        $ujian->load('soal.pilihanJawaban');
         
         return Excel::download(
-            new \App\Exports\SoalExport($ujianId), 
+            new \App\Exports\SoalExport($ujian->id), 
             'soal_' . \Illuminate\Support\Str::slug($ujian->judul) . '.xlsx'
         );
     }

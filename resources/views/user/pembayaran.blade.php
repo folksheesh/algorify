@@ -14,7 +14,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Tombol Kembali -->
-            <a href="{{ route('kursus.show', $kursus->id) }}" class="back-button">
+            <a href="{{ route('kursus.show', $kursus->slug) }}" class="back-button">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -138,7 +138,7 @@
                     @endif
 
                     @if (in_array($transaksi->status, ['failed', 'expired']))
-                        <form action="{{ route('user.kursus.pembayaran', $kursus->id) }}" method="GET"
+                        <form action="{{ route('user.kursus.pembayaran', $kursus->slug) }}" method="GET"
                             style="margin-top: 15px;">
                             <input type="hidden" name="new" value="1">
                             <button type="submit" class="btn-primary" style="background: #10b981;">

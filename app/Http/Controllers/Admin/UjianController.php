@@ -18,9 +18,9 @@ class UjianController extends Controller
         $this->progressRepository = $progressRepository;
     }
 
-    public function show($id)
+    public function show(Ujian $ujian)
     {
-        $ujian = Ujian::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban'])->findOrFail($id);
+        $ujian->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban']);
         
         // Get all items from the same module for navigation
         $modul = $ujian->modul;

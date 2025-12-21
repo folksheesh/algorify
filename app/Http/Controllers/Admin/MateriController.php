@@ -19,9 +19,9 @@ class MateriController extends Controller
         $this->progressRepository = $progressRepository;
     }
 
-    public function show($id)
+    public function show(Materi $materi)
     {
-        $materi = Materi::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian'])->findOrFail($id);
+        $materi->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian']);
         
         // Get all materials in the same module (videos + materi + ujian)
         $modul = $materi->modul;

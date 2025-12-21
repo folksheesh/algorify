@@ -37,7 +37,7 @@
 <div class="page-container">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
+    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus->slug) }}?open_modul={{ $ujian->modul->slug }}" class="back-btn" onclick="navigateToModul(event, this.href)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -314,7 +314,7 @@
                             @if($showResults)
                                 @if($hasil && $hasil->nilai >= ($ujian->minimum_score ?? 70))
                                     {{-- Sudah Lulus - Tombol Selesai ke halaman pelatihan --}}
-                                    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}" class="btn btn-success" style="text-decoration: none;">
+                                    <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus->slug) }}" class="btn btn-success" style="text-decoration: none;">
                                         <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                         </svg>
@@ -322,7 +322,7 @@
                                     </a>
                                 @else
                                     {{-- Belum Lulus - Tombol Coba Lagi --}}
-                                    <a href="{{ route('admin.ujian.show', $ujian->id) }}" class="btn btn-primary" style="text-decoration: none;">
+                                    <a href="{{ route('admin.ujian.show', $ujian->slug) }}" class="btn btn-primary" style="text-decoration: none;">
                                         <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
                                         </svg>
@@ -400,7 +400,7 @@
                                 };
                             @endphp
                             
-                            <a href="{{ route($routeName, $itemData->id) }}" class="material-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; border-radius: 8px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; {{ $isCurrent ? 'background: #ECFDF5; border-color: #10B981;' : '' }}" onmouseover="this.style.background='{{ $isCurrent ? '#ECFDF5' : '#F9FAFB' }}'" onmouseout="this.style.background='{{ $isCurrent ? '#ECFDF5' : '' }}'">
+                            <a href="{{ route($routeName, $itemData->slug) }}" class="material-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem; border-radius: 8px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; {{ $isCurrent ? 'background: #ECFDF5; border-color: #10B981;' : '' }}" onmouseover="this.style.background='{{ $isCurrent ? '#ECFDF5' : '#F9FAFB' }}'" onmouseout="this.style.background='{{ $isCurrent ? '#ECFDF5' : '' }}'">
                                 
                                 @if($item['completed'] ?? false)
                                     {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
@@ -1807,7 +1807,7 @@ body.exam-active-mode #examSidebar {
         }
         
         // Submit to backend for quiz (practice type)
-        fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
+        fetch('{{ route("user.ujian.submit", $ujian->slug) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1866,7 +1866,7 @@ body.exam-active-mode #examSidebar {
         }
         
         // Submit to backend (tanpa alert)
-        fetch('{{ route("user.ujian.submit", $ujian->id) }}', {
+        fetch('{{ route("user.ujian.submit", $ujian->slug) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1877,7 +1877,7 @@ body.exam-active-mode #examSidebar {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '{{ route("user.ujian.result", $ujian->id) }}';
+                window.location.href = '{{ route("user.ujian.result", $ujian->slug) }}';
             } else {
                 showToast('Gagal', 'Gagal menyelesaikan ujian: ' + data.message, 'error');
             }
@@ -2309,7 +2309,7 @@ body.exam-active-mode #examSidebar {
     }
 
     function exportSoal() {
-        window.location.href = '{{ route("admin.soal.export", $ujian->id) }}';
+        window.location.href = '{{ route("admin.soal.export", $ujian->slug) }}';
     }
 
     // Lampiran Foto Functions

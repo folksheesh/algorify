@@ -63,7 +63,7 @@
 <div class="page-container @role('pengajar') with-topbar @endrole">
     
     <!-- Back Button -->
-    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus_id) }}?open_modul={{ $materi->modul_id }}" class="back-btn" onclick="navigateToModul(event, this.href)">
+    <a href="{{ route('admin.pelatihan.show', $materi->modul->kursus->slug) }}?open_modul={{ $materi->modul->slug }}" class="back-btn" onclick="navigateToModul(event, this.href)">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -192,7 +192,7 @@
                             };
                         @endphp
                         
-                        <a href="{{ route($routeName, $itemData->id) }}" class="material-item {{ $isCurrent ? 'active' : '' }}">
+                        <a href="{{ route($routeName, $itemData->slug) }}" class="material-item {{ $isCurrent ? 'active' : '' }}">
                             
                             @if($item['completed'] ?? false)
                                 {{-- Icon Centang Hijau untuk item yang sudah selesai --}}

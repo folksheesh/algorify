@@ -16,7 +16,7 @@ class EnrollmentController extends Controller
     /**
      * Show the payment page for a course
      */
-    public function showPayment($id, Request $request)
+    public function showPayment(Kursus $kursus, Request $request)
     {
         // Ensure user is authenticated
         if (!Auth::check()) {
@@ -24,13 +24,13 @@ class EnrollmentController extends Controller
         }
 
         $user = Auth::user();
-        $kursus = Kursus::with('pengajar')->findOrFail($id);
+        $kursus->load('pengajar');
         
         // Pengajar tidak wajib, lanjut meski tidak ada pengajar
         
         // Check if user already enrolled
         $existingEnrollment = Enrollment::where('user_id', $user->id)
-            ->where('kursus_id', $id)
+            ->where('kursus_id', $kursus->id)
             ->first();
         
         if ($existingEnrollment) {
@@ -44,7 +44,7 @@ class EnrollmentController extends Controller
         
         // Check for any existing transaction
         $transaksi = Transaksi::where('user_id', $user->id)
-            ->where('kursus_id', $id)
+            ->where('kursus_id', $kursus->id)
             ->latest()
             ->first();
 
@@ -58,7 +58,7 @@ class EnrollmentController extends Controller
             // Create new transaction with unique code
             $transaksi = Transaksi::create([
                 'user_id' => $user->id,
-                'kursus_id' => $id,
+                'kursus_id' => $kursus->id,
                 'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
                 'jumlah' => $kursus->harga,
                 'nominal_pembayaran' => $kursus->harga,
@@ -91,7 +91,7 @@ class EnrollmentController extends Controller
                 // Create new transaction with unique code
                 $transaksi = Transaksi::create([
                     'user_id' => $user->id,
-                    'kursus_id' => $id,
+                    'kursus_id' => $kursus->id,
                     'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
                     'jumlah' => $kursus->harga,
                     'nominal_pembayaran' => $kursus->harga,
@@ -104,7 +104,7 @@ class EnrollmentController extends Controller
             // No transaction exists, create new one
             $transaksi = Transaksi::create([
                 'user_id' => $user->id,
-                'kursus_id' => $id,
+                'kursus_id' => $kursus->id,
                 'kode_transaksi' => 'TRX-' . strtoupper(Str::random(12)),
                 'jumlah' => $kursus->harga,
                 'nominal_pembayaran' => $kursus->harga,
@@ -242,7 +242,7 @@ class EnrollmentController extends Controller
     /**
      * Process enrollment
      */
-    public function enroll(Request $request, $id)
+    public function enroll(Request $request, Kursus $kursus)
     {
         // Ensure user is authenticated
         if (!Auth::check()) {
@@ -250,11 +250,9 @@ class EnrollmentController extends Controller
         }
 
         $user = Auth::user();
-        $kursus = Kursus::findOrFail($id);
-        
         // Check if user already enrolled
         $existingEnrollment = Enrollment::where('user_id', $user->id)
-            ->where('kursus_id', $id)
+            ->where('kursus_id', $kursus->id)
             ->first();
         
         if ($existingEnrollment) {
@@ -278,7 +276,7 @@ class EnrollmentController extends Controller
         }
         
         // For paid courses, redirect to payment
-        return redirect()->route('user.kursus.pembayaran', $kursus->id);
+        return redirect()->route('user.kursus.pembayaran', $kursus->slug);
     }
 
     /**
@@ -330,12 +328,14 @@ class EnrollmentController extends Controller
             $transaksi->status = strtolower($status);
             $transaksi->save();
             
-            return redirect()->route('user.kursus.pembayaran', $transaksi->kursus_id)
+            $kursus = Kursus::find($transaksi->kursus_id);
+            return redirect()->route('user.kursus.pembayaran', $kursus?->slug ?? $transaksi->kursus_id)
                 ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
         }
         
         // Still pending, redirect to payment page to wait
-        return redirect()->route('user.kursus.pembayaran', $transaksi->kursus_id)
+        $kursus = Kursus::find($transaksi->kursus_id);
+        return redirect()->route('user.kursus.pembayaran', $kursus?->slug ?? $transaksi->kursus_id)
             ->with('info', 'Menunggu konfirmasi pembayaran...');
     }
     

@@ -107,7 +107,7 @@
             </div>
 
             <!-- Action Button -->
-            <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus_id) }}?open_modul={{ $ujian->modul_id }}" class="action-button">
+            <a href="{{ route('admin.pelatihan.show', $ujian->modul->kursus->slug) }}?open_modul={{ $ujian->modul->slug }}" class="action-button">
                 Kembali ke Pelatihan
             </a>
         </div>

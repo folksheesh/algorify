@@ -90,9 +90,9 @@ class VideoController extends Controller
         return response()->json(['success' => true, 'message' => 'Video berhasil dihapus!']);
     }
 
-    public function show($id)
+    public function show(Video $video)
     {
-        $video = Video::with(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian'])->findOrFail($id);
+        $video->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian']);
         
         // Get all materials in the same module (videos + materi + ujian)
         $modul = $video->modul;

@@ -16,7 +16,7 @@
                 <!-- Page Header -->
                 <div class="page-header">
                     <div class="page-header-left">
-                        <a href="{{ route('admin.pelatihan.show', $kursus->id) }}" class="back-btn">
+                        <a href="{{ route('admin.pelatihan.show', $kursus->slug) }}" class="back-btn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M19 12H5M12 19l-7-7 7-7"/>
                             </svg>

@@ -25,10 +25,10 @@ class UjianController extends Controller
     /**
      * Submit jawaban ujian
      */
-    public function submit(Request $request, $id)
+    public function submit(Request $request, Ujian $ujian)
     {
         $user = Auth::user();
-        $ujian = Ujian::with('soal.pilihanJawaban')->findOrFail($id);
+        $ujian->load('soal.pilihanJawaban');
         
         DB::beginTransaction();
         try {
@@ -170,10 +170,10 @@ class UjianController extends Controller
     /**
      * Show result page
      */
-    public function result($id)
+    public function result(Ujian $ujian)
     {
         $user = Auth::user();
-        $ujian = Ujian::with(['soal', 'kursus', 'modul'])->findOrFail($id);
+        $ujian->load(['soal', 'kursus', 'modul']);
         
         // Get score
         $nilai = Nilai::where('user_id', $user->id)
@@ -181,7 +181,7 @@ class UjianController extends Controller
             ->first();
         
         if (!$nilai) {
-            return redirect()->route('admin.ujian.show', $id)
+            return redirect()->route('admin.ujian.show', $ujian->slug)
                 ->with('error', 'Anda belum menyelesaikan ujian ini.');
         }
         

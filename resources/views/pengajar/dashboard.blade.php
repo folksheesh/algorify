@@ -101,7 +101,7 @@
                                         <p class="course-card-status">{{ ucfirst($kursus->status ?? 'draft') }}</p>
                                         <div class="course-card-footer">
                                             <span class="course-card-students">{{ $kursus->enrollments_count }} siswa</span>
-                                            <a href="{{ route('admin.pelatihan.show', $kursus->id) }}" class="course-card-link">Lihat Detail</a>
+                                            <a href="{{ route('admin.pelatihan.show', $kursus->slug) }}" class="course-card-link">Lihat Detail</a>
                                         </div>
                                     </div>
                                 </div>

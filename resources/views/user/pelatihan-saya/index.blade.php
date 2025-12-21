@@ -42,7 +42,7 @@
                     <!-- Courses Grid -->
                     <div class="courses-grid" id="coursesGrid">
                         @foreach($enrollments as $enrollment)
-                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}'">
+                        <div class="course-card" data-course-name="{{ strtolower($enrollment->kursus->judul) }}" onclick="window.location='{{ route('admin.pelatihan.show', $enrollment->kursus->slug) }}'">
                             <div class="course-thumbnail-wrapper">
                                 @php
                                     $enrollmentThumbnail = resolve_thumbnail_url(
@@ -97,7 +97,7 @@
                                             Cek Sertifikat
                                         </a>
                                     @else
-                                        <a href="{{ route('admin.pelatihan.show', $enrollment->kursus->id) }}" class="btn-continue">
+                                        <a href="{{ route('admin.pelatihan.show', $enrollment->kursus->slug) }}" class="btn-continue">
                                             Lanjutkan Belajar
                                         </a>
                                     @endif
