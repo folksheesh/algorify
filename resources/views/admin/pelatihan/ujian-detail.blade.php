@@ -1763,6 +1763,8 @@ body.exam-active-mode #examSidebar {
     
     // Initialize navigation state
     initializeNavigationState();
+    // Initialize navigation buttons visibility (important for single-question exams)
+    updateNavigationButtons();
     @endif
 
     // Form submission
