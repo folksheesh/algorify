@@ -3,7 +3,8 @@
    ============================================ */
 
 /* Reset untuk memastikan fixed positioning berfungsi */
-html, body {
+html,
+body {
     height: 100%;
     /* overflow-x: hidden; */
 }
@@ -23,73 +24,95 @@ body {
 
 /* Keyframes untuk berbagai animasi */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 @keyframes fadeInDown {
-    from { 
-        opacity: 0; 
-        transform: translateY(-20px); 
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 @keyframes slideInLeft {
-    from { 
-        opacity: 0; 
-        transform: translateX(-30px); 
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
 @keyframes slideInRight {
-    from { 
-        opacity: 0; 
-        transform: translateX(30px); 
+    from {
+        opacity: 0;
+        transform: translateX(30px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
 @keyframes scaleIn {
-    from { 
-        opacity: 0; 
-        transform: scale(0.9); 
+    from {
+        opacity: 0;
+        transform: scale(0.9);
     }
-    to { 
-        opacity: 1; 
-        transform: scale(1); 
+
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* ============================================
@@ -162,7 +185,8 @@ body {
 
 /* Container profil user di sidebar */
 .user-profile {
-    display: none; /* Hidden - tidak digunakan lagi */
+    display: none;
+    /* Hidden - tidak digunakan lagi */
     flex-direction: column;
     align-items: center;
     padding: 0 16px 16px 16px;
@@ -264,14 +288,37 @@ body {
 }
 
 /* Staggered animation untuk nav items */
-.nav-item:nth-child(1) { animation-delay: 0.05s; }
-.nav-item:nth-child(2) { animation-delay: 0.1s; }
-.nav-item:nth-child(3) { animation-delay: 0.15s; }
-.nav-item:nth-child(4) { animation-delay: 0.2s; }
-.nav-item:nth-child(5) { animation-delay: 0.25s; }
-.nav-item:nth-child(6) { animation-delay: 0.3s; }
-.nav-item:nth-child(7) { animation-delay: 0.35s; }
-.nav-item:nth-child(8) { animation-delay: 0.4s; }
+.nav-item:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.nav-item:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.nav-item:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.nav-item:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.nav-item:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.nav-item:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.nav-item:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.nav-item:nth-child(8) {
+    animation-delay: 0.4s;
+}
 
 /* Menghilangkan marker list */
 .nav-item::marker {
@@ -328,11 +375,11 @@ body {
     position: relative;
 }
 
-.nav-item.has-submenu > .nav-link {
+.nav-item.has-submenu>.nav-link {
     position: relative;
 }
 
-.nav-item.has-submenu > .nav-link::after {
+.nav-item.has-submenu>.nav-link::after {
     content: '';
     position: absolute;
     right: 16px;
@@ -346,7 +393,7 @@ body {
     transition: transform 0.2s ease;
 }
 
-.nav-item.has-submenu.open > .nav-link::after {
+.nav-item.has-submenu.open>.nav-link::after {
     transform: translateY(-50%) rotate(180deg);
 }
 
@@ -439,7 +486,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Add space for fixed topbar when present */
@@ -448,10 +496,11 @@ body {
 }
 
 /* Main content when sidebar is collapsed */
-.sidebar.collapsed ~ .main-content {
+.sidebar.collapsed~.main-content {
     margin-left: var(--sidebar-collapsed-width);
     width: calc(100% - var(--sidebar-collapsed-width));
     max-width: calc(100vw - var(--sidebar-collapsed-width));
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Wrapper untuk konten utama agar footer sticky di bawah */
@@ -538,14 +587,17 @@ body {
 
 /* Animasi khusus hero banner */
 @keyframes heroGlow {
-    0%, 100% { 
-        box-shadow: 
+
+    0%,
+    100% {
+        box-shadow:
             0 4px 20px rgba(93, 63, 255, 0.25),
             0 0 0 0 rgba(93, 63, 255, 0.1),
             inset 0 0 30px rgba(93, 63, 255, 0.05);
     }
-    50% { 
-        box-shadow: 
+
+    50% {
+        box-shadow:
             0 8px 40px rgba(93, 63, 255, 0.4),
             0 0 60px rgba(99, 102, 241, 0.2),
             inset 0 0 40px rgba(93, 63, 255, 0.08);
@@ -553,18 +605,39 @@ body {
 }
 
 @keyframes floatAnimation {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
 }
 
 @keyframes textGlow {
-    0%, 100% { text-shadow: 0 2px 10px rgba(93, 63, 255, 0.3), 0 0 20px rgba(99, 102, 241, 0.2); }
-    50% { text-shadow: 0 2px 15px rgba(93, 63, 255, 0.4), 0 0 30px rgba(99, 102, 241, 0.3); }
+
+    0%,
+    100% {
+        text-shadow: 0 2px 10px rgba(93, 63, 255, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    50% {
+        text-shadow: 0 2px 15px rgba(93, 63, 255, 0.4), 0 0 30px rgba(99, 102, 241, 0.3);
+    }
 }
 
 @keyframes btnPulse {
-    0%, 100% { box-shadow: 0 4px 15px rgba(93, 63, 255, 0.3); }
-    50% { box-shadow: 0 4px 25px rgba(93, 63, 255, 0.5); }
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(93, 63, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 25px rgba(93, 63, 255, 0.5);
+    }
 }
 
 /* Banner hero - dengan background image */
@@ -579,8 +652,10 @@ body {
     overflow: hidden;
     animation: fadeInUp 0.6s ease forwards, heroGlow 3s ease-in-out infinite;
     min-height: 220px;
-    background-color: #7B8CDE; /* fallback color */
-    background-size: 120%; /* zoom out - gambar lebih kecil */
+    background-color: #7B8CDE;
+    /* fallback color */
+    background-size: 120%;
+    /* zoom out - gambar lebih kecil */
     background-position: center center;
 }
 
@@ -614,7 +689,7 @@ body {
     margin-bottom: 12px;
     line-height: 1.3;
     letter-spacing: -0.5px;
-    text-shadow: 
+    text-shadow:
         0 2px 4px rgba(93, 63, 255, 0.4),
         0 4px 8px rgba(99, 102, 241, 0.3),
         0 0 20px rgba(139, 92, 246, 0.2);
@@ -628,7 +703,7 @@ body {
     color: #FFFFFF;
     line-height: 1.6;
     margin-bottom: 20px;
-    text-shadow: 
+    text-shadow:
         0 1px 3px rgba(93, 63, 255, 0.5),
         0 2px 6px rgba(99, 102, 241, 0.3);
 }
@@ -657,7 +732,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s ease;
 }
 
@@ -726,10 +801,21 @@ body {
 }
 
 /* Staggered animation untuk stat cards */
-.stat-card:nth-child(1) { animation-delay: 0.1s; }
-.stat-card:nth-child(2) { animation-delay: 0.2s; }
-.stat-card:nth-child(3) { animation-delay: 0.3s; }
-.stat-card:nth-child(4) { animation-delay: 0.4s; }
+.stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
 
 /* Hover state card statistik */
 .stat-card:hover {
@@ -880,15 +966,41 @@ body {
 }
 
 /* Staggered animation untuk course cards */
-.course-card:nth-child(1) { animation-delay: 0.1s; }
-.course-card:nth-child(2) { animation-delay: 0.15s; }
-.course-card:nth-child(3) { animation-delay: 0.2s; }
-.course-card:nth-child(4) { animation-delay: 0.25s; }
-.course-card:nth-child(5) { animation-delay: 0.3s; }
-.course-card:nth-child(6) { animation-delay: 0.35s; }
-.course-card:nth-child(7) { animation-delay: 0.4s; }
-.course-card:nth-child(8) { animation-delay: 0.45s; }
-.course-card:nth-child(9) { animation-delay: 0.5s; }
+.course-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.course-card:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.course-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.course-card:nth-child(4) {
+    animation-delay: 0.25s;
+}
+
+.course-card:nth-child(5) {
+    animation-delay: 0.3s;
+}
+
+.course-card:nth-child(6) {
+    animation-delay: 0.35s;
+}
+
+.course-card:nth-child(7) {
+    animation-delay: 0.4s;
+}
+
+.course-card:nth-child(8) {
+    animation-delay: 0.45s;
+}
+
+.course-card:nth-child(9) {
+    animation-delay: 0.5s;
+}
 
 /* Hover state card kursus */
 .course-card:hover {
@@ -1102,11 +1214,11 @@ body {
     .main-content {
         padding: 28px 32px;
     }
-    
+
     .hero-banner {
         padding: 32px 36px;
     }
-    
+
     .hero-title {
         font-size: 28px;
     }
@@ -1118,19 +1230,19 @@ body {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
-    
+
     .main-content {
         padding: 24px;
     }
-    
+
     .hero-title {
         font-size: 26px;
     }
-    
+
     .hero-description {
         font-size: 14px;
     }
-    
+
     .illustration-graphic {
         width: 160px;
         height: 120px;
@@ -1139,27 +1251,28 @@ body {
 
 /* Tablet Portrait */
 @media (max-width: 992px) {
+
     /* Tampilkan tombol hamburger */
     .mobile-menu-toggle {
         display: flex;
     }
-    
+
     /* Overlay siap digunakan di mobile (tetap hidden sampai active) */
     .sidebar-overlay {
         display: block;
     }
-    
+
     /* Sidebar hidden by default di mobile */
     .sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
-    
+
     /* Sidebar active saat menu dibuka */
     .sidebar.active {
         transform: translateX(0);
     }
-    
+
     /* Main content full width */
     .main-content {
         margin-left: 0;
@@ -1167,36 +1280,36 @@ body {
         max-width: 100%;
         padding: 80px 24px 24px 24px;
     }
-    
+
     /* Stats grid 2 kolom */
     .stats-section {
         flex-wrap: wrap;
     }
-    
+
     .stat-card {
         flex: 1 1 calc(50% - 10px);
         min-width: calc(50% - 10px);
     }
-    
+
     /* Hero banner adjustments */
     .hero-banner {
         padding: 28px;
         min-height: 200px;
     }
-    
+
     .hero-content {
         flex: 0 1 60%;
     }
-    
+
     .hero-title {
         font-size: 24px;
     }
-    
+
     .hero-cta-btn {
         padding: 12px 24px;
         font-size: 14px;
     }
-    
+
     .illustration-graphic {
         width: 140px;
         height: 100px;
@@ -1205,6 +1318,7 @@ body {
 
 /* Mobile Landscape */
 @media (max-width: 768px) {
+
     /* Dashboard container menjadi vertikal */
     .dashboard-container {
         flex-direction: column;
@@ -1227,23 +1341,23 @@ body {
         padding: 80px 16px 24px 16px;
         margin-left: 0;
     }
-    
+
     /* Main header / Search */
     .main-header {
         margin-bottom: 16px;
     }
-    
+
     .search-container {
         width: 100%;
     }
-    
+
     .search-input {
         width: 100%;
         padding: 14px 48px 14px 16px;
         font-size: 15px;
         border-radius: 12px;
     }
-    
+
     .search-button {
         right: 8px;
         width: 36px;
@@ -1261,39 +1375,39 @@ body {
         flex-direction: column;
         gap: 12px;
     }
-    
+
     .stat-card {
         flex: 1 1 100%;
         min-width: 100%;
         padding: 1rem;
     }
-    
+
     /* Stats grid untuk Lanjutkan Belajar */
     .stats-grid {
         gap: 12px !important;
     }
-    
+
     .stats-grid .stat-card {
         padding: 1rem !important;
         border-radius: 10px !important;
     }
-    
+
     .stats-grid .stat-icon {
         width: 40px !important;
         height: 40px !important;
         border-radius: 10px !important;
         margin-right: 0.75rem !important;
     }
-    
+
     .stats-grid .stat-icon svg {
         width: 20px !important;
         height: 20px !important;
     }
-    
+
     .stats-grid .stat-content .stat-value {
         font-size: 0.7rem !important;
     }
-    
+
     .stats-grid .stat-content .stat-label {
         font-size: 0.9rem !important;
     }
@@ -1309,39 +1423,39 @@ body {
         background-position: center center;
         background-size: 130%;
     }
-    
+
     .hero-banner::before {
         background: linear-gradient(180deg, rgba(93, 63, 255, 0.5) 0%, rgba(99, 102, 241, 0.3) 100%);
     }
-    
+
     .hero-content {
         order: 1;
         flex: 1;
         animation: slideInLeft 0.7s ease 0.2s forwards;
     }
-    
+
     .hero-title {
         font-size: 1.35rem;
         line-height: 1.4;
         margin-bottom: 8px;
         color: #FFFFFF;
     }
-    
+
     .hero-title br {
         display: none;
     }
-    
+
     .hero-description {
         font-size: 0.875rem;
         line-height: 1.5;
         margin-bottom: 16px;
         color: #FFFFFF;
     }
-    
+
     .hero-description br {
         display: none;
     }
-    
+
     .hero-cta-btn {
         padding: 12px 20px;
         font-size: 14px;
@@ -1353,13 +1467,13 @@ body {
         order: 2;
         margin-top: 20px;
     }
-    
+
     .illustration-graphic {
         width: 140px;
         height: auto;
         max-height: 100px;
     }
-    
+
     /* Section header */
     .section-header {
         flex-direction: row;
@@ -1368,58 +1482,58 @@ body {
         gap: 8px;
         margin-bottom: 12px;
     }
-    
+
     .section-header a {
         font-size: 0.8rem !important;
         white-space: nowrap;
     }
-    
+
     .section-title {
         font-size: 1.1rem;
     }
-    
+
     /* Courses section */
     .courses-section {
         margin-bottom: 1.5rem !important;
     }
-    
+
     /* Course card adjustments */
     .course-card {
         border-radius: 14px;
     }
 
-    
+
     .course-content {
         padding: 14px 16px;
     }
-    
+
     .course-badge {
         font-size: 0.65rem;
         padding: 4px 10px;
     }
-    
+
     .course-title {
         font-size: 0.95rem;
         margin-bottom: 6px;
     }
-    
+
     .course-author {
         margin-top: 10px;
     }
-    
+
     .author-avatar {
         width: 32px !important;
         height: 32px !important;
     }
-    
+
     .author-name {
         font-size: 0.8rem;
     }
-    
+
     .author-role {
         font-size: 0.7rem;
     }
-    
+
     /* Bookmark button */
     .bookmark-button {
         width: 36px;
@@ -1433,7 +1547,9 @@ body {
         grid-template-columns: 1fr !important;
         gap: 20px !important;
     }
-}/* Mobile Portrait (Small phones) */
+}
+
+/* Mobile Portrait (Small phones) */
 @media (max-width: 480px) {
     .mobile-menu-toggle {
         top: 12px;
@@ -1441,24 +1557,24 @@ body {
         width: 44px;
         height: 44px;
     }
-    
+
     .main-content {
         padding: 70px 12px 20px 12px;
     }
-    
+
     /* Search */
     .search-input {
         padding: 12px 44px 12px 14px;
         font-size: 14px;
         border-radius: 10px;
     }
-    
+
     .search-button {
         right: 6px;
         width: 32px;
         height: 32px;
     }
-    
+
     /* Hero Banner */
     .hero-banner {
         padding: 18px 14px;
@@ -1467,122 +1583,122 @@ body {
         background-position: center center;
         background-size: 10%;
     }
-    
+
     .hero-title {
         font-size: 1.15rem;
         line-height: 1.35;
         color: #FFFFFF;
     }
-    
+
     .hero-description {
         font-size: 0.8rem;
         margin-top: 6px;
         margin-bottom: 14px;
         color: #FFFFFF;
     }
-    
+
     .hero-cta-btn {
         padding: 10px 18px;
         font-size: 13px;
         border-radius: 8px;
     }
-    
+
     .illustration-graphic {
         width: 100px;
         height: auto;
         max-height: 80px;
     }
-    
+
     .hero-illustration {
         margin-top: 16px;
     }
-    
+
     /* Section */
     .section-title {
         font-size: 1rem;
     }
-    
+
     .section-header a {
         font-size: 0.75rem !important;
     }
-    
+
     .courses-section {
         margin-bottom: 1.25rem !important;
     }
-    
+
     /* Stats grid - Lanjutkan Belajar */
     .stats-grid {
         gap: 10px !important;
     }
-    
+
     .stats-grid .stat-card {
         padding: 0.875rem !important;
         border-radius: 10px !important;
     }
-    
+
     .stats-grid .stat-icon {
         width: 36px !important;
         height: 36px !important;
         margin-right: 0.625rem !important;
     }
-    
+
     .stats-grid .stat-icon svg {
         width: 18px !important;
         height: 18px !important;
     }
-    
+
     .stats-grid .stat-content .stat-value {
         font-size: 0.65rem !important;
     }
-    
+
     .stats-grid .stat-content .stat-label {
         font-size: 0.85rem !important;
     }
-    
+
     .stats-grid .stat-menu svg {
         width: 16px;
         height: 16px;
     }
-    
+
     /* Course card */
     .course-card {
         border-radius: 12px;
     }
-    
-    
+
+
     .course-content {
         padding: 12px 14px;
     }
-    
+
     .course-badge {
         font-size: 0.6rem;
         padding: 3px 8px;
         margin-bottom: 6px;
     }
-    
+
     .course-title {
         font-size: 0.9rem;
         margin-bottom: 4px;
         line-height: 1.3;
     }
-    
+
     .course-author {
         margin-top: 8px;
     }
-    
+
     .author-avatar {
         width: 28px !important;
         height: 28px !important;
     }
-    
+
     .author-name {
         font-size: 0.75rem;
     }
-    
+
     .author-role {
         font-size: 0.65rem;
     }
-    
+
     /* Bookmark button */
     .bookmark-button {
         width: 32px;
@@ -1590,46 +1706,46 @@ body {
         top: 8px;
         right: 8px;
     }
-    
+
     .bookmark-button svg {
         width: 16px;
         height: 16px;
     }
-    
+
     /* Stat cards */
     .stat-card {
         padding: 12px;
     }
-    
+
     .stat-icon {
         width: 36px;
         height: 36px;
     }
-    
+
     .stat-label {
         font-size: 14px;
     }
-    
+
     /* User profile di sidebar */
     .user-avatar {
         width: 60px;
         height: 60px;
     }
-    
+
     .greeting-title {
         font-size: 16px;
     }
-    
+
     .greeting-subtitle {
         font-size: 12px;
     }
-    
+
     /* Navigation */
     .nav-link {
         padding: 10px 14px;
         font-size: 14px;
     }
-    
+
     /* Footer/Logout */
     .logout-button {
         padding: 10px 14px;
@@ -1699,7 +1815,7 @@ body {
         background: white;
         padding: 0.75rem 1rem;
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin-top: 0;
         margin-bottom: 1rem;
     }
@@ -1714,16 +1830,16 @@ body {
         background: white;
         padding: 0.625rem 1rem;
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin: 0;
         font-size: 0.85rem;
     }
-    
+
     .back-button svg {
         width: 18px;
         height: 18px;
     }
-    
+
     /* Tambah padding top pada detail-content untuk memberi ruang back button fixed */
     .detail-content {
         padding-top: 70px !important;
@@ -1738,13 +1854,13 @@ body {
         font-size: 0.8rem;
         max-width: calc(100% - 80px);
     }
-    
+
     .back-button span {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .back-button svg {
         width: 16px;
         height: 16px;
