@@ -382,91 +382,10 @@ class BankSoalController extends Controller
      */
     public function exportCsv(Request $request)
     {
-        $query = BankSoal::with(['kategori', 'kursus', 'creator']);
-
-        // Apply filters same as getData
-        if ($request->has('search') && $request->search != '') {
-            $search = strtolower($request->search);
-            $query->where(function($q) use ($search) {
-                $q->whereRaw('LOWER(pertanyaan) like ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(tipe_soal) like ?', ["%{$search}%"]);
-            });
-        }
-
-        if ($request->has('tipe_soal') && $request->tipe_soal != '') {
-            $query->where('tipe_soal', $request->tipe_soal);
-        }
-
-        if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('kategori_id', $request->kategori);
-        }
-
-        if ($request->has('kursus') && $request->kursus != '') {
-            $query->where('kursus_id', $request->kursus);
-        }
-
-        $soal = $query->latest()->get();
-        
-        // Count by type
-        $countPilihanGanda = $soal->where('tipe_soal', 'pilihan_ganda')->count();
-        $countMultiJawaban = $soal->where('tipe_soal', 'multi_jawaban')->count();
-        $countEssay = $soal->where('tipe_soal', 'essay')->count();
-
-        $headers = [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="bank_soal_' . date('Y-m-d_His') . '.csv"',
-        ];
-
-        $callback = function() use ($soal, $countPilihanGanda, $countMultiJawaban, $countEssay) {
-            $file = fopen('php://output', 'w');
-            // Add BOM for UTF-8
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
-            // Report Header
-            fputcsv($file, ['LAPORAN BANK SOAL - ALGORIFY'], ';');
-            fputcsv($file, ['Tanggal Export: ' . date('d/m/Y H:i:s')], ';');
-            fputcsv($file, [''], ';');
-            fputcsv($file, ['RINGKASAN'], ';');
-            fputcsv($file, ['Total Soal', count($soal)], ';');
-            fputcsv($file, ['Pilihan Ganda', $countPilihanGanda], ';');
-            fputcsv($file, ['Multi Jawaban', $countMultiJawaban], ';');
-            fputcsv($file, ['Essay', $countEssay], ';');
-            fputcsv($file, [''], ';');
-            fputcsv($file, ['DETAIL SOAL'], ';');
-            
-            // Column headers
-            fputcsv($file, ['No', 'Pertanyaan', 'Tipe Soal', 'Opsi Jawaban', 'Jawaban Benar', 'Kategori/Kursus', 'Poin', 'Dibuat Oleh', 'Tanggal'], ';');
-            
-            foreach ($soal as $index => $item) {
-                $opsiStr = '';
-                if (is_array($item->opsi_jawaban)) {
-                    $opsiStr = implode(' | ', $item->opsi_jawaban);
-                }
-                
-                $jawabanStr = '';
-                if (is_array($item->jawaban_benar)) {
-                    $jawabanStr = implode(', ', $item->jawaban_benar);
-                } elseif ($item->jawaban_benar !== null) {
-                    $jawabanStr = (string) $item->jawaban_benar;
-                }
-                
-                fputcsv($file, [
-                    $index + 1,
-                    $item->pertanyaan,
-                    $item->tipe_soal,
-                    $opsiStr,
-                    $jawabanStr,
-                    $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'),
-                    $item->poin ?? 1,
-                    $item->creator ? $item->creator->name : '-',
-                    $item->created_at->format('d/m/Y H:i')
-                ], ';');
-            }
-            
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\BankSoalExport($request), 
+            'bank_soal_' . now()->timezone('Asia/Jakarta')->format('Y-m-d_His') . '.xlsx'
+        );
     }
 
     /**

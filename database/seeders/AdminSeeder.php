@@ -20,31 +20,39 @@ class AdminSeeder extends Seeder
         $superAdminRole = Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
 
         // Create main admin
-        $admin = User::create([
-            'id' => User::generateId('admin'),
-            'name' => 'Anton Alam',
-            'email' => 'admin@algorify.com',
-            'password' => Hash::make('admin123'),
-            'phone' => '081234567890',
-            'profesi' => 'Administrator',
-            'address' => 'Jakarta, Indonesia',
-            'pendidikan' => 'S2 Teknologi Informasi',
-            'email_verified_at' => now(),
-        ]);
-        $admin->assignRole('admin');
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@algorify.com'],
+            [
+                'id' => User::generateId('admin'),
+                'name' => 'Anton Alam',
+                'password' => Hash::make('admin123'),
+                'phone' => '081234567890',
+                'profesi' => 'Administrator',
+                'address' => 'Jakarta, Indonesia',
+                'pendidikan' => 'S2 Teknologi Informasi',
+                'email_verified_at' => now(),
+            ]
+        );
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
 
         // Create super admin
-        $superAdmin = User::create([
-            'id' => User::generateId('admin'),
-            'name' => 'Super Admin',
-            'email' => 'superadmin@algorify.com',
-            'password' => Hash::make('admin123'),
-            'phone' => '081234567800',
-            'profesi' => 'Super Administrator',
-            'address' => 'Jakarta, Indonesia',
-            'pendidikan' => 'S2 Computer Science',
-            'email_verified_at' => now(),
-        ]);
-        $superAdmin->assignRole('super admin');
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'superadmin@algorify.com'],
+            [
+                'id' => User::generateId('admin'),
+                'name' => 'Super Admin',
+                'password' => Hash::make('admin123'),
+                'phone' => '081234567800',
+                'profesi' => 'Super Administrator',
+                'address' => 'Jakarta, Indonesia',
+                'pendidikan' => 'S2 Computer Science',
+                'email_verified_at' => now(),
+            ]
+        );
+        if (!$superAdmin->hasRole('super admin')) {
+            $superAdmin->assignRole('super admin');
+        }
     }
 }
