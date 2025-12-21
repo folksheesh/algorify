@@ -16,13 +16,16 @@ Platform E-Learning & Sertifikasi Digital
 
 ## 1.2 Deskripsi Singkat
 
-Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan pelatihan online, ujian, dan penerbitan sertifikat digital. Platform ini dirancang untuk memfasilitasi pembelajaran jarak jauh dengan fitur manajemen kursus, pelacakan progres peserta, pembayaran terintegrasi, dan sistem ujian yang aman.
+Aplikasi ini dirancang sebagai wadah pembelajaran mandiri, repositori materi, dan media promosi produk pelatihan TIK.
 
 **Tujuan Proyek:**
-- Menyediakan akses pelatihan berkualitas secara online
-- Memfasilitasi proses pembelajaran dengan pelacakan progres yang akurat
-- Menerbitkan sertifikat digital terverifikasi untuk peserta yang lulus
-- Mempermudah admin dan pengajar dalam mengelola konten dan memantau aktivitas peserta
+Membangun platform layanan pelatihan TIK berbasis LMS yang berfungsi sebagai wadah pembelajaran mandiri, repository materi, serta media promosi produk pelatihan TIK. Platform ini ditujukan untuk masyarakat umum dan dikelola oleh layanan bisnis Jurusan TIK PNJ dengan tujuan utama menghasilkan pendapatan.
+
+Aplikasi yang akan dibuat diharapkan dapat memberikan manfaat pada aspek berikut:
+
+- **Model Pembelajaran Fleksibel:** Mendukung pelatihan full online (video, quiz, ujian), hybrid (materi online + pertemuan via Zoom/Google Meet), dan tatap muka (online maupun offline), serta berfungsi sebagai repository materi pembelajaran.
+- **Dashboard Analitik:** Menyediakan analisis data terkait jumlah peserta, jenis pelatihan, transaksi, keuntungan, segmentasi pengguna (profesi, umur, lokasi), serta performa produk pelatihan (mana yang laku dan tidak). Dashboard ini menjadi dasar pengambilan keputusan strategis.
+- **Kemudahan Akses:** Platform bersifat user-friendly, responsif, dan dapat diakses dari berbagai perangkat, termasuk dengan layar kecil.
 
 ---
 
@@ -30,49 +33,25 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 
 ### Alur Aplikasi
 
-```
-┌─────────────────┐
-│  Landing Page   │
-│   (Login/Reg)   │
-└────────┬────────┘
-         │
-         ▼
-    ┌────────┐
-    │  Login │◄─────── Google OAuth
-    └───┬────┘
-        │
-        ▼
-┌───────────────────────────────────────┐
-│          Dashboard (Role-based)        │
-├───────────────┬───────────┬───────────┤
-│    Peserta    │  Pengajar │   Admin   │
-└───────┬───────┴─────┬─────┴─────┬─────┘
-        │             │           │
-        ▼             ▼           ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ Pilih Kursus │ │ Kelola   │ │ Kelola Data  │
-│ Bayar (DOKU) │ │ Kursus   │ │ Master       │
-└──────┬───────┘ └─────┬────┘ └──────┬───────┘
-       │               │              │
-       ▼               ▼              ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ Ikuti        │ │ Upload   │ │ Monitoring   │
-│ Pelatihan    │ │ Materi   │ │ & Laporan    │
-│ (Video/Modul)│ │ & Soal   │ │              │
-└──────┬───────┘ └──────────┘ └──────────────┘
-       │
-       ▼
-┌──────────────┐
-│ Ujian        │
-│ (Pengacakan) │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐
-│ Sertifikat   │
-│ Digital (PDF)│
-└──────────────┘
-```
+#### Admin
+- Mengelola data pengguna (peserta & pengajar)
+- Mengunggah dan mengelola kursus
+- Mengunggah dan mengelola materi pelatihan
+- Memantau transaksi
+- Melihat laporan melalui dashboard & analitik
+
+#### Pengajar
+- Login ke sistem sebagai pengajar
+- Mengelola kursus
+- Mengunggah dan mengelola materi pelatihan
+- Memantau progres peserta
+
+#### Peserta
+- Mengakses dan login ke sistem Algorify
+- Melihat dan memilih pelatihan yang tersedia
+- Melakukan pendaftaran dan pembayaran
+- Mengikuti pelatihan (mengakses materi video/modul, mengerjakan kuis dan ujian)
+- Menyelesaikan pelatihan dan mendapatkan sertifikat
 
 ### Fitur Berdasarkan Role
 
@@ -118,7 +97,7 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 ## 1.4 Tech Stack
 
 ### Backend
-- **Framework:** Laravel 11.x
+- **Framework:** Laravel 11
 - **Language:** PHP 8.2+
 - **Authentication:** Laravel Breeze + Socialite (Google OAuth)
 - **Authorization:** Spatie Laravel Permission
@@ -133,7 +112,7 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 - **Icons & UI:** Blade Components + Tailwind Forms
 
 ### Database
-- **Primary:** MySQL / MariaDB
+- **Primary:** PostgreSQL
 - **ORM:** Eloquent
 
 ### Testing
@@ -153,7 +132,7 @@ Algorify adalah platform e-learning berbasis web yang memungkinkan pengelolaan p
 - PHP >= 8.2
 - Composer
 - Node.js & npm
-- MySQL/MariaDB
+- PostgreSQL/MySQL
 - Web Server (Apache/Nginx) atau Laravel Sail (Docker)
 
 ### Langkah Instalasi
@@ -316,73 +295,101 @@ Jalankan PHPUnit secara langsung:
 ```
 algorify-main-new/
 ├── app/
+│   ├── helpers.php             # Helper global (fungsi bantu)
 │   ├── Console/
 │   │   └── Commands/           # Artisan custom commands
-│   ├── Exports/                # Excel export classes
+│   ├── Exports/                # Excel export
 │   │   ├── SoalExport.php
 │   │   └── SoalTemplateExport.php
-│   ├── Http/
-│   │   ├── Controllers/        # Route controllers
-│   │   │   ├── Admin/          # Admin controllers
-│   │   │   ├── User/           # User-facing controllers
-│   │   │   └── Auth/           # Authentication controllers
-│   │   ├── Middleware/         # Custom middleware
-│   │   └── Requests/           # Form requests & validation
-│   ├── Imports/                # Excel import classes
+│   ├── Imports/                # Excel import
 │   │   └── SoalImport.php
-│   ├── Models/                 # Eloquent models
-│   │   ├── User.php
-│   │   ├── Kursus.php
-│   │   ├── Materi.php
-│   │   ├── Ujian.php
-│   │   ├── Sertifikat.php
-│   │   └── ...
+│   ├── Http/
+│   │   ├── Controllers/        # Controller (logika halaman/fitur)
+│   │   │   ├── Admin/          # Halaman & fitur khusus Admin
+│   │   │   ├── Api/            # Endpoint API
+│   │   │   ├── Auth/           # Login/daftar/OAuth
+│   │   │   ├── User/           # Halaman & fitur peserta/user
+│   │   │   └── ...             # Controller lain (file .php langsung)
+│   │   ├── Middleware/         # Middleware (filter auth/role/dll.)
+│   │   └── Requests/           # Validasi request (aturan input form)
+│   ├── Models/                 # Model Eloquent (mapping tabel DB)
 │   ├── Providers/              # Service providers
-│   ├── Repositories/           # Repository pattern classes
-│   ├── Services/               # Business logic services
+│   ├── Repositories/           # Pola repository (akses data)
+│   ├── Services/               # Service / logika bisnis
 │   │   └── DokuSignatureService.php
-│   ├── View/Components/        # Blade components
-│   └── helpers.php             # Global helper functions
+│   └── View/
+│       └── Components/         # Blade components
 │
 ├── bootstrap/
-│   ├── app.php                 # Application bootstrap
-│   ├── providers.php           # Service providers config
-│   └── cache/                  # Bootstrap cache
+│   ├── app.php                 # Bootstrap aplikasi
+│   ├── providers.php           # Konfigurasi providers
+│   └── cache/                  # Cache bootstrap
 │
 ├── config/                     # Configuration files
 │   ├── app.php
+│   ├── auth.php
 │   ├── database.php
 │   ├── doku.php                # DOKU payment config
+│   ├── permission.php          # Role/permission (Spatie)
 │   ├── services.php            # OAuth & external services
 │   └── ...
 │
 ├── database/
-│   ├── factories/              # Model factories
-│   ├── migrations/             # Database migrations
-│   └── seeders/                # Database seeders
+│   ├── factories/              # Data dummy (untuk testing/seeding)
+│   ├── migrations/             # Perubahan struktur tabel DB
+│   └── seeders/                # Data awal (akun default, master data)
 │
 ├── docs/                       # Documentation
 │   ├── GOOGLE_OAUTH_SETUP.md
 │   ├── IMPORT_EXPORT_SOAL.md
 │   ├── PROGRESS_TRACKING.md
 │   ├── SERTIFIKAT_ADMIN.md
-│   ├── TEST_PLAN.md
 │   └── template-setup.md
 │
 ├── public/                     # Web root (assets publik)
 │   ├── index.php               # Entry point
-│   ├── css/
-│   ├── js/
-│   └── template/               # Template assets
+│   ├── .htaccess               # Konfigurasi Apache (jika dipakai)
+│   ├── css/                    # CSS yang dipakai browser
+│   │   ├── admin/              # CSS halaman Admin
+│   │   ├── kursus/             # CSS halaman Kursus
+│   │   ├── pengajar/           # CSS halaman Pengajar
+│   │   ├── peserta/            # CSS halaman Peserta
+│   │   └── profile/            # CSS halaman Profil
+│   ├── images/                 # Gambar statis
+│   │   └── Group 1000015019.png
+│   ├── js/                     # JavaScript statis
+│   │   └── indonesia-cities.js
+│   ├── template/               # Template assets
+│   ├── storage                 # Symlink ke storage/app/public
+│   ├── favicon.ico             # Icon tab browser
+│   ├── favicon.png             # Icon alternatif
+│   └── robots.txt              # Aturan indexing crawler
 │
 ├── resources/
-│   ├── css/                    # Source CSS files
-│   ├── js/                     # Source JS files
-│   └── views/                  # Blade templates
-│       ├── admin/              # Admin views
-│       ├── pengajar/           # Instructor views
-│       ├── auth/               # Auth views
-│       ├── components/         # Reusable components
+│   ├── css/                    # Sumber CSS (sebelum dibuild oleh Vite)
+│   │   ├── admin/              # CSS khusus admin (source)
+│   │   └── app.css             # Entry CSS utama
+│   ├── js/                     # Sumber JavaScript (sebelum dibuild)
+│   │   ├── components/         # Komponen UI (Vue)
+│   │   ├── layouts/            # Layout tampilan (Vue)
+│   │   ├── router/             # Routing frontend (Vue)
+│   │   ├── stores/             # State management (Vue)
+│   │   ├── views/              # Halaman frontend (Vue)
+│   │   ├── app.js              # Entry JS utama
+│   │   ├── App.vue             # Root component Vue
+│   │   ├── axios.js            # Konfigurasi request HTTP
+│   │   └── bootstrap.js        # Inisialisasi frontend
+│   └── views/                  # Blade templates (halaman Laravel)
+│       ├── layouts/            # Kerangka halaman (header/footer)
+│       ├── components/         # Komponen Blade reusable
+│       ├── admin/              # Halaman Admin
+│       ├── pengajar/           # Halaman Pengajar
+│       ├── user/               # Halaman Peserta/User
+│       ├── auth/               # Halaman login/register
+│       ├── kursus/             # Halaman kursus
+│       ├── profile/            # Halaman profil
+│       ├── verify/             # Halaman verifikasi (contoh: sertifikat)
+│       ├── vendor/             # Override view package pihak ketiga
 │       └── ...
 │
 ├── routes/
@@ -392,22 +399,41 @@ algorify-main-new/
 │   └── console.php             # Console routes
 │
 ├── storage/
-│   ├── app/                    # Application files
-│   ├── framework/              # Framework cache & sessions
-│   └── logs/                   # Application logs
+│   ├── app/                    # File aplikasi (upload/export)
+│   │   └── public/             # File yang boleh diakses publik (via public/storage)
+│   ├── framework/              # File runtime Laravel
+│   │   ├── cache/              # Cache aplikasi
+│   │   ├── sessions/           # Session login
+│   │   ├── views/              # Cache hasil render Blade
+│   │   └── testing/            # Kebutuhan testing
+│   └── logs/                   # Log aplikasi
 │
 ├── tests/
-│   ├── Feature/                # Feature tests
-│   ├── Unit/                   # Unit tests
+│   ├── Feature/                # Tes alur fitur (end-to-end level aplikasi)
+│   ├── Unit/                   # Tes fungsi kecil (unit)
 │   └── TestCase.php
 │
 ├── vendor/                     # Composer dependencies
+├── .editorconfig
+├── .env                        # Konfigurasi lokal (jangan di-commit)
 ├── .env.example                # Environment template
+├── .gitattributes
+├── .gitignore
 ├── artisan                     # Artisan CLI
 ├── composer.json               # PHP dependencies
+├── composer.lock               # Lock dependencies PHP
+├── fix_metode_pembayaran.sql
+├── nixpacks.toml
+├── package-lock.json
 ├── package.json                # JavaScript dependencies
 ├── phpunit.xml                 # PHPUnit config
+├── postcss.config.js
+├── Procfile
+├── setup_scheduler.ps1
+├── start_scheduler.bat
 ├── tailwind.config.js          # Tailwind CSS config
+├── vercel.json
+├── verify_seeder.php
 ├── vite.config.js              # Vite build config
 └── README.md                   # This file
 ```
@@ -485,30 +511,39 @@ php artisan migrate:fresh --seed
 
 ### Dokumentasi Tambahan
 
-- [Setup Google OAuth](GOOGLE_OAUTH_SETUP.md)
+#### Dokumen di Repository
+
+- [Setup Google OAuth](docs/GOOGLE_OAUTH_SETUP.md)
 - [Impor/Ekspor Soal](docs/IMPORT_EXPORT_SOAL.md)
 - [Pelacakan Progres](docs/PROGRESS_TRACKING.md)
 - [Sertifikat Admin](docs/SERTIFIKAT_ADMIN.md)
+
+#### Referensi & Dokumen Eksternal
+
+- **Manajemen Proyek**
+   - 🔗 [Google Drive](https://drive.google.com/drive/u/1/folders/1oAxSLa0hDV8qDVVc9A-17Wq_4-t6zhrQ)
+   - 🔗 [Notion Layanan Pelatihan TIK - Algorify](https://www.notion.so/2627ae519f5b8055b911f65df68dec5c?pvs=21)
+   - 🔗 [WBS dan Timeline SDLC](https://docs.google.com/spreadsheets/d/16pAwnZB_--z471tSl9-F57v7FtNQ-dkXEr89QE5qilg/edit?gid=0#gid=0)
+   - 🔗 [Presentasi Akhir - Algorify](https://www.canva.com/design/DAG7MAqpZGk/d4F5x-WkE3Sst1W2misoDQ/edit?utm_content=DAG7MAqpZGk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+- **Requirements**
+   - 🔗 [Business & Functional Requirements](https://docs.google.com/spreadsheets/d/1Ez24vwxtnEtPiwsVFA6v6P5nFrwpMKLjwRihAjbAltA/edit?gid=0#gid=0)
+   - 🔗 [History Requirement](https://docs.google.com/spreadsheets/d/1vy-JE1JgS3fEFe2Z8iMITcGi8TLbymJG05GCRFDo2X4/edit?gid=303200458#gid=303200458)
+
+- **Desain & Proses**
+   - 🔗 [Desain Figma](https://www.figma.com/design/G2zEPAx4DJAYr2WLbQgQhk/Latihan-Pelayanan-TIK---HighFive--Copy-?node-id=0-1&p=f&t=Fh1lNCEYyQlRB2oT-0)
+   - 🔗 [Diagram BPMN](https://modeler.camunda.io/diagrams/a5596897-ad7f-4c34-8004-b10a794010c8--high-five?v=1056,345,1)
+
+- **Testing**
+   - 🔗 [Form Usability Testing - Algorify](https://forms.gle/wJSaeqKy4oMsfhbm9)
 
 ### Kontribusi
 
 Untuk berkontribusi pada proyek ini:
 1. Fork repository
-2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
-
-### Lisensi
-
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
-
-### Kontak & Support
-
-- Email: support@algorify.com
-- Dokumentasi: `/docs`
-- Issue Tracker: GitHub Issues
-
----
-
-**Dibuat dengan menggunakan Laravel**
+2. Buat branch fitur (contoh: `git checkout -b feature/login-google`)
+3. Lakukan perubahan kode seperlunya
+4. Jalankan tes (contoh: `php artisan test`)
+5. Commit perubahan (contoh: `git commit -m "feat: tambah login Google"`)
+6. Push ke branch (contoh: `git push origin feature/login-google`)
+7. Buat Pull Request
