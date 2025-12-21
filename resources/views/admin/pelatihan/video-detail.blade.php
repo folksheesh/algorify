@@ -270,7 +270,7 @@
 @php
     $fileVideo = $video->file_video;
     $youtubeUrl = $video->youtube_url;
-    $isYoutube = !empty($youtubeUrl) || (str_contains($fileVideo ?? '', 'youtube.com') || str_contains($fileVideo ?? '', 'youtu.be'));
+    $isYoutube = !empty($youtubeUrl) || (!empty($fileVideo) && (str_contains($fileVideo, 'youtube.com') || str_contains($fileVideo, 'youtu.be')));
     $youtubeId = '';
     
     if ($isYoutube) {
@@ -283,6 +283,9 @@
             $youtubeId = $matches[1];
         }
     }
+    
+    // Check if local video file exists
+    $hasValidLocalVideo = !empty($fileVideo) && !$isYoutube && \Illuminate\Support\Facades\Storage::disk('public')->exists($fileVideo);
 @endphp
 <div class="page-container @role('pengajar') with-topbar @endrole"
     
@@ -337,11 +340,19 @@
                                 allowfullscreen>
                             </iframe>
                         </div>
-                    @else
+                    @elseif($hasValidLocalVideo)
                         <video controls id="localVideoPlayer">
                             <source src="{{ asset('storage/' . $fileVideo) }}" type="video/mp4">
                             Browser Anda tidak mendukung tag video.
                         </video>
+                    @else
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; background: #f1f5f9; border-radius: 12px;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                                <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p style="color: #64748b; margin-top: 1rem; font-size: 0.875rem;">Video belum tersedia</p>
+                        </div>
                     @endif
                 </div>
 
