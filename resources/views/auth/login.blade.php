@@ -63,8 +63,8 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                <label class="form-check-label" for="remember">Ingat saya</label>
+                                <input class="form-check-input" type="checkbox" id="rememberEmail" value="1">
+                                <label class="form-check-label" for="rememberEmail">Ingat email saya</label>
                             </div>
                             @if (Route::has('password.request'))
                                 <a class="link-forgot" href="{{ route('password.request') }}">Lupa Kata Sandi?</a>
@@ -113,6 +113,11 @@
         (function(){
             const toggleBtn = document.getElementById('togglePassword');
             const pwdInput = document.getElementById('password');
+            const emailInput = document.getElementById('email');
+            const rememberCheck = document.getElementById('rememberEmail');
+            const loginForm = document.querySelector('form');
+            
+            // Toggle password visibility
             if (toggleBtn && pwdInput) {
                 toggleBtn.addEventListener('click', function() {
                     const icon = toggleBtn.querySelector('i');
@@ -121,6 +126,24 @@
                     if (icon) {
                         icon.classList.toggle('bi-eye');
                         icon.classList.toggle('bi-eye-slash');
+                    }
+                });
+            }
+            
+            // Load saved email from localStorage
+            const savedEmail = localStorage.getItem('remembered_email');
+            if (savedEmail && emailInput) {
+                emailInput.value = savedEmail;
+                if (rememberCheck) rememberCheck.checked = true;
+            }
+            
+            // Save email to localStorage on form submit if checkbox is checked
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    if (rememberCheck && rememberCheck.checked && emailInput) {
+                        localStorage.setItem('remembered_email', emailInput.value);
+                    } else {
+                        localStorage.removeItem('remembered_email');
                     }
                 });
             }
