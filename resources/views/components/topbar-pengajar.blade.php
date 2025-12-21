@@ -1,6 +1,6 @@
 {{-- Topbar untuk Pengajar - Mirip dengan Peserta --}}
 @php
-    $displayName = display_user_name();
+    $displayName = Auth::user()->name ?? 'User';
     $avatarInitial = strtoupper(substr($displayName, 0, 1));
 @endphp
 <nav class="topbar-pengajar">

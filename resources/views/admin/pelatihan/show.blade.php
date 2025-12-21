@@ -524,6 +524,11 @@
                         <input type="number" name="waktu_pengerjaan" id="quizWaktu" class="form-input" placeholder="Contoh: 15" min="1" value="15" required>
                         <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Masukkan waktu dalam menit (contoh: 15 untuk kuis singkat)</small>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Nilai Minimum Kelulusan</label>
+                        <input type="number" name="minimum_score" id="quizMinScore" class="form-input" placeholder="Contoh: 70" min="0" max="100" value="70">
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Nilai minimum untuk lulus (0-100, default: 70)</small>
+                    </div>
                     <p style="font-size: 0.875rem; color: #6B7280; margin-top: 1rem; padding: 0.75rem; background: #F3F4F6; border-radius: 6px;">
                         💡 Soal dapat ditambahkan setelah kuis dibuat
                     </p>
@@ -568,6 +573,11 @@
                         <label class="form-label">Waktu Pengerjaan (menit) *</label>
                         <input type="number" name="waktu_pengerjaan" id="examWaktu" class="form-input" placeholder="Contoh: 60" min="1" required>
                         <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Masukkan waktu dalam menit (contoh: 60 untuk 1 jam)</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nilai Minimum Kelulusan</label>
+                        <input type="number" name="minimum_score" id="examMinScore" class="form-input" placeholder="Contoh: 70" min="0" max="100" value="70">
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Nilai minimum untuk lulus (0-100, default: 70)</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1197,6 +1207,7 @@
                         document.getElementById('quizDeskripsi').value = data.deskripsi || '';
                         document.getElementById('quizModulId').value = data.modul_id;
                         document.getElementById('quizWaktu').value = data.waktu_pengerjaan || 15;
+                        document.getElementById('quizMinScore').value = data.minimum_score || 70;
                         document.getElementById('quizModalTitle').textContent = 'Edit Kuis';
                     } else {
                         document.getElementById('examMethod').value = 'PUT';
@@ -1205,6 +1216,7 @@
                         document.getElementById('examDeskripsi').value = data.deskripsi || '';
                         document.getElementById('examModulId').value = data.modul_id;
                         document.getElementById('examWaktu').value = data.waktu_pengerjaan || '';
+                        document.getElementById('examMinScore').value = data.minimum_score || 70;
                         document.getElementById('examModalTitle').textContent = 'Edit Ujian';
                     }
                     
