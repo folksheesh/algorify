@@ -15,10 +15,12 @@
             padding: 8px 12px !important;
             border: 1px solid #dfe3e7 !important;
             border-radius: 0.5rem !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             line-height: 32px !important;
             color: #6c757d !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 46px !important;
@@ -26,9 +28,17 @@
         .select2-dropdown {
             border: 1px solid #dfe3e7 !important;
             border-radius: 0.5rem !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
         }
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
             background-color: #435EBE !important;
+        }
+        .select2-results__option {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+            padding: 10px 12px !important;
+        }
+        .select2-search--dropdown .select2-search__field {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
         }
     </style>
 @endpush
@@ -147,6 +157,7 @@
                 addressSelect.append(option);
             });
 
+            // Initialize Select2 for address
             addressSelect.select2({
                 placeholder: 'Pilih kabupaten/kota',
                 allowClear: true,
@@ -163,6 +174,14 @@
                     }
                     return null;
                 }
+            });
+            
+            // Initialize Select2 for jenis_kelamin
+            $('#jenis_kelamin').select2({
+                placeholder: 'Pilih jenis kelamin',
+                allowClear: false,
+                width: '100%',
+                minimumResultsForSearch: Infinity // Hide search box for short lists
             });
         });
     </script>

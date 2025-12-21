@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordResetOtp;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Tampilkan halaman permintaan tautan reset password.
-     *
-     * Halaman ini berisi form di mana pengguna memasukkan email mereka
-     * untuk menerima tautan reset password melalui email.
-     *
-     * @return View Halaman form lupa password
+     * Tampilkan halaman permintaan OTP reset password.
      */
     public function create(): View
     {
@@ -24,45 +21,97 @@ class PasswordResetLinkController extends Controller
     }
 
     /**
-     * Tangani permintaan untuk mengirim tautan reset password.
-     *
-     * Alur kerja:
-     * 1. Validasi format email yang dimasukkan pengguna
-     * 2. Panggil Password::sendResetLink untuk mencoba mengirim email
-     * 3. Periksa status hasil pengiriman dan berikan respons yang sesuai
-     *
-     * Penjelasan variabel penting:
-     * - $request: berisi input dari form (hanya 'email' yang dipakai)
-     * - $status: hasil dari Password::sendResetLink() (kode yang menjelaskan sukses/gagal)
-     *
-     * Alasan langkah tertentu:
-     * - Validasi email diperlukan agar tidak mencoba mengirim ke alamat yang jelas salah
-     * - Password::sendResetLink mengurus pembuatan token dan pengiriman email
-     *   (kita tidak perlu menulis logika token manual di sini)
-     * - Mengembalikan input email saat gagal agar pengguna tidak perlu mengetik ulang
-     *
-     * @param Request $request Data dari form lupa password
-     * @throws \Illuminate\Validation\ValidationException Jika validasi gagal
-     * @return RedirectResponse Kembali ke form dengan status atau error
+     * Kirim OTP ke email pengguna.
      */
     public function store(Request $request): RedirectResponse
     {
-        // Validasi input: pastikan email diisi dan berbentuk alamat email yang benar
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
-        // Coba kirim tautan reset password ke email yang diminta.
-        // Password::sendResetLink akan membuat token dan mengirim email sesuai konfigurasi.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Check if user exists
+        $user = User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tidak terdaftar dalam sistem.']);
+        }
 
-        // Jika pengiriman sukses, tampilkan status sukses. Jika gagal, kembalikan
-        // ke form dengan input email supaya pengguna bisa mencoba lagi.
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        // Generate OTP
+        $otp = PasswordResetOtp::generateFor($request->email);
+
+        // Send OTP via email
+        try {
+            Mail::send('emails.password-reset-otp', [
+                'otp' => $otp,
+                'name' => $user->name,
+            ], function ($message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Kode OTP Reset Password - Algorify');
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Gagal mengirim email. Silakan coba lagi.']);
+        }
+
+        // Store email in session for next step
+        session(['password_reset_email' => $request->email]);
+
+        return redirect()->route('password.verify-otp')
+            ->with('status', 'Kode OTP telah dikirim ke email Anda.');
+    }
+
+    /**
+     * Tampilkan form verifikasi OTP.
+     */
+    public function showVerifyOtp(): View
+    {
+        $email = session('password_reset_email');
+        
+        if (!$email) {
+            return redirect()->route('password.request');
+        }
+
+        return view('auth.verify-otp', ['email' => $email]);
+    }
+
+    /**
+     * Verifikasi OTP yang dimasukkan.
+     */
+    public function verifyOtp(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'otp' => ['required', 'string', 'size:6'],
+        ]);
+
+        $email = session('password_reset_email');
+        
+        if (!$email) {
+            return redirect()->route('password.request')
+                ->withErrors(['email' => 'Sesi telah berakhir. Silakan mulai ulang.']);
+        }
+
+        // Verify OTP
+        if (!PasswordResetOtp::verify($email, $request->otp)) {
+            return back()->withErrors(['otp' => 'Kode OTP tidak valid atau sudah kadaluarsa.']);
+        }
+
+        // Mark as verified in session
+        session(['password_reset_verified' => true]);
+
+        return redirect()->route('password.reset.form');
+    }
+
+    /**
+     * Tampilkan form reset password (setelah OTP terverifikasi).
+     */
+    public function showResetForm(): View
+    {
+        $email = session('password_reset_email');
+        $verified = session('password_reset_verified');
+        
+        if (!$email || !$verified) {
+            return redirect()->route('password.request');
+        }
+
+        return view('auth.reset-password', ['email' => $email]);
     }
 }

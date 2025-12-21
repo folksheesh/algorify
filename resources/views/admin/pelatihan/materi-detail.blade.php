@@ -109,7 +109,7 @@
 
                 <!-- Main Content -->
                 <div class="materi-content" style="line-height: 1.8; color: #374151;">
-                    {!! $materi->konten !!}
+                    {!! \App\Helpers\HtmlSanitizer::sanitize($materi->konten) !!}
                 </div>
 
                 <!-- Mark as Complete Button (for peserta role) -->
