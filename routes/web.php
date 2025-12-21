@@ -28,7 +28,11 @@ Route::get('/dashboard', function () {
     /** @var \App\Models\User $user */
     $user = Auth::user();
 
-    \App\Models\Kursus::whereNull('slug')->get()->each->save();
+    // Auto-regenerate slugs for records missing them
+    \App\Models\Kursus::whereNull('slug')->orWhere('slug', '')->get()->each->save();
+    \App\Models\Video::whereNull('slug')->orWhere('slug', '')->get()->each->save();
+    \App\Models\Materi::whereNull('slug')->orWhere('slug', '')->get()->each->save();
+    \App\Models\Ujian::whereNull('slug')->orWhere('slug', '')->get()->each->save();
     
     // Check if user has admin or super admin role
     if ($user->hasAnyRole(['admin', 'super admin'])) {

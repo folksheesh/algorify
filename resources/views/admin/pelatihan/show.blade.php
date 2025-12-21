@@ -173,7 +173,7 @@
                                                     $routeName = $item['type'] === 'video' ? 'admin.video.show' : ($item['type'] === 'pdf' ? 'admin.materi.show' : 'admin.ujian.show');
                                                 @endphp
                                                 <div class="materi-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;" data-id="{{ $data->id }}" data-type="{{ $item['type'] }}">
-                                                    <a href="{{ route($routeName, $data->slug) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
+                                                    <a href="{{ route($routeName, $data->slug ?? $data->id) }}" style="display: flex; align-items: center; gap: 1rem; flex: 1; text-decoration: none; color: inherit;">
                                                         @if($item['completed'] ?? false)
                                                             {{-- Icon Centang Hijau untuk item yang sudah selesai --}}
                                                             <div style="width: 40px; height: 40px; background: #D1FAE5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">

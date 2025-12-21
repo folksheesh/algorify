@@ -195,7 +195,7 @@ class BankSoalExport implements WithEvents, WithTitle
                     $sheet->setCellValue("C{$dataRow}", $tipeSoalMap[$item->tipe_soal] ?? ucfirst(str_replace('_', ' ', $item->tipe_soal)));
                     $sheet->setCellValue("D{$dataRow}", $opsiStr);
                     $sheet->setCellValue("E{$dataRow}", $jawabanStr);
-                    $sheet->setCellValue("F{$dataRow}", $item->kategori ? $item->kategori->judul : ($item->kursus ? $item->kursus->judul : '-'));
+                    $sheet->setCellValue("F{$dataRow}", $item->kategori ? $item->kategori->nama_kategori : ($item->kursus ? $item->kursus->judul : '-'));
                     $sheet->setCellValue("G{$dataRow}", $item->poin ?? 1);
                     $sheet->setCellValue("H{$dataRow}", $item->creator ? $item->creator->name : '-');
                     $sheet->setCellValue("I{$dataRow}", $item->created_at->format('d/m/Y'));
