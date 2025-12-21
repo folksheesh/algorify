@@ -1,6 +1,6 @@
 @extends('layouts.template')
 
-@section('title', 'Login - Mazer Admin Dashboard')
+@section('title', 'Masuk - Algorify')
 
 @push('styles')
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">

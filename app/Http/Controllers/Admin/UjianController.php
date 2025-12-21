@@ -84,6 +84,7 @@ class UjianController extends Controller
             'deskripsi' => 'nullable|string',
             'tipe' => 'required|in:quiz,ujian',
             'waktu_pengerjaan' => 'required|integer|min:1',
+            'minimum_score' => 'nullable|integer|min:0|max:100',
         ]);
 
         // Get kursus_id from modul
@@ -97,6 +98,7 @@ class UjianController extends Controller
             'tipe' => $validated['tipe'] === 'quiz' ? 'practice' : 'exam',
             'status' => 'active',
             'waktu_pengerjaan' => $validated['waktu_pengerjaan'],
+            'minimum_score' => $validated['minimum_score'] ?? 70,
         ]);
 
         return response()->json([
@@ -118,6 +120,7 @@ class UjianController extends Controller
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'waktu_pengerjaan' => 'required|integer|min:1',
+            'minimum_score' => 'nullable|integer|min:0|max:100',
         ]);
 
         $ujian = Ujian::findOrFail($id);
@@ -125,6 +128,7 @@ class UjianController extends Controller
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
             'waktu_pengerjaan' => $validated['waktu_pengerjaan'],
+            'minimum_score' => $validated['minimum_score'] ?? $ujian->minimum_score ?? 70,
         ]);
 
         return response()->json([

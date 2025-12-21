@@ -105,19 +105,23 @@ class KategoriController extends Controller
     {
         $kategori = KategoriPelatihan::findOrFail($id);
 
-        // Check if kategori has related soal
+        // Jika kategori memiliki soal terkait, pindahkan ke kategori placeholder
         if ($kategori->bankSoal()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kategori tidak dapat dihapus karena masih memiliki soal terkait'
-            ], 400);
+            // Cari atau buat kategori placeholder "Umum"
+            $placeholderKategori = KategoriPelatihan::firstOrCreate(
+                ['nama_kategori' => 'Umum'],
+                ['slug' => 'umum', 'deskripsi' => 'Kategori default untuk soal yang kategorinya dihapus']
+            );
+            
+            // Pindahkan semua soal ke kategori placeholder
+            $kategori->bankSoal()->update(['kategori_id' => $placeholderKategori->id]);
         }
 
         $kategori->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Kategori berhasil dihapus'
+            'message' => 'Kategori berhasil dihapus. Soal terkait dipindahkan ke kategori Umum.'
         ]);
     }
 

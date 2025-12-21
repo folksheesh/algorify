@@ -396,22 +396,47 @@ if (count($objectives) < 2) {
                                     <circle cx="12" cy="12" r="10" />
                                     <path d="M12 6v6l4 2" />
                                 </svg>
-                                <span class="info-title">180 Hari waktu akses</span>
+                                <span class="info-title">{{ $kursus->durasi ?? '180' }} Hari waktu akses</span>
                             </div>
                             <span class="info-description">Akses materi kapan saja selama periode kursus.</span>
                         </div>
 
-                        {{-- Flexible Schedule --}}
+                        {{-- Tipe Kursus --}}
                         <div class="course-info-item">
                             <div class="info-header">
-                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" />
-                                    <path d="M16 2v4M8 2v4M3 10h18" />
+                                @php
+                                    $tipeKursus = $kursus->tipe_kursus ?? 'online';
+                                    $tipeLabel = match($tipeKursus) {
+                                        'online' => 'Online',
+                                        'offline' => 'Offline',
+                                        'hybrid' => 'Hybrid',
+                                        default => 'Online'
+                                    };
+                                    $tipeDesc = match($tipeKursus) {
+                                        'online' => 'Belajar dari mana saja secara daring',
+                                        'offline' => 'Pembelajaran tatap muka langsung',
+                                        'hybrid' => 'Kombinasi online dan tatap muka',
+                                        default => 'Belajar dari mana saja secara daring'
+                                    };
+                                @endphp
+                                @if($tipeKursus === 'online')
+                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <path d="M8 21h8M12 17v4" />
                                 </svg>
-                                <span class="info-title">Jadwal Fleksibel</span>
+                                @elseif($tipeKursus === 'offline')
+                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-8h6v8" />
+                                </svg>
+                                @else
+                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                                </svg>
+                                @endif
+                                <span class="info-title">Kursus {{ $tipeLabel }}</span>
                             </div>
-                            <span class="info-description">Belajar sesuai kecepatan Anda sendiri</span>
+                            <span class="info-description">{{ $tipeDesc }}</span>
                         </div>
                     </div>
 
