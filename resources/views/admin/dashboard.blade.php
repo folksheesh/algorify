@@ -500,7 +500,7 @@
                                 <!-- Years will be populated dynamically -->
                             </select>
                         </div>
-                        <div class="chart-content" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                        <div class="chart-content chart-content--pertumbuhan">
                             <canvas id="pertumbuhanChart"></canvas>
                         </div>
                     </div>
@@ -886,6 +886,24 @@
         populateYearDropdown();
         loadTransaksiData();
         loadPertumbuhanData();
+
+        function resizeDashboardCharts() {
+            if (transaksiChart) {
+                transaksiChart.resize();
+            }
+            if (pertumbuhanChart) {
+                pertumbuhanChart.resize();
+            }
+        }
+
+        // Keep charts stable when layout changes (e.g., sidebar expand/collapse)
+        window.addEventListener('layout:changed', function () {
+            requestAnimationFrame(resizeDashboardCharts);
+            setTimeout(resizeDashboardCharts, 200);
+        });
+        window.addEventListener('resize', function () {
+            requestAnimationFrame(resizeDashboardCharts);
+        });
 
         // Filter handlers
         document.getElementById('pertumbuhanFilter').addEventListener('change', function(e) {

@@ -6,293 +6,7 @@
     <link rel="shortcut icon" href="{{ asset('template/assets/compiled/svg/favicon.svg?v=' . time()) }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('template/custom/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/kursus/show.css') }}">
-    <style>
-        .course-detail-wrapper {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding:24px;
-            padding-top: 0px
-        }
-
-        .course-title-main {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 2rem;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        .course-main-section {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            align-items: stretch;
-        }
-
-        .course-image-container {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .course-image-container img {
-            width: 100%;
-            height: 100%;
-            min-height: 280px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .learning-objectives-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 1.75rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e5e7eb;
-        }
-
-        .learning-objectives-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 1.25rem;
-        }
-
-        .learning-objectives-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 160px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-
-        /* Custom scrollbar styling */
-        .learning-objectives-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .learning-objectives-list::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
-        }
-
-        .learning-objectives-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        .learning-objectives-list::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        .learning-objectives-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-            color: #374151;
-            line-height: 1.6;
-        }
-
-        .learning-objectives-list li:last-child {
-            margin-bottom: 0;
-        }
-
-        .check-icon {
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            color: #2563eb;
-            margin-top: 2px;
-        }
-
-        .course-info-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .course-info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-        }
-
-        .course-info-item .info-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .course-info-item .info-icon {
-            width: 22px;
-            height: 22px;
-            color: #6366f1;
-        }
-
-        .course-info-item .info-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #1e293b;
-        }
-
-        .course-info-item .info-description {
-            font-size: 0.875rem;
-            color: #64748b;
-            padding-left: 30px;
-        }
-
-        .instructor-section {
-            background: #fff;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            margin-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .instructor-label {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-
-        .instructor-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .instructor-role {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-bottom: 0.75rem;
-        }
-
-        .instructor-bio {
-            font-size: 0.9rem;
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        .course-highlight-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            align-items: stretch;
-            margin-bottom: 2rem;
-        }
-
-        .highlight-card {
-            flex: 1 1 320px;
-            min-width: 120px;
-            min-height: 170px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-section {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e5e7eb;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            height: 100%;
-        }
-
-        .price-section .price-title {
-            font-size: 0.95rem;
-            color: #64748b;
-        }
-
-        .price-section .price-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #5D3FFF;
-        }
-
-        .price-section .price-desc {
-            font-size: 0.95rem;
-            color: #475569;
-        }
-
-        .price-section .price-note {
-            font-size: 0.9rem;
-            color: #64748b;
-        }
-
-        .enroll-section {
-            text-align: center;
-        }
-
-        .enroll-btn {
-            display: inline-block;
-            background: #2563eb;
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.05rem;
-            padding: 16px 80px;
-            border-radius: 12px;
-            text-decoration: none;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
-            transition: all 0.2s ease;
-        }
-
-        .enroll-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-            color: #fff;
-        }
-
-        @media (max-width: 900px) {
-            .course-main-section {
-                grid-template-columns: 1fr;
-            }
-
-            .course-info-row {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .course-info-item .info-description {
-                padding-left: 30px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .course-detail-wrapper {
-                padding: 20px 16px;
-            }
-
-            .course-title-main {
-                font-size: 1.35rem;
-            }
-
-            .enroll-btn {
-                width: 100%;
-                padding: 14px 24px;
-            }
-        }
-    </style>
+    
 @endpush
 
 @section('content')
@@ -396,12 +110,15 @@ if (count($objectives) < 2) {
                                     <circle cx="12" cy="12" r="10" />
                                     <path d="M12 6v6l4 2" />
                                 </svg>
-                                <span class="info-title">{{ $kursus->durasi ?? '180' }} Hari waktu akses</span>
+                                @php
+                                    $durasiHari = ($kursus->durasi && $kursus->durasi > 0) ? ($kursus->durasi * 7) : 180;
+                                @endphp
+                                <span class="info-title">{{ $durasiHari }} Hari waktu akses</span>
                             </div>
                             <span class="info-description">Akses materi kapan saja selama periode kursus.</span>
                         </div>
 
-                        {{-- Tipe Kursus --}}
+                        {{-- Course Type --}}
                         <div class="course-info-item">
                             <div class="info-header">
                                 @php
@@ -426,15 +143,18 @@ if (count($objectives) < 2) {
                                 </svg>
                                 @elseif($tipeKursus === 'offline')
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-8h6v8" />
+                                    <path d="M3 6l9-4 9 4v12l-9 4-9-4z" />
+                                    <path d="M3 6l9 4 9-4" />
+                                    <path d="M12 10v12" />
                                 </svg>
                                 @else
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                    <path d="M8 21h8M12 17v4" />
+                                    <path d="M2 11h20" />
                                 </svg>
                                 @endif
-                                <span class="info-title">Kursus {{ $tipeLabel }}</span>
+                                <span class="info-title">Tipe: {{ $tipeLabel }}</span>
                             </div>
                             <span class="info-description">{{ $tipeDesc }}</span>
                         </div>
@@ -443,10 +163,10 @@ if (count($objectives) < 2) {
 
                     <div class="course-highlight-row">
                         <div class="instructor-section highlight-card">
-                            <div class="instructor-label">Instruktur</div>
-                            <div class="instructor-name">{{ $kursus->user->name ?? $kursus->pengajar ?? 'Nama Instruktur' }}</div>
-                            <div class="instructor-role">{{ $kursus->user->profesi ?? 'Senior Instructor' }}</div>
-                            <div class="instructor-bio">Instruktur berpengalaman dengan keahlian di bidang
+                            <div class="instructor-label">Pengajar</div>
+                            <div class="instructor-name">{{ $kursus->user->name ?? $kursus->pengajar ?? 'Nama Pengajar' }}</div>
+                            <div class="instructor-role">{{ $kursus->user->profesi ?? 'Pengajar Profesional' }}</div>
+                            <div class="instructor-bio">Pengajar berpengalaman dengan keahlian di bidang
                                 {{ strtolower($kursus->judul) }} yang siap membimbing Anda mencapai tujuan pembelajaran.</div>
                         </div>
                         <div class="price-section highlight-card">
