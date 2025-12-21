@@ -96,7 +96,7 @@ if (count($objectives) < 2) {
                                     <rect x="4" y="4" width="16" height="16" rx="2" />
                                     <path d="M9 9h6v6H9z" />
                                 </svg>
-                                <span class="info-title">{{ $kursus->modul->count() }} modul</span>
+                                <span class="info-title">{{ $kursus->modul?->count() ?? 0 }} modul</span>
                             </div>
                             <span class="info-description">Dapatkan wawasan mendalam tentang fundamental
                                 {{ strtolower($kursus->judul) }}.</span>

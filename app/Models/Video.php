@@ -14,6 +14,7 @@ class Video extends Model
         'slug',
         'deskripsi',
         'file_video',
+        'youtube_url',
         'urutan',
     ];
 

@@ -238,21 +238,25 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($pengajarData as $data) {
-            $user = User::create([
-                'id' => User::generateId('pengajar'),
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'] ?? 'password'),
-                'phone' => $data['phone'],
-                'profesi' => $data['profesi'],
-                'address' => $data['address'],
-                'pendidikan' => $data['pendidikan'],
-                'tanggal_lahir' => $data['tanggal_lahir'],
-                'jenis_kelamin' => $data['jenis_kelamin'],
-                'email_verified_at' => now(),
-                'status' => 'active',
-            ]);
-            $user->assignRole('pengajar');
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'id' => User::generateId('pengajar'),
+                    'name' => $data['name'],
+                    'password' => Hash::make($data['password'] ?? 'password'),
+                    'phone' => $data['phone'],
+                    'profesi' => $data['profesi'],
+                    'address' => $data['address'],
+                    'pendidikan' => $data['pendidikan'],
+                    'tanggal_lahir' => $data['tanggal_lahir'],
+                    'jenis_kelamin' => $data['jenis_kelamin'],
+                    'email_verified_at' => now(),
+                    'status' => 'active',
+                ]
+            );
+            if (!$user->hasRole('pengajar')) {
+                $user->assignRole('pengajar');
+            }
         }
 
         // ========================================
@@ -464,21 +468,25 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($pesertaData as $data) {
-            $user = User::create([
-                'id' => User::generateId('peserta'),
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'] ?? 'password'),
-                'phone' => $data['phone'],
-                'profesi' => $data['profesi'],
-                'address' => $data['address'],
-                'pendidikan' => $data['pendidikan'],
-                'tanggal_lahir' => $data['tanggal_lahir'],
-                'jenis_kelamin' => $data['jenis_kelamin'],
-                'email_verified_at' => now(),
-                'status' => 'active',
-            ]);
-            $user->assignRole('peserta');
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'id' => User::generateId('peserta'),
+                    'name' => $data['name'],
+                    'password' => Hash::make($data['password'] ?? 'password'),
+                    'phone' => $data['phone'],
+                    'profesi' => $data['profesi'],
+                    'address' => $data['address'],
+                    'pendidikan' => $data['pendidikan'],
+                    'tanggal_lahir' => $data['tanggal_lahir'],
+                    'jenis_kelamin' => $data['jenis_kelamin'],
+                    'email_verified_at' => now(),
+                    'status' => 'active',
+                ]
+            );
+            if (!$user->hasRole('peserta')) {
+                $user->assignRole('peserta');
+            }
         }
 
         echo "✓ UserSeeder berhasil! Total: 21 Pengajar + 20 Peserta\n";
