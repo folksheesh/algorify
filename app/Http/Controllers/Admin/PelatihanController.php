@@ -110,10 +110,12 @@ class PelatihanController extends Controller
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
             'durasi' => 'required|integer|min:1',
-            'harga' => 'required|integer|min:0',
+            'harga' => 'required|integer|min:0|max:99999999',
             'kapasitas' => 'nullable|integer|min:1',
             // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+        ], [
+            'harga.max' => 'Harga terlalu besar. Maksimal Rp 99.999.999.',
         ]);
 
         // Handle thumbnail upload
@@ -165,10 +167,12 @@ class PelatihanController extends Controller
             'deskripsi' => 'nullable|string',
             'pengajar_id' => 'required|exists:users,id',
             'durasi' => 'required|integer|min:1',
-            'harga' => 'required|integer|min:0',
+            'harga' => 'required|integer|min:0|max:99999999',
             'kapasitas' => 'nullable|integer|min:1',
             // Batas ukuran thumbnail dinaikkan menjadi 1MB (1024 KB)
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+        ], [
+            'harga.max' => 'Harga terlalu besar. Maksimal Rp 99.999.999.',
         ]);
 
         // Handle thumbnail upload

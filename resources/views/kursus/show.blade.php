@@ -111,7 +111,8 @@ if (count($objectives) < 2) {
                                     <path d="M12 6v6l4 2" />
                                 </svg>
                                 @php
-                                    $durasiHari = ($kursus->durasi && $kursus->durasi > 0) ? ($kursus->durasi * 7) : 180;
+                                    $durasiValue = is_numeric($kursus->durasi) ? (int) $kursus->durasi : 0;
+                                    $durasiHari = $durasiValue > 0 ? ($durasiValue * 7) : 180;
                                 @endphp
                                 <span class="info-title">{{ $durasiHari }} Hari waktu akses</span>
                             </div>

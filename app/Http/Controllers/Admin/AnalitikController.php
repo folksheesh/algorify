@@ -52,6 +52,7 @@ class AnalitikController extends Controller
                     
                     return (object)[
                         'id' => $kursus->id, // Tambahkan ID untuk link ke detail
+                        'slug' => $kursus->slug,
                         'nama' => $kursus->judul, // Field nama kursus adalah 'judul'
                         'peserta' => $kursus->enrollments_count,
                         'pendapatan' => $pendapatan

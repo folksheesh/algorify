@@ -696,20 +696,51 @@
         // Global variable untuk menyimpan ID kursus yang akan dihapus
         let deleteKursusId = null;
 
+        function normalizeHarga(value) {
+            const raw = String(value ?? '');
+            if (!raw) {
+                return 0;
+            }
+            if (raw.includes('.') && !raw.includes('Rp')) {
+                const numeric = parseFloat(raw);
+                return Number.isNaN(numeric) ? 0 : Math.round(numeric);
+            }
+            const digits = raw.replace(/[^0-9]/g, '');
+            return digits ? parseInt(digits, 10) : 0;
+        }
+
         function formatRupiah(value) {
-            const digits = String(value ?? '').replace(/[^0-9]/g, '');
-            if (!digits) {
+            const numericValue = normalizeHarga(value);
+            if (!numericValue) {
                 return '';
             }
-            const formatted = new Intl.NumberFormat('id-ID').format(parseInt(digits, 10));
+            const formatted = new Intl.NumberFormat('id-ID').format(numericValue);
             return 'Rp ' + formatted;
         }
 
         // Format harga ke rupiah saat input
         const hargaInput = document.getElementById('harga');
+        const maxHarga = 99999999;
         if (hargaInput) {
             hargaInput.addEventListener('input', function (e) {
                 e.target.value = formatRupiah(e.target.value);
+            });
+        }
+
+        const formKursus = document.getElementById('formKursus');
+        if (formKursus && hargaInput) {
+            formKursus.addEventListener('submit', function (event) {
+                const hargaValue = normalizeHarga(hargaInput.value);
+
+                if (hargaValue > maxHarga) {
+                    event.preventDefault();
+                    const message = 'Harga terlalu besar. Maksimal Rp 99.999.999.';
+                    if (typeof showToast === 'function') {
+                        showToast(message, 'error');
+                    } else {
+                        alert(message);
+                    }
+                }
             });
         }
         
