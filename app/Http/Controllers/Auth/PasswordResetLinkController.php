@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -50,12 +51,25 @@ class PasswordResetLinkController extends Controller
         // Validasi input: pastikan email diisi dan berbentuk alamat email yang benar
         $request->validate([
             'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
         ]);
+
+        $email = $request->input('email');
+        $userExists = User::where('email', $email)->exists();
+
+        if (! $userExists) {
+            return back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Akun tidak ditemukan.')
+                ->withErrors(['email' => 'Akun tidak ditemukan.']);
+        }
 
         // Coba kirim tautan reset password ke email yang diminta.
         // Password::sendResetLink akan membuat token dan mengirim email sesuai konfigurasi.
         $status = Password::sendResetLink(
-            $request->only('email')
+            ['email' => $email]
         );
 
         // Jika pengiriman sukses, tampilkan status sukses. Jika gagal, kembalikan

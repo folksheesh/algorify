@@ -25,7 +25,12 @@
 
             <div class="page-header">
                 <h1 class="page-title">Sertifikat Saya</h1>
-                <p class="page-subtitle">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <p class="page-subtitle" style="margin: 0;">Dapatkan sertifikat untuk setiap pelatihan yang telah Anda selesaikan</p>
+                    <a href="{{ route('verify.sertifikat.index') }}" class="btn-download-cert" style="background: #6B46FF; text-decoration: none; padding: 0.55rem 1rem; font-size: 0.9rem;">
+                        Verifikasi Sertifikat
+                    </a>
+                </div>
             </div>
 
             @if(session('success'))

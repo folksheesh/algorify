@@ -10,6 +10,7 @@ use App\Models\Kursus;
 use App\Models\Materi;
 use App\Models\Ujian;
 use App\Models\Video;
+use App\Http\Controllers\CertificateVerificationController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -21,6 +22,11 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 // DOKU Payment Callback (no auth required)
 Route::get('/payment/callback', [\App\Http\Controllers\User\EnrollmentController::class, 'paymentCallback'])->name('payment.callback');
 Route::post('/doku/notification', [\App\Http\Controllers\User\EnrollmentController::class, 'notification'])->name('doku.notification');
+
+// Verifikasi Sertifikat (public)
+Route::get('/verifikasi-sertifikat', [CertificateVerificationController::class, 'index'])->name('verify.sertifikat.index');
+Route::post('/verifikasi-sertifikat', [CertificateVerificationController::class, 'verify'])->name('verify.sertifikat.verify');
+Route::get('/verifikasi-sertifikat/scan/{token}', [CertificateVerificationController::class, 'scan'])->name('verify.sertifikat.scan');
 
 // Breeze auth routes (login, register, password reset, etc.)
 
