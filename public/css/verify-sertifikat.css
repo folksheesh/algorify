@@ -67,20 +67,13 @@ body[data-bs-theme="light"] .verify-page,
 }
 
 .verify-page .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #9f8fef 0%, #7c6ee4 100%);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(124, 110, 228, 0.3);
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
 }
 
 .verify-page .logo-icon svg {
-    width: 22px;
-    height: 22px;
-    color: white;
+    display: none;
 }
 
 .verify-page .logo-text {
@@ -88,6 +81,34 @@ body[data-bs-theme="light"] .verify-page,
     color: var(--verify-primary);
     font-size: 1.5rem;
     letter-spacing: -0.01em;
+}
+
+/* Back Button */
+.verify-page .btn-back {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--verify-muted);
+    text-decoration: none;
+    background: #f1f5f9;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.verify-page .btn-back:hover {
+    color: var(--verify-primary);
+    background: #e8eef5;
+}
+
+.verify-page .btn-back svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Hide old logo img if exists */

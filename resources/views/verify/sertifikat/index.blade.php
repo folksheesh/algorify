@@ -11,15 +11,18 @@
         <div class="verify-wrapper">
             <header class="verify-header">
                 <div class="logo-row">
-                    {{-- Logo Icon with Square Style --}}
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="16" height="16" rx="3" fill="white" fill-opacity="0.3"/>
-                            <rect x="6" y="6" width="12" height="12" rx="2" fill="white"/>
-                        </svg>
-                    </div>
+                    {{-- Logo Icon using actual logo image --}}
+                    <img src="{{ asset('template/img/icon-logo.png') }}" alt="Algorify Logo" class="logo-icon" style="width: 36px; height: 36px; object-fit: contain;">
                     <span class="logo-text">Algorify</span>
                 </div>
+                
+                {{-- Back Button --}}
+                <a href="{{ route('user.sertifikat.index') }}" class="btn-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Kembali
+                </a>
                 <h1>Verifikasi Sertifikat</h1>
                 <p class="subtitle">Masukkan nomor sertifikat untuk memverifikasi keasliannya</p>
             </header>

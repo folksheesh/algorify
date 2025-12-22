@@ -41,8 +41,8 @@ class Kursus extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     
-    // Alias untuk instructor (backwards compatibility)
-    public function pengajarRelation()
+    // Alias untuk instructor (backwards compatibility) - digunakan oleh PelatihanController
+    public function pengajar()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
