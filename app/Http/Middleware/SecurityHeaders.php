@@ -40,10 +40,10 @@ class SecurityHeaders
         // Allow inline scripts/styles for Laravel applications, YouTube embeds, jQuery, Select2, Google OAuth
         $csp = "default-src 'self'; " .
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://code.jquery.com https://www.youtube.com https://s.ytimg.com https://accounts.google.com https://apis.google.com; " .
-               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://accounts.google.com; " .
-               "font-src 'self' https://fonts.gstatic.com data:; " .
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://accounts.google.com https://fonts.bunny.net; " .
+               "font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net data:; " .
                "img-src 'self' data: blob: https: http:; " .
-               "frame-src 'self' https://www.youtube.com https://youtube.com https://accounts.google.com; " .
+               "frame-src 'self' https://www.youtube.com https://youtube.com https://accounts.google.com https://staging.doku.com; " .
                "connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com; " .
                "media-src 'self' blob:; " .
                "object-src 'none'; " .
