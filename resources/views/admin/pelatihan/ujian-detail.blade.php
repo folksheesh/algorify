@@ -687,6 +687,13 @@
 
             <!-- Sidebar Navigation (seperti gambar referensi) -->
             <div id="examSidebar" class="exam-sidebar" @hasrole('peserta') style="display: none;" @endhasrole>
+                <!-- Close button for mobile -->
+                <button class="exam-sidebar-close" onclick="toggleExamSidebar()" style="display: none; position: absolute; top: 1rem; right: 1rem; background: #F1F5F9; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                
                 <!-- Timer Card -->
                 <div class="exam-sidebar-card">
                     <div class="timer-label" style="font-size: 0.875rem; color: #64748B; margin-bottom: 0.5rem; text-align: center;">Sisa Waktu</div>
@@ -725,6 +732,16 @@
     @endif
 
 </div>
+
+{{-- Mobile Sidebar Toggle Button --}}
+<button id="examSidebarToggle" class="exam-sidebar-toggle hidden" onclick="toggleExamSidebar()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+</button>
+
+{{-- Mobile Sidebar Overlay --}}
+<div id="examSidebarOverlay" class="exam-sidebar-overlay" onclick="toggleExamSidebar()"></div>
 
 {{-- Modal Konfirmasi Hapus Soal --}}
 <style>
@@ -1099,31 +1116,153 @@ body.exam-active-mode #examSidebar {
         grid-template-columns: 1fr;
     }
     
+    /* Sidebar becomes a slide-in panel from right */
     body.exam-active-mode #examSidebar {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        top: auto;
-        z-index: 999;
+        top: 0;
+        right: -320px;
+        width: 300px;
+        height: 100vh;
+        z-index: 1001;
         display: flex;
-        gap: 0;
+        flex-direction: column;
+        gap: 1rem;
         padding: 1rem;
         background: white;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-        border-radius: 20px 20px 0 0;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+        transition: right 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    body.exam-active-mode #examSidebar.open {
+        right: 0;
     }
     
     .exam-sidebar-card {
         margin-bottom: 0;
     }
     
+    /* Keep timer visible in sidebar */
     .timer-card {
-        display: none;
+        display: block;
     }
     
     body.exam-active-mode {
-        padding-bottom: 200px;
+        padding-bottom: 80px; /* Space for toggle button */
+    }
+}
+
+@media (max-width: 768px) {
+    /* Simplified flat header */
+    .exam-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+    
+    .exam-navbar-inner {
+        padding: 0.5rem 1rem;
+        flex-wrap: nowrap;
+    }
+    
+    .exam-navbar-left {
+        display: none; /* Hide UJIAN label on mobile */
+    }
+    
+    .exam-navbar-center {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .exam-header-card {
+        padding: 0.625rem 1rem;
+        border-radius: 8px;
+    }
+    
+    .exam-header-top {
+        margin-bottom: 0.375rem;
+    }
+    
+    .exam-header-title {
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+    }
+    
+    .exam-header-timer {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .exam-progress-info {
+        font-size: 0.75rem;
+        margin-bottom: 0.375rem;
+    }
+    
+    .exam-progress-bar {
+        height: 4px;
+    }
+    
+    .exam-question-wrapper {
+        padding: 1rem;
+    }
+    
+    /* Floating toggle button above question area */
+    .exam-sidebar-toggle {
+        position: fixed;
+        top: 100px; /* Below the header navbar */
+        right: 1rem;
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        z-index: 999;
+        cursor: pointer;
+    }
+    
+    .exam-sidebar-toggle.hidden {
+        display: none;
+    }
+    
+    /* Overlay when sidebar is open */
+    .exam-sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: none;
+    }
+    
+    .exam-sidebar-overlay.active {
+        display: block;
+    }
+    
+    /* Show close button on mobile */
+    .exam-sidebar-close {
+        display: flex !important;
+    }
+    
+    /* Add padding top to sidebar for close button */
+    body.exam-active-mode #examSidebar {
+        padding-top: 3.5rem;
+    }
+    
+    body.exam-active-mode {
+        padding-top: 90px;
+        padding-bottom: 20px;
     }
 }
 
@@ -1737,11 +1876,30 @@ body.exam-active-mode #examSidebar {
             examContainer.classList.add('exam-active');
         }
         
+        // Show toggle button for mobile (check screen width)
+        const toggleBtn = document.getElementById('examSidebarToggle');
+        if (toggleBtn && window.innerWidth <= 1024) {
+            toggleBtn.classList.remove('hidden');
+        }
+        
         // Start the timer
         startTimer();
         
         // Update progress bar
         updateProgressBar(1);
+    }
+    
+    // Toggle exam sidebar on mobile
+    function toggleExamSidebar() {
+        const sidebar = document.getElementById('examSidebar');
+        const overlay = document.getElementById('examSidebarOverlay');
+        
+        if (sidebar) {
+            sidebar.classList.toggle('open');
+        }
+        if (overlay) {
+            overlay.classList.toggle('active');
+        }
     }
     
     // Update progress bar and question info

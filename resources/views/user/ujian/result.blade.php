@@ -29,7 +29,7 @@
             <!-- Score Circle -->
             <div class="score-section">
                 <div class="score-circle">
-                    <svg width="180" height="180">
+                    <svg viewBox="0 0 180 180" width="100%" height="100%">
                         <circle class="bg-circle" cx="90" cy="90" r="80"></circle>
                         <circle class="progress-circle" cx="90" cy="90" r="80" 
                                 stroke-dasharray="{{ 2 * 3.14159 * 80 }}" 
