@@ -287,7 +287,7 @@
     // Check if local video file exists
     $hasValidLocalVideo = !empty($fileVideo) && !$isYoutube && \Illuminate\Support\Facades\Storage::disk('public')->exists($fileVideo);
 @endphp
-<div class="page-container @role('pengajar') with-topbar @endrole"
+<div class="page-container @role('pengajar') with-topbar @endrole">
     
     <!-- Back Button -->
     <a href="{{ route('admin.pelatihan.show', $video->modul->kursus->slug) }}?open_modul={{ $video->modul->slug }}" class="back-btn" onclick="navigateToModul(event, this.href)">

@@ -258,6 +258,102 @@
 <!-- Sidebar Overlay -->
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+<!-- Mobile Menu Button (Hamburger) -->
+<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+    </svg>
+</button>
+
+<style>
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #5D3FFF 0%, #7C3FFF 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(93, 63, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(93, 63, 255, 0.5);
+}
+
+.mobile-menu-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 992px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Hide hamburger when sidebar is open */
+    .sidebar.active ~ .mobile-menu-btn,
+    body:has(.sidebar.active) .mobile-menu-btn {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 5rem 1rem 1rem 1rem !important;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Hide edge toggle on mobile */
+    .sidebar-edge-toggle {
+        display: none !important;
+    }
+    
+    /* Adjust page container padding */
+    .page-container {
+        padding: 1rem !important;
+    }
+}
+</style>
+
 <style>
     /* Active menu item background color */
     .nav-item.active>.nav-link {
