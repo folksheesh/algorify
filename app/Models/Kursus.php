@@ -36,7 +36,13 @@ class Kursus extends Model
     ];
 
     // Relationships
-    public function pengajar()
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    // Alias untuk instructor (backwards compatibility)
+    public function pengajarRelation()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -45,6 +51,17 @@ class Kursus extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    // Accessor untuk nama pengajar
+    public function getPengajarNameAttribute()
+    {
+        // Try to get from user relation first
+        if ($this->user_id && $this->instructor) {
+            return $this->instructor->name;
+        }
+        // Fallback to pengajar string field
+        return $this->pengajar ?: '-';
     }
 
     public function modul()

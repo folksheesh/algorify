@@ -148,7 +148,7 @@
                     
                     <div class="info-item">
                         <div class="info-label">Pengajar</div>
-                        <div class="info-value">{{ $materi->modul->kursus->pengajar->name ?? '-' }}</div>
+                        <div class="info-value">{{ $materi->modul->kursus->pengajar_name ?? '-' }}</div>
                     </div>
                 </div>
             </div>

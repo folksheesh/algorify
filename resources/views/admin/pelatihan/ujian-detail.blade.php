@@ -365,7 +365,7 @@
                         
                         <div>
                             <div style="font-size: 0.75rem; color: #6B7280; margin-bottom: 0.25rem;">Pengajar</div>
-                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->pengajar->name ?? '-' }}</div>
+                            <div style="font-weight: 600; color: #1F2937;">{{ $ujian->modul->kursus->pengajar_name ?? '-' }}</div>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ class MateriController extends Controller
 
     public function show(Materi $materi)
     {
-        $materi->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian']);
+        $materi->load(['modul.kursus.instructor', 'modul.video', 'modul.materi', 'modul.ujian']);
         
         // Get all materials in the same module (videos + materi + ujian)
         $modul = $materi->modul;

@@ -20,7 +20,7 @@ class UjianController extends Controller
 
     public function show(Ujian $ujian)
     {
-        $ujian->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban']);
+        $ujian->load(['modul.kursus.instructor', 'modul.video', 'modul.materi', 'modul.ujian', 'soal.pilihanJawaban']);
         
         // Get all items from the same module for navigation
         $modul = $ujian->modul;

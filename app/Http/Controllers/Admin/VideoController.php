@@ -141,7 +141,7 @@ class VideoController extends Controller
 
     public function show(Video $video)
     {
-        $video->load(['modul.kursus.pengajar', 'modul.video', 'modul.materi', 'modul.ujian']);
+        $video->load(['modul.kursus.instructor', 'modul.video', 'modul.materi', 'modul.ujian']);
         
         // Get all materials in the same module (videos + materi + ujian)
         $modul = $video->modul;
