@@ -5,6 +5,8 @@ namespace App\Providers; // Namespace untuk service provider
 use Illuminate\Support\ServiceProvider; // Import kelas dasar ServiceProvider
 use App\Repositories\ProgressRepository;
 
+use Illuminate\Support\Facades\URL;
+
 // Kelas ini menangani pendaftaran dan inisialisasi layanan-layanan
 // yang dibutuhkan aplikasi saat pertama kali dijalankan
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Force HTTPS specifically for ngrok or production
+        if($this->app->environment('production') || str_contains(request()->url(), 'ngrok-free.app')) {
+            URL::forceScheme('https');
+        }
     }
 }
