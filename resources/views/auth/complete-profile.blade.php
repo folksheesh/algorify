@@ -75,7 +75,7 @@
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Nomor Telepon</label>
-                            <input type="tel" class="form-control form-control-xl @error('phone') is-invalid @enderror"
+                            <input type="number" class="form-control form-control-xl @error('phone') is-invalid @enderror"
                                    placeholder="Masukkan nomor telepon" name="phone" id="phone"
                                    value="{{ old('phone', $user->phone) }}" required>
                             @error('phone')
