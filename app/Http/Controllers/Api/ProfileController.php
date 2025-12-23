@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        $user = $request->user();
+        $user = \App\Models\User::findOrFail($id);
         
         $request->validate([
             'name' => 'required|string|max:255',
@@ -54,7 +54,8 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user
+            'user' => $user,
+            'id' => $user->id
         ]);
     }
 }

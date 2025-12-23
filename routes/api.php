@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kursus/{id}', [KursusController::class, 'show']);
     
     // Profile routes
-    Route::post('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/{id}', [ProfileController::class, 'update']);
     
     // Admin routes
     Route::prefix('admin')->group(function () {
