@@ -137,31 +137,58 @@ Aplikasi yang akan dibuat diharapkan dapat memberikan manfaat pada aspek berikut
 
 ### Langkah Instalasi
 
-1. **Clone Repository**
+1. **Clone repo**
    ```bash
-   git clone <repository-url>
-   cd algorify-main-new
+   git clone https://github.com/folksheesh/algorify.git
+   cd algorify
    ```
 
-2. **Install Dependencies PHP**
+2. **Install dependency backend (PHP/Laravel)**
    ```bash
    composer install
    ```
 
-3. **Install Dependencies JavaScript**
+3. **Install dependency frontend (Vite/Tailwind)**
    ```bash
    npm install
    ```
 
-4. **Konfigurasi Environment**
+4. **Buat file `.env` dari template**
+   - Linux/Mac:
+     ```bash
+     cp .env.example .env
+     ```
+   - Windows PowerShell:
+     ```powershell
+     Copy-Item .env.example .env
+     ```
+
+5. **Generate APP_KEY**
    ```bash
-   cp .env.example .env
    php artisan key:generate
    ```
 
-5. **Konfigurasi Database**
-   
-   Edit file `.env`:
+6. **Siapkan database**
+   - **PostgreSQL (default):** pastikan PostgreSQL berjalan dan buat database `algorify`.
+     - Via `psql`:
+       ```bash
+       psql -U postgres -c "CREATE DATABASE algorify;"
+       ```
+     - Atau buat dari pgAdmin.
+   - **MySQL (opsional):** pastikan MySQL berjalan dan buat database `algorify`.
+
+7. **Atur koneksi database di `.env`**
+   **PostgreSQL (default):**
+   ```env
+   DB_CONNECTION=pgsql
+   DB_HOST=127.0.0.1
+   DB_PORT=5432
+   DB_DATABASE=algorify
+   DB_USERNAME=postgres
+   DB_PASSWORD=
+   ```
+
+   **MySQL (opsional):**
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -171,40 +198,46 @@ Aplikasi yang akan dibuat diharapkan dapat memberikan manfaat pada aspek berikut
    DB_PASSWORD=
    ```
 
-6. **Konfigurasi Google OAuth** (Opsional)
-   
-   Ikuti panduan di `GOOGLE_OAUTH_SETUP.md`, lalu tambahkan ke `.env`:
-   ```env
-   GOOGLE_CLIENT_ID=your_client_id
-   GOOGLE_CLIENT_SECRET=your_client_secret
-   GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
-   ```
-
-7. **Konfigurasi DOKU Payment** (Opsional)
-   
-   Edit `.env`:
-   ```env
-   DOKU_CLIENT_ID=your_doku_client_id
-   DOKU_SECRET_KEY=your_doku_secret_key
-   DOKU_SHARED_KEY=your_doku_shared_key
-   DOKU_ENVIRONMENT=sandbox
-   ```
-
-8. **Migrasi Database & Seeder**
+8. **Migrasi + seed**
    ```bash
-   php artisan migrate
-   php artisan db:seed
+   php artisan migrate --seed
    ```
 
-9. **Link Storage**
+9. **Link storage (wajib untuk file upload/akses storage)**
    ```bash
    php artisan storage:link
    ```
 
-10. **Build Assets**
-    ```bash
-    npm run build
-    ```
+10. **Konfigurasi Google OAuth (opsional)**
+   Ikuti panduan di `docs/GOOGLE_OAUTH_SETUP.md`, lalu isi di `.env`:
+   ```env
+   GOOGLE_CLIENT_ID=your_client_id
+   GOOGLE_CLIENT_SECRET=your_client_secret
+   GOOGLE_REDIRECT_URL=http://localhost:8000/auth/google/callback
+   ```
+
+11. **Konfigurasi DOKU Payment (opsional)**
+   Isi di `.env` (sesuai `config/doku.php`):
+   ```env
+   DOKU_CLIENT_ID=your_doku_client_id
+   DOKU_SECRET_KEY=your_doku_secret_key
+   DOKU_IS_PRODUCTION=false
+   DOKU_DISABLE_SSL_VERIFY=true
+   ```
+
+12. **Jalankan aplikasi (2 terminal)**
+   - Terminal 1 (backend):
+     ```bash
+     php artisan serve
+     ```
+   - Terminal 2 (frontend):
+     ```bash
+     npm run dev
+     ```
+
+   Buka: `http://localhost:8000`
+
+> **Jika error koneksi PostgreSQL di Windows:** pastikan ekstensi PHP `pdo_pgsql` aktif (di `php.ini`), lalu restart terminal/server.
 
 ---
 
